@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_3.html -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BanG Dream! 徽章圖鑑</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet"/>
+<link href="./index_files/css2" rel="stylesheet">
+<link href="./index_files/css2(1)" rel="stylesheet">
 <style>
 :root{
   --bg:#faf9f5;--surface:#fff;--border:#ece9e0;--text:#1a1a1a;--muted:#777;
@@ -111,6 +111,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 .badge-img-wrap{aspect-ratio:1;background:#f5f4f0;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
 .badge-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.25s;}
+.badge-img-wrap img.non-round{object-fit:contain;padding:6px;}
 .badge-card:hover .badge-img-wrap img{transform:scale(1.05);}
 .no-img{font-size:2.5rem;opacity:0.25;}
 
@@ -129,6 +130,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .detail-overlay.active .detail-modal{transform:scale(1);}
 .detail-img-wrap{position:relative;}
 .detail-img{width:100%;aspect-ratio:1;object-fit:cover;background:#f5f4f0;display:block;}
+.detail-img.non-round{object-fit:contain;padding:12px;}
 .detail-close{position:absolute;top:0.75rem;right:0.75rem;width:34px;height:34px;border-radius:50%;
   background:#0005;border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .detail-body{padding:1.5rem;}
@@ -211,8 +213,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     color:#fff;font-family:inherit;font-size:0.8rem;
     cursor:pointer;transition:all 0.2s;z-index:10;">🌙 夜間模式</button>
     <div class="site-logo">
-      <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
-      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
+      <span style="font-family:&#39;Boogaloo&#39;,sans-serif;">BanG Dream!</span>
+      <span style="font-family:&#39;Cubic 11&#39;,&#39;Noto Sans TC&#39;,sans-serif;"> 徽章圖鑑</span>
     </div>
   </div>
 </header>
@@ -221,37 +223,129 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <h3>搜尋</h3>
-      <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()"/>
+      <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()">
     </div>
     <div class="sidebar-section">
       <h3>樂團</h3>
-      <div class="band-list" id="band-list"></div>
+      <div class="band-list" id="band-list"><div class="band-chip" id="bc-Poppin_Party" style="--chip-color:#ff69b4;--chip-bg:#ff69b418" onclick="toggleBand(&#39;Poppin\&#39;Party&#39;)">
+      <div class="band-dot" style="background:#ff69b4"></div>
+      <span style="color:#ff69b4">Poppin'Party</span>
+      <span class="band-chip-count">1</span>
+    </div><div class="band-chip" id="bc-Roselia" style="--chip-color:#1a2a6c;--chip-bg:#1a2a6c18" onclick="toggleBand(&#39;Roselia&#39;)">
+      <div class="band-dot" style="background:#1a2a6c"></div>
+      <span style="color:#1a2a6c">Roselia</span>
+      <span class="band-chip-count">2</span>
+    </div><div class="band-chip" id="bc-Afterglow" style="--chip-color:#cc2222;--chip-bg:#cc222218" onclick="toggleBand(&#39;Afterglow&#39;)">
+      <div class="band-dot" style="background:#cc2222"></div>
+      <span style="color:#cc2222">Afterglow</span>
+      <span class="band-chip-count">1</span>
+    </div><div class="band-chip" id="bc-MyGO_____" style="--chip-color:#4488cc;--chip-bg:#4488cc18" onclick="toggleBand(&#39;MyGO!!!!!&#39;)">
+      <div class="band-dot" style="background:#4488cc"></div>
+      <span style="color:#4488cc">MyGO!!!!!</span>
+      <span class="band-chip-count">1</span>
+    </div><div class="band-chip" id="bc-Ave_Mujica" style="--chip-color:#991111;--chip-bg:#99111118" onclick="toggleBand(&#39;Ave Mujica&#39;)">
+      <div class="band-dot" style="background:#991111"></div>
+      <span style="color:#991111">Ave Mujica</span>
+      <span class="band-chip-count">1</span>
+    </div></div>
     </div>
-    <div class="sidebar-section" id="char-section" style="display:none;">
+    <div class="sidebar-section" id="char-section" style="">
       <h3>角色</h3>
-      <div class="filter-group" id="char-list"></div>
+      <div class="filter-group" id="char-list">
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="戸山香澄">
+      <span>戸山香澄</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="氷川紗夜">
+      <span>氷川紗夜</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="美竹蘭">
+      <span>美竹蘭</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="高松燈">
+      <span>高松燈</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="湊友希那">
+      <span>湊友希那</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleChar(this.value)" value="Oblivionis">
+      <span>Oblivionis</span>
+    </label></div>
     </div>
     <div class="sidebar-section" id="year-section">
       <h3>發售日期</h3>
-      <div class="filter-group" id="year-list"></div>
+      <div class="filter-group" id="year-list">
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleYear(this.value)" value="2024">
+      <span>2024</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleYear(this.value)" value="2023">
+      <span>2023</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleYear(this.value)" value="2022">
+      <span>2022</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleYear(this.value)" value="2021">
+      <span>2021</span>
+    </label></div>
     </div>
     <div class="sidebar-section" id="series-section">
       <h3>版本</h3>
-      <div class="filter-group" id="series-list"></div>
+      <div class="filter-group" id="series-list">
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleSeries(this.value)" value="Ani-Art">
+      <span>Ani-Art</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleSeries(this.value)" value="LIVE ver.">
+      <span>LIVE ver.</span>
+    </label></div>
     </div>
     <div class="sidebar-section" id="event-section">
       <h3>活動</h3>
-      <div class="filter-group" id="event-list"></div>
+      <div class="filter-group" id="event-list">
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleEvent(this.value)" value="Ave Mujica Anime">
+      <span>Ave Mujica Anime</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleEvent(this.value)" value="BanG Dream! 10th Live">
+      <span>BanG Dream! 10th Live</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleEvent(this.value)" value="BanG Dream! 9th Live">
+      <span>BanG Dream! 9th Live</span>
+    </label></div>
     </div>
     <div class="sidebar-section" id="type-section">
       <h3>類型</h3>
-      <div class="filter-group" id="type-list"></div>
+      <div class="filter-group" id="type-list">
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleType(this.value)" value="角色本身">
+      <span>角色本身</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleType(this.value)" value="角色相關">
+      <span>角色相關</span>
+    </label>
+    <label class="filter-item">
+      <input type="checkbox" onchange="toggleType(this.value)" value="角色聲優">
+      <span>角色聲優</span>
+    </label></div>
     </div>
-    <div class="sidebar-section" id="size-section">
+    <div class="sidebar-section" id="size-section" style="display: none;">
       <h3>尺寸</h3>
       <div class="filter-group" id="size-list"></div>
     </div>
-    <div class="sidebar-section" id="country-section">
+    <div class="sidebar-section" id="country-section" style="display: none;">
       <h3>活動國家</h3>
       <div class="filter-group" id="country-list"></div>
     </div>
@@ -261,7 +355,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <div class="main-wrap">
   <main class="main">
     <div class="result-bar">
-      <div class="result-count" id="result-count"></div>
+      <div class="result-count" id="result-count">請選擇篩選條件</div>
       <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
         <select class="sort-select" id="sort" onchange="applyFilters()">
   <option value="year-desc">發售日期（新→舊）</option>
@@ -269,13 +363,18 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
           <option value="char">角色名稱</option>
         </select>
         <div class="view-toggle">
-          <button class="btn-view active" id="btn-grid" onclick="setView('grid')">⊞ 圖鑑</button>
-          <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
+          <button class="btn-view active" id="btn-grid" onclick="setView(&#39;grid&#39;)">⊞ 圖鑑</button>
+          <button class="btn-view" id="btn-table" onclick="setView(&#39;table&#39;)">☰ 表格</button>
         </div>
         <button class="btn-view" onclick="openExport()" style="border-color:#5a4fcf;color:#5a4fcf;font-weight:600;">⬇ 下載圖檔</button>
       </div>
     </div>
-    <div class="badge-grid" id="badge-grid"></div>
+    <div class="badge-grid" id="badge-grid">
+      <div class="empty-main">
+        <div style="font-size:3rem">🎵</div>
+        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">請從左側選擇篩選條件</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
+      </div></div>
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
@@ -291,7 +390,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="" alt=""/>
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_3.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -309,7 +408,33 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <script>
 // 活動簡稱對照表（可之後透過上傳 CSV 更新）
-let eventShortNames = {}; // { '活動全稱': '活動簡稱' }
+const eventShortNames = {
+  'MyGO!!!!!一單－迷星叫初回生産限定盤': '一單－迷星叫 初回生産限定盤',
+  'MyGO!!!!!一單－迷星叫 初回生産限定盤': '一單－迷星叫 初回生産限定盤',
+  'MyGO!!!!!二單－音一会BD限定盤': '二單－音一会 BD限定盤',
+  'MyGO!!!!!二單－音一会 BD限定盤': '二單－音一会 BD限定盤',
+  'MyGO!!!!!歌曲插圖迷星叫': '歌曲插圖迷星叫',
+  'MyGO!!!!!歌曲插圖名無聲': '歌曲插圖名無聲',
+  'MyGO!!!!!歌曲插圖潛在表明': '歌曲插圖潛在表明',
+  'MyGO!!!!!歌曲插圖影色舞': '歌曲插圖影色舞',
+  'Classic ver.ホログラム': 'Classic',
+  'Classic ver. ホログラム': 'Classic',
+  'MyGO!!!!!TV動畫紀念V1': 'TV動畫紀念V1',
+  'MyGO!!!!!TV動畫紀念 V1': 'TV動畫紀念V1',
+  'MyGO!!!!!TV動畫紀念V2': 'TV動畫紀念V2',
+  'MyGO!!!!!TV動畫紀念 V2': 'TV動畫紀念V2',
+  'MyGO!!!!!三單－壱雫空BD限定盤': '三單－壱雫空BD限定盤',
+  'MyGO!!!!!三單－壱雫空 BD限定盤': '三單－壱雫空BD限定盤',
+  'MyGO!!!!! 5th LIVE「迷うことに迷わない」': 'MyGO!!!!! 5th LIVE',
+  'ブシロードストア2周年記念ver.武士道商店二周年紀念V1': '商店二周年紀念V1',
+  'ブシロードストア2周年記念ver.武士道商店二周年紀念 V1': '商店二周年紀念V1',
+  'ブシロードストア2周年記念ver.武士道商店二周年紀念V2': '商店二周年紀念V2',
+  'ブシロードストア2周年記念ver.武士道商店二周年紀念 V2': '商店二周年紀念V2',
+  'MyGO!!!!! Jump ver.通常ver.': 'Jump 通常ver.',
+  'MyGO!!!!! Jump ver. 通常ver.': 'Jump 通常ver.',
+  'MyGO!!!!! Jump ver.ホロver.': 'Jump ホロver.',
+  'MyGO!!!!! Jump ver. ホロver.': 'Jump ホロver.',
+};
 
 function getEventShortName(event){
   if(!event) return '';
@@ -389,6 +514,10 @@ async function init(){
 }
 
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
+
+const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
+  '75mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
+function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
   const bc={};
@@ -524,6 +653,8 @@ function renderGrid(list){
     return `<div class="badge-card" onclick="toggleCard(this,${idx})">
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
+          class="${isBadgeRound(b.size)?'':'non-round'}"
+          style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
       </div>
@@ -556,9 +687,11 @@ function toggleCard(card, idx){
 function openDetail(idx){
   const b=all[idx];
   const c=bandColor(b.band);
-  document.getElementById('d-img').src=`${b.id}.${b.ext||'jpg'}`;
-  document.getElementById('d-img').onerror=function(){this.style.display='none';};
-  document.getElementById('d-img').style.display='block';
+  const dImg = document.getElementById('d-img');
+  dImg.src=`${b.id}.${b.ext||'jpg'}`;
+  dImg.onerror=function(){this.style.display='none';};
+  dImg.style.display='block';
+  dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
   document.getElementById('d-band').textContent=b.band||'—';
   document.getElementById('d-band').style.cssText=`background:${c}20;color:${c}`;
   document.getElementById('d-char').textContent=b.character||'—';
@@ -991,11 +1124,11 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div class="sidebar-section" style="margin-bottom:1rem;">
       <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">版面配置</h3>
       <div class="export-options">
-        <div class="export-opt selected" id="layout-grid" onclick="selectLayout('grid')">
+        <div class="export-opt selected" id="layout-grid" onclick="selectLayout(&#39;grid&#39;)">
           <div class="export-opt-title">⊞ 圖片網格</div>
           <div class="export-opt-desc">每列顯示多枚徽章圖片</div>
         </div>
-        <div class="export-opt" id="layout-table" onclick="selectLayout('table')">
+        <div class="export-opt" id="layout-table" onclick="selectLayout(&#39;table&#39;)">
           <div class="export-opt-title">☰ 清單表格</div>
           <div class="export-opt-desc">含文字資訊的表格形式</div>
         </div>
@@ -1019,8 +1152,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 
     <div class="sidebar-section" style="margin-bottom:1.25rem;">
       <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
-      <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑"
-        style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
+      <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑" style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;">
     </div>
 
     <div class="progress-bar-wrap" id="prog-wrap">
@@ -1033,5 +1165,6 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </div>
   </div>
 </div>
-</body>
-</html>
+
+
+</body></html>
