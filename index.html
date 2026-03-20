@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_5.html -->
+<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_6.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_5.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_6.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -409,6 +409,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <script>
+// 圖片來源（GitHub Pages）
+const IMG_BASE_URL = 'https://liar-chang.github.io/bandori-badges/';
+
 // 活動簡稱對照表（可之後透過上傳 CSV 更新）
 const eventShortNames = {
   'MyGO!!!!!一單－迷星叫初回生産限定盤': '一單－迷星叫 初回生産限定盤',
@@ -643,7 +646,7 @@ function renderGrid(list){
   }
   g.innerHTML=list.map(b=>{
     const c=bandColor(b.band);
-    const src=`${b.id}.${b.ext||'jpg'}`;
+    const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
     const idx=all.indexOf(b);
     const shortEvent = getEventShortName(b.event);
     const eventHtml = b.url
@@ -920,8 +923,10 @@ async function doExport(){
   // 計算總高度
   function calcHeight(groups){
     let h = HEADER_H + PAD;
+    let prevT = null;
     for(const g of groups){
-      h += TYPE_H + SIZE_H + 8;
+      if(g.type !== prevT){ h += TYPE_H + 6; prevT = g.type; }
+      h += SIZE_H + 8;
       const rows = Math.ceil(g.items.length / COLS);
       h += rows * ITEM_H + PAD;
     }
@@ -938,7 +943,7 @@ async function doExport(){
     img.crossOrigin = 'anonymous';
     img.onload = ()=>{ imgMap[b.id]=img; res(); };
     img.onerror = ()=>res();
-    img.src = `${b.id}.${b.ext||'jpg'}`;
+    img.src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
   })));
   prog.style.width = '50%';
 
