@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_6.html -->
+<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_7.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -280,7 +280,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </label></div>
     </div>
     <div class="sidebar-section" id="year-section">
-      <h3>發售日期</h3>
+      <h3>發售年份</h3>
       <div class="filter-group" id="year-list">
     <label class="filter-item">
       <input type="checkbox" onchange="toggleYear(this.value)" value="2024">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_6.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_7.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -400,7 +400,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
         <div class="detail-field"><label>版本</label><span id="d-series"></span></div>
-        <div class="detail-field"><label>發售日期</label><span id="d-year"></span></div>
+        <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
         <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
@@ -440,6 +440,12 @@ const eventShortNames = {
   'MyGO!!!!! Jump ver.ホロver.': 'Jump ホロver.',
   'MyGO!!!!! Jump ver. ホロver.': 'Jump ホロver.',
 };
+
+function getYear(year){
+  if(!year) return '';
+  const m = year.match(/(\d{4})年/);
+  return m ? m[1] : year;
+}
 
 function getEventShortName(event){
   if(!event) return '';
