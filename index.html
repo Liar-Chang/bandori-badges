@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_7.html -->
+<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_8.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_7.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_8.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -545,7 +545,7 @@ function buildSidebar(){
     </div>`;
   }).join('');
 
-  buildCheckList('year-list','year-section',[...new Set(all.map(b=>b.year).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
+  buildCheckList('year-list','year-section',[...new Set(all.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
   buildCheckList('series-list','series-section',[...new Set(all.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
   buildCheckList('event-list','event-section',[...new Set(all.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
   buildCheckList('type-list','type-section',['角色本身','角色相關','角色聲優'],selTypes,'toggleType');
@@ -608,7 +608,7 @@ function applyFilters(){
   let res=all.filter(b=>{
     if(selBands.size&&!selBands.has(b.band)) return false;
     if(selChars.size&&!selChars.has(b.character)) return false;
-    if(selYears.size&&!selYears.has(b.year)) return false;
+    if(selYears.size&&!selYears.has(getYear(b.year))) return false;
     if(selSeries.size&&!selSeries.has(b.series)) return false;
     if(selEvents.size&&!selEvents.has(b.event)) return false;
     if(selTypes.size&&!selTypes.has(b.type)) return false;
