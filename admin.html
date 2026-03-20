@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>徽章資料管理 — BanG Dream!</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;}
+
+header{background:#1a1a2e;color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
+header h1{font-size:1.15rem;font-weight:700;}
+header span{font-size:0.82rem;opacity:0.5;}
+.header-actions{display:flex;gap:0.6rem;flex-wrap:wrap;}
+
+.container{max-width:1200px;margin:0 auto;padding:1.75rem 1.5rem;}
+
+button{font-family:inherit;cursor:pointer;transition:all 0.15s;font-weight:500;border-radius:8px;}
+.btn{font-size:0.85rem;padding:0.48rem 1.1rem;border:1.5px solid transparent;}
+.btn-primary{background:#3d3d8f;color:#fff;border-color:#3d3d8f;}
+.btn-primary:hover{background:#2e2e70;}
+.btn-secondary{background:#fff;color:#333;border-color:#ddd;}
+.btn-secondary:hover{background:#f5f4f0;}
+.btn-success{background:#27ae60;color:#fff;border-color:#27ae60;}
+.btn-success:hover{background:#1e8449;}
+.btn-danger{background:#fff;color:#c0392b;border-color:#e0aaaa;}
+.btn-danger:hover{background:#fdf0f0;}
+.btn-purple{background:#7c3aed;color:#fff;border-color:#7c3aed;}
+.btn-purple:hover{background:#6d28d9;}
+.btn-sm{font-size:0.78rem;padding:0.3rem 0.7rem;border-radius:6px;}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
+.count-badge{background:#fff;border:1px solid #ddd;border-radius:20px;padding:0.35rem 1rem;font-size:0.85rem;color:#555;}
+
+.tabs{display:flex;background:#fff;border:1.5px solid #e0e0e0;border-radius:10px;overflow:hidden;width:fit-content;}
+.tab{font-family:inherit;font-size:0.875rem;font-weight:500;padding:0.6rem 1.4rem;border:none;background:transparent;cursor:pointer;color:#777;border-right:1px solid #e0e0e0;transition:all 0.15s;}
+.tab:last-child{border-right:none;}
+.tab.active{background:#1a1a2e;color:#fff;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Drop zone */
+.drop-zone{border:2.5px dashed #c0bef0;border-radius:16px;background:#f8f7ff;padding:3rem 2rem;
+  text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:1.5rem;}
+.drop-zone.over{border-color:#5a4fcf;background:#eeedfb;transform:scale(1.01);}
+.drop-zone-icon{font-size:2.5rem;margin-bottom:0.75rem;}
+.drop-zone h3{font-size:1rem;font-weight:700;color:#3d3d8f;margin-bottom:0.35rem;}
+.drop-zone p{font-size:0.83rem;color:#999;}
+
+/* Batch defaults */
+.batch-defaults{background:#fff;border-radius:12px;border:1px solid #e0e0e0;padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+.batch-defaults h3{font-size:0.85rem;font-weight:700;color:#555;margin-bottom:1rem;}
+.defaults-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.85rem;}
+.field{display:flex;flex-direction:column;gap:0.35rem;}
+.field label{font-size:0.78rem;font-weight:600;color:#666;}
+.field input,.field select{font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a;outline:none;transition:border 0.15s;}
+.field input:focus,.field select:focus{border-color:#5a4fcf;}
+
+/* Batch grid */
+.batch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.batch-card{background:#fff;border-radius:12px;border:1.5px solid #e0e0e0;overflow:hidden;}
+.batch-card.has-dupe{border-color:#e07b2a;}
+.batch-card-img{width:100%;aspect-ratio:1;object-fit:cover;background:#f0f0f0;display:block;}
+.batch-card-body{padding:0.75rem;}
+.batch-card-id{font-size:0.72rem;color:#888;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:space-between;}
+.dupe-badge{background:#e07b2a;color:#fff;font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:10px;}
+.bf{display:flex;flex-direction:column;gap:0.18rem;margin-bottom:0.45rem;}
+.bf label{font-size:0.7rem;color:#888;font-weight:600;}
+.bf input,.bf select{font-family:inherit;font-size:0.8rem;padding:0.33rem 0.55rem;border:1px solid #e0e0e0;border-radius:5px;background:#fafafa;outline:none;width:100%;}
+.bf input:focus,.bf select:focus{border-color:#5a4fcf;background:#fff;}
+.remove-btn{width:100%;margin-top:0.35rem;font-size:0.75rem;padding:0.32rem;border-radius:5px;background:#fff;border:1px solid #e0aaaa;color:#c0392b;cursor:pointer;font-family:inherit;}
+.remove-btn:hover{background:#fdf0f0;}
+
+.batch-actions{display:flex;gap:0.75rem;justify-content:flex-end;flex-wrap:wrap;align-items:center;padding:1rem 0;}
+
+/* List tab */
+.filter-bar{display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;}
+.filter-bar input,.filter-bar select{font-family:inherit;font-size:0.85rem;padding:0.45rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;outline:none;}
+.filter-bar input{flex:1;min-width:160px;}
+
+.table-wrap{background:#fff;border-radius:12px;border:1px solid #e0e0e0;overflow:hidden;}
+table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+thead{background:#f0eff9;}
+th{padding:0.75rem 1rem;text-align:left;font-weight:600;color:#3d3d8f;white-space:nowrap;font-size:0.78rem;}
+td{padding:0.6rem 1rem;border-top:1px solid #f0f0f0;vertical-align:middle;}
+tr:hover td{background:#fafafa;}
+.badge-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #e0e0e0;background:#f5f5f5;}
+.band-pill{display:inline-block;padding:0.18rem 0.55rem;border-radius:10px;font-size:0.72rem;font-weight:600;}
+.row-actions{display:flex;gap:0.4rem;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:100;}
+.modal-overlay.active{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:1.75rem;width:min(580px,95vw);max-height:90vh;overflow-y:auto;}
+.modal h2{font-size:1.05rem;font-weight:700;margin-bottom:1.25rem;color:#1a1a2e;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.9rem;}
+.modal-actions{display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1.5rem;}
+.modal-img-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;}
+.modal-thumb-wrap{position:relative;width:90px;height:90px;flex-shrink:0;}
+.modal-thumb{width:90px;height:90px;border-radius:50%;border:2px solid #e0e0e0;object-fit:cover;background:#f0eff8;display:block;}
+.modal-thumb-overlay{position:absolute;inset:0;border-radius:50%;background:#0005;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;cursor:pointer;font-size:0.7rem;color:#fff;font-weight:600;text-align:center;}
+.modal-thumb-wrap:hover .modal-thumb-overlay{opacity:1;}
+.modal-no-img{width:90px;height:90px;border-radius:50%;border:2px dashed #c0bef0;background:#f8f7ff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:border 0.15s;}
+.modal-no-img:hover{border-color:#5a4fcf;}
+
+.toast{position:fixed;bottom:2rem;right:2rem;background:#1a1a2e;color:#fff;padding:0.75rem 1.5rem;
+  border-radius:8px;font-size:0.875rem;z-index:500;opacity:0;transform:translateY(10px);
+  transition:all 0.25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+.empty-state{text-align:center;padding:3rem;color:#bbb;}
+
+/* ── Batch edit toolbar ── */
+.bulk-toolbar{background:#1a1a2e;color:#fff;border-radius:10px;padding:0.65rem 1rem;
+  margin-bottom:0.75rem;display:none;align-items:center;gap:0.75rem;flex-wrap:wrap;}
+.bulk-toolbar.show{display:flex;}
+.bulk-count{font-size:0.85rem;opacity:0.8;}
+.bulk-toolbar .btn-danger{background:#c0392b;color:#fff;border-color:#c0392b;}
+.bulk-toolbar .btn-danger:hover{background:#a93226;}
+
+/* Bulk field edit bar */
+.bulk-edit-bar{background:#f0effd;border:1.5px solid #c0bef0;border-radius:10px;
+  padding:0.75rem 1rem;margin-bottom:0.75rem;display:none;align-items:center;gap:0.6rem;flex-wrap:wrap;}
+.bulk-edit-bar.show{display:flex;}
+.bulk-edit-bar label{font-size:0.8rem;font-weight:600;color:#3d3d8f;white-space:nowrap;}
+.bulk-edit-bar select,.bulk-edit-bar input{font-family:inherit;font-size:0.82rem;
+  padding:0.38rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;outline:none;}
+.bulk-edit-bar select:focus,.bulk-edit-bar input:focus{border-color:#5a4fcf;}
+
+/* Checkbox col */
+.cb-col{width:36px;text-align:center;}
+input[type=checkbox]{width:15px;height:15px;accent-color:#5a4fcf;cursor:pointer;}
+tr.selected td{background:#f0effd !important;}
+
+/* Inline editable cell */
+td.editable{cursor:pointer;position:relative;}
+td.editable:hover{background:#f5f4ff !important;}
+td.editable.editing{padding:0;}
+td.editable .cell-display{display:block;}
+td.editable .cell-input{display:none;width:100%;font-family:inherit;font-size:0.85rem;
+  padding:0.55rem 0.75rem;border:none;border-bottom:2px solid #5a4fcf;background:#f0effd;outline:none;}
+td.editable.editing .cell-display{display:none;}
+td.editable.editing .cell-input{display:block;}
+td.editable .edit-hint{position:absolute;top:2px;right:4px;font-size:0.6rem;color:#c0bef0;opacity:0;transition:opacity 0.15s;}
+td.editable:hover .edit-hint{opacity:1;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🎵 BanG Dream! 徽章管理後台</h1>
+    <span>admin.html</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('json-import').click()">📂 匯入 JSON</button>
+    <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
+    <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
+    <button class="btn btn-danger btn-sm" onclick="clearAll()">清除全部</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="top-bar">
+    <div class="count-badge">共 <strong id="total-count">0</strong> 筆資料</div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('batch')">⊞ 批次上傳</button>
+      <button class="tab" onclick="switchTab('list')">☰ 管理清單</button>
+    </div>
+  </div>
+
+  <!-- BATCH TAB -->
+  <div class="tab-content active" id="tab-batch">
+
+    <div class="drop-zone" id="drop-zone"
+      onclick="document.getElementById('file-input').click()"
+      ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <input type="file" id="file-input" multiple accept="image/*" style="display:none" onchange="onFileSelect(event)"/>
+      <div class="drop-zone-icon">🖼️</div>
+      <h3>拖曳圖片到這裡，或點擊選擇檔案</h3>
+      <p>支援 JPG、PNG、WebP｜可一次選取多張｜檔名流水號即為編號（如 001.jpg）</p>
+    </div>
+
+    <div class="batch-defaults" id="defaults-card" style="display:none;">
+      <h3>⚡ 批次套用預設值 <span style="font-weight:400;color:#aaa;font-size:0.78rem;">填好後點「套用到全部」</span></h3>
+      <div class="defaults-grid">
+        <div class="field">
+          <label>樂團</label>
+          <select id="d-band">
+            <option value="">不套用</option>
+            <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+            <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
+            <option>RAISE A SUILEN</option><option>Morfonica</option>
+            <option>MyGO!!!!!</option><option>Ave Mujica</option>
+            <option>夢限大MewType</option><option>millsage</option>
+            <option>一家Dumb Rock!</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>版本</label>
+          <input type="text" id="d-series" placeholder="如 Ani-Art"/>
+        </div>
+        <div class="field">
+          <label>發售發售日期</label>
+          <input type="text" id="d-year" placeholder="如 2024年7月10日"/>
+        </div>
+        <div class="field">
+          <label>活動名稱</label>
+          <input type="text" id="d-event" placeholder="如 BanG Dream! 10th Live"/>
+        </div>
+        <div class="field">
+          <label>角色名稱</label>
+          <input type="text" id="d-character" placeholder="如 湊友希那"/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>購買連結</label>
+          <input type="text" id="d-url" placeholder="https://..."/>
+        </div>
+        <div class="field">
+          <label>類型</label>
+          <select id="d-type">
+            <option value="">不套用</option>
+            <option>角色本身</option>
+            <option>角色相關</option>
+            <option>角色聲優</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>尺寸</label>
+          <select id="d-size">
+            <option value="">不套用</option>
+            <option>56-58mm圓形</option>
+            <option>75mm圓形</option>
+            <option>54mm圓形</option>
+            <option>50mm圓形</option>
+            <option>30mm圓形</option>
+            <option>25mm圓形</option>
+            <option>15.2cm圓形</option>
+            <option>長方形</option>
+            <option>心形</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>活動國家</label>
+          <select id="d-country">
+            <option value="">不套用</option>
+            <option>日本</option>
+            <option>台灣</option>
+            <option>韓國</option>
+            <option>中國</option>
+            <option>香港</option>
+            <option>其他</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <button class="btn btn-purple" onclick="applyDefaults()">✓ 套用到全部</button>
+        <button class="btn btn-secondary" onclick="clearDefaults()">清除欄位</button>
+      </div>
+    </div>
+
+    <div class="empty-state" id="batch-empty" style="display:none;">
+      <div style="font-size:2rem">🎸</div>
+      <p style="margin-top:0.5rem;font-size:0.875rem">尚無待上傳圖片</p>
+    </div>
+
+    <div class="batch-grid" id="batch-grid"></div>
+
+    <div class="batch-actions" id="batch-actions" style="display:none;">
+      <span style="font-size:0.85rem;color:#888;">共 <strong id="batch-count">0</strong> 張待儲存</span>
+      <button class="btn btn-danger" onclick="clearBatch()">清除全部</button>
+      <button class="btn btn-primary" onclick="saveBatch()">✓ 全部儲存到資料庫</button>
+    </div>
+  </div>
+
+  <!-- LIST TAB -->
+  <div class="tab-content" id="tab-list">
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+      <span style="font-size:0.78rem;color:#aaa;">點格子直接編輯｜勾選後可批次操作</span>
+      <button class="btn btn-secondary" onclick="openModal()">＋ 單筆新增</button>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" id="search" placeholder="搜尋編號、角色、系列..." oninput="renderList()"/>
+      <select id="filter-band" onchange="renderList()"><option value="">所有樂團</option></select>
+    </div>
+
+    <!-- Bulk toolbar -->
+    <div class="bulk-toolbar" id="bulk-toolbar">
+      <span class="bulk-count">已勾選 <strong id="sel-count">0</strong> 筆</span>
+      <button class="btn btn-sm" style="background:#3d3d8f;color:#fff;border:none;" onclick="selectAllVisible()">全選目前頁</button>
+      <button class="btn btn-sm btn-secondary" onclick="clearSelection()">取消全選</button>
+      <button class="btn btn-sm btn-danger" onclick="bulkDelete()">🗑 批次刪除</button>
+      <button class="btn btn-sm btn-purple" onclick="toggleBulkEdit()">✏ 批次修改欄位</button>
+    </div>
+
+    <!-- Bulk field edit -->
+    <div class="bulk-edit-bar" id="bulk-edit-bar">
+      <label>修改欄位：</label>
+      <select id="bulk-field">
+        <option value="band">樂團</option>
+        <option value="series">版本</option>
+        <option value="year">發售發售日期</option>
+        <option value="event">活動名稱</option>
+        <option value="character">角色名稱</option>
+        <option value="type">類型</option>
+        <option value="size">尺寸</option>
+        <option value="country">活動國家</option>
+        <option value="url">購買連結</option>
+        <option value="note">備註</option>
+      </select>
+      <input type="text" id="bulk-value" placeholder="新的值..." style="flex:1;min-width:140px;"/>
+      <button class="btn btn-sm btn-primary" onclick="applyBulkEdit()">✓ 套用到勾選筆數</button>
+      <button class="btn btn-sm btn-secondary" onclick="toggleBulkEdit()">取消</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th class="cb-col"><input type="checkbox" id="check-all" onchange="toggleAll(this)"/></th>
+          <th>圖片</th><th>編號</th><th>樂團</th><th>角色</th>
+          <th>版本</th><th>發售日期</th><th>活動</th><th>操作</th>
+        </tr></thead>
+        <tbody id="badge-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="list-empty">
+        <div style="font-size:2rem">🎸</div>
+        <p style="margin-top:0.5rem;font-size:0.875rem">尚無資料，請先使用批次上傳</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Single edit modal -->
+<div class="modal-overlay" id="modal" onclick="maybeCloseModal(event)">
+  <div class="modal">
+    <h2 id="modal-title">新增徽章</h2>
+    <div class="modal-img-row">
+      <input type="file" id="modal-img-input" accept="image/*" style="display:none" onchange="onModalImgSelect(event)"/>
+      <div class="modal-thumb-wrap" onclick="document.getElementById('modal-img-input').click()">
+        <img class="modal-thumb" id="modal-thumb" src="" alt="" style="display:none"/>
+        <div class="modal-no-img" id="modal-no-img">🖼️</div>
+        <div class="modal-thumb-overlay">點擊<br>換圖</div>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;color:#aaa;margin-bottom:0.3rem;">圖片路徑</div>
+        <code id="modal-path" style="font-size:0.8rem;color:#5a4fcf;"></code>
+        <div style="font-size:0.72rem;color:#c0bef0;margin-top:0.3rem;">點擊圓圈可上傳本機圖片預覽</div>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>編號 *</label><input type="text" id="f-id" placeholder="如 001" oninput="updateModalPath()"/></div>
+      <div class="field"><label>副檔名</label>
+        <select id="f-ext" onchange="updateModalPath()">
+          <option value="jpg">jpg</option><option value="png">png</option><option value="webp">webp</option>
+        </select>
+      </div>
+      <div class="field"><label>樂團</label>
+        <select id="f-band">
+          <option value="">請選擇</option>
+          <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+          <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
+          <option>RAISE A SUILEN</option><option>Morfonica</option>
+          <option>MyGO!!!!!</option><option>Ave Mujica</option>
+          <option>夢限大MewType</option><option>millsage</option>
+          <option>一家Dumb Rock!</option><option>其他</option>
+        </select>
+      </div>
+      <div class="field"><label>角色名稱</label><input type="text" id="f-character" placeholder="如 湊友希那"/></div>
+      <div class="field"><label>版本</label><input type="text" id="f-series" placeholder="如 Ani-Art"/></div>
+      <div class="field"><label>發售發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
+      <div class="field" style="grid-column:1/-1"><label>活動名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
+      <div class="field"><label>類型</label>
+        <select id="f-type">
+          <option value="">請選擇</option>
+          <option>角色本身</option>
+          <option>角色相關</option>
+          <option>角色聲優</option>
+        </select>
+      </div>
+      <div class="field"><label>尺寸</label>
+        <select id="f-size">
+          <option value="">請選擇</option>
+          <option>56-58mm圓形</option>
+          <option>75mm圓形</option>
+          <option>54mm圓形</option>
+          <option>50mm圓形</option>
+          <option>30mm圓形</option>
+          <option>25mm圓形</option>
+          <option>15.2cm圓形</option>
+          <option>長方形</option>
+          <option>心形</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="field"><label>活動國家</label>
+        <select id="f-country">
+          <option value="">請選擇</option>
+          <option>日本</option>
+          <option>台灣</option>
+          <option>韓國</option>
+          <option>中國</option>
+          <option>香港</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/-1"><label>購買連結</label><input type="text" id="f-url" placeholder="https://..."/></div>
+      <div class="field" style="grid-column:1/-1"><label>備註</label><input type="text" id="f-note" placeholder="其他備註"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveSingle()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BAND_COLORS={"Poppin'Party":"#ff6ea3","Roselia":"#5a4fcf","Afterglow":"#e07b2a",
+  "Pastel*Palettes":"#4ab8d8","Hello, Happy World!":"#d4a800","RAISE A SUILEN":"#1ab8a0",
+  "Morfonica":"#5a9fd4","MyGO!!!!!":"#7aaa3a","Ave Mujica":"#9b59b6",
+  "夢限大MewType":"#e85d9a","millsage":"#f4a44a","一家Dumb Rock!":"#5cb8e4","其他":"#aaa"};
+const BAND_LIST=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
+  "Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica",
+  "夢限大MewType","millsage","一家Dumb Rock!","其他"];
+
+let badges=JSON.parse(localStorage.getItem('bandori_badges')||'[]');
+let editingIdx=-1;
+let batchItems=[];
+let imageCache={}; // id -> objectUrl (記憶體快取，關頁消失)
+
+function persist(){
+  localStorage.setItem('bandori_badges',JSON.stringify(badges));
+  document.getElementById('total-count').textContent=badges.length;
+  updateBandFilter();
+}
+
+function switchTab(t){
+  ['batch','list'].forEach(n=>{
+    document.getElementById('tab-'+n).classList.toggle('active',n===t);
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['batch','list'][i]===t));
+  if(t==='list') renderList();
+}
+
+/* ── Drag & Drop ── */
+function onDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('over');}
+function onDragLeave(){document.getElementById('drop-zone').classList.remove('over');}
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('over');
+  addFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')));
+}
+function onFileSelect(e){addFiles([...e.target.files]);e.target.value='';}
+
+function addFiles(files){
+  if(!files.length) return;
+  files.forEach(file=>{
+    const nameNoExt=file.name.replace(/\.[^.]+$/,'');
+    const ext=file.name.split('.').pop().toLowerCase();
+    const objectUrl=URL.createObjectURL(file);
+    const isDupe=!!badges.find(b=>b.id===nameNoExt);
+    batchItems.push({id:nameNoExt,ext,objectUrl,band:'',character:'',series:'',year:'',event:'',type:'',size:'',country:'',url:'',note:'',isDupe});
+  });
+  renderBatchGrid();
+  document.getElementById('defaults-card').style.display='';
+  document.getElementById('batch-actions').style.display='flex';
+  document.getElementById('batch-empty').style.display='none';
+}
+
+function renderBatchGrid(){
+  const grid=document.getElementById('batch-grid');
+  document.getElementById('batch-count').textContent=batchItems.length;
+  if(!batchItems.length){
+    grid.innerHTML='';
+    document.getElementById('batch-empty').style.display='block';
+    document.getElementById('batch-actions').style.display='none';
+    document.getElementById('defaults-card').style.display='none';
+    return;
+  }
+  grid.innerHTML=batchItems.map((item,i)=>`
+    <div class="batch-card ${item.isDupe?'has-dupe':''}">
+      <img class="batch-card-img" src="${item.objectUrl}" alt="${item.id}"/>
+      <div class="batch-card-body">
+        <div class="batch-card-id">
+          <span>#${item.id}.${item.ext}</span>
+          ${item.isDupe?'<span class="dupe-badge">⚠ 已存在</span>':''}
+        </div>
+        <div class="bf"><label>樂團</label>
+          <select onchange="batchItems[${i}].band=this.value">
+            <option value="">請選擇</option>
+            ${BAND_LIST.map(b=>`<option${item.band===b?' selected':''}>${b}</option>`).join('')}
+          </select>
+        </div>
+        <div class="bf"><label>角色名稱</label>
+          <input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value"/>
+        </div>
+        <div class="bf"><label>版本</label>
+          <input type="text" value="${item.series}" placeholder="如 Ani-Art" oninput="batchItems[${i}].series=this.value"/>
+        </div>
+        <div class="bf"><label>發售日期</label>
+          <input type="text" value="${item.year}" placeholder="2024年7月10日" oninput="batchItems[${i}].year=this.value"/>
+        </div>
+        <div class="bf"><label>活動</label>
+          <input type="text" value="${item.event}" placeholder="活動名稱" oninput="batchItems[${i}].event=this.value"/>
+        </div>
+        <div class="bf"><label>類型</label>
+          <select onchange="batchItems[${i}].type=this.value">
+            <option value="">請選擇</option>
+            <option${item.type==='角色本身'?' selected':''}>角色本身</option>
+            <option${item.type==='角色相關'?' selected':''}>角色相關</option>
+            <option${item.type==='角色聲優'?' selected':''}>角色聲優</option>
+          </select>
+        </div>
+        <div class="bf"><label>尺寸</label>
+          <select onchange="batchItems[${i}].size=this.value">
+            <option value="">請選擇</option>
+            <option${item.size==='56-58mm圓形'?' selected':''}>56-58mm圓形</option>
+            <option${item.size==='75mm圓形'?' selected':''}>75mm圓形</option>
+            <option${item.size==='54mm圓形'?' selected':''}>54mm圓形</option>
+            <option${item.size==='50mm圓形'?' selected':''}>50mm圓形</option>
+            <option${item.size==='30mm圓形'?' selected':''}>30mm圓形</option>
+            <option${item.size==='25mm圓形'?' selected':''}>25mm圓形</option>
+            <option${item.size==='15.2cm圓形'?' selected':''}>15.2cm圓形</option>
+            <option${item.size==='長方形'?' selected':''}>長方形</option>
+            <option${item.size==='心形'?' selected':''}>心形</option>
+            <option${item.size==='其他'?' selected':''}>其他</option>
+          </select>
+        </div>
+        <div class="bf"><label>活動國家</label>
+          <select onchange="batchItems[${i}].country=this.value">
+            <option value="">請選擇</option>
+            <option${item.country==='日本'?' selected':''}>日本</option>
+            <option${item.country==='台灣'?' selected':''}>台灣</option>
+            <option${item.country==='韓國'?' selected':''}>韓國</option>
+            <option${item.country==='中國'?' selected':''}>中國</option>
+            <option${item.country==='香港'?' selected':''}>香港</option>
+            <option${item.country==='其他'?' selected':''}>其他</option>
+          </select>
+        </div>
+        <div class="bf"><label>購買連結</label>
+          <input type="text" value="${item.url||''}" placeholder="https://..." oninput="batchItems[${i}].url=this.value"/>
+        </div>
+        <button class="remove-btn" onclick="removeFromBatch(${i})">✕ 移除</button>
+      </div>
+    </div>`).join('');
+}
+
+function removeFromBatch(i){
+  URL.revokeObjectURL(batchItems[i].objectUrl);
+  batchItems.splice(i,1);
+  renderBatchGrid();
+}
+
+function clearBatch(){
+  batchItems.forEach(item=>URL.revokeObjectURL(item.objectUrl));
+  batchItems=[];
+  renderBatchGrid();
+}
+
+function applyDefaults(){
+  const band=document.getElementById('d-band').value;
+  const series=document.getElementById('d-series').value.trim();
+  const year=document.getElementById('d-year').value;
+  const event=document.getElementById('d-event').value.trim();
+  const character=document.getElementById('d-character').value.trim();
+  const type=document.getElementById('d-type').value;
+  const size=document.getElementById('d-size').value;
+  const country=document.getElementById('d-country').value;
+  const url=document.getElementById('d-url').value.trim();
+  batchItems=batchItems.map(item=>({
+    ...item,
+    band:band||item.band,
+    series:series||item.series,
+    year:year||item.year,
+    event:event||item.event,
+    character:character||item.character,
+    type:type||item.type,
+    size:size||item.size,
+    country:country||item.country,
+    url:url||item.url,
+  }));
+  renderBatchGrid();
+  showToast('✓ 已套用預設值到全部徽章');
+}
+
+function clearDefaults(){
+  ['d-band','d-series','d-year','d-event','d-character','d-type','d-size','d-country','d-url'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.value='';
+  });
+}
+
+function saveBatch(){
+  let saved=0,updated=0;
+  batchItems.forEach(item=>{
+    const {objectUrl,isDupe,...data}=item;
+    const idx=badges.findIndex(b=>b.id===data.id);
+    if(idx>=0){badges[idx]=data;updated++;}
+    else{badges.push(data);saved++;}
+    // 保留 objectUrl 到快取，不 revoke
+    if(objectUrl) imageCache[data.id]=objectUrl;
+  });
+  batchItems=[];
+  persist();
+  renderBatchGrid();
+  showToast(`✓ 完成！新增 ${saved} 筆${updated?`，更新 ${updated} 筆`:''}｜本次圖片已快取`);
+  setTimeout(()=>switchTab('list'),700);
+}
+
+/* ── List ── */
+function updateBandFilter(){
+  const sel=document.getElementById('filter-band');
+  const cur=sel.value;
+  const bands=[...new Set(badges.map(b=>b.band).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">所有樂團</option>'+bands.map(b=>`<option${b===cur?' selected':''}>${b}</option>`).join('');
+}
+
+let selectedIds = new Set();
+
+function renderList(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const fb=document.getElementById('filter-band').value;
+  const tbody=document.getElementById('badge-tbody');
+  const empty=document.getElementById('list-empty');
+  const filtered=badges.filter(b=>{
+    const mq=!q||[b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q));
+    return mq&&(!fb||b.band===fb);
+  });
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';updateBulkBar();return;}
+  empty.style.display='none';
+
+  const EDITABLE = ['character','series','year','event','note'];
+
+  tbody.innerHTML=filtered.map(b=>{
+    const ri=badges.indexOf(b);
+    const c=BAND_COLORS[b.band]||'#aaa';
+    const checked=selectedIds.has(b.id)?'checked':'';
+    const selClass=selectedIds.has(b.id)?'selected':'';
+
+    const editableCell = (field,val) => `
+      <td class="editable" ondblclick="startInlineEdit(this,${ri},'${field}')" title="雙擊編輯">
+        <span class="edit-hint">✎</span>
+        <span class="cell-display">${val||'—'}</span>
+        <input class="cell-input" value="${(val||'').replace(/"/g,'&quot;')}"
+          onblur="commitInlineEdit(this,${ri},'${field}')"
+          onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')cancelInlineEdit(this)"/>
+      </td>`;
+
+    return `<tr class="${selClass}" data-id="${b.id}">
+      <td class="cb-col"><input type="checkbox" ${checked} onchange="toggleRow('${b.id}',this)"/></td>
+      <td><img class="badge-thumb"
+        src="${imageCache[b.id]||`${b.id}.${b.ext||'jpg'}`}"
+        onerror="this.style.visibility='hidden'" alt=""/></td>
+      <td><strong>#${b.id}</strong></td>
+      <td ondblclick="startBandEdit(this,${ri})" title="雙擊編輯樂團" class="editable">
+        <span class="edit-hint">✎</span>
+        <span class="cell-display"><span class="band-pill" style="background:${c}22;color:${c}">${b.band||'—'}</span></span>
+        <select class="cell-input" style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.4rem;border:none;border-bottom:2px solid #5a4fcf;background:#f0effd;"
+          onblur="commitBandEdit(this,${ri})"
+          onchange="commitBandEdit(this,${ri})">
+          ${BAND_LIST.map(bl=>`<option${bl===b.band?' selected':''}>${bl}</option>`).join('')}
+        </select>
+      </td>
+      ${editableCell('character',b.character)}
+      ${editableCell('series',b.series)}
+      ${editableCell('year',b.year)}
+      ${editableCell('event',b.event)}
+      <td><div class="row-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openModal(${ri})">編輯</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBadge(${ri})">刪除</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  updateBulkBar();
+}
+
+/* ── Inline edit ── */
+function startInlineEdit(td,ri,field){
+  td.classList.add('editing');
+  td.querySelector('.cell-input').focus();
+}
+function commitInlineEdit(input,ri,field){
+  const val=input.value.trim();
+  badges[ri][field]=val;
+  persist();
+  const td=input.closest('td');
+  td.classList.remove('editing');
+  td.querySelector('.cell-display').textContent=val||'—';
+}
+function cancelInlineEdit(input){
+  const td=input.closest('td');
+  td.classList.remove('editing');
+}
+function startBandEdit(td,ri){
+  td.classList.add('editing');
+  td.querySelector('select.cell-input').focus();
+}
+function commitBandEdit(sel,ri){
+  badges[ri].band=sel.value;
+  persist();
+  const td=sel.closest('td');
+  td.classList.remove('editing');
+  const c=BAND_COLORS[sel.value]||'#aaa';
+  td.querySelector('.cell-display').innerHTML=`<span class="band-pill" style="background:${c}22;color:${c}">${sel.value||'—'}</span>`;
+}
+
+/* ── Checkbox / bulk ── */
+function toggleRow(id, cb){
+  if(cb.checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+  const row=cb.closest('tr');
+  row.classList.toggle('selected',cb.checked);
+  updateBulkBar();
+}
+function toggleAll(master){
+  document.querySelectorAll('#badge-tbody input[type=checkbox]').forEach(cb=>{
+    cb.checked=master.checked;
+    const id=cb.closest('tr').dataset.id;
+    if(master.checked) selectedIds.add(id);
+    else selectedIds.delete(id);
+    cb.closest('tr').classList.toggle('selected',master.checked);
+  });
+  updateBulkBar();
+}
+function selectAllVisible(){
+  document.querySelectorAll('#badge-tbody input[type=checkbox]').forEach(cb=>{
+    cb.checked=true;
+    selectedIds.add(cb.closest('tr').dataset.id);
+    cb.closest('tr').classList.add('selected');
+  });
+  updateBulkBar();
+}
+function clearSelection(){
+  selectedIds.clear();
+  document.querySelectorAll('#badge-tbody input[type=checkbox]').forEach(cb=>{
+    cb.checked=false;
+    cb.closest('tr').classList.remove('selected');
+  });
+  document.getElementById('check-all').checked=false;
+  updateBulkBar();
+}
+function updateBulkBar(){
+  const n=selectedIds.size;
+  document.getElementById('sel-count').textContent=n;
+  document.getElementById('bulk-toolbar').classList.toggle('show',n>0);
+}
+function bulkDelete(){
+  if(!selectedIds.size) return;
+  if(!confirm(`確定刪除 ${selectedIds.size} 筆資料？`)) return;
+  badges=badges.filter(b=>!selectedIds.has(b.id));
+  selectedIds.clear();
+  persist();renderList();showToast(`已刪除`);
+}
+function toggleBulkEdit(){
+  const bar=document.getElementById('bulk-edit-bar');
+  bar.classList.toggle('show');
+}
+function applyBulkEdit(){
+  if(!selectedIds.size){showToast('請先勾選要修改的資料');return;}
+  const field=document.getElementById('bulk-field').value;
+  const val=document.getElementById('bulk-value').value.trim();
+  if(!val){showToast('請輸入新的值');return;}
+  let count=0;
+  badges.forEach(b=>{
+    if(selectedIds.has(b.id)){b[field]=val;count++;}
+  });
+  persist();renderList();
+  showToast(`✓ 已修改 ${count} 筆的「${document.getElementById('bulk-field').options[document.getElementById('bulk-field').selectedIndex].text}」`);
+  document.getElementById('bulk-edit-bar').classList.remove('show');
+  document.getElementById('bulk-value').value='';
+}
+
+function deleteBadge(i){
+  if(!confirm(`確定刪除 #${badges[i].id}？`)) return;
+  const id=badges[i].id;
+  if(imageCache[id]){URL.revokeObjectURL(imageCache[id]);delete imageCache[id];}
+  badges.splice(i,1);persist();renderList();showToast('已刪除');
+}
+
+/* ── Modal ── */
+function openModal(idx=-1){
+  editingIdx=idx;
+  const b=idx>=0?badges[idx]:{};
+  // Reset local preview
+  if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
+  document.getElementById('modal-title').textContent=idx>=0?'編輯徽章':'新增徽章';
+  document.getElementById('f-id').value=b.id||'';
+  document.getElementById('f-ext').value=b.ext||'jpg';
+  document.getElementById('f-band').value=b.band||'';
+  document.getElementById('f-character').value=b.character||'';
+  document.getElementById('f-series').value=b.series||'';
+  document.getElementById('f-year').value=b.year||'';
+  document.getElementById('f-event').value=b.event||'';
+  document.getElementById('f-type').value=b.type||'';
+  document.getElementById('f-size').value=b.size||'';
+  document.getElementById('f-country').value=b.country||'';
+  document.getElementById('f-url').value=b.url||'';
+  document.getElementById('f-note').value=b.note||'';
+  updateModalPath();
+  document.getElementById('modal').classList.add('active');
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('active');
+  editingIdx=-1;
+  if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
+}
+function maybeCloseModal(e){if(e.target===document.getElementById('modal'))closeModal();}
+let modalImgObjectUrl = null;
+
+function updateModalPath(){
+  const id=document.getElementById('f-id').value||'001';
+  const ext=document.getElementById('f-ext').value||'jpg';
+  document.getElementById('modal-path').textContent=`${id}.${ext}`;
+  // Use imageCache or local preview or path
+  if(!modalImgObjectUrl){
+    const t=document.getElementById('modal-thumb');
+    const cached=imageCache[id];
+    t.src=cached||`${id}.${ext}`;
+    t.style.display='block';
+    t.onerror=function(){
+      this.style.display='none';
+      document.getElementById('modal-no-img').style.display='flex';
+    };
+    document.getElementById('modal-no-img').style.display='none';
+    if(cached){
+      // show cache indicator
+      document.getElementById('modal-path').innerHTML=
+        `images/${id}.${ext} <span style="color:#27ae60;font-size:0.7rem;">✓ 已快取</span>`;
+      return;
+    }
+  }
+}
+
+function onModalImgSelect(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(modalImgObjectUrl) URL.revokeObjectURL(modalImgObjectUrl);
+  modalImgObjectUrl = URL.createObjectURL(file);
+  const t = document.getElementById('modal-thumb');
+  t.src = modalImgObjectUrl;
+  t.style.display = 'block';
+  t.onerror = null;
+  document.getElementById('modal-no-img').style.display = 'none';
+  // Auto-fill id and ext from filename
+  const nameNoExt = file.name.replace(/\.[^.]+$/,'');
+  const ext = file.name.split('.').pop().toLowerCase();
+  const idField = document.getElementById('f-id');
+  const extField = document.getElementById('f-ext');
+  if(!idField.value) idField.value = nameNoExt;
+  if(['jpg','png','webp'].includes(ext)) extField.value = ext;
+  // Also save to imageCache using current id
+  const cacheId = idField.value || nameNoExt;
+  if(imageCache[cacheId]) URL.revokeObjectURL(imageCache[cacheId]);
+  imageCache[cacheId] = modalImgObjectUrl;
+  updateModalPath();
+  e.target.value='';
+}
+function saveSingle(){
+  const id=document.getElementById('f-id').value.trim();
+  if(!id){showToast('請填寫編號');return;}
+  const badge={id,ext:document.getElementById('f-ext').value,band:document.getElementById('f-band').value,
+    character:document.getElementById('f-character').value.trim(),series:document.getElementById('f-series').value.trim(),
+    year:document.getElementById('f-year').value,event:document.getElementById('f-event').value.trim(),
+    type:document.getElementById('f-type').value,
+    size:document.getElementById('f-size').value,
+    country:document.getElementById('f-country').value,
+    url:document.getElementById('f-url').value.trim(),
+    note:document.getElementById('f-note').value.trim()};
+  if(editingIdx>=0){badges[editingIdx]=badge;showToast('已更新');}
+  else{if(badges.find(b=>b.id===id)){showToast('此編號已存在');return;}badges.push(badge);showToast('已新增');}
+  persist();renderList();closeModal();
+}
+
+/* ── Import / Export ── */
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(badges,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='badges.json';a.click();
+  showToast('badges.json 已匯出！');
+}
+function importJSON(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data))throw 0;
+      if(!confirm(`匯入 ${data.length} 筆資料？將覆蓋現有資料`))return;
+      badges=data;persist();renderList();showToast(`已匯入 ${data.length} 筆`);
+    }catch{showToast('JSON 格式錯誤');}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+function clearAll(){
+  if(!confirm('確定清除全部資料？'))return;
+  badges=[];persist();renderList();showToast('已清除');
+}
+
+/* ── Toast ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+persist();
+renderList();
+</script>
+</body>
+</html>
