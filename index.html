@@ -11,6 +11,33 @@
   --bg:#faf9f5;--surface:#fff;--border:#ece9e0;--text:#1a1a1a;--muted:#777;
   --radius:14px;
 }
+[data-theme="dark"]{
+  --bg:#141414;--surface:#1e1e1e;--border:#2e2e2e;--text:#f0f0f0;--muted:#888;
+}
+[data-theme="dark"] body{background:var(--bg);color:var(--text);}
+[data-theme="dark"] .sidebar{background:#1a1a1a;border-color:#2e2e2e;}
+[data-theme="dark"] .badge-card{background:#1e1e1e;border-color:#2e2e2e;}
+[data-theme="dark"] .badge-card:hover{border-color:#7c6fcd;box-shadow:0 4px 20px #5a4fcf30;}
+[data-theme="dark"] .badge-img-wrap{background:#2a2a2a;}
+[data-theme="dark"] .band-chip:hover{background:#252525;}
+[data-theme="dark"] .search-box{background:#252525;color:#f0f0f0;border-color:#3a3a3a;}
+[data-theme="dark"] .sort-select{background:#252525;color:#f0f0f0;border-color:#3a3a3a;}
+[data-theme="dark"] .detail-modal{background:#1e1e1e;}
+[data-theme="dark"] .detail-note{background:#2a2a2a;color:#aaa;}
+[data-theme="dark"] .btn-reset{background:#252525;color:#888;border-color:#3a3a3a;}
+[data-theme="dark"] .btn-reset:hover{border-color:#5a4fcf;color:#a09aff;}
+[data-theme="dark"] .filter-item{color:var(--text);}
+[data-theme="dark"] .badge-series{color:#888;}
+[data-theme="dark"] .table-view-wrap .badge-table{background:#1e1e1e;}
+[data-theme="dark"] .badge-table thead{background:#252525;}
+[data-theme="dark"] .badge-table td{border-color:#2e2e2e;color:var(--text);}
+[data-theme="dark"] .badge-table tr:hover td{background:#252525;}
+[data-theme="dark"] .export-modal{background:#1e1e1e;color:var(--text);}
+[data-theme="dark"] .export-opt{border-color:#3a3a3a;}
+[data-theme="dark"] .export-opt:hover,.export-opt.selected{background:#2a2a2e;}
+[data-theme="dark"] .btn-view{background:#1e1e1e;color:#888;border-color:#3a3a3a;}
+[data-theme="dark"] .btn-view.active{background:#3d3d8f;color:#fff;}
+[data-theme="dark"] .main-wrap{background:var(--bg);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
@@ -163,6 +190,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <header class="site-header">
   <div class="header-inner">
+  <button id="theme-toggle" onclick="toggleTheme()" style="
+    position:absolute;top:1rem;right:1rem;
+    background:#ffffff22;border:1.5px solid #ffffff44;
+    border-radius:20px;padding:0.35rem 0.85rem;
+    color:#fff;font-family:inherit;font-size:0.8rem;
+    cursor:pointer;transition:all 0.2s;z-index:10;">🌙 夜間模式</button>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
       <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
@@ -261,6 +294,16 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <script>
+// 活動簡稱對照表（可之後透過上傳 CSV 更新）
+let eventShortNames = {}; // { '活動全稱': '活動簡稱' }
+
+function getEventShortName(event){
+  if(!event) return '';
+  if(eventShortNames[event]) return eventShortNames[event];
+  // 若無簡稱，截短至10字
+  return event.length > 10 ? event.slice(0, 10) + '…' : event;
+}
+
 const BAND_COLORS={
   "Poppin'Party":"#ff6ea3","Roselia":"#5a4fcf","Afterglow":"#e07b2a",
   "Pastel*Palettes":"#4ab8d8","Hello, Happy World!":"#d4a800",
@@ -431,7 +474,7 @@ function renderGrid(list){
         <div class="badge-char">${b.character||'—'}</div>
         <span class="badge-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span>
         ${b.series?`<div class="badge-series">${b.series}</div>`:''}
-        ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${b.url?`<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${b.event}</a>`:b.event}</div>`:''}
+        ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${b.url?`<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${getEventShortName(b.event)}</a>`:getEventShortName(b.event)}</div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -467,6 +510,25 @@ function closeDetail(){document.getElementById('detail-overlay').classList.remov
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
 init();
+
+/* ── Dark mode ── */
+function toggleTheme(){
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  document.getElementById('theme-toggle').textContent = newTheme === 'dark' ? '☀️ 白天模式' : '🌙 夜間模式';
+}
+
+// 載入儲存的主題
+(function(){
+  const saved = localStorage.getItem('theme');
+  if(saved){
+    document.documentElement.setAttribute('data-theme', saved);
+    const btn = document.getElementById('theme-toggle');
+    if(btn) btn.textContent = saved === 'dark' ? '☀️ 白天模式' : '🌙 夜間模式';
+  }
+})();
 
 /* ── Resizable sidebar ── */
 (function(){
