@@ -730,20 +730,71 @@ async function doExport(){
 
   const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
   const list = currentFiltered;
-  const CELL = exportLayout==='grid' ? 120 : 44;
-  const COLS = exportLayout==='grid' ? exportCols : 1;
-  const PAD = 32;
-  const HEADER_H = 64;
-  const LABEL_H = exportLayout==='grid' ? 28 : 0;
-  const ROW_H = exportLayout==='grid' ? CELL + LABEL_H + 12 : 52;
-  const ROWS = Math.ceil(list.length / (exportLayout==='grid' ? COLS : 1));
 
-  // Table mode: one row per badge
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
-  const COL_W = exportLayout==='table' ? Math.max(600, fields.length * 120 + 60) : (COLS*(CELL+12)+PAD*2);
-  const W = exportLayout==='grid' ? (COLS*(CELL+12)+PAD*2) : COL_W;
-  const TABLE_HEADER_H = exportLayout==='table' ? 36 : 0;
-  const H = HEADER_H + TABLE_HEADER_H + ROWS * ROW_H + PAD*2;
+  if(exportLayout === 'table'){
+    await doExportTable(list, title, btn, progWrap, prog);
+    return;
+  }
+
+  // ── Grid mode with type + size grouping ──
+  const CELL = 110;
+  const COLS = exportCols;
+  const PAD = 28;
+  const GAP = 10;
+  const HEADER_H = 72;
+  const TYPE_H = 36;   // 類型標題高度
+  const SIZE_H = 28;   // 尺寸標題高度
+  const LABEL_H = 30;  // 活動簡稱高度
+  const ITEM_H = CELL + LABEL_H + GAP;
+  const W = COLS * (CELL + GAP) + PAD * 2;
+
+  const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', ''];
+  const SIZE_MAIN = ['56-58mm圓形', '57mm圓形', '56mm圓形', '58mm圓形'];
+  const ROUND_SIZES = ['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形','75mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形'];
+
+  function isMain56(size){ return SIZE_MAIN.includes(size); }
+  function isRound(size){ return ROUND_SIZES.includes(size); }
+
+  // 分組：type → sizeGroup(main/other) → badges
+  function groupBadges(badges){
+    const groups = [];
+    const types = [...new Set(badges.map(b=>b.type||''))].sort((a,b)=>{
+      return TYPE_ORDER.indexOf(a||'') - TYPE_ORDER.indexOf(b||'');
+    });
+    for(const type of types){
+      const byType = badges.filter(b=>(b.type||'')===type);
+      const main56 = byType.filter(b=>isMain56(b.size||''));
+      const others = byType.filter(b=>!isMain56(b.size||''));
+      if(main56.length) groups.push({type, sizeLabel:'56-58mm圓形', items:main56});
+      if(others.length) groups.push({type, sizeLabel:'其他尺寸', items:others});
+    }
+    return groups;
+  }
+
+  // 計算總高度
+  function calcHeight(groups){
+    let h = HEADER_H + PAD;
+    for(const g of groups){
+      h += TYPE_H + SIZE_H + 8;
+      const rows = Math.ceil(g.items.length / COLS);
+      h += rows * ITEM_H + PAD;
+    }
+    return h + PAD;
+  }
+
+  const groups = groupBadges(list);
+  const H = calcHeight(groups);
+
+  // Load images
+  const imgMap = {};
+  await Promise.all(list.map(b => new Promise(res=>{
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = ()=>{ imgMap[b.id]=img; res(); };
+    img.onerror = ()=>res();
+    img.src = `${b.id}.${b.ext||'jpg'}`;
+  })));
+  prog.style.width = '50%';
 
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
@@ -753,133 +804,178 @@ async function doExport(){
   ctx.fillStyle = '#faf9f5';
   ctx.fillRect(0,0,W,H);
 
-  // Header bar
+  // Header
   const grad = ctx.createLinearGradient(0,0,W,0);
-  grad.addColorStop(0,'#13122b'); grad.addColorStop(1,'#2d1b4e');
+  grad.addColorStop(0,'#ff6eb4'); grad.addColorStop(1,'#c0005a');
   ctx.fillStyle = grad;
-  ctx.roundRect(PAD/2, PAD/2, W-PAD, HEADER_H, 12);
-  ctx.fill();
-
-  // Title text
+  ctx.beginPath(); ctx.roundRect(PAD/2, PAD/2, W-PAD, HEADER_H-8, 12); ctx.fill();
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 22px "Noto Sans TC", sans-serif';
-  ctx.fillText(title, PAD*1.5, PAD/2+38);
-  ctx.font = '13px sans-serif';
-  ctx.fillStyle = '#ffffff88';
+  ctx.font = 'bold 24px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+  ctx.fillText(title, PAD*1.5, PAD/2+36);
+  ctx.font = '13px sans-serif'; ctx.fillStyle='#ffffff99';
   ctx.fillText(`共 ${list.length} 枚`, PAD*1.5, PAD/2+56);
 
-  prog.style.width = '10%';
+  // Draw groups
+  let curY = HEADER_H + PAD;
+  let prevType = null;
 
-  // Load images
-  const imgs = await Promise.all(list.map((b,i) => new Promise(res=>{
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = ()=>res(img);
-    img.onerror = ()=>res(null);
-    img.src = `${b.id}.${b.ext||'jpg'}`;
-  })));
+  for(const g of groups){
+    // 類型標題（只在換類型時顯示）
+    if(g.type !== prevType){
+      const typeLabel = g.type || '未分類';
+      ctx.fillStyle = '#1a1a2e';
+      ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, TYPE_H, 8); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+      ctx.fillText('▌ ' + typeLabel, PAD+12, curY+24);
+      curY += TYPE_H + 6;
+      prevType = g.type;
+    }
 
-  prog.style.width = '60%';
+    // 尺寸標題
+    ctx.fillStyle = '#e8e5f5';
+    ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, SIZE_H, 6); ctx.fill();
+    ctx.fillStyle = '#3d3d8f';
+    ctx.font = 'bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+    ctx.fillText(g.sizeLabel, PAD+10, curY+19);
+    curY += SIZE_H + 8;
 
-  if(exportLayout==='grid'){
-    // Draw grid
-    list.forEach((b,i)=>{
+    // 徽章
+    g.items.forEach((b, i)=>{
       const col = i % COLS;
       const row = Math.floor(i / COLS);
-      const x = PAD + col*(CELL+12);
-      const y = HEADER_H + PAD + row*ROW_H;
+      const x = PAD + col*(CELL+GAP);
+      const y = curY + row * ITEM_H;
       const c = bandColor(b.band);
+      const isRoundBadge = isRound(b.size||'');
 
       // Card bg
       ctx.fillStyle = '#fff';
-      ctx.beginPath(); ctx.roundRect(x,y,CELL,CELL,10); ctx.fill();
-      ctx.strokeStyle = c+'55'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.roundRect(x,y,CELL,CELL,10); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(x, y, CELL, CELL, isRoundBadge?CELL/2:8); ctx.fill();
+      ctx.strokeStyle = c+'44'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.roundRect(x, y, CELL, CELL, isRoundBadge?CELL/2:8); ctx.stroke();
 
-      // Image (circle clip)
-      if(imgs[i]){
+      // Image
+      const img = imgMap[b.id];
+      if(img){
         ctx.save();
-        ctx.beginPath();
-        ctx.arc(x+CELL/2, y+CELL/2, CELL/2-4, 0, Math.PI*2);
-        ctx.clip();
-        ctx.drawImage(imgs[i], x+4, y+4, CELL-8, CELL-8);
+        if(isRoundBadge){
+          ctx.beginPath();
+          ctx.arc(x+CELL/2, y+CELL/2, CELL/2-3, 0, Math.PI*2);
+          ctx.clip();
+          ctx.drawImage(img, x+3, y+3, CELL-6, CELL-6);
+        } else {
+          // 非圓形：保持比例完整顯示
+          const iw = img.naturalWidth, ih = img.naturalHeight;
+          const scale = Math.min((CELL-8)/iw, (CELL-8)/ih);
+          const dw = iw*scale, dh = ih*scale;
+          const dx = x + (CELL-dw)/2, dy = y + (CELL-dh)/2;
+          ctx.beginPath(); ctx.roundRect(x+3, y+3, CELL-6, CELL-6, 6); ctx.clip();
+          ctx.drawImage(img, dx, dy, dw, dh);
+        }
         ctx.restore();
       } else {
         const charColor = CHAR_COLORS[b.character] || CHAR_COLORS.default;
         ctx.fillStyle = charColor + '33';
-        ctx.beginPath(); ctx.roundRect(x+4,y+4,CELL-8,CELL-8,8); ctx.fill();
-        ctx.fillStyle = charColor; ctx.font='24px sans-serif'; ctx.textAlign='center';
+        ctx.beginPath(); ctx.roundRect(x+3, y+3, CELL-6, CELL-6, isRoundBadge?CELL/2:6); ctx.fill();
+        ctx.fillStyle = charColor; ctx.font='22px sans-serif'; ctx.textAlign='center';
         ctx.fillText('🎵', x+CELL/2, y+CELL/2+8);
       }
 
-      // Label
-      ctx.fillStyle = '#333'; ctx.font='bold 11px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
-      const label = b.character||'—';
-      ctx.fillText(label.length>8?label.slice(0,8)+'…':label, x+CELL/2, y+CELL+18);
-    });
-
-  } else {
-    // Table mode
-    const TH = 36, THUMB=36, TX=PAD, TY=HEADER_H+PAD;
-    const fieldW = (W - PAD*2 - 60) / fields.length;
-
-    // Table header
-    ctx.fillStyle='#f0eff9';
-    ctx.fillRect(TX, TY, W-PAD*2, TH);
-    ctx.fillStyle = '#3d3d8f';
-    ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
-    ctx.fillText('圖', TX+10, TY+23);
-    fields.forEach((f,fi)=>{
-      ctx.fillText(f.label, TX+60+fi*fieldW, TY+23);
-    });
-
-    list.forEach((b,i)=>{
-      const ry = TY + TH + i*ROW_H;
-      ctx.fillStyle = i%2===0?'#fff':'#faf9f5';
-      ctx.fillRect(TX, ry, W-PAD*2, ROW_H);
-
-      // divider
-      ctx.strokeStyle='#ece9e0'; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(TX,ry); ctx.lineTo(TX+W-PAD*2,ry); ctx.stroke();
-
-      // Thumbnail circle
-      if(imgs[i]){
-        ctx.save();
-        ctx.beginPath(); ctx.arc(TX+8+THUMB/2, ry+ROW_H/2, THUMB/2, 0, Math.PI*2); ctx.clip();
-        ctx.drawImage(imgs[i], TX+8, ry+(ROW_H-THUMB)/2, THUMB, THUMB);
-        ctx.restore();
+      // 活動簡稱 label
+      const shortName = getEventShortName(b.event||'');
+      ctx.fillStyle = '#333';
+      ctx.font = '10px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
+      const maxW = CELL - 4;
+      let labelText = shortName;
+      while(ctx.measureText(labelText).width > maxW && labelText.length > 1){
+        labelText = labelText.slice(0, -1);
       }
-
-      const c = bandColor(b.band);
-      ctx.font='12px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-      fields.forEach((f,fi)=>{
-        let val = b[f.key]||'—';
-        if(f.key==='band'){
-          ctx.fillStyle=c+'22';
-          ctx.beginPath(); ctx.roundRect(TX+60+fi*fieldW-4, ry+ROW_H/2-10, Math.min(val.length*9+16,fieldW-8), 20, 10); ctx.fill();
-          ctx.fillStyle=c;
-        } else {
-          ctx.fillStyle='#333';
-        }
-        if(val.length>14) val=val.slice(0,13)+'…';
-        ctx.fillText(val, TX+60+fi*fieldW, ry+ROW_H/2+5);
-      });
+      if(labelText !== shortName) labelText += '…';
+      ctx.fillText(labelText, x+CELL/2, y+CELL+18);
     });
+
+    const rows = Math.ceil(g.items.length / COLS);
+    curY += rows * ITEM_H + PAD;
   }
 
   prog.style.width='95%';
-
-  // Download
   canvas.toBlob(blob=>{
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `bandori-badges-${Date.now()}.png`;
+    a.href=url; a.download=`bandori-badges-${Date.now()}.png`;
     a.click(); URL.revokeObjectURL(url);
     prog.style.width='100%';
     setTimeout(()=>{
       btn.disabled=false; btn.textContent='產生並下載';
       progWrap.style.display='none'; prog.style.width='0%';
     },600);
+  },'image/png');
+}
+
+async function doExportTable(list, title, btn, progWrap, prog){
+  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const PAD=32, TH=36, ROW_H=52, THUMB=36, HEADER_H=64;
+  const W = Math.max(600, fields.length*120+60);
+  const H = HEADER_H + TH + list.length*ROW_H + PAD*2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle='#faf9f5'; ctx.fillRect(0,0,W,H);
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#13122b'); grad.addColorStop(1,'#2d1b4e');
+  ctx.fillStyle=grad;
+  ctx.beginPath(); ctx.roundRect(PAD/2,PAD/2,W-PAD,HEADER_H,12); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 22px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+  ctx.fillText(title, PAD*1.5, PAD/2+38);
+
+  const imgs = await Promise.all(list.map(b=>new Promise(res=>{
+    const img=new Image(); img.crossOrigin='anonymous';
+    img.onload=()=>res(img); img.onerror=()=>res(null);
+    img.src=`${b.id}.${b.ext||'jpg'}`;
+  })));
+  prog.style.width='60%';
+
+  const TX=PAD, TY=HEADER_H+PAD;
+  const fieldW=(W-PAD*2-60)/fields.length;
+  ctx.fillStyle='#f0eff9'; ctx.fillRect(TX,TY,W-PAD*2,TH);
+  ctx.fillStyle='#3d3d8f'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('圖',TX+10,TY+23);
+  fields.forEach((f,fi)=>ctx.fillText(f.label,TX+60+fi*fieldW,TY+23));
+
+  list.forEach((b,i)=>{
+    const ry=TY+TH+i*ROW_H;
+    ctx.fillStyle=i%2===0?'#fff':'#faf9f5'; ctx.fillRect(TX,ry,W-PAD*2,ROW_H);
+    ctx.strokeStyle='#ece9e0'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(TX,ry); ctx.lineTo(TX+W-PAD*2,ry); ctx.stroke();
+    if(imgs[i]){
+      ctx.save();
+      ctx.beginPath(); ctx.arc(TX+8+THUMB/2,ry+ROW_H/2,THUMB/2,0,Math.PI*2); ctx.clip();
+      ctx.drawImage(imgs[i],TX+8,ry+(ROW_H-THUMB)/2,THUMB,THUMB);
+      ctx.restore();
+    }
+    const c=bandColor(b.band);
+    ctx.font='12px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+    fields.forEach((f,fi)=>{
+      let val=b[f.key]||'—';
+      if(f.key==='event') val=getEventShortName(val);
+      if(f.key==='band'){ctx.fillStyle=c+'22';ctx.beginPath();ctx.roundRect(TX+60+fi*fieldW-4,ry+ROW_H/2-10,Math.min(val.length*9+16,fieldW-8),20,10);ctx.fill();ctx.fillStyle=c;}
+      else ctx.fillStyle='#333';
+      if(val.length>14) val=val.slice(0,13)+'…';
+      ctx.fillText(val,TX+60+fi*fieldW,ry+ROW_H/2+5);
+    });
+  });
+
+  prog.style.width='95%';
+  canvas.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=`bandori-badges-${Date.now()}.png`;
+    a.click(); URL.revokeObjectURL(url);
+    prog.style.width='100%';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='產生並下載';progWrap.style.display='none';prog.style.width='0%';},600);
   },'image/png');
 }
 </script>
