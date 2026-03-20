@@ -7,9 +7,11 @@
     "series": "",
     "year": "2022年11月9日",
     "event": "MyGO!!!!!一單－迷星叫初回生産限定盤",
-    "note": "",
+    "type": "角色本身",
     "size": "56-58mm圓形",
-    "type": "角色本身"
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "002",
@@ -1066,12 +1068,14 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "通常ver.",
     "year": "2023年11月3日",
-    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」通常ver.",
-    "note": "",
+    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
+    "type": "角色本身",
     "size": "56-58mm圓形",
-    "type": "角色本身"
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "090",
