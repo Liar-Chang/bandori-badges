@@ -30,12 +30,17 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .header-count{display:inline-block;background:#ffffff18;border:1px solid #ffffff22;border-radius:20px;
   padding:0.3rem 1rem;font-size:0.8rem;margin-top:0.75rem;}
 
-.layout{display:grid;grid-template-columns:270px 1fr;min-height:calc(100vh - 160px);}
-@media(max-width:800px){.layout{grid-template-columns:1fr;}}
+.layout{display:flex;min-height:calc(100vh - 160px);}
+@media(max-width:800px){.layout{flex-direction:column;}}
 
 .sidebar{background:#fff;border-right:1px solid var(--border);padding:1.5rem 1.25rem;
-  position:sticky;top:0;height:100vh;overflow-y:auto;}
-@media(max-width:800px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);}}
+  position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;width:280px;min-width:180px;max-width:500px;}
+@media(max-width:800px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);width:100%!important;}}
+
+.resize-handle{width:5px;background:transparent;cursor:col-resize;flex-shrink:0;transition:background 0.15s;position:relative;z-index:10;}
+.resize-handle:hover,.resize-handle.dragging{background:#c0bef0;}
+
+.main-wrap{flex:1;min-width:0;}
 
 .sidebar-section{margin-bottom:1.5rem;}
 .sidebar-section h3{font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;
@@ -160,8 +165,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   </div>
 </header>
 
-<div class="layout">
-  <aside class="sidebar">
+<div class="layout" id="layout">
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()"/>
@@ -200,7 +205,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </div>
     <button class="btn-reset" onclick="resetFilters()">重置所有篩選</button>
   </aside>
-
+  <div class="resize-handle" id="resize-handle"></div>
+  <div class="main-wrap">
   <main class="main">
     <div class="result-bar">
       <div class="result-count" id="result-count"></div>
@@ -227,6 +233,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       </table>
     </div>
   </main>
+  </div>
 </div>
 
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
@@ -381,6 +388,21 @@ function applyFilters(){
     if(sort==='char') return (a.character||'').localeCompare(b.character||'');
     return 0;
   });
+  // 若無任何篩選條件，顯示提示不顯示資料
+  const hasFilter = selBands.size||selYears.size||selSeries.size||selEvents.size||
+    selTypes.size||selChars.size||selSizes.size||selCountries.size||
+    document.getElementById('search').value.trim();
+  if(!hasFilter){
+    document.getElementById('result-count').textContent='請選擇篩選條件';
+    renderGrid([]);
+    document.getElementById('badge-grid').innerHTML=`
+      <div class="empty-main">
+        <div style="font-size:3rem">🎵</div>
+        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">請從左側選擇篩選條件</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
+      </div>`;
+    return;
+  }
   document.getElementById('result-count').textContent=`顯示 ${res.length} / ${all.length} 枚`;
   renderGrid(res);
 }
@@ -441,6 +463,36 @@ function closeDetail(){document.getElementById('detail-overlay').classList.remov
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
 init();
+
+/* ── Resizable sidebar ── */
+(function(){
+  const handle = document.getElementById('resize-handle');
+  const sidebar = document.getElementById('sidebar');
+  let dragging = false, startX = 0, startW = 0;
+
+  handle.addEventListener('mousedown', e=>{
+    dragging = true;
+    startX = e.clientX;
+    startW = sidebar.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    const newW = Math.min(500, Math.max(180, startW + (e.clientX - startX)));
+    sidebar.style.width = newW + 'px';
+  });
+
+  document.addEventListener('mouseup', ()=>{
+    if(!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+})();
 
 /* ─── View toggle ─── */
 let currentView = 'grid';
