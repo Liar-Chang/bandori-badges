@@ -142,6 +142,20 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 .empty-main{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--muted);}
 
+/* 展開卡片 */
+.badge-card.expanded{grid-column:span 2;border-color:#b8b0e8;box-shadow:0 4px 20px #5a4fcf20;}
+.badge-card-expand{display:none;padding:0.75rem 0.85rem 0.85rem;border-top:1px solid var(--border);animation:fadeIn 0.2s ease;}
+.badge-card.expanded .badge-card-expand{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.expand-field{display:flex;flex-direction:column;gap:0.15rem;margin-bottom:0.55rem;}
+.expand-field:last-child{margin-bottom:0;}
+.expand-label{font-size:0.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;}
+.expand-value{font-size:0.82rem;color:var(--text);line-height:1.4;}
+.expand-link{color:#5a4fcf;text-decoration:none;font-size:0.82rem;}
+.expand-link:hover{text-decoration:underline;}
+[data-theme="dark"] .badge-card-expand{border-color:#2e2e2e;}
+[data-theme="dark"] .expand-value{color:var(--text);}
+
 /* View toggle */
 .view-toggle{display:flex;gap:0.5rem;}
 .btn-view{font-family:inherit;font-size:0.82rem;padding:0.4rem 0.9rem;border-radius:7px;
@@ -464,7 +478,14 @@ function renderGrid(list){
     const c=bandColor(b.band);
     const src=`${b.id}.${b.ext||'jpg'}`;
     const idx=all.indexOf(b);
-    return `<div class="badge-card" onclick="openDetail(${idx})">
+    const shortEvent = getEventShortName(b.event);
+    const eventHtml = b.url
+      ? `<a href="${b.url}" target="_blank" rel="noopener" class="expand-link" onclick="event.stopPropagation()">${b.event||'—'}</a>`
+      : (b.event||'—');
+    const shortEventHtml = b.url
+      ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${shortEvent}</a>`
+      : shortEvent;
+    return `<div class="badge-card" onclick="toggleCard(this,${idx})">
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
@@ -474,10 +495,26 @@ function renderGrid(list){
         <div class="badge-char">${b.character||'—'}</div>
         <span class="badge-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span>
         ${b.series?`<div class="badge-series">${b.series}</div>`:''}
-        ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${b.url?`<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${getEventShortName(b.event)}</a>`:getEventShortName(b.event)}</div>`:''}
+        ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${shortEventHtml}</div>`:''}
+      </div>
+      <div class="badge-card-expand">
+        ${b.event?`<div class="expand-field"><span class="expand-label">活動</span><span class="expand-value">${eventHtml}</span></div>`:''}
+        ${b.year?`<div class="expand-field"><span class="expand-label">發售日期</span><span class="expand-value">${b.year}</span></div>`:''}
+        ${b.size?`<div class="expand-field"><span class="expand-label">尺寸</span><span class="expand-value">${b.size}</span></div>`:''}
+        ${b.series?`<div class="expand-field"><span class="expand-label">版本</span><span class="expand-value">${b.series}</span></div>`:''}
+        ${b.type?`<div class="expand-field"><span class="expand-label">類型</span><span class="expand-value">${b.type}</span></div>`:''}
+        ${b.country?`<div class="expand-field"><span class="expand-label">活動國家</span><span class="expand-value">${b.country}</span></div>`:''}
+        ${b.note?`<div class="expand-field"><span class="expand-label">備註</span><span class="expand-value">${b.note}</span></div>`:''}
       </div>
     </div>`;
   }).join('');
+}
+
+function toggleCard(card, idx){
+  const wasExpanded = card.classList.contains('expanded');
+  // 收起其他已展開的卡片
+  document.querySelectorAll('.badge-card.expanded').forEach(c=>c.classList.remove('expanded'));
+  if(!wasExpanded) card.classList.add('expanded');
 }
 
 function openDetail(idx){
