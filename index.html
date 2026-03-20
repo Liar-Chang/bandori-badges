@@ -333,6 +333,34 @@ const BAND_COLORS={
   "一家Dumb Rock!":"#e85030",
   "其他":"#888"
 };
+const CHAR_COLORS={
+  "高松燈":"#77BBDD",
+  "千早愛音":"#FF8899",
+  "要樂奈":"#77DD77",
+  "長崎爽世":"#FFDD88",
+  "椎名立希":"#7777AA",
+  "三角初華":"#BB9955",
+  "若葉睦":"#779977",
+  "八幡海鈴":"#335566",
+  "祐天寺若麥":"#AA4477",
+  "豐川祥子":"#7799CC",
+  "仲町阿拉蕾":"#FFEE55",
+  "宮永野乃花":"#FFBBCC",
+  "峰月律":"#4477CC",
+  "藤都子":"#9977CC",
+  "千石由乃":"#EE5577",
+  "汐見螢":"#99FF99",
+  "伊澤棗":"#FF4444",
+  "琴平凪":"#5555FF",
+  "濱崎茉幌":"#77FFFF",
+  "和泉朋花":"#EE99EE",
+  "須賀蕾叶":"#FF7700",
+  "馬橋心玖":"#22CCFF",
+  "矢倉蓬咲":"#448888",
+  "梅里千櫻梨":"#FF55AA",
+  "四宮寧月":"#9999FF",
+  "default":"#c0bef0"
+};
 const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
   "Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica",
   "夢限大MewType","millsage","一家Dumb Rock!"];
@@ -497,7 +525,7 @@ function renderGrid(list){
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-        <div class="no-img" style="display:none">🎵</div>
+        <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
       </div>
       <div class="badge-info">
         <div class="badge-char">${b.character||'—'}</div>
@@ -777,9 +805,10 @@ async function doExport(){
         ctx.drawImage(imgs[i], x+4, y+4, CELL-8, CELL-8);
         ctx.restore();
       } else {
-        ctx.fillStyle = '#f0f0f0';
+        const charColor = CHAR_COLORS[b.character] || CHAR_COLORS.default;
+        ctx.fillStyle = charColor + '33';
         ctx.beginPath(); ctx.roundRect(x+4,y+4,CELL-8,CELL-8,8); ctx.fill();
-        ctx.fillStyle = '#ccc'; ctx.font='24px sans-serif'; ctx.textAlign='center';
+        ctx.fillStyle = charColor; ctx.font='24px sans-serif'; ctx.textAlign='center';
         ctx.fillText('🎵', x+CELL/2, y+CELL/2+8);
       }
 
