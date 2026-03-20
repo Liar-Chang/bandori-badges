@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_3.html -->
+<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_5.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -200,6 +200,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .progress-bar-wrap{height:4px;background:#eee;border-radius:2px;margin-bottom:1rem;overflow:hidden;display:none;}
 .progress-bar{height:100%;background:linear-gradient(90deg,#ff6ea3,#9b59b6);width:0%;transition:width 0.2s;}
 .export-preview{margin-top:1rem;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-height:200px;overflow-y:auto;}
+.preview-canvas-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:450px;max-width:100%;margin-bottom:1rem;background:#f5f4f0;display:none;text-align:center;}
+.preview-canvas-wrap canvas{display:block;margin:0 auto;}
 </style>
 </head>
 <body>
@@ -390,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_3.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_5.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -854,6 +856,16 @@ function toggleField(k,el){
   el.classList.toggle('on', selectedFields.has(k));
 }
 
+async function generateCanvas(targetCanvas){
+  const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
+  const list = currentFiltered;
+  if(exportLayout === 'table'){
+    await doExportTable(list, title, null, null, null, targetCanvas);
+    return;
+  }
+  await generateGridCanvas(targetCanvas, list, title);
+}
+
 async function doExport(){
   const btn = document.getElementById('btn-dl');
   const progWrap = document.getElementById('prog-wrap');
@@ -870,6 +882,7 @@ async function doExport(){
   }
 
   // ── Grid mode with type + size grouping ──
+  let targetCanvas = null; // null = download mode
   const CELL = 110;
   const COLS = exportCols;
   const PAD = 28;
@@ -877,7 +890,7 @@ async function doExport(){
   const HEADER_H = 72;
   const TYPE_H = 36;   // 類型標題高度
   const SIZE_H = 28;   // 尺寸標題高度
-  const LABEL_H = 30;  // 活動簡稱高度
+  const LABEL_H = 44;  // 活動簡稱高度（支援兩行）
   const ITEM_H = CELL + LABEL_H + GAP;
   const W = COLS * (CELL + GAP) + PAD * 2;
 
@@ -1015,17 +1028,24 @@ async function doExport(){
         ctx.fillText('🎵', x+CELL/2, y+CELL/2+8);
       }
 
-      // 活動簡稱 label
+      // 活動簡稱 label（支援換行）
       const shortName = getEventShortName(b.event||'');
       ctx.fillStyle = '#333';
       ctx.font = '10px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
       const maxW = CELL - 4;
-      let labelText = shortName;
-      while(ctx.measureText(labelText).width > maxW && labelText.length > 1){
-        labelText = labelText.slice(0, -1);
+      // 自動換行
+      const words = shortName.split('');
+      let line = '', lines = [];
+      for(const ch of words){
+        if(ctx.measureText(line+ch).width > maxW){
+          lines.push(line); line = ch;
+        } else { line += ch; }
       }
-      if(labelText !== shortName) labelText += '…';
-      ctx.fillText(labelText, x+CELL/2, y+CELL+18);
+      if(line) lines.push(line);
+      lines = lines.slice(0,2); // 最多2行
+      lines.forEach((l,li)=>{
+        ctx.fillText(l, x+CELL/2, y+CELL+14+(li*13));
+      });
     });
 
     const rows = Math.ceil(g.items.length / COLS);
@@ -1044,6 +1064,27 @@ async function doExport(){
       progWrap.style.display='none'; prog.style.width='0%';
     },600);
   },'image/png');
+}
+
+async function doPreview(){
+  const btn = document.getElementById('btn-preview');
+  btn.textContent = '產生中...'; btn.disabled = true;
+
+  // 建立 canvas（重用 doExport 的邏輯，但顯示在預覽區）
+  const previewWrap = document.getElementById('preview-wrap');
+  const previewCanvas = document.getElementById('preview-canvas');
+  previewWrap.style.display = 'none';
+
+  await generateCanvas(previewCanvas);
+
+  // 縮放顯示
+  const scale = Math.min(1, 520 / previewCanvas.width);
+  previewCanvas.style.width = (previewCanvas.width * scale) + 'px';
+  previewCanvas.style.height = 'auto';
+  previewWrap.style.display = 'block';
+  previewWrap.scrollTop = 0;
+
+  btn.textContent = '👁 預覽'; btn.disabled = false;
 }
 
 async function doExportTable(list, title, btn, progWrap, prog){
@@ -1159,9 +1200,14 @@ async function doExportTable(list, title, btn, progWrap, prog){
       <div class="progress-bar" id="prog-bar"></div>
     </div>
 
+    <div class="preview-canvas-wrap" id="preview-wrap">
+      <canvas id="preview-canvas"></canvas>
+    </div>
+
     <div class="export-actions">
       <button class="btn-cancel" onclick="closeExport()">取消</button>
-      <button class="btn-download" id="btn-dl" onclick="doExport()">產生並下載</button>
+      <button class="btn-download" style="background:#5a4fcf;" id="btn-preview" onclick="doPreview()">👁 預覽</button>
+      <button class="btn-download" id="btn-dl" onclick="doExport()">⬇ 下載</button>
     </div>
   </div>
 </div>
