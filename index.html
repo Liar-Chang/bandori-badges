@@ -775,12 +775,6 @@ async function doExport(){
         ctx.fillText('🎵', x+CELL/2, y+CELL/2+8);
       }
 
-      // ID badge
-      ctx.fillStyle = c;
-      ctx.beginPath(); ctx.roundRect(x+4,y+4,28,16,4); ctx.fill();
-      ctx.fillStyle='#fff'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
-      ctx.fillText('#'+b.id, x+18, y+15);
-
       // Label
       ctx.fillStyle = '#333'; ctx.font='bold 11px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
       const label = b.character||'—';
