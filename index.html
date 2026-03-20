@@ -4,7 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BanG Dream! 徽章圖鑑</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#faf9f5;--surface:#fff;--border:#ece9e0;--text:#1a1a1a;--muted:#777;
@@ -14,21 +15,24 @@
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
 .site-header{
-  background:#13122b;color:#fff;
-  padding:2.5rem 2rem 2rem;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#ff6eb4 0%,#ff2d78 40%,#c0005a 100%);
+  color:#fff;
+  padding:2rem 2rem 1.75rem;text-align:center;position:relative;overflow:hidden;
 }
 .site-header::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 20% 50%,#3d3d8f44 0%,transparent 60%),
-             radial-gradient(ellipse at 80% 50%,#9b59b633 0%,transparent 60%);
+  background:radial-gradient(ellipse at 20% 30%,#ffffff30 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 80%,#ff9ed044 0%,transparent 50%);
   pointer-events:none;
 }
+
 .header-inner{position:relative;z-index:1;}
-.site-logo{font-family:'Nunito',sans-serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;letter-spacing:-0.02em;
-  background:linear-gradient(90deg,#ff6ea3,#c77dff,#6ea8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.site-sub{font-size:0.9rem;opacity:0.6;margin-top:0.3rem;letter-spacing:0.05em;}
-.header-count{display:inline-block;background:#ffffff18;border:1px solid #ffffff22;border-radius:20px;
-  padding:0.3rem 1rem;font-size:0.8rem;margin-top:0.75rem;}
+.site-logo{font-size:clamp(2rem,5vw,3.2rem);font-weight:400;letter-spacing:0.02em;
+  background:linear-gradient(90deg,#fff 0%,#ffe0ee 50%,#fff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(2px 2px 0px #c0005a);line-height:1.2;}
+
+
 
 .layout{display:flex;min-height:calc(100vh - 160px);}
 @media(max-width:800px){.layout{flex-direction:column;}}
@@ -54,7 +58,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .band-chip{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;border-radius:8px;
   cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;font-size:0.85rem;user-select:none;}
 .band-chip:hover{background:#f5f4f0;}
-.band-chip.active{border-color:var(--chip-color);background:var(--chip-bg);}
+.band-chip.active{border-color:var(--chip-color);background:var(--chip-bg);font-weight:600;}
 .band-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .band-chip-count{margin-left:auto;font-size:0.75rem;opacity:0.5;}
 
@@ -159,9 +163,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <header class="site-header">
   <div class="header-inner">
-    <div class="site-logo">BanG Dream! 徽章圖鑑</div>
-    <div class="site-sub">Badge Encyclopedia</div>
-    <div class="header-count" id="header-count">載入中...</div>
+    <div class="site-logo">
+      <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
+      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
+    </div>
   </div>
 </header>
 
@@ -285,7 +290,6 @@ async function init(){
       {id:"006",ext:"jpg",band:"Roselia",character:"氷川紗夜",series:"Ani-Art",year:"2021",event:"",note:""},
     ];
   }
-  document.getElementById('header-count').textContent=`共 ${all.length} 枚徽章`;
   buildSidebar();
   buildCharList();
   applyFilters();
