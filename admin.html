@@ -154,6 +154,7 @@ td.editable:hover .edit-hint{opacity:1;}
     <span>admin.html</span>
   </div>
   <div class="header-actions">
+    <button class="btn btn-secondary btn-sm" onclick="editImgBase()">🖼 圖片來源設定</button>
     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('json-import').click()">📂 匯入 JSON</button>
     <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
@@ -419,6 +420,9 @@ td.editable:hover .edit-hint{opacity:1;}
 <div class="toast" id="toast"></div>
 
 <script>
+// 圖片來源設定（改成你的 GitHub Pages 網址）
+const IMG_BASE_URL = 'https://liar-chang.github.io/bandori-badges/';
+
 const BAND_COLORS={"Poppin'Party":"#ff6ea3","Roselia":"#5a4fcf","Afterglow":"#e07b2a",
   "Pastel*Palettes":"#4ab8d8","Hello, Happy World!":"#d4a800","RAISE A SUILEN":"#1ab8a0",
   "Morfonica":"#5a9fd4","MyGO!!!!!":"#7aaa3a","Ave Mujica":"#9b59b6",
@@ -431,6 +435,11 @@ let badges=JSON.parse(localStorage.getItem('bandori_badges')||'[]');
 let editingIdx=-1;
 let batchItems=[];
 let imageCache={}; // id -> objectUrl (記憶體快取，關頁消失)
+
+function imgUrl(b){
+  if(imageCache[b.id]) return imageCache[b.id];
+  return IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+}
 
 function persist(){
   localStorage.setItem('bandori_badges',JSON.stringify(badges));
@@ -653,7 +662,7 @@ function renderList(){
     return `<tr class="${selClass}" data-id="${b.id}">
       <td class="cb-col"><input type="checkbox" ${checked} onchange="toggleRow('${b.id}',this)"/></td>
       <td><img class="badge-thumb"
-        src="${imageCache[b.id]||`${b.id}.${b.ext||'jpg'}`}"
+        src="${imgUrl(b)}"
         onerror="this.style.visibility='hidden'" alt=""/></td>
       <td><strong>#${b.id}</strong></td>
       <td ondblclick="startBandEdit(this,${ri})" title="雙擊編輯樂團" class="editable">
@@ -901,14 +910,29 @@ function clearAll(){
 }
 
 /* ── Toast ── */
+function editImgBase(){
+  const url = prompt('圖片來源網址（結尾要有 /）：', IMG_BASE_URL);
+  if(url !== null){
+    window.IMG_BASE_URL = url;
+    localStorage.setItem('img_base_url', url);
+    renderList();
+    showToast('圖片來源已更新');
+  }
+}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
+// 載入儲存的圖片來源設定
+const savedImgBase = localStorage.getItem('img_base_url');
+if(savedImgBase) window.IMG_BASE_URL = savedImgBase;
+
 persist();
 renderList();
 </script>
 </body>
 </html>
+
