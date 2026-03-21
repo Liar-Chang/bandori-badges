@@ -3435,28 +3435,30 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年7月13日",
-    "event": "2024 Summer ver.GIGO2024夏季ホログラム",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "2024 Summer ver.GIGO2024夏季",
+    "short_event": "GIGO2024夏季",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-creative.com/items/7618/",
+    "note": ""
   },
   {
     "id": "232",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ビッグ",
     "year": "2024年7月13日",
-    "event": "2024 Summer ver.GIGO2024夏季ビッグ",
-    "note": "",
-    "size": "75mm圓形",
+    "event": "2024 Summer ver.GIGO2024夏季",
+    "short_event": "GIGO2024夏季",
     "type": "角色本身",
+    "size": "75mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://prize.bushiroad-creative.com/product/8172/",
+    "note": ""
   },
   {
     "id": "233",
@@ -3470,7 +3472,8 @@
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "2024 Summer",
+    "url": "https://bushiroad-store.com/products/2000183715997"
   },
   {
     "id": "234",
@@ -3484,7 +3487,8 @@
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "2024 Summer",
+    "url": "https://bushiroad-store.com/products/2000183715997"
   },
   {
     "id": "235",
@@ -3498,7 +3502,8 @@
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "2024 Summer",
+    "url": "https://bushiroad-store.com/products/2000183715997"
   },
   {
     "id": "236",
@@ -3512,7 +3517,8 @@
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "2024 Summer",
+    "url": "https://bushiroad-store.com/products/2000183715997"
   },
   {
     "id": "237",
@@ -3526,7 +3532,8 @@
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "2024 Summer",
+    "url": "https://bushiroad-store.com/products/2000183715997"
   },
   {
     "id": "238",
