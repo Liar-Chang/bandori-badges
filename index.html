@@ -826,7 +826,7 @@ async function doExport(){
   const HEADER_H = 72;
   const TYPE_H = 36;   // 類型標題高度
   const SIZE_H = 28;   // 尺寸標題高度
-  const LABEL_H = 44;  // 活動簡稱高度（支援兩行）
+  const LABEL_H = 58;  // 活動簡稱高度（支援三行）
   const ITEM_H = CELL + LABEL_H + GAP;
   const W = COLS * (CELL + GAP) + PAD * 2;
 
@@ -1027,9 +1027,9 @@ async function doExport(){
         } else { line += ch; }
       }
       if(line) lines.push(line);
-      lines = lines.slice(0,2); // 最多2行
+      lines = lines.slice(0,3); // 最多3行
       lines.forEach((l,li)=>{
-        ctx.fillText(l, x+CELL/2, y+CELL+14+(li*13));
+        ctx.fillText(l, x+CELL/2, y+CELL+14+(li*14));
       });
     });
 
