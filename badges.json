@@ -23844,17 +23844,18 @@
   },
   {
     "id": "1696",
-    "ext": "jpg",
+    "ext": "png",
     "band": "Ave Mujica",
     "character": "三角初華",
     "series": "",
     "year": "2026年3月14日",
     "event": "JR東海BanG Dream! 10th Anniversary! × 推し旅Thanks Party",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "1697",
