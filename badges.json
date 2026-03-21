@@ -9907,16 +9907,17 @@
   },
   {
     "id": "761",
-    "ext": "jpg",
+    "ext": "png",
     "band": "Ave Mujica",
     "character": "若葉睦",
     "series": "",
     "year": "2025年3月1日",
     "event": "薄明光線 ver.スクエア箔ver.",
-    "note": "",
-    "size": "長方形",
     "type": "角色本身",
-    "country": "日本"
+    "size": "長方形",
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "762",
