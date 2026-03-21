@@ -200,8 +200,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .progress-bar-wrap{height:4px;background:#eee;border-radius:2px;margin-bottom:1rem;overflow:hidden;display:none;}
 .progress-bar{height:100%;background:linear-gradient(90deg,#ff6ea3,#9b59b6);width:0%;transition:width 0.2s;}
 .export-preview{margin-top:1rem;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-height:200px;overflow-y:auto;}
-.preview-canvas-wrap{border:1px solid var(--border);border-radius:8px;overflow:auto;max-height:450px;max-width:100%;margin-bottom:1rem;background:#f5f4f0;display:none;text-align:center;}
-.preview-canvas-wrap canvas{display:block;margin:0 auto;}
+
 </style>
 </head>
 <body>
@@ -792,16 +791,6 @@ function toggleField(k,el){
   el.classList.toggle('on', selectedFields.has(k));
 }
 
-async function generateCanvas(targetCanvas){
-  const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
-  const list = currentFiltered;
-  if(exportLayout === 'table'){
-    await doExportTable(list, title, null, null, null, targetCanvas);
-    return;
-  }
-  await generateGridCanvas(targetCanvas, list, title);
-}
-
 async function doExport(){
   const btn = document.getElementById('btn-dl');
   const progWrap = document.getElementById('prog-wrap');
@@ -818,7 +807,6 @@ async function doExport(){
   }
 
   // ── Grid mode with type + size grouping ──
-  let targetCanvas = null; // null = download mode
   const CELL = 110;
   const COLS = exportCols;
   const PAD = 28;
@@ -1059,27 +1047,6 @@ async function doExport(){
   },'image/png');
 }
 
-async function doPreview(){
-  const btn = document.getElementById('btn-preview');
-  btn.textContent = '產生中...'; btn.disabled = true;
-
-  // 建立 canvas（重用 doExport 的邏輯，但顯示在預覽區）
-  const previewWrap = document.getElementById('preview-wrap');
-  const previewCanvas = document.getElementById('preview-canvas');
-  previewWrap.style.display = 'none';
-
-  await generateCanvas(previewCanvas);
-
-  // 縮放顯示
-  const scale = Math.min(1, 520 / previewCanvas.width);
-  previewCanvas.style.width = (previewCanvas.width * scale) + 'px';
-  previewCanvas.style.height = 'auto';
-  previewWrap.style.display = 'block';
-  previewWrap.scrollTop = 0;
-
-  btn.textContent = '👁 預覽'; btn.disabled = false;
-}
-
 async function doExportTable(list, title, btn, progWrap, prog){
   const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
   const PAD=32, TH=36, ROW_H=52, THUMB=36, HEADER_H=64;
@@ -1202,13 +1169,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
       <div class="progress-bar" id="prog-bar"></div>
     </div>
 
-    <div class="preview-canvas-wrap" id="preview-wrap">
-      <canvas id="preview-canvas"></canvas>
-    </div>
-
     <div class="export-actions">
       <button class="btn-cancel" onclick="closeExport()">取消</button>
-      <button class="btn-download" style="background:#5a4fcf;" id="btn-preview" onclick="doPreview()">👁 預覽</button>
       <button class="btn-download" id="btn-dl" onclick="doExport()">⬇ 下載</button>
     </div>
   </div>
