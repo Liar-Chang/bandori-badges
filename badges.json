@@ -431,13 +431,14 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ホログラム",
     "year": "2023年8月4日",
-    "event": "Classic ver.ホログラム",
+    "event": "Classic ver.",
     "note": "",
     "size": "56-58mm圓形",
     "type": "角色本身",
-    "country": "日本"
+    "country": "日本",
+    "short_event": "Classic"
   },
   {
     "id": "032",
@@ -23544,7 +23545,9 @@
     "note": "",
     "type": "角色本身",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "https://bang-dream.com/events/mygo_9th/",
+    "short_event": "MyGO!!!!! 9th LIVE"
   },
   {
     "id": "1805",
@@ -23557,7 +23560,9 @@
     "note": "",
     "type": "角色本身",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "https://bang-dream.com/events/mygo_9th/",
+    "short_event": "MyGO!!!!! 9th LIVE"
   },
   {
     "id": "1806",
@@ -23570,7 +23575,9 @@
     "note": "",
     "type": "角色本身",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "https://bang-dream.com/events/mygo_9th/",
+    "short_event": "MyGO!!!!! 9th LIVE"
   },
   {
     "id": "1807",
@@ -23583,7 +23590,9 @@
     "note": "",
     "type": "角色本身",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "https://bang-dream.com/events/mygo_9th/",
+    "short_event": "MyGO!!!!! 9th LIVE"
   },
   {
     "id": "1808",
@@ -23596,6 +23605,8 @@
     "note": "",
     "type": "角色本身",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "https://bang-dream.com/events/mygo_9th/",
+    "short_event": "MyGO!!!!! 9th LIVE"
   }
 ]
