@@ -3525,14 +3525,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "Glitter effect",
     "year": "2024年7月19日",
-    "event": "ANIPLUS Collaboration Cafe新加坡甜品店聯動Glitter effect",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "ANIPLUS Collaboration Cafe新加坡甜品店聯動",
+    "short_event": "",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "240",
@@ -3542,11 +3543,12 @@
     "series": "",
     "year": "2024年7月20日",
     "event": "JR東海Vol.1",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "241",
