@@ -1620,14 +1620,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ビッグ",
     "year": "2023年12月1日",
-    "event": "2023 Winter ver.GIGO2023冬季ビッグ",
-    "note": "",
-    "size": "75mm圓形",
+    "event": "2023 Winter ver.GIGO2023冬季",
+    "short_event": "GIGO2023冬季",
     "type": "角色本身",
+    "size": "75mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://prize.bushiroad-creative.com/product/7856/",
+    "note": ""
   },
   {
     "id": "111",
