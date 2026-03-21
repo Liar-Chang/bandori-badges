@@ -12093,10 +12093,11 @@
     "series": "",
     "year": "2025",
     "event": "MyGO!!!!! アーティストVol.2",
-    "note": "",
-    "type": "角色本身",
+    "type": "角色聲優",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "930",
@@ -12158,10 +12159,11 @@
     "series": "",
     "year": "2025",
     "event": "MyGO!!!!! アーティストVol.2",
-    "note": "",
-    "type": "角色本身",
+    "type": "角色聲優",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "935",
@@ -12223,10 +12225,11 @@
     "series": "",
     "year": "2025",
     "event": "MyGO!!!!! アーティストVol.2",
-    "note": "",
-    "type": "角色本身",
+    "type": "角色聲優",
     "size": "56-58mm圓形",
-    "country": "日本"
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "940",
@@ -20649,13 +20652,14 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "BIG",
     "year": "2026年2月5日",
-    "event": "Ani-Art 第6弾 ver.BBIG",
-    "note": "",
-    "size": "15.2cm圓形",
+    "event": "Ani-Art 第6弾 ver.B",
     "type": "角色本身",
-    "country": "日本"
+    "size": "15.2cm圓形",
+    "country": "日本",
+    "url": "",
+    "note": ""
   },
   {
     "id": "1588",
