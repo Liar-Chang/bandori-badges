@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/User/Downloads/index_11.html -->
+<!-- saved from url=(0045)file:///C:/Users/User/Downloads/index_12.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_11.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_12.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -637,9 +637,13 @@ function applyFilters(){
     if(sort==='id-asc') return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     if(sort==='id-desc') return (b.id||'').localeCompare(a.id||'',undefined,{numeric:true});
     if(sort==='year-desc'||sort==='year-asc'){
+      // 無日期或無圖片排最後
+      const aLast = !a.year || !a.ext ? 1 : 0;
+      const bLast = !b.year || !b.ext ? 1 : 0;
+      if(aLast !== bLast) return aLast - bLast;
       const ay = (a.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
-      const by = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
-      const ad = new Date(ay||0), bd = new Date(by||0);
+      const by2 = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
+      const ad = new Date(ay||0), bd = new Date(by2||0);
       return sort==='year-desc' ? bd-ad : ad-bd;
     }
     if(sort==='char') return (a.character||'').localeCompare(b.character||'');
@@ -927,10 +931,10 @@ async function doExport(){
   const SIZE_ORDER = [
     '56-58mm圓形','15.2cm圓形','75mm圓形','60mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
-    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','迷你圓形',
+    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','60mm圓形','54mm圓形',
-    '50mm圓形','30mm圓形','25mm圓形','迷你圓形','15.2cm圓形']);
+    '50mm圓形','30mm圓形','25mm圓形','未確定','15.2cm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
 
@@ -950,7 +954,15 @@ async function doExport(){
       });
       for(const size of sizes){
         const items = byType.filter(b=>(b.size||'其他')===size);
-        if(items.length) groups.push({type, sizeLabel:size||'其他', items});
+        if(items.length){
+          // 無日期或無圖片排最後
+          items.sort((a,b)=>{
+            const aLast = !a.year || !a.ext ? 1 : 0;
+            const bLast = !b.year || !b.ext ? 1 : 0;
+            return aLast - bLast;
+          });
+          groups.push({type, sizeLabel:size||'其他', items});
+        }
       }
     }
     return groups;
