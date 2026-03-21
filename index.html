@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_9.html -->
+<!-- saved from url=(0045)file:///C:/Users/User/Downloads/index_10.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_9.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_10.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -924,24 +924,34 @@ async function doExport(){
   const W = COLS * (CELL + GAP) + PAD * 2;
 
   const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', ''];
-  const SIZE_MAIN = ['56-58mm圓形', '57mm圓形', '56mm圓形', '58mm圓形'];
-  const ROUND_SIZES = ['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形','75mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形'];
+  const SIZE_ORDER = [
+    '56-58mm圓形','15.2cm圓形','75mm圓形','60mm圓形',
+    '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
+    '橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','迷你圓形',
+  ];
+  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','60mm圓形','54mm圓形',
+    '50mm圓形','30mm圓形','25mm圓形','迷你圓形','15.2cm圓形']);
 
-  function isMain56(size){ return SIZE_MAIN.includes(size); }
-  function isRound(size){ return ROUND_SIZES.includes(size); }
+  function isRound(size){ return ROUND_SIZES.has(size||''); }
 
-  // 分組：type → sizeGroup(main/other) → badges
+  // 分組：type → size → badges
   function groupBadges(badges){
     const groups = [];
     const types = [...new Set(badges.map(b=>b.type||''))].sort((a,b)=>{
-      return TYPE_ORDER.indexOf(a||'') - TYPE_ORDER.indexOf(b||'');
+      const ai = TYPE_ORDER.indexOf(a||''); const bi = TYPE_ORDER.indexOf(b||'');
+      return (ai===-1?99:ai)-(bi===-1?99:bi);
     });
     for(const type of types){
       const byType = badges.filter(b=>(b.type||'')===type);
-      const main56 = byType.filter(b=>isMain56(b.size||''));
-      const others = byType.filter(b=>!isMain56(b.size||''));
-      if(main56.length) groups.push({type, sizeLabel:'56-58mm圓形', items:main56});
-      if(others.length) groups.push({type, sizeLabel:'其他尺寸', items:others});
+      // 取得此類型內出現的尺寸，依 SIZE_ORDER 排序
+      const sizes = [...new Set(byType.map(b=>b.size||'其他'))].sort((a,b)=>{
+        const ai = SIZE_ORDER.indexOf(a); const bi = SIZE_ORDER.indexOf(b);
+        return (ai===-1?99:ai)-(bi===-1?99:bi);
+      });
+      for(const size of sizes){
+        const items = byType.filter(b=>(b.size||'其他')===size);
+        if(items.length) groups.push({type, sizeLabel:size||'其他', items});
+      }
     }
     return groups;
   }
