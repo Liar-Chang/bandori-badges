@@ -19079,14 +19079,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "隱藏版",
     "year": "2025年11月1日",
-    "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration隱藏版",
-    "note": "",
-    "size": "心形",
+    "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
+    "short_event": "",
     "type": "角色本身",
+    "size": "心形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "1357",
@@ -19163,14 +19164,15 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "隱藏版",
     "year": "2025年11月1日",
-    "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration隱藏版",
-    "note": "",
-    "size": "心形",
+    "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
+    "short_event": "",
     "type": "角色本身",
+    "size": "心形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "1363",
