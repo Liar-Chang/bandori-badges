@@ -457,11 +457,12 @@
     "series": "ホログラム",
     "year": "2023年8月4日",
     "event": "Classic ver.",
-    "note": "",
-    "size": "57mm圓形",
+    "short_event": "Classic",
     "type": "角色本身",
+    "size": "57mm圓形",
     "country": "日本",
-    "short_event": "Classic"
+    "url": "https://bushiroad-creative.com/items/6406/",
+    "note": ""
   },
   {
     "id": "032",
