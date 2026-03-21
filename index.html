@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0044)file:///C:/Users/User/Downloads/index_3.html -->
-<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BanG Dream! 徽章圖鑑</title>
-<link href="./index_files/css2" rel="stylesheet">
-<link href="./index_files/css2(1)" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#faf9f5;--surface:#fff;--border:#ece9e0;--text:#1a1a1a;--muted:#777;
@@ -215,8 +215,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     color:#fff;font-family:inherit;font-size:0.8rem;
     cursor:pointer;transition:all 0.2s;z-index:10;">🌙 夜間模式</button>
     <div class="site-logo">
-      <span style="font-family:&#39;Boogaloo&#39;,sans-serif;">BanG Dream!</span>
-      <span style="font-family:&#39;Cubic 11&#39;,&#39;Noto Sans TC&#39;,sans-serif;"> 徽章圖鑑</span>
+      <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
+      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
     </div>
   </div>
 </header>
@@ -225,129 +225,37 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <h3>搜尋</h3>
-      <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()">
+      <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()"/>
     </div>
     <div class="sidebar-section">
       <h3>樂團</h3>
-      <div class="band-list" id="band-list"><div class="band-chip" id="bc-Poppin_Party" style="--chip-color:#ff69b4;--chip-bg:#ff69b418" onclick="toggleBand(&#39;Poppin\&#39;Party&#39;)">
-      <div class="band-dot" style="background:#ff69b4"></div>
-      <span style="color:#ff69b4">Poppin'Party</span>
-      <span class="band-chip-count">1</span>
-    </div><div class="band-chip" id="bc-Roselia" style="--chip-color:#1a2a6c;--chip-bg:#1a2a6c18" onclick="toggleBand(&#39;Roselia&#39;)">
-      <div class="band-dot" style="background:#1a2a6c"></div>
-      <span style="color:#1a2a6c">Roselia</span>
-      <span class="band-chip-count">2</span>
-    </div><div class="band-chip" id="bc-Afterglow" style="--chip-color:#cc2222;--chip-bg:#cc222218" onclick="toggleBand(&#39;Afterglow&#39;)">
-      <div class="band-dot" style="background:#cc2222"></div>
-      <span style="color:#cc2222">Afterglow</span>
-      <span class="band-chip-count">1</span>
-    </div><div class="band-chip" id="bc-MyGO_____" style="--chip-color:#4488cc;--chip-bg:#4488cc18" onclick="toggleBand(&#39;MyGO!!!!!&#39;)">
-      <div class="band-dot" style="background:#4488cc"></div>
-      <span style="color:#4488cc">MyGO!!!!!</span>
-      <span class="band-chip-count">1</span>
-    </div><div class="band-chip" id="bc-Ave_Mujica" style="--chip-color:#991111;--chip-bg:#99111118" onclick="toggleBand(&#39;Ave Mujica&#39;)">
-      <div class="band-dot" style="background:#991111"></div>
-      <span style="color:#991111">Ave Mujica</span>
-      <span class="band-chip-count">1</span>
-    </div></div>
+      <div class="band-list" id="band-list"></div>
     </div>
-    <div class="sidebar-section" id="char-section" style="">
+    <div class="sidebar-section" id="char-section" style="display:none;">
       <h3>角色</h3>
-      <div class="filter-group" id="char-list">
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="高松燈">
-      <span>高松燈</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="戸山香澄">
-      <span>戸山香澄</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="氷川紗夜">
-      <span>氷川紗夜</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="美竹蘭">
-      <span>美竹蘭</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="湊友希那">
-      <span>湊友希那</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleChar(this.value)" value="Oblivionis">
-      <span>Oblivionis</span>
-    </label></div>
+      <div class="filter-group" id="char-list"></div>
     </div>
     <div class="sidebar-section" id="year-section">
       <h3>發售年份</h3>
-      <div class="filter-group" id="year-list">
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleYear(this.value)" value="2024">
-      <span>2024</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleYear(this.value)" value="2023">
-      <span>2023</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleYear(this.value)" value="2022">
-      <span>2022</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleYear(this.value)" value="2021">
-      <span>2021</span>
-    </label></div>
+      <div class="filter-group" id="year-list"></div>
     </div>
     <div class="sidebar-section" id="series-section">
       <h3>版本</h3>
-      <div class="filter-group" id="series-list">
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleSeries(this.value)" value="Ani-Art">
-      <span>Ani-Art</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleSeries(this.value)" value="LIVE ver.">
-      <span>LIVE ver.</span>
-    </label></div>
+      <div class="filter-group" id="series-list"></div>
     </div>
     <div class="sidebar-section" id="event-section">
       <h3>活動</h3>
-      <div class="filter-group" id="event-list">
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleEvent(this.value)" value="Ave Mujica Anime">
-      <span>Ave Mujica Anime</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleEvent(this.value)" value="BanG Dream! 10th Live">
-      <span>BanG Dream! 10th Live</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleEvent(this.value)" value="BanG Dream! 9th Live">
-      <span>BanG Dream! 9th Live</span>
-    </label></div>
+      <div class="filter-group" id="event-list"></div>
     </div>
     <div class="sidebar-section" id="type-section">
       <h3>類型</h3>
-      <div class="filter-group" id="type-list">
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleType(this.value)" value="角色本身">
-      <span>角色本身</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleType(this.value)" value="角色相關">
-      <span>角色相關</span>
-    </label>
-    <label class="filter-item">
-      <input type="checkbox" onchange="toggleType(this.value)" value="角色聲優">
-      <span>角色聲優</span>
-    </label></div>
+      <div class="filter-group" id="type-list"></div>
     </div>
-    <div class="sidebar-section" id="size-section" style="display: none;">
+    <div class="sidebar-section" id="size-section">
       <h3>尺寸</h3>
       <div class="filter-group" id="size-list"></div>
     </div>
-    <div class="sidebar-section" id="country-section" style="display: none;">
+    <div class="sidebar-section" id="country-section">
       <h3>活動國家</h3>
       <div class="filter-group" id="country-list"></div>
     </div>
@@ -357,7 +265,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <div class="main-wrap">
   <main class="main">
     <div class="result-bar">
-      <div class="result-count" id="result-count">請選擇篩選條件</div>
+      <div class="result-count" id="result-count"></div>
       <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
         <select class="sort-select" id="sort" onchange="applyFilters()">
   <option value="year-desc">發售日期（新→舊）</option>
@@ -365,18 +273,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
           <option value="char">角色名稱</option>
         </select>
         <div class="view-toggle">
-          <button class="btn-view active" id="btn-grid" onclick="setView(&#39;grid&#39;)">⊞ 圖鑑</button>
-          <button class="btn-view" id="btn-table" onclick="setView(&#39;table&#39;)">☰ 表格</button>
+          <button class="btn-view active" id="btn-grid" onclick="setView('grid')">⊞ 圖鑑</button>
+          <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
         </div>
         <button class="btn-view" onclick="openExport()" style="border-color:#5a4fcf;color:#5a4fcf;font-weight:600;">⬇ 下載圖檔</button>
       </div>
     </div>
-    <div class="badge-grid" id="badge-grid">
-      <div class="empty-main">
-        <div style="font-size:3rem">🎵</div>
-        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">請從左側選擇篩選條件</div>
-        <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
-      </div></div>
+    <div class="badge-grid" id="badge-grid"></div>
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
@@ -392,7 +295,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_3.html" alt="">
+      <img id="d-img" class="detail-img" src="" alt=""/>
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -1263,11 +1166,11 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div class="sidebar-section" style="margin-bottom:1rem;">
       <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">版面配置</h3>
       <div class="export-options">
-        <div class="export-opt selected" id="layout-grid" onclick="selectLayout(&#39;grid&#39;)">
+        <div class="export-opt selected" id="layout-grid" onclick="selectLayout('grid')">
           <div class="export-opt-title">⊞ 圖片網格</div>
           <div class="export-opt-desc">每列顯示多枚徽章圖片</div>
         </div>
-        <div class="export-opt" id="layout-table" onclick="selectLayout(&#39;table&#39;)">
+        <div class="export-opt" id="layout-table" onclick="selectLayout('table')">
           <div class="export-opt-title">☰ 清單表格</div>
           <div class="export-opt-desc">含文字資訊的表格形式</div>
         </div>
@@ -1291,7 +1194,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
 
     <div class="sidebar-section" style="margin-bottom:1.25rem;">
       <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
-      <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑" style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;">
+      <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑"
+        style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
     </div>
 
     <div class="progress-bar-wrap" id="prog-wrap">
@@ -1309,10 +1213,9 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </div>
   </div>
 </div>
-<footer style="text-align:center;padding:0.75rem;font-family:&#39;Noto Sans TC&#39;,sans-serif;
+<footer style="text-align:center;padding:0.75rem;font-family:'Noto Sans TC',sans-serif;
   font-size:0.75rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
   作者：千早愛音的暴躁柯基
 </footer>
-
-
-</body></html>
+</body>
+</html>
