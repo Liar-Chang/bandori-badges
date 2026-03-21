@@ -1014,7 +1014,7 @@ async function doExport(){
       }
 
       // 活動簡稱 label（支援換行）
-      const shortName = getEventShortName(b.event||'');
+      const shortName = b.short_event || getEventShortName(b.event||'');
       ctx.fillStyle = '#333';
       ctx.font = '10px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
       const maxW = CELL - 4;
