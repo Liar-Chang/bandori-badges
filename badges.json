@@ -3510,14 +3510,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "Gold hot stamp",
     "year": "2024年7月19日",
-    "event": "ANIPLUS Collaboration Cafe新加坡甜品店聯動Gold hot stamp",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "ANIPLUS Collaboration Cafe新加坡甜品店聯動",
+    "short_event": "",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "239",
