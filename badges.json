@@ -3075,140 +3075,150 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "箔押し",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海箔押し",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "Voyage ver.",
+    "short_event": "Voyage",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000178826738",
+    "note": ""
   },
   {
     "id": "208",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "箔押し",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海箔押し",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826738"
   },
   {
     "id": "209",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "箔押し",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海箔押し",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826738"
   },
   {
     "id": "210",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "箔押し",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海箔押し",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826738"
   },
   {
     "id": "211",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "箔押し",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海箔押し",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826738"
   },
   {
     "id": "212",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海ホログラム",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826721"
   },
   {
     "id": "213",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海ホログラム",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826721"
   },
   {
     "id": "214",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海ホログラム",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826721"
   },
   {
     "id": "215",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海ホログラム",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826721"
   },
   {
     "id": "216",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "ホログラム",
     "year": "2024年6月23日",
-    "event": "Voyage ver.航海ホログラム",
+    "event": "Voyage ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Voyage",
+    "url": "https://bushiroad-store.com/products/2000178826721"
   },
   {
     "id": "217",
@@ -3218,11 +3228,12 @@
     "series": "",
     "year": "2024年6月28日",
     "event": "JOYSOUND聯動",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "JOYSOUND聯動",
     "type": "角色本身",
+    "size": "57mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://shop.joysound.com/campaign/bang-dream2024/",
+    "note": ""
   },
   {
     "id": "218",
@@ -3232,11 +3243,12 @@
     "series": "",
     "year": "2024年6月29日",
     "event": "碧を泳ぐver.",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "碧を泳ぐ",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-creative.com/items/7497/",
+    "note": ""
   },
   {
     "id": "219",
@@ -3250,7 +3262,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "碧を泳ぐ",
+    "url": "https://bushiroad-creative.com/items/7497/"
   },
   {
     "id": "220",
@@ -3264,7 +3277,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "碧を泳ぐ",
+    "url": "https://bushiroad-creative.com/items/7497/"
   },
   {
     "id": "221",
@@ -3278,7 +3292,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "碧を泳ぐ",
+    "url": "https://bushiroad-creative.com/items/7497/"
   },
   {
     "id": "222",
@@ -3292,7 +3307,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "碧を泳ぐ",
+    "url": "https://bushiroad-creative.com/items/7497/"
   },
   {
     "id": "223",
