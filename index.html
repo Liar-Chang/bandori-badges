@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/User/Downloads/index_12.html -->
+<!-- saved from url=(0045)file:///C:/Users/User/Downloads/index_15.html -->
 <html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,7 +392,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
     <div class="detail-img-wrap">
-      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_12.html" alt="">
+      <img id="d-img" class="detail-img" src="file:///C:/Users/User/Downloads/index_15.html" alt="">
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body">
@@ -637,9 +637,9 @@ function applyFilters(){
     if(sort==='id-asc') return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     if(sort==='id-desc') return (b.id||'').localeCompare(a.id||'',undefined,{numeric:true});
     if(sort==='year-desc'||sort==='year-asc'){
-      // 無日期或無圖片排最後
-      const aLast = !a.year || !a.ext ? 1 : 0;
-      const bLast = !b.year || !b.ext ? 1 : 0;
+      // 無日期排最後
+      const aLast = !a.year ? 1 : 0;
+      const bLast = !b.year ? 1 : 0;
       if(aLast !== bLast) return aLast - bLast;
       const ay = (a.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
       const by2 = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
@@ -955,10 +955,10 @@ async function doExport(){
       for(const size of sizes){
         const items = byType.filter(b=>(b.size||'其他')===size);
         if(items.length){
-          // 無日期或無圖片排最後
+          // 無日期排最後（圖片在載入後另外排）
           items.sort((a,b)=>{
-            const aLast = !a.year || !a.ext ? 1 : 0;
-            const bLast = !b.year || !b.ext ? 1 : 0;
+            const aLast = !a.year ? 1 : 0;
+            const bLast = !b.year ? 1 : 0;
             return aLast - bLast;
           });
           groups.push({type, sizeLabel:size||'其他', items});
@@ -994,6 +994,19 @@ async function doExport(){
     img.src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
   })));
   prog.style.width = '50%';
+
+  // 圖片載入後，無圖片的排到每個群組最後
+  for(const g of groups){
+    g.items.sort((a,b)=>{
+      const aNoImg = !imgMap[a.id] ? 1 : 0;
+      const bNoImg = !imgMap[b.id] ? 1 : 0;
+      if(aNoImg !== bNoImg) return aNoImg - bNoImg;
+      // 無日期也排最後
+      const aNoDate = !a.year ? 1 : 0;
+      const bNoDate = !b.year ? 1 : 0;
+      return aNoDate - bNoDate;
+    });
+  }
 
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
