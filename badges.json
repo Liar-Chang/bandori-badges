@@ -2407,7 +2407,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! Blu-ray 下巻",
+    "url": "https://bang-dream.com/discographies/3630/"
   },
   {
     "id": "163",
@@ -2421,7 +2422,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! Blu-ray 下巻",
+    "url": "https://bang-dream.com/discographies/3630/"
   },
   {
     "id": "164",
@@ -2435,7 +2437,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! Blu-ray 下巻",
+    "url": "https://bang-dream.com/discographies/3630/"
   },
   {
     "id": "165",
@@ -2449,7 +2452,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! Blu-ray 下巻",
+    "url": "https://bang-dream.com/discographies/3630/"
   },
   {
     "id": "166",
@@ -2463,7 +2467,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! Blu-ray 下巻",
+    "url": "https://bang-dream.com/discographies/3630/"
   },
   {
     "id": "167",
@@ -2862,11 +2867,12 @@
     "series": "",
     "year": "2024年5月6日",
     "event": "杉藥局",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "杉藥局",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "194",
@@ -10724,17 +10730,18 @@
   },
   {
     "id": "755",
-    "ext": "jpg",
+    "ext": "png",
     "band": "Ave Mujica",
     "character": "三角初華",
     "series": "",
     "year": "2025年3月1日",
     "event": "薄明光線 ver.スクエア通常ver.",
-    "note": "",
-    "size": "長方形",
+    "short_event": "",
     "type": "角色本身",
+    "size": "長方形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "756",
@@ -10808,17 +10815,18 @@
   },
   {
     "id": "761",
-    "ext": "jpg",
+    "ext": "png",
     "band": "Ave Mujica",
     "character": "若葉睦",
     "series": "",
     "year": "2025年3月1日",
     "event": "薄明光線 ver.スクエア箔ver.",
-    "note": "",
-    "size": "長方形",
+    "short_event": "",
     "type": "角色本身",
+    "size": "長方形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": ""
   },
   {
     "id": "762",
