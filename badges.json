@@ -1487,12 +1487,13 @@
     "character": "千早愛音",
     "series": "",
     "year": "2023年11月15日",
-    "event": "Sweets×Flower Tea Party! ver.茶會",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "Sweets×Flower Tea Party! ver.",
+    "short_event": "茶會",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000150327642",
+    "note": ""
   },
   {
     "id": "102",
