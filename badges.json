@@ -1368,12 +1368,12 @@
     "series": "通常ver.",
     "year": "2023年11月3日",
     "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
-    "note": "",
-    "size": "56mm圓形",
-    "type": "角色本身",
-    "country": "日本",
     "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
-    "url": "https://bushiroad-store.com/products/2000151451834"
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000151451834",
+    "note": ""
   },
   {
     "id": "094",
@@ -1383,7 +1383,7 @@
     "series": "ホロver.",
     "year": "2023年11月3日",
     "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
-    "short_event": "",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -1397,12 +1397,12 @@
     "character": "千早愛音",
     "series": "ホロver.",
     "year": "2023年11月3日",
-    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」ホロver.",
+    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "url": "https://bushiroad-store.com/products/2000151451834"
   },
   {
@@ -1412,12 +1412,12 @@
     "character": "要樂奈",
     "series": "ホロver.",
     "year": "2023年11月3日",
-    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」ホロver.",
+    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "url": "https://bushiroad-store.com/products/2000151451834"
   },
   {
@@ -1427,12 +1427,12 @@
     "character": "長崎爽世",
     "series": "ホロver.",
     "year": "2023年11月3日",
-    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」ホロver.",
+    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "url": "https://bushiroad-store.com/products/2000151451834"
   },
   {
@@ -1442,12 +1442,12 @@
     "character": "椎名立希",
     "series": "ホロver.",
     "year": "2023年11月3日",
-    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」ホロver.",
+    "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "url": "https://bushiroad-store.com/products/2000151451834"
   },
   {
@@ -1455,28 +1455,30 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "特典",
     "year": "2023年11月3日",
     "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」特典",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000151451834",
+    "note": ""
   },
   {
     "id": "100",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "特典",
     "year": "2023年11月3日",
     "event": "BanG Dream! 12th☆LIVEMyGO!!!!!「ちいさな一瞬」特典",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "BanG Dream! 12th LIVE「ちいさな一瞬」",
+    "url": "https://bushiroad-store.com/products/2000151451834"
   },
   {
     "id": "101",
