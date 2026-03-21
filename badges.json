@@ -1593,11 +1593,12 @@
     "series": "",
     "year": "2023年12月29日",
     "event": "コミックマーケット103C103Ave Mujica 缶バッジセット vol.1",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "C103",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000159236259",
+    "note": ""
   },
   {
     "id": "109",
@@ -1611,7 +1612,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "C103",
+    "url": "https://bushiroad-store.com/products/2000159236259"
   },
   {
     "id": "110",
