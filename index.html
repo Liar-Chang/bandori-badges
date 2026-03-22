@@ -830,7 +830,7 @@ async function doExport(){
   const HEADER_H = 72;
   const TYPE_H = 36;   // 類型標題高度
   const SIZE_H = 28;   // 尺寸標題高度
-  const LABEL_H = 58;  // 活動簡稱高度（支援三行）
+  const LABEL_H = 72;  // 活動簡稱+版本高度
   const ITEM_H = CELL + LABEL_H + GAP;
   const W = COLS * (CELL + GAP) + PAD * 2;
 
@@ -1035,6 +1035,14 @@ async function doExport(){
       lines.forEach((l,li)=>{
         ctx.fillText(l, x+CELL/2, y+CELL+14+(li*14));
       });
+
+      // 版本
+      if(b.series){
+        ctx.fillStyle = '#888';
+        ctx.font = '9px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
+        const seriesText = b.series.length > 12 ? b.series.slice(0,11)+'…' : b.series;
+        ctx.fillText(seriesText, x+CELL/2, y+CELL+14+(lines.length*14)+2);
+      }
     });
 
     const rows = Math.ceil(g.items.length / COLS);
