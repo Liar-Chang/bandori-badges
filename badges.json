@@ -5130,14 +5130,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "通常ver.",
     "year": "2024年9月24日",
-    "event": "和洋折衷ver.通常ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "和洋折衷ver.",
+    "short_event": "和洋折衷",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000189934644",
+    "note": ""
   },
   {
     "id": "346",
@@ -6071,7 +6072,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動通常ver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "412",
@@ -6085,7 +6087,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動通常ver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "413",
@@ -6099,7 +6102,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動通常ver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "414",
@@ -6113,7 +6117,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動通常ver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "415",
@@ -6127,7 +6132,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動通常ver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "416",
@@ -6141,7 +6147,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動ホログラムver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "417",
@@ -6155,7 +6162,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動ホログラムver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "418",
@@ -6169,7 +6177,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動ホログラムver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "419",
@@ -6183,7 +6192,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動ホログラムver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "420",
@@ -6197,7 +6207,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "出道1週年紀念活動ホログラムver.",
+    "url": "https://bushiroad-store.com/collections/mugendai-mewtype/products/2000198288196"
   },
   {
     "id": "421",
@@ -9893,7 +9904,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "十周年軌跡展",
+    "url": "https://www.movic.jp/shop/g/g03522-00603-00339/"
   },
   {
     "id": "685",
@@ -19878,7 +19890,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ani-Art 第6弾 ver.A",
+    "url": "https://amnibus.com/products/detail/98653"
   },
   {
     "id": "1392",
@@ -19892,7 +19905,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ani-Art 第6弾 ver.A",
+    "url": "https://amnibus.com/products/detail/98653"
   },
   {
     "id": "1393",
@@ -19906,7 +19920,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ani-Art 第6弾 ver.A",
+    "url": "https://amnibus.com/products/detail/98653"
   },
   {
     "id": "1394",
@@ -19920,7 +19935,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ani-Art 第6弾 ver.A",
+    "url": "https://amnibus.com/products/detail/98653"
   },
   {
     "id": "1395",
@@ -19934,7 +19950,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ani-Art 第6弾 ver.A",
+    "url": "https://amnibus.com/products/detail/98653"
   },
   {
     "id": "1396",
@@ -23714,10 +23731,11 @@
     "year": "2026年2月27日",
     "event": "BanG Dream! 10th Anniversary LIVE「In the name of BanG Dream!」会場限定ビッグホログラム缶バッジ賞",
     "note": "",
-    "size": "75mm圓形",
+    "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/events/bangdream-10th-anniversary-live"
   },
   {
     "id": "1665",
