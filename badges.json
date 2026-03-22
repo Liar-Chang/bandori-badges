@@ -12558,39 +12558,42 @@
     "series": "",
     "year": "2025年4月17日",
     "event": "生日紀念商品2025宮永ののか",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000224513223",
+    "note": ""
   },
   {
     "id": "854",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "宮永野乃花",
-    "series": "",
+    "series": "ホログラムver.",
     "year": "2025年4月17日",
-    "event": "生日紀念商品2025宮永ののかホログラムver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025宮永ののか",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000224513223",
+    "note": ""
   },
   {
     "id": "855",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "宮永野乃花",
-    "series": "",
+    "series": "紀念徽章",
     "year": "2025年4月17日",
-    "event": "生日紀念商品2025宮永ののか紀念徽章",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025宮永ののか",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000224513230",
+    "note": ""
   },
   {
     "id": "856",
@@ -12975,14 +12978,15 @@
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "ホログラム",
     "year": "2025年4月25日",
-    "event": "ホワイトミニドレス ver.白色迷你禮服Animate限定ホログラム",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "BanG Dream! ホワイトミニドレス ver.(Animate限定)",
+    "short_event": "ホワイトミニドレス",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://www.animate-onlineshop.jp/pn/%E3%80%90%E3%82%B0%E3%83%83%E3%82%BA-%E3%83%90%E3%83%83%E3%83%81%E3%80%91BanG+Dream%EF%BC%81+%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%83%9B%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8+%E3%83%9B%E3%83%AF%E3%82%A4%E3%83%88%E3%83%9F%E3%83%8B%E3%83%89%E3%83%AC%E3%82%B9+ver.%E3%80%90%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%A4%E3%83%88%E9%99%90%E5%AE%9A%E3%80%91/pd/3113676/",
+    "note": ""
   },
   {
     "id": "884",
@@ -14086,7 +14090,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "",
+    "url": "https://bang-dream.com/discographies/3931/"
   },
   {
     "id": "960",
@@ -14097,10 +14102,11 @@
     "year": "2025年4月30日",
     "event": "夢限大みゅーたいぷ二單－Hi-Vision特典",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "",
+    "url": "https://bang-dream.com/discographies/3931/"
   },
   {
     "id": "961",
@@ -14111,10 +14117,11 @@
     "year": "2025年4月30日",
     "event": "夢限大みゅーたいぷ二單－Hi-Vision特典",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "",
+    "url": "https://bang-dream.com/discographies/3931/"
   },
   {
     "id": "962",
@@ -14125,10 +14132,11 @@
     "year": "2025年4月30日",
     "event": "夢限大みゅーたいぷ二單－Hi-Vision特典",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "",
+    "url": "https://bang-dream.com/discographies/3931/"
   },
   {
     "id": "963",
@@ -14142,7 +14150,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "",
+    "url": "https://bang-dream.com/discographies/3931/"
   },
   {
     "id": "964",
