@@ -9539,26 +9539,28 @@
     "character": "千早愛音",
     "series": "",
     "year": "2025年1月28日",
-    "event": "少女樂團派對第三回總選舉正比款",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "少女樂團派對第三回總選舉",
+    "short_event": "第三回總選舉",
     "type": "角色本身",
+    "size": "58mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://m.weibo.cn/status/5126312979333378",
+    "note": ""
   },
   {
     "id": "641",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "Q版",
     "year": "2025年1月28日",
-    "event": "少女樂團派對第三回總選舉Q版款",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "少女樂團派對第三回總選舉",
+    "short_event": "第三回總選舉",
     "type": "角色本身",
+    "size": "58mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://m.weibo.cn/status/5126312979333378",
+    "note": ""
   },
   {
     "id": "642",
