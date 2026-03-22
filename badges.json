@@ -17865,7 +17865,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1199",
@@ -17879,7 +17879,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1200",
@@ -17893,7 +17893,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1201",
@@ -17907,7 +17907,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1202",
@@ -17921,7 +17921,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1203",
@@ -17935,7 +17935,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1204",
@@ -17949,7 +17949,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1205",
@@ -17963,7 +17963,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1206",
@@ -17977,7 +17977,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1207",
@@ -17991,7 +17991,7 @@
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1208",
@@ -21614,11 +21614,11 @@
     "series": "",
     "year": "2025年12月8日",
     "event": "MyGO!!!!!×OK COFFEE",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "OK COFFEE聯動"
   },
   {
     "id": "1464",
@@ -21628,11 +21628,11 @@
     "series": "",
     "year": "2025年12月8日",
     "event": "MyGO!!!!!×OK COFFEE",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "OK COFFEE聯動"
   },
   {
     "id": "1465",
@@ -21642,11 +21642,11 @@
     "series": "",
     "year": "2025年12月8日",
     "event": "MyGO!!!!!×OK COFFEE",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "OK COFFEE聯動"
   },
   {
     "id": "1466",
@@ -21656,11 +21656,11 @@
     "series": "",
     "year": "2025年12月8日",
     "event": "MyGO!!!!!×OK COFFEE",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "OK COFFEE聯動"
   },
   {
     "id": "1467",
@@ -21670,39 +21670,41 @@
     "series": "",
     "year": "2025年12月8日",
     "event": "MyGO!!!!!×OK COFFEE",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "OK COFFEE聯動"
   },
   {
     "id": "1468",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ホログラム",
     "year": "2025年12月8日",
-    "event": "WINTER トレーディングホログラム缶バッジ Check ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "WINTER Check ver.",
+    "short_event": "WINTER Check",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-creative.com/items/93955/",
+    "note": ""
   },
   {
     "id": "1469",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ホログラム",
     "year": "2025年12月8日",
-    "event": "WINTER トレーディングホログラム缶バッジ Stripe ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "WINTER Stripe ver.",
+    "short_event": "WINTER Stripe",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-creative.com/items/93954/",
+    "note": ""
   },
   {
     "id": "1470",
@@ -21854,98 +21856,70 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "MyGO!!!!! Voyage ver.",
     "year": "2026年1月1日",
     "event": "布偶胸章系列「ぴんぐるみ」MyGO!!!!! Voyage ver.",
     "note": "",
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1481",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "MyGO!!!!! Voyage ver.",
     "year": "2026年1月1日",
     "event": "布偶胸章系列「ぴんぐるみ」MyGO!!!!! Voyage ver.",
     "note": "",
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1482",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "MyGO!!!!! Voyage ver.",
     "year": "2026年1月1日",
     "event": "布偶胸章系列「ぴんぐるみ」MyGO!!!!! Voyage ver.",
     "note": "",
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1483",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "MyGO!!!!! Voyage ver.",
     "year": "2026年1月1日",
     "event": "布偶胸章系列「ぴんぐるみ」MyGO!!!!! Voyage ver.",
     "note": "",
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1484",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "MyGO!!!!! Voyage ver.",
     "year": "2026年1月1日",
     "event": "布偶胸章系列「ぴんぐるみ」MyGO!!!!! Voyage ver.",
     "note": "",
     "size": "約80mm布偶胸章",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
-  },
-  {
-    "id": "1485",
-    "ext": "jpg",
-    "band": "Ave Mujica",
-    "character": "祐天寺若麥",
-    "series": "",
-    "year": "2026",
-    "event": "布偶胸章系列「ぴんぐるみ」 MyGO!!!!! Voyage ver.",
-    "note": "",
-    "type": "角色本身",
-    "size": "56mm圓形",
-    "country": "日本",
-    "short_event": ""
-  },
-  {
-    "id": "1486",
-    "ext": "jpg",
-    "band": "Ave Mujica",
-    "character": "豐川祥子",
-    "series": "",
-    "year": "2026",
-    "event": "布偶胸章系列「ぴんぐるみ」 MyGO!!!!! Voyage ver.",
-    "note": "",
-    "type": "角色本身",
-    "size": "56mm圓形",
-    "country": "日本",
-    "short_event": ""
+    "short_event": "布偶胸章系列"
   },
   {
     "id": "1487",
@@ -23392,11 +23366,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98639",
+    "note": ""
   },
   {
     "id": "1589",
@@ -23406,11 +23381,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98640",
+    "note": ""
   },
   {
     "id": "1590",
@@ -23420,11 +23396,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98641",
+    "note": ""
   },
   {
     "id": "1591",
@@ -23434,11 +23411,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98642",
+    "note": ""
   },
   {
     "id": "1592",
@@ -23463,11 +23441,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98644",
+    "note": ""
   },
   {
     "id": "1594",
@@ -23477,11 +23456,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98645",
+    "note": ""
   },
   {
     "id": "1595",
@@ -23491,11 +23471,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98646",
+    "note": ""
   },
   {
     "id": "1596",
@@ -23505,11 +23486,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98647",
+    "note": ""
   },
   {
     "id": "1597",
@@ -23519,11 +23501,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98648",
+    "note": ""
   },
   {
     "id": "1598",
@@ -23533,11 +23516,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98649",
+    "note": ""
   },
   {
     "id": "1599",
@@ -23547,11 +23531,12 @@
     "series": "BIG",
     "year": "2026年2月5日",
     "event": "Ani-Art 第6弾",
-    "note": "",
-    "size": "15.2cm圓形",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
+    "size": "15.2cm圓形",
     "country": "日本",
-    "short_event": "Ani-Art 第6弾"
+    "url": "https://amnibus.com/products/detail/98650",
+    "note": ""
   },
   {
     "id": "1600",
