@@ -5145,14 +5145,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ホロver.",
     "year": "2024年9月24日",
-    "event": "和洋折衷ver.ホロver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "和洋折衷ver.",
+    "short_event": "和洋折衷",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/products/2000189934644",
+    "note": ""
   },
   {
     "id": "347",
