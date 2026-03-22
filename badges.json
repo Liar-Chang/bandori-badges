@@ -5163,11 +5163,11 @@
     "series": "",
     "year": "2024年9月1日",
     "event": "MyGO!!!!!劇場版",
-    "note": "",
+    "note": "原網址失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版"
   },
   {
     "id": "348",
@@ -5177,11 +5177,11 @@
     "series": "",
     "year": "2024年9月1日",
     "event": "MyGO!!!!!劇場版",
-    "note": "",
+    "note": "原網址失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版"
   },
   {
     "id": "349",
@@ -5191,11 +5191,11 @@
     "series": "",
     "year": "2024年9月1日",
     "event": "MyGO!!!!!劇場版",
-    "note": "",
+    "note": "原網址失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版"
   },
   {
     "id": "350",
@@ -5205,11 +5205,11 @@
     "series": "",
     "year": "2024年9月1日",
     "event": "MyGO!!!!!劇場版",
-    "note": "",
+    "note": "原網址失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版"
   },
   {
     "id": "351",
@@ -5219,11 +5219,11 @@
     "series": "",
     "year": "2024年9月1日",
     "event": "MyGO!!!!!劇場版",
-    "note": "",
+    "note": "原網址失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版"
   },
   {
     "id": "352",
@@ -5305,98 +5305,105 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "メタリック",
     "year": "2024年9月21日",
     "event": "PalVerseメタリック",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "PalVerse",
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327"
   },
   {
     "id": "358",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "メタリック",
     "year": "2024年9月21日",
     "event": "PalVerseメタリック",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "PalVerse",
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327"
   },
   {
     "id": "359",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "メタリック",
     "year": "2024年9月21日",
     "event": "PalVerseメタリック",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "PalVerse",
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327"
   },
   {
     "id": "360",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "メタリック",
     "year": "2024年9月21日",
     "event": "PalVerseメタリック",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "PalVerse",
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327"
   },
   {
     "id": "361",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "メタリック",
     "year": "2024年9月21日",
     "event": "PalVerseメタリック",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "PalVerse",
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327"
   },
   {
     "id": "362",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "メタリック隱藏版",
     "year": "2024年9月21日",
-    "event": "PalVerseメタリック隱藏版",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "PalVerseメタリック",
+    "short_event": "PalVerse",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/post-1700/products/2000190165327",
+    "note": ""
   },
   {
     "id": "363",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "アニメイト通常版",
     "year": "2024年9月25日",
     "event": "Poppin'Party×MyGO!!!!!合同ライブ「Divide/Unite」Blu-rayアニメイト－通常版",
-    "note": "",
-    "size": "磁鐵",
+    "short_event": "Divide/Unite BD",
     "type": "角色本身",
+    "size": "磁鐵",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bang-dream.com/discographies/3752/",
+    "note": ""
   },
   {
     "id": "364",
