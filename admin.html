@@ -267,7 +267,7 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field">
-          <label>活動國家</label>
+          <label>活動國家/地區</label>
           <select id="d-country">
             <option value="">不套用</option>
             <option>日本</option>
@@ -332,7 +332,7 @@ td.editable:hover .edit-hint{opacity:1;}
         <option value="character">角色名稱</option>
         <option value="type">類型</option>
         <option value="size">尺寸</option>
-        <option value="country">活動國家</option>
+        <option value="country">活動國家/地區</option>
         <option value="url">相關連結</option>
         <option value="note">備註</option>
       </select>
@@ -437,7 +437,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option>未確定</option>
         </select>
       </div>
-      <div class="field"><label>活動國家</label>
+      <div class="field"><label>活動國家/地區</label>
         <select id="f-country">
           <option value="">請選擇</option>
           <option>日本</option>
@@ -587,7 +587,7 @@ function renderBatchGrid(){
             <option${item.size==='未確定'?' selected':''}>未確定</option>
           </select>
         </div>
-        <div class="bf"><label>活動國家</label>
+        <div class="bf"><label>活動國家/地區</label>
           <select onchange="batchItems[${i}].country=this.value">
             <option value="">請選擇</option>
             <option${item.country==='日本'?' selected':''}>日本</option>
