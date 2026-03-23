@@ -271,7 +271,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="filter-group" id="size-list"></div>
     </div>
     <div class="sidebar-section" id="country-section">
-      <h3>活動國家</h3>
+      <h3>活動國家/地區</h3>
       <div class="filter-group" id="country-list"></div>
     </div>
     <button class="btn-reset" onclick="resetFilters()">重置所有篩選</button>
@@ -623,7 +623,7 @@ function renderGrid(list){
         ${b.size?`<div class="expand-field"><span class="expand-label">尺寸</span><span class="expand-value">${b.size}</span></div>`:''}
         ${b.series?`<div class="expand-field"><span class="expand-label">版本</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">類型</span><span class="expand-value">${b.type}</span></div>`:''}
-        ${b.country?`<div class="expand-field"><span class="expand-label">活動國家</span><span class="expand-value">${b.country}</span></div>`:''}
+        ${b.country?`<div class="expand-field"><span class="expand-label">活動國家/地區</span><span class="expand-value">${b.country}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">備註</span><span class="expand-value">${b.note}</span></div>`:''}
       </div>
     </div>`;
