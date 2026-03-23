@@ -19193,26 +19193,28 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年9月26日",
-    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.角色徽章",
-    "note": "",
-    "size": "75mm圓形",
+    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.",
+    "short_event": "手遊簡中服2025",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "75mm圓形",
+    "country": "中國",
+    "url": "https://mall.bilibili.com/detail.html?loadingShow=1&noTitleBar=1&saleType=0&itemsId=13183896&track_id=__BGMT__&contentId=&from=&msource=cps_Mdynamic_171818544_cont-2-1115301667070279704",
+    "note": ""
   },
   {
     "id": "1289",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "流沙壓克力",
     "year": "2025年9月26日",
-    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.流沙壓克力徽章",
-    "note": "",
-    "size": "60mm圓形",
+    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.",
+    "short_event": "手遊簡中服2025",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "60mm圓形",
+    "country": "中國",
+    "url": "https://mall.bilibili.com/detail.html?loadingShow=1&noTitleBar=1&saleType=0&itemsId=13183919&track_id=__BGMT__&contentId=&from=&msource=cps_Mdynamic_171818544_cont-2-1115301667070279704",
+    "note": ""
   },
   {
     "id": "1290",
@@ -19221,12 +19223,13 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1291",
@@ -19235,12 +19238,13 @@
     "character": "三角初華",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1292",
@@ -19249,12 +19253,13 @@
     "character": "仲町阿拉蕾",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1293",
