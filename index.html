@@ -9,11 +9,86 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-QQ2V3WVRLS');
+/* ── Excel 輸出 ── */
+function doExportXlsx(list, title, btn, progWrap, prog){
+  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const headers = fields.map(f=>f.label);
+  const rows = list.map(b=>{
+    return fields.map(f=>{
+      let val = b[f.key]||'';
+      if(f.key==='event') val = b.short_event||getEventShortName(val)||val;
+      return val;
+    });
+  });
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  // 設定欄寬
+  ws['!cols'] = fields.map(f=>({wch: f.key==='event'?40:f.key==='band'?15:20}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, title.slice(0,30));
+  XLSX.writeFile(wb, `bandori-badges-${Date.now()}.xlsx`);
+  prog.style.width='100%';
+  setTimeout(()=>{ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; prog.style.width='0%'; },600);
+}
+
+/* ── HTML 輸出 ── */
+function doExportHtml(list, title, btn, progWrap, prog){
+  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const c = bandColor;
+  const rows = list.map(b=>{
+    const imgSrc = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    const cells = fields.map(f=>{
+      let val = b[f.key]||'—';
+      if(f.key==='event') val = b.short_event||getEventShortName(val)||val;
+      if(f.key==='band'){
+        const bc=bandColor(b.band);
+        return `<td><span style="background:${bc}22;color:${bc};padding:2px 8px;border-radius:8px;font-size:0.85em;">${val}</span></td>`;
+      }
+      return `<td>${val}</td>`;
+    }).join('');
+    return `<tr><td><img src="${imgSrc}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'"/></td>${cells}</tr>`;
+  }).join('');
+
+  const htmlContent = `<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<title>${title}</title>
+<style>
+body{font-family:'Noto Sans TC',sans-serif;background:#faf9f5;padding:2rem;}
+h1{color:#13122b;margin-bottom:1rem;}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px #0001;}
+th{background:#f0eff9;color:#3d3d8f;padding:10px 14px;text-align:left;font-size:0.85rem;}
+td{padding:8px 14px;border-top:1px solid #ece9e0;vertical-align:middle;font-size:0.9rem;}
+tr:hover td{background:#fafaf8;}
+footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
+</style>
+</head>
+<body>
+<h1>${title}（共 ${list.length} 枚）</h1>
+<table>
+<thead><tr><th>圖片</th>${fields.map(f=>`<th>${f.label}</th>`).join('')}</tr></thead>
+<tbody>${rows}</tbody>
+</table>
+<footer>作者：千早愛音的暴躁柯基</footer>
+</body>
+</html>`;
+
+  const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`bandori-badges-${Date.now()}.html`;
+  a.click(); URL.revokeObjectURL(url);
+  prog.style.width='100%';
+  setTimeout(()=>{ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; prog.style.width='0%'; },600);
+}
+
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BanG Dream! 徽章圖鑑</title>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
 
 
@@ -93,7 +168,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 @media(max-width:800px){.layout{flex-direction:column;}}
 
 .sidebar{background:#fff;border-right:1px solid var(--border);padding:1.5rem 1.25rem;
-  position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;width:280px;min-width:180px;max-width:500px;}
+  position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;width:320px;min-width:240px;max-width:600px;}
 @media(max-width:800px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);width:100%!important;}}
 
 .resize-handle{width:5px;background:transparent;cursor:col-resize;flex-shrink:0;transition:background 0.15s;position:relative;z-index:10;}
@@ -247,31 +322,18 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   .site-logo{font-size:clamp(1.4rem,8vw,2.5rem);}
 }
 
-/* ── 語言切換 ── */
-.lang-switch{
-  position:fixed;bottom:1.25rem;left:1.25rem;
-  display:flex;gap:0.3rem;z-index:300;
-}
-.lang-btn{
-  font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;
-  border-radius:6px;cursor:pointer;border:1.5px solid #ddd;
-  background:#fff;color:#555;transition:all 0.15s;
-}
-.lang-btn.active{background:#5a4fcf;color:#fff;border-color:#5a4fcf;}
-[data-theme="dark"] .lang-btn{background:#1e1e1e;color:#aaa;border-color:#333;}
-[data-theme="dark"] .lang-btn.active{background:#5a4fcf;color:#fff;}
 </style>
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-  <button id="theme-toggle" onclick="toggleTheme()" title="切換夜間模式" style="
-    position:absolute;bottom:0.5rem;right:0.75rem;
-    background:transparent;border:none;
-    color:#fff;font-size:1.2rem;
-    cursor:pointer;transition:all 0.2s;z-index:10;
-    opacity:0.7;padding:0.2rem;">🌙</button>
+  <div style="position:absolute;bottom:0.5rem;right:0.75rem;display:flex;align-items:center;gap:0.35rem;z-index:10;">
+    <button id="lang-zh" onclick="setLang('zh-TW')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">繁中</button>
+    <button id="lang-cn" onclick="setLang('zh-CN')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">简中</button>
+    <button id="lang-ja" onclick="setLang('ja')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">日本語</button>
+    <button id="theme-toggle" onclick="toggleTheme()" title="切換夜間模式" style="background:transparent;border:none;color:#fff;font-size:1.1rem;cursor:pointer;opacity:0.8;padding:0.1rem 0.2rem;">🌙</button>
+  </div>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
       <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
@@ -373,7 +435,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 // 圖片來源（GitHub Pages）
 const IMG_BASE_URL = 'https://liar-chang.github.io/bandori-badges/images/';
 
-// 活動簡稱對照表（可之後透過上傳 CSV 更新）
+// 活動簡稱對照表
 const eventShortNames = {
   'MyGO!!!!!一單－迷星叫初回生産限定盤': '一單－迷星叫 初回生産限定盤',
   'MyGO!!!!!一單－迷星叫 初回生産限定盤': '一單－迷星叫 初回生産限定盤',
@@ -763,9 +825,13 @@ function applyLang(){
     const btn = document.getElementById('lang-'+l.replace('-','').replace('TW','zh').replace('CN','cn').replace('ja','ja'));
     if(btn) btn.classList.toggle('active', l===currentLang);
   });
-  document.getElementById('lang-zh').classList.toggle('active', currentLang==='zh-TW');
-  document.getElementById('lang-cn').classList.toggle('active', currentLang==='zh-CN');
-  document.getElementById('lang-ja').classList.toggle('active', currentLang==='ja');
+  [['lang-zh','zh-TW'],['lang-cn','zh-CN'],['lang-ja','ja']].forEach(([id,l])=>{
+    const btn=document.getElementById(id);
+    if(btn){
+      btn.style.background = l===currentLang ? '#ffffff55' : '#ffffff22';
+      btn.style.fontWeight = l===currentLang ? '700' : '400';
+    }
+  });
   // 更新標題
   document.title = L.title;
   // 搜尋框
@@ -837,7 +903,7 @@ function toggleTheme(){
 
   document.addEventListener('mousemove', e=>{
     if(!dragging) return;
-    const newW = Math.min(500, Math.max(180, startW + (e.clientX - startX)));
+    const newW = Math.min(600, Math.max(240, startW + (e.clientX - startX)));
     sidebar.style.width = newW + 'px';
   });
 
@@ -896,6 +962,39 @@ window.renderGrid = function(list){
 
 /* ─── Export ─── */
 let exportLayout = 'grid';
+let exportFmt = 'png';
+
+function selectFmt(fmt){
+  exportFmt = fmt;
+  ['png','jpg','pdf','html','xlsx'].forEach(f=>{
+    document.getElementById('fmt-'+f).classList.toggle('on', f===fmt);
+  });
+  // PDF/HTML/Excel 只支援表格模式
+  const tableOnly = ['pdf','html','xlsx'].includes(fmt);
+  if(tableOnly && exportLayout!=='table'){
+    selectLayout('table');
+  }
+  document.getElementById('layout-grid').style.opacity = tableOnly ? '0.4' : '1';
+  document.getElementById('layout-grid').style.pointerEvents = tableOnly ? 'none' : '';
+}
+
+
+let exportFmt = 'png';
+
+function selectFmt(fmt){
+  exportFmt = fmt;
+  ['png','jpg','pdf','xlsx','html'].forEach(f=>{
+    document.getElementById('fmt-'+f).classList.toggle('on', f===fmt);
+  });
+  // xlsx 和 html 不支援圖片網格模式提示
+  const gridOpt = document.getElementById('layout-grid');
+  if(fmt==='xlsx'){
+    gridOpt.style.opacity='0.4'; gridOpt.style.pointerEvents='none';
+    if(exportLayout==='grid') selectLayout('table');
+  } else {
+    gridOpt.style.opacity=''; gridOpt.style.pointerEvents='';
+  }
+}
 let exportCols = 4;
 const EXPORT_FIELDS = [
   {key:'band',label:'樂團'},
@@ -947,6 +1046,17 @@ async function doExport(){
 
   const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
   const list = currentFiltered;
+
+  // Excel 輸出
+  if(exportFmt === 'xlsx'){
+    doExportXlsx(list, title, btn, progWrap, prog);
+    return;
+  }
+  // HTML 輸出
+  if(exportFmt === 'html'){
+    doExportHtml(list, title, btn, progWrap, prog);
+    return;
+  }
 
   if(exportLayout === 'table'){
     await doExportTable(list, title, btn, progWrap, prog);
@@ -1189,17 +1299,27 @@ async function doExport(){
   ctx.restore();
 
   prog.style.width='95%';
-  canvas.toBlob(blob=>{
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href=url; a.download=`bandori-badges-${Date.now()}.png`;
-    a.click(); URL.revokeObjectURL(url);
+  // 依格式輸出
+  if(exportFmt === 'pdf'){
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({orientation: canvas.width>canvas.height?'landscape':'portrait', unit:'px', format:[canvas.width, canvas.height]});
+    pdf.addImage(imgData,'PNG',0,0,canvas.width,canvas.height);
+    pdf.save(`bandori-badges-${Date.now()}.pdf`);
     prog.style.width='100%';
-    setTimeout(()=>{
-      btn.disabled=false; btn.textContent='產生並下載';
-      progWrap.style.display='none'; prog.style.width='0%';
-    },600);
-  },'image/png');
+    setTimeout(()=>{ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; prog.style.width='0%'; },600);
+  } else {
+    const mimeType = exportFmt==='jpg' ? 'image/jpeg' : 'image/png';
+    const ext = exportFmt==='jpg' ? 'jpg' : 'png';
+    canvas.toBlob(blob=>{
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download=`bandori-badges-${Date.now()}.${ext}`;
+      a.click(); URL.revokeObjectURL(url);
+      prog.style.width='100%';
+      setTimeout(()=>{ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; prog.style.width='0%'; },600);
+    }, mimeType, 0.92);
+  }
 }
 
 async function doExportTable(list, title, btn, progWrap, prog){
@@ -1287,15 +1407,102 @@ async function doExportTable(list, title, btn, progWrap, prog){
   ctx.restore();
 
   prog.style.width='95%';
-  canvas.toBlob(blob=>{
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url; a.download=`bandori-badges-${Date.now()}.png`;
-    a.click(); URL.revokeObjectURL(url);
-    prog.style.width='100%';
-    setTimeout(()=>{btn.disabled=false;btn.textContent='產生並下載';progWrap.style.display='none';prog.style.width='0%';},600);
-  },'image/png');
+  if(exportFmt==='pdf'){
+    const {jsPDF}=window.jspdf;
+    const imgData=canvas.toDataURL('image/png');
+    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width,canvas.height]});
+    pdf.addImage(imgData,'PNG',0,0,canvas.width,canvas.height);
+    pdf.save(`bandori-badges-${Date.now()}.pdf`);
+  } else {
+    const mimeType=exportFmt==='jpg'?'image/jpeg':'image/png';
+    const ext=exportFmt==='jpg'?'jpg':'png';
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=`bandori-badges-${Date.now()}.${ext}`;
+      a.click(); URL.revokeObjectURL(url);
+    },mimeType,0.92);
+  }
+  prog.style.width='100%';
+  setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='⬇ 下載';}if(progWrap){progWrap.style.display='none';}if(prog){prog.style.width='0%';}},600);
 }
+
+/* ── HTML 匯出 ── */
+function doExportHTML(list, title, btn, progWrap, prog){
+  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const rows = list.map(b=>{
+    const eventVal = b.short_event || getEventShortName(b.event||'');
+    const c = bandColor(b.band);
+    const imgSrc = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    return `<tr>
+      <td><img src="${imgSrc}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;"/></td>
+      ${fields.map(f=>{
+        let val = b[f.key]||'—';
+        if(f.key==='event') val=eventVal;
+        if(f.key==='band') return `<td><span style="background:${c}22;color:${c};padding:2px 8px;border-radius:10px;font-size:0.8rem;">${val}</span></td>`;
+        return `<td>${val}</td>`;
+      }).join('')}
+    </tr>`;
+  }).join('');
+
+  const htmlContent = `<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/>
+<title>${title}</title>
+<style>
+  body{font-family:'Noto Sans TC',sans-serif;background:#faf9f5;color:#1a1a1a;padding:2rem;}
+  h1{color:#13122b;margin-bottom:1rem;}
+  table{border-collapse:collapse;width:100%;}
+  th{background:#f0eff9;color:#3d3d8f;padding:10px 12px;text-align:left;font-size:0.8rem;}
+  td{padding:8px 12px;border-top:1px solid #ece9e0;vertical-align:middle;}
+  tr:hover td{background:#f5f4ff;}
+  .footer{margin-top:1rem;font-size:0.75rem;color:#aaa;}
+</style></head><body>
+<h1>${title}</h1>
+<p style="color:#888;font-size:0.85rem;">共 ${list.length} 枚｜匯出時間：${new Date().toLocaleString('zh-TW')}</p>
+<table>
+  <thead><tr><th>圖片</th>${fields.map(f=>`<th>${f.label}</th>`).join('')}</tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+<div class="footer">作者：千早愛音的暴躁柯基</div>
+</body></html>`;
+
+  const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`bandori-badges-${Date.now()}.html`;
+  a.click(); URL.revokeObjectURL(url);
+  btn.disabled=false; btn.textContent='⬇ 下載';
+  progWrap.style.display='none';
+}
+
+/* ── Excel 匯出 ── */
+function doExportExcel(list, title, btn, progWrap, prog){
+  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const headers = ['圖片連結', ...fields.map(f=>f.label)];
+  const rows = list.map(b=>{
+    const eventVal = b.short_event || getEventShortName(b.event||'');
+    const imgUrl = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    return [imgUrl, ...fields.map(f=>{
+      if(f.key==='event') return eventVal;
+      return b[f.key]||'';
+    })];
+  });
+
+  // 產生 CSV（Excel 可直接開啟）
+  const csvRows = [headers, ...rows].map(row=>
+    row.map(val=>'"'+(String(val||'').replace(/"/g,'""'))+'"').join(',')
+  ).join('
+');
+  const bom = '﻿'; // UTF-8 BOM for Excel
+  const blob = new Blob([bom+csvRows], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`bandori-badges-${Date.now()}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  btn.disabled=false; btn.textContent='⬇ 下載';
+  progWrap.style.display='none';
+}
+
 </script>
 
 <!-- Export Modal -->
@@ -1335,10 +1542,32 @@ async function doExportTable(list, title, btn, progWrap, prog){
       <div class="export-field-row" id="field-chips"></div>
     </div>
 
+    <div class="sidebar-section" style="margin-bottom:1rem;">
+      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">輸出格式</h3>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <button class="export-field-chip on" id="fmt-png" onclick="selectFmt('png')">PNG</button>
+        <button class="export-field-chip" id="fmt-jpg" onclick="selectFmt('jpg')">JPG</button>
+        <button class="export-field-chip" id="fmt-pdf" onclick="selectFmt('pdf')">PDF</button>
+        <button class="export-field-chip" id="fmt-html" onclick="selectFmt('html')">HTML</button>
+        <button class="export-field-chip" id="fmt-xlsx" onclick="selectFmt('xlsx')">Excel</button>
+      </div>
+    </div>
+
     <div class="sidebar-section" style="margin-bottom:1.25rem;">
       <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
       <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑"
         style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
+    </div>
+
+    <div class="sidebar-section" style="margin-bottom:1rem;">
+      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">輸出格式</h3>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="export-field-chip on" id="fmt-png" onclick="selectFmt('png')">PNG</button>
+        <button class="export-field-chip" id="fmt-jpg" onclick="selectFmt('jpg')">JPG</button>
+        <button class="export-field-chip" id="fmt-pdf" onclick="selectFmt('pdf')">PDF</button>
+        <button class="export-field-chip" id="fmt-xlsx" onclick="selectFmt('xlsx')">Excel</button>
+        <button class="export-field-chip" id="fmt-html" onclick="selectFmt('html')">HTML</button>
+      </div>
     </div>
 
     <div class="progress-bar-wrap" id="prog-wrap">
@@ -1351,13 +1580,6 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </div>
   </div>
 </div>
-<!-- 語言切換 -->
-<div class="lang-switch">
-  <button class="lang-btn active" onclick="setLang('zh-TW')" id="lang-zh">繁中</button>
-  <button class="lang-btn" onclick="setLang('zh-CN')" id="lang-cn">简中</button>
-  <button class="lang-btn" onclick="setLang('ja')" id="lang-ja">日本語</button>
-</div>
-
 <!-- 更新日誌公告框 -->
 <div class="announce-box" id="announce-box">
   <div class="announce-header" onclick="toggleAnnounce()">
