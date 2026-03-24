@@ -1103,10 +1103,11 @@ async function doExport(){
 async function doExportTable(list, title, btn, progWrap, prog){
   const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
   const PAD=32, TH=40, ROW_H=52, THUMB=40, HEADER_H=64;
-  // 橫式：每列最多 3 筆，欄位加寬
-  const COLS_PER_ROW = 1; // 一列一筆，但欄位橫向展開
-  const FIELD_W = 180; // 每個欄位寬度
-  const W = Math.max(900, 60 + fields.length * FIELD_W + PAD*2);
+  // 各欄位寬度
+  const FIELD_WIDTHS = {band:120, character:100, event:320, year:130, series:150};
+  const DEFAULT_W = 150;
+  const totalFieldW = fields.reduce((s,f)=>s+(FIELD_WIDTHS[f.key]||DEFAULT_W), 0);
+  const W = 60 + totalFieldW + PAD*2;
   const H = HEADER_H + TH + list.length*ROW_H + PAD*2 + 30;
 
   const canvas = document.createElement('canvas');
@@ -1129,11 +1130,15 @@ async function doExportTable(list, title, btn, progWrap, prog){
   prog.style.width='60%';
 
   const TX=PAD, TY=HEADER_H+PAD;
-  const fieldW=FIELD_W;
+  // 計算各欄位 x 起始位置
+  const fieldXMap = {};
+  let fieldX = TX+60;
+  fields.forEach(f=>{ fieldXMap[f.key]=fieldX; fieldX+=(FIELD_WIDTHS[f.key]||DEFAULT_W); });
+
   ctx.fillStyle='#f0eff9'; ctx.fillRect(TX,TY,W-PAD*2,TH);
   ctx.fillStyle='#3d3d8f'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
   ctx.fillText('圖',TX+10,TY+23);
-  fields.forEach((f,fi)=>ctx.fillText(f.label,TX+60+fi*fieldW,TY+23));
+  fields.forEach(f=>ctx.fillText(f.label, fieldXMap[f.key], TY+23));
 
   list.forEach((b,i)=>{
     const ry=TY+TH+i*ROW_H;
@@ -1148,14 +1153,20 @@ async function doExportTable(list, title, btn, progWrap, prog){
     }
     const c=bandColor(b.band);
     ctx.font='12px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-    fields.forEach((f,fi)=>{
+    fields.forEach(f=>{
       let val=b[f.key]||'—';
-      if(f.key==='event') val=getEventShortName(val);
-      if(f.key==='band'){ctx.fillStyle=c+'22';ctx.beginPath();ctx.roundRect(TX+60+fi*fieldW-4,ry+ROW_H/2-10,Math.min(val.length*9+16,fieldW-8),20,10);ctx.fill();ctx.fillStyle=c;}
-      else ctx.fillStyle='#333';
-      if(f.key==='event' && val.length>20) val=val.slice(0,19)+'…';
-      else if(val.length>16) val=val.slice(0,15)+'…';
-      ctx.fillText(val,TX+60+fi*fieldW,ry+ROW_H/2+5);
+      if(f.key==='event') val=b.short_event||getEventShortName(val);
+      const fw = FIELD_WIDTHS[f.key]||DEFAULT_W;
+      const fx = fieldXMap[f.key];
+      if(f.key==='band'){
+        ctx.fillStyle=c+'22';
+        ctx.beginPath();ctx.roundRect(fx-4,ry+ROW_H/2-10,Math.min(val.length*8+16,fw-8),20,10);ctx.fill();
+        ctx.fillStyle=c;
+      } else { ctx.fillStyle='#333'; }
+      // 依欄位寬度截斷
+      const maxChars = Math.floor(fw/8);
+      if(val.length>maxChars) val=val.slice(0,maxChars-1)+'…';
+      ctx.fillText(val, fx, ry+ROW_H/2+5);
     });
   });
 
