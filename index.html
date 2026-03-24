@@ -229,6 +229,23 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .progress-bar{height:100%;background:linear-gradient(90deg,#ff6ea3,#9b59b6);width:0%;transition:width 0.2s;}
 .export-preview{margin-top:1rem;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-height:200px;overflow-y:auto;}
 
+
+/* ── 手機版 RWD ── */
+@media(max-width:800px){
+  .sidebar{max-height:60vh;overflow-y:auto;}
+  .badge-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:0.6rem;}
+  .main{padding:0.75rem;}
+  .result-bar{flex-direction:column;align-items:flex-start;}
+  .site-header{padding:1.25rem 1rem 1rem;}
+  .resize-handle{display:none;}
+}
+@media(max-width:480px){
+  .badge-grid{grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+  .badge-info{padding:0.4rem 0.5rem 0.5rem;}
+  .badge-char{font-size:0.78rem;}
+  .badge-series{font-size:0.65rem;}
+  .site-logo{font-size:clamp(1.4rem,8vw,2.5rem);}
+}
 </style>
 </head>
 <body>
