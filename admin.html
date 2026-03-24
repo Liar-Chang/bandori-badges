@@ -309,6 +309,12 @@ td.editable:hover .edit-hint{opacity:1;}
     <div class="filter-bar">
       <input type="text" id="search" placeholder="搜尋編號、角色、系列..." oninput="renderList()"/>
       <select id="filter-band" onchange="renderList()"><option value="">所有樂團</option></select>
+      <select id="filter-missing" onchange="renderList()" style="font-family:inherit;font-size:0.82rem;padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;">
+        <option value="">全部顯示</option>
+        <option value="no_url">缺少相關連結（且無備註）</option>
+        <option value="no_short">缺少活動簡稱</option>
+        <option value="no_url_and_short">同時缺少兩者</option>
+      </select>
     </div>
 
     <!-- Bulk toolbar -->
@@ -713,7 +719,10 @@ function saveBatch(){
 function updateBandFilter(){
   const sel=document.getElementById('filter-band');
   const cur=sel.value;
-  const bands=[...new Set(badges.map(b=>b.band).filter(Boolean))].sort();
+  const BAND_ORDER=["MyGO!!!!!","Ave Mujica","夢限大MewType","Poppin'Party","Roselia","Afterglow",
+    "Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","millsage","一家Dumb Rock!","其他"];
+  const existing=new Set(badges.map(b=>b.band).filter(Boolean));
+  const bands=[...BAND_ORDER.filter(b=>existing.has(b)),...[...existing].filter(b=>!BAND_ORDER.includes(b)).sort()];
   sel.innerHTML='<option value="">所有樂團</option>'+bands.map(b=>`<option${b===cur?' selected':''}>${b}</option>`).join('');
 }
 
@@ -726,9 +735,15 @@ function renderList(){
   const fb=document.getElementById('filter-band').value;
   const tbody=document.getElementById('badge-tbody');
   const empty=document.getElementById('list-empty');
+  const fm=document.getElementById('filter-missing').value;
   const filtered=badges.filter(b=>{
     const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
-    return mq&&(!fb||b.band===fb);
+    const bandOk=!fb||b.band===fb;
+    let missingOk=true;
+    if(fm==='no_url') missingOk=!b.url&&!b.note;
+    else if(fm==='no_short') missingOk=!b.short_event;
+    else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
+    return mq&&bandOk&&missingOk;
   });
   filteredCache = filtered;
   if(!filtered.length){tbody.innerHTML='';empty.style.display='block';updateBulkBar();return;}
