@@ -246,18 +246,32 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   .badge-series{font-size:0.65rem;}
   .site-logo{font-size:clamp(1.4rem,8vw,2.5rem);}
 }
+
+/* ── 語言切換 ── */
+.lang-switch{
+  position:fixed;bottom:1.25rem;left:1.25rem;
+  display:flex;gap:0.3rem;z-index:300;
+}
+.lang-btn{
+  font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;
+  border-radius:6px;cursor:pointer;border:1.5px solid #ddd;
+  background:#fff;color:#555;transition:all 0.15s;
+}
+.lang-btn.active{background:#5a4fcf;color:#fff;border-color:#5a4fcf;}
+[data-theme="dark"] .lang-btn{background:#1e1e1e;color:#aaa;border-color:#333;}
+[data-theme="dark"] .lang-btn.active{background:#5a4fcf;color:#fff;}
 </style>
 </head>
 <body>
 
 <header class="site-header">
   <div class="header-inner">
-  <button id="theme-toggle" onclick="toggleTheme()" style="
-    position:absolute;top:1rem;right:1rem;
-    background:#ffffff22;border:1.5px solid #ffffff44;
-    border-radius:20px;padding:0.35rem 0.85rem;
-    color:#fff;font-family:inherit;font-size:0.8rem;
-    cursor:pointer;transition:all 0.2s;z-index:10;">🌙 夜間模式</button>
+  <button id="theme-toggle" onclick="toggleTheme()" title="切換夜間模式" style="
+    position:absolute;bottom:0.5rem;right:0.75rem;
+    background:transparent;border:none;
+    color:#fff;font-size:1.2rem;
+    cursor:pointer;transition:all 0.2s;z-index:10;
+    opacity:0.7;padding:0.2rem;">🌙</button>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
       <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
@@ -699,13 +713,101 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
 init();
 
+
+/* ── 多語言 ── */
+const LANGS = {
+  'zh-TW': {
+    title:'BanG Dream! 徽章圖鑑',
+    search:'角色、版本、活動...',
+    band:'樂團', char:'角色', series:'版本', year:'發售年份',
+    event:'活動', type:'類型', size:'尺寸', country:'活動國家/地區',
+    sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
+    gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
+    noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
+    filterTip:'請從左側選擇篩選條件',
+  },
+  'zh-CN': {
+    title:'BanG Dream! 徽章图鉴',
+    search:'角色、版本、活动...',
+    band:'乐团', char:'角色', series:'版本', year:'发售年份',
+    event:'活动', type:'类型', size:'尺寸', country:'活动国家/地区',
+    sortNew:'发售日期（新→旧）', sortOld:'发售日期（旧→新）', sortChar:'角色名称',
+    gridView:'图鉴', tableView:'表格', download:'⬇ 下载图档',
+    noFilter:'请选择筛选条件', noResult:'找不到符合的徽章',
+    filterTip:'请从左侧选择筛选条件',
+  },
+  'ja': {
+    title:'BanG Dream! バッジ図鑑',
+    search:'キャラ、バージョン、イベント...',
+    band:'バンド', char:'キャラクター', series:'バージョン', year:'発売年',
+    event:'イベント', type:'タイプ', size:'サイズ', country:'活動国/地域',
+    sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
+    gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
+    noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
+    filterTip:'左側からフィルターを選択してください',
+  },
+};
+
+let currentLang = localStorage.getItem('lang') || 'zh-TW';
+
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  applyLang();
+}
+
+function applyLang(){
+  const L = LANGS[currentLang];
+  // 更新按鈕狀態
+  ['zh-TW','zh-CN','ja'].forEach(l=>{
+    const btn = document.getElementById('lang-'+l.replace('-','').replace('TW','zh').replace('CN','cn').replace('ja','ja'));
+    if(btn) btn.classList.toggle('active', l===currentLang);
+  });
+  document.getElementById('lang-zh').classList.toggle('active', currentLang==='zh-TW');
+  document.getElementById('lang-cn').classList.toggle('active', currentLang==='zh-CN');
+  document.getElementById('lang-ja').classList.toggle('active', currentLang==='ja');
+  // 更新標題
+  document.title = L.title;
+  // 搜尋框
+  const searchEl = document.getElementById('search');
+  if(searchEl) searchEl.placeholder = L.search;
+  // sidebar 標題
+  const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
+  const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
+  // 排序
+  const sortSel = document.getElementById('sort-sel');
+  if(sortSel){
+    sortSel.options[0].text = L.sortNew;
+    sortSel.options[1].text = L.sortOld;
+    sortSel.options[2].text = L.sortChar;
+  }
+  // 下載按鈕
+  const dlBtn = document.querySelector('[onclick="openExport()"]');
+  if(dlBtn) dlBtn.textContent = L.download;
+  // 視圖按鈕
+  const gridBtn = document.getElementById('btn-grid');
+  const tableBtn = document.getElementById('btn-table');
+  if(gridBtn) gridBtn.textContent = '⊞ ' + L.gridView;
+  if(tableBtn) tableBtn.textContent = '☰ ' + L.tableView;
+}
+
+applyLang();
+
+/* ── 公告框 ── */
+function toggleAnnounce(){
+  const body = document.getElementById('announce-body');
+  const arrow = document.getElementById('announce-arrow');
+  const hidden = body.classList.toggle('hidden');
+  arrow.textContent = hidden ? '▸' : '▾';
+}
+
 /* ── Dark mode ── */
 function toggleTheme(){
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const newTheme = isDark ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
-  document.getElementById('theme-toggle').textContent = newTheme === 'dark' ? '☀️ 白天模式' : '🌙 夜間模式';
+  document.getElementById('theme-toggle').textContent = newTheme === 'dark' ? '☀️' : '🌙';
 }
 
 // 載入儲存的主題
@@ -714,7 +816,7 @@ function toggleTheme(){
   if(saved){
     document.documentElement.setAttribute('data-theme', saved);
     const btn = document.getElementById('theme-toggle');
-    if(btn) btn.textContent = saved === 'dark' ? '☀️ 白天模式' : '🌙 夜間模式';
+    if(btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
   }
 })();
 
@@ -1249,6 +1351,27 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </div>
   </div>
 </div>
+<!-- 語言切換 -->
+<div class="lang-switch">
+  <button class="lang-btn active" onclick="setLang('zh-TW')" id="lang-zh">繁中</button>
+  <button class="lang-btn" onclick="setLang('zh-CN')" id="lang-cn">简中</button>
+  <button class="lang-btn" onclick="setLang('ja')" id="lang-ja">日本語</button>
+</div>
+
+<!-- 更新日誌公告框 -->
+<div class="announce-box" id="announce-box">
+  <div class="announce-header" onclick="toggleAnnounce()">
+    <span>📢 更新日誌</span>
+    <button class="announce-close" id="announce-arrow">▾</button>
+  </div>
+  <div class="announce-body" id="announce-body">
+    <div class="announce-item">
+      <div class="announce-date">2026/3/25</div>
+      <div>網站上線！MyGO!!!!!、Ave Mujica、夢限大MewType 徽章資料建置中</div>
+    </div>
+  </div>
+</div>
+
 <footer style="text-align:center;padding:0.75rem;font-family:'Noto Sans TC',sans-serif;
   font-size:0.75rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
   作者：千早愛音的暴躁柯基
