@@ -2,9 +2,21 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8"/>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQ2V3WVRLS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QQ2V3WVRLS');
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BanG Dream! 徽章圖鑑</title>
+
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+
+
 <link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -240,7 +252,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-section">
       <h3>搜尋</h3>
-      <input class="search-box" type="text" id="search" placeholder="角色、系列、活動..." oninput="applyFilters()"/>
+      <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
     </div>
     <div class="sidebar-section">
       <h3>樂團</h3>
@@ -747,7 +759,7 @@ function renderTable(list){
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>
-      <td>${b.series||'—'}</td>
+      <td>${b.series||b.short_event||'—'}</td>
       <td>${b.year||'—'}</td>
     </tr>`;
   }).join('');
@@ -769,7 +781,7 @@ let exportCols = 4;
 const EXPORT_FIELDS = [
   {key:'band',label:'樂團'},
   {key:'character',label:'角色'},
-  {key:'series',label:'系列'},
+  {key:'series',label:'版本'},
   {key:'year',label:'發售日期'},
   {key:'event',label:'活動'},
 ];
@@ -1092,7 +1104,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   const imgs = await Promise.all(list.map(b=>new Promise(res=>{
     const img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>res(img); img.onerror=()=>res(null);
-    img.src=`${b.id}.${b.ext||'jpg'}`;
+    img.src=IMG_BASE_URL+b.id+'.'+(b.ext||'jpg');
   })));
   prog.style.width='60%';
 
@@ -1132,6 +1144,12 @@ async function doExportTable(list, title, btn, progWrap, prog){
   ctx.textAlign = 'right';
   ctx.fillStyle = '#bbb';
   ctx.fillText('作者：千早愛音的暴躁柯基', W - PAD, H - 12);
+  ctx.restore();
+
+  // 作者署名
+  ctx.save();
+  ctx.font='11px "Noto Sans TC",sans-serif'; ctx.textAlign='right'; ctx.fillStyle='#bbb';
+  ctx.fillText('作者：千早愛音的暴躁柯基', W-PAD, H-12);
   ctx.restore();
 
   prog.style.width='95%';
