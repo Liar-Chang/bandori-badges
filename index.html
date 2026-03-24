@@ -327,7 +327,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
-          <th>圖片</th><th>樂團</th><th>角色</th><th>活動</th><th>版本</th><th>發售日期</th>
+          <th>圖片</th><th>樂團</th><th>角色</th><th>活動</th><th>發售日期</th><th>版本</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -670,7 +670,7 @@ function openDetail(idx){
   const b=all[idx];
   const c=bandColor(b.band);
   const dImg = document.getElementById('d-img');
-  dImg.src=`${b.id}.${b.ext||'jpg'}`;
+  dImg.src=IMG_BASE_URL+b.id+'.'+(b.ext||'jpg');
   dImg.onerror=function(){this.style.display='none';};
   dImg.style.display='block';
   dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
@@ -766,7 +766,7 @@ function renderTable(list){
   if(!list.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">無符合資料</td></tr>'; return; }
   tbody.innerHTML = list.map((b,i)=>{
     const c = bandColor(b.band);
-    const src = `${b.id}.${b.ext||'jpg'}`;
+    const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
     const idx = all.indexOf(b);
     const eventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:underline;">${b.event||'—'}</a>`
@@ -776,8 +776,8 @@ function renderTable(list){
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>
-      <td>${b.series||b.short_event||'—'}</td>
       <td>${b.year||'—'}</td>
+      <td>${b.series||'—'}</td>
     </tr>`;
   }).join('');
 }
@@ -798,9 +798,9 @@ let exportCols = 4;
 const EXPORT_FIELDS = [
   {key:'band',label:'樂團'},
   {key:'character',label:'角色'},
-  {key:'series',label:'版本'},
-  {key:'year',label:'發售日期'},
   {key:'event',label:'活動'},
+  {key:'year',label:'發售日期'},
+  {key:'series',label:'版本'},
 ];
 let selectedFields = new Set(['id','band','character','series','year','event']);
 
@@ -1102,9 +1102,12 @@ async function doExport(){
 
 async function doExportTable(list, title, btn, progWrap, prog){
   const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
-  const PAD=32, TH=36, ROW_H=52, THUMB=36, HEADER_H=64;
-  const W = Math.max(600, fields.length*120+60);
-  const H = HEADER_H + TH + list.length*ROW_H + PAD*2;
+  const PAD=32, TH=40, ROW_H=52, THUMB=40, HEADER_H=64;
+  // 橫式：每列最多 3 筆，欄位加寬
+  const COLS_PER_ROW = 1; // 一列一筆，但欄位橫向展開
+  const FIELD_W = 180; // 每個欄位寬度
+  const W = Math.max(900, 60 + fields.length * FIELD_W + PAD*2);
+  const H = HEADER_H + TH + list.length*ROW_H + PAD*2 + 30;
 
   const canvas = document.createElement('canvas');
   canvas.width=W; canvas.height=H;
@@ -1126,7 +1129,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   prog.style.width='60%';
 
   const TX=PAD, TY=HEADER_H+PAD;
-  const fieldW=(W-PAD*2-60)/fields.length;
+  const fieldW=FIELD_W;
   ctx.fillStyle='#f0eff9'; ctx.fillRect(TX,TY,W-PAD*2,TH);
   ctx.fillStyle='#3d3d8f'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
   ctx.fillText('圖',TX+10,TY+23);
@@ -1150,7 +1153,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
       if(f.key==='event') val=getEventShortName(val);
       if(f.key==='band'){ctx.fillStyle=c+'22';ctx.beginPath();ctx.roundRect(TX+60+fi*fieldW-4,ry+ROW_H/2-10,Math.min(val.length*9+16,fieldW-8),20,10);ctx.fill();ctx.fillStyle=c;}
       else ctx.fillStyle='#333';
-      if(val.length>14) val=val.slice(0,13)+'…';
+      if(f.key==='event' && val.length>20) val=val.slice(0,19)+'…';
+      else if(val.length>16) val=val.slice(0,15)+'…';
       ctx.fillText(val,TX+60+fi*fieldW,ry+ROW_H/2+5);
     });
   });
