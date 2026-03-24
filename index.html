@@ -867,6 +867,24 @@ function applyLang(){
 applyLang();
 
 /* ── 公告框 ── */
+// 載入更新日誌
+async function loadChangelog(){
+  try{
+    const res = await fetch('changelog.json?t=' + Date.now());
+    const data = await res.json();
+    const body = document.getElementById('announce-body');
+    if(!data.length){ body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>'; return; }
+    body.innerHTML = data.slice().reverse().map(item=>`
+      <div class="announce-item">
+        <div class="announce-date">${item.date}</div>
+        <div>${item.content}</div>
+      </div>`).join('');
+  } catch(e){
+    document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
+  }
+}
+loadChangelog();
+
 function toggleAnnounce(){
   const body = document.getElementById('announce-body');
   const arrow = document.getElementById('announce-arrow');
@@ -986,20 +1004,7 @@ function selectFmt(fmt){
 }
 
 
-function selectFmt(fmt){
-  exportFmt = fmt;
-  ['png','jpg','pdf','xlsx','html'].forEach(f=>{
-    document.getElementById('fmt-'+f).classList.toggle('on', f===fmt);
-  });
-  // xlsx 和 html 不支援圖片網格模式提示
-  const gridOpt = document.getElementById('layout-grid');
-  if(fmt==='xlsx'){
-    gridOpt.style.opacity='0.4'; gridOpt.style.pointerEvents='none';
-    if(exportLayout==='grid') selectLayout('table');
-  } else {
-    gridOpt.style.opacity=''; gridOpt.style.pointerEvents='';
-  }
-}
+
 let exportCols = 4;
 const EXPORT_FIELDS = [
   {key:'band',label:'樂團'},
@@ -1563,17 +1568,6 @@ function doExportExcel(list, title, btn, progWrap, prog){
         style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
     </div>
 
-    <div class="sidebar-section" style="margin-bottom:1rem;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">輸出格式</h3>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <button class="export-field-chip on" id="fmt-png" onclick="selectFmt('png')">PNG</button>
-        <button class="export-field-chip" id="fmt-jpg" onclick="selectFmt('jpg')">JPG</button>
-        <button class="export-field-chip" id="fmt-pdf" onclick="selectFmt('pdf')">PDF</button>
-        <button class="export-field-chip" id="fmt-xlsx" onclick="selectFmt('xlsx')">Excel</button>
-        <button class="export-field-chip" id="fmt-html" onclick="selectFmt('html')">HTML</button>
-      </div>
-    </div>
-
     <div class="progress-bar-wrap" id="prog-wrap">
       <div class="progress-bar" id="prog-bar"></div>
     </div>
@@ -1591,10 +1585,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
     <button class="announce-close" id="announce-arrow">▾</button>
   </div>
   <div class="announce-body" id="announce-body">
-    <div class="announce-item">
-      <div class="announce-date">2026/3/25</div>
-      <div>網站上線！MyGO!!!!!、Ave Mujica、夢限大MewType 徽章資料建置中</div>
-    </div>
+    <div style="text-align:center;color:var(--muted);padding:0.5rem;font-size:0.78rem;">載入中...</div>
   </div>
 </div>
 
