@@ -686,10 +686,14 @@ function applyFilters(){
       const ay = (a.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
       const by2 = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
       const ad = new Date(ay||0), bd = new Date(by2||0);
-      return sort==='year-desc' ? bd-ad : ad-bd;
+      const dateDiff = sort==='year-desc' ? bd-ad : ad-bd;
+      // 日期相同時，依 badges.json 陣列順序排列
+      if(dateDiff !== 0) return dateDiff;
+      return all.indexOf(a) - all.indexOf(b);
     }
     if(sort==='char') return (a.character||'').localeCompare(b.character||'');
-    return 0;
+    // 預設：依原始陣列順序
+    return all.indexOf(a) - all.indexOf(b);
   });
   // 若無任何篩選條件，顯示提示不顯示資料
   const hasFilter = selBands.size||selYears.size||selSeries.size||selEvents.size||
