@@ -591,7 +591,13 @@ function buildSidebar(){
   buildCheckList('series-list','series-section',[...new Set(all.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
   buildCheckList('event-list','event-section',[...new Set(all.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
   buildCheckList('type-list','type-section',['角色本身','角色相關','角色聲優'],selTypes,'toggleType');
-  buildCheckList('size-list','size-section',[...new Set(all.map(b=>b.size).filter(Boolean))].sort(),selSizes,'toggleSize');
+  const SIZE_FIRST = ['56mm圓形','57mm圓形','58mm圓形'];
+  const allSizes = [...new Set(all.map(b=>b.size).filter(Boolean))];
+  const sortedSizes = [
+    ...SIZE_FIRST.filter(s=>allSizes.includes(s)),
+    ...allSizes.filter(s=>!SIZE_FIRST.includes(s)).sort()
+  ];
+  buildCheckList('size-list','size-section',sortedSizes,selSizes,'toggleSize');
   buildCheckList('country-list','country-section',[...new Set(all.map(b=>b.country).filter(Boolean))].sort(),selCountries,'toggleCountry');
 }
 
@@ -1626,12 +1632,6 @@ function doExportExcel(list, title, btn, progWrap, prog){
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       Twitter/X
     </a>
-    <a href="mailto:liarfortwfgo@gmail.com"
-      style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
+    <a href="/cdn-cgi/l/email-protection#8ce0e5edfeeae3fef8fbeaebe3ccebe1ede5e0a2efe3e1" style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      liarfortwfgo@gmail.com
-    </a>
-  </div>
-</footer>
-</body>
-</html>
+      <span class="__cf_email__" d
