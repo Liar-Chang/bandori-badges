@@ -321,6 +321,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   .site-header{padding:1.25rem 1rem 1rem;}
   .resize-handle{display:none;}
 }
+@media(max-width:800px){
+  #header-controls{display:none !important;}
+  #mobile-controls{display:flex !important;}
+}
 @media(max-width:480px){
   .badge-grid{grid-template-columns:repeat(3,1fr);gap:0.5rem;}
   .badge-info{padding:0.4rem 0.5rem 0.5rem;}
@@ -335,7 +339,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <header class="site-header">
   <div class="header-inner">
-  <div style="position:absolute;bottom:0.5rem;right:0.75rem;display:flex;align-items:center;gap:0.35rem;z-index:10;">
+  <div id="header-controls" style="position:absolute;bottom:0.5rem;right:0.75rem;display:flex;align-items:center;gap:0.35rem;z-index:10;">
     <button id="lang-zh" onclick="setLang('zh-TW')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">繁中</button>
     <button id="lang-cn" onclick="setLang('zh-CN')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">简中</button>
     <button id="lang-ja" onclick="setLang('ja')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">日本語</button>
@@ -350,6 +354,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 <div class="layout" id="layout">
   <aside class="sidebar" id="sidebar">
+    <!-- 手機版語言/夜間模式控制列 -->
+    <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+      <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
+      <button onclick="setLang('zh-CN')" id="mlang-cn" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">简中</button>
+      <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
+      <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
+    </div>
+
     <div class="sidebar-section">
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
@@ -837,6 +849,13 @@ function applyLang(){
     if(btn){
       btn.style.background = l===currentLang ? '#ffffff55' : '#ffffff22';
       btn.style.fontWeight = l===currentLang ? '700' : '400';
+    }
+    // 手機版按鈕
+    const mbtn=document.getElementById('m'+id);
+    if(mbtn){
+      mbtn.style.background = l===currentLang ? '#5a4fcf' : 'var(--bg)';
+      mbtn.style.color = l===currentLang ? '#fff' : 'var(--text)';
+      mbtn.style.borderColor = l===currentLang ? '#5a4fcf' : 'var(--border)';
     }
   });
   // 更新標題
