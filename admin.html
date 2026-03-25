@@ -606,11 +606,15 @@ function persist(){
 }
 
 function switchTab(t){
-  ['batch','list'].forEach(n=>{
+  ['batch','text','list'].forEach(n=>{
     document.getElementById('tab-'+n).classList.toggle('active',n===t);
   });
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['batch','list'][i]===t));
+  document.querySelectorAll('.tab').forEach(el=>{
+    const onclick = el.getAttribute('onclick')||'';
+    el.classList.toggle('active', onclick.includes(`'${t}'`));
+  });
   if(t==='list') renderList();
+  if(t==='text') updateTextChars();
 }
 
 /* ── Drag & Drop ── */
