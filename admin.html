@@ -164,6 +164,7 @@ td.editable:hover .edit-hint{opacity:1;}
     <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
     <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
+    <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
     <button class="btn btn-danger btn-sm" onclick="clearAll()">清除全部</button>
   </div>
 </header>
@@ -173,6 +174,7 @@ td.editable:hover .edit-hint{opacity:1;}
     <div class="count-badge">共 <strong id="total-count">0</strong> 筆資料</div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('batch')">⊞ 批次上傳</button>
+      <button class="tab" onclick="switchTab('text')">📋 批次建資料</button>
       <button class="tab" onclick="switchTab('list')">☰ 管理清單</button>
     </div>
   </div>
@@ -251,6 +253,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>57mm圓形</option>
             <option>58mm圓形</option>
             <option>15.2cm圓形</option>
+            <option>15cm圓形</option>
             <option>75mm圓形</option>
             <option>60mm圓形</option>
             <option>54mm圓形</option>
@@ -300,6 +303,110 @@ td.editable:hover .edit-hint{opacity:1;}
   </div>
 
   <!-- LIST TAB -->
+  <!-- 批次建資料 TAB -->
+  <div class="tab-content" id="tab-text">
+    <div class="batch-defaults" style="display:block;">
+      <h3>📋 批次建資料 <span style="font-weight:400;color:#aaa;font-size:0.78rem;">先建文字資料，之後再補圖片</span></h3>
+
+      <div style="margin-bottom:1rem;padding:0.75rem 1rem;background:#fff8e1;border-radius:8px;border:1px solid #ffe082;font-size:0.82rem;color:#7a5c00;line-height:1.6;">
+        💡 建立資料後，將圖片依流水號命名（如 <strong>1842.jpg</strong>）上傳到 GitHub images/ 資料夾，前台即會自動顯示。
+      </div>
+
+      <!-- 共用預設值 -->
+      <div class="defaults-grid" style="margin-bottom:1rem;">
+        <div class="field">
+          <label>樂團</label>
+          <select id="t-band" onchange="updateTextChars()">
+            <option value="">請選擇</option>
+            <option>MyGO!!!!!</option><option>Ave Mujica</option>
+            <option>夢限大MewType</option>
+            <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+            <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
+            <option>RAISE A SUILEN</option><option>Morfonica</option>
+            <option>millsage</option><option>一家Dumb Rock!</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>發售日期</label>
+          <input type="text" id="t-year" placeholder="如 2025年4月1日"/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>活動名稱</label>
+          <input type="text" id="t-event" placeholder="如 Ave Mujica 5th LIVE"/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>活動簡稱</label>
+          <input type="text" id="t-short_event" placeholder="如 5th LIVE"/>
+        </div>
+        <div class="field">
+          <label>類型</label>
+          <select id="t-type">
+            <option value="">請選擇</option>
+            <option>角色本身</option><option>角色相關</option><option>角色聲優</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>尺寸</label>
+          <select id="t-size">
+            <option value="">請選擇</option>
+            <option>56mm圓形</option><option>57mm圓形</option><option>58mm圓形</option>
+            <option>15.2cm圓形</option><option>15cm圓形</option><option>75mm圓形</option>
+            <option>60mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
+            <option>30mm圓形</option><option>25mm圓形</option>
+            <option>橢圓形</option><option>長方形</option><option>心形</option>
+            <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>活動國家/地區</label>
+          <select id="t-country">
+            <option value="">請選擇</option>
+            <option>日本</option><option>台灣</option><option>韓國</option>
+            <option>中國</option><option>香港</option><option>新加坡</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>版本</label>
+          <input type="text" id="t-series" placeholder="如 通常ver."/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>相關連結</label>
+          <input type="text" id="t-url" placeholder="https://..."/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>備註</label>
+          <input type="text" id="t-note" placeholder="其他備註"/>
+        </div>
+      </div>
+
+      <!-- 角色清單（勾選要建立的角色） -->
+      <div style="margin-bottom:1rem;">
+        <label style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;display:block;">選擇角色 <span style="font-weight:400;color:#aaa;font-size:0.78rem;">（勾選要建立的角色，可多選）</span></label>
+        <div id="t-char-list" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem;"></div>
+      </div>
+
+      <!-- 圖片副檔名 -->
+      <div class="field" style="margin-bottom:1rem;">
+        <label>圖片副檔名</label>
+        <select id="t-ext">
+          <option value="jpg">JPG</option>
+          <option value="png">PNG</option>
+        </select>
+      </div>
+
+      <!-- 預覽將建立的資料 -->
+      <div id="t-preview" style="display:none;margin-bottom:1rem;">
+        <label style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;display:block;">預覽將建立的資料</label>
+        <div id="t-preview-list" style="font-size:0.82rem;border:1px solid #eee;border-radius:8px;overflow:hidden;"></div>
+      </div>
+
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="previewTextBatch()">👁 預覽</button>
+        <button class="btn btn-purple" onclick="saveTextBatch()">✓ 建立資料</button>
+      </div>
+    </div>
+  </div>
+
   <div class="tab-content" id="tab-list">
     <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
       <span style="font-size:0.78rem;color:#aaa;">點格子直接編輯｜勾選後可批次操作</span>
@@ -355,6 +462,7 @@ td.editable:hover .edit-hint{opacity:1;}
       <table>
         <thead><tr>
           <th class="cb-col"></th>
+          <th style="width:28px;"></th>
           <th>圖片</th><th>編號</th><th>樂團</th><th>角色</th>
           <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本</th><th>操作</th>
         </tr></thead>
@@ -428,6 +536,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="57mm圓形">57mm圓形</option>
           <option value="58mm圓形">58mm圓形</option>
           <option value="15.2cm圓形">15.2cm圓形</option>
+          <option value="15cm圓形">15cm圓形</option>
           <option>75mm圓形</option>
           <option>60mm圓形</option>
           <option>54mm圓形</option>
@@ -766,8 +875,14 @@ function renderList(){
           onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')cancelInlineEdit(this)"/>
       </td>`;
 
-    return `<tr class="${selClass}" data-id="${b.id}" onclick="handleRowClick(event,'${b.id}')" style="cursor:pointer;">
+    return `<tr class="${selClass}" data-id="${b.id}" data-ri="${ri}" draggable="true"
+      ondragstart="dragStart(event,${ri})"
+      ondragover="dragOver(event)"
+      ondragleave="dragLeave(event)"
+      ondrop="dragDrop(event,${ri})"
+      onclick="handleRowClick(event,'${b.id}')" style="cursor:pointer;">
       <td class="cb-col"><input type="checkbox" ${checked}/></td>
+      <td style="cursor:grab;color:#ccc;text-align:center;padding:0 4px;" title="拖曳排序">⠿</td>
       <td><img class="badge-thumb"
         src="${imgUrl(b)}"
         onerror="this.style.visibility='hidden'" alt=""/></td>
@@ -785,7 +900,7 @@ function renderList(){
       <td onclick="event.stopPropagation()">
         <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
           onchange="commitSizeEdit(this,${ri})">
-          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','75mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
+          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       ${editableCell('year',b.year)}
@@ -844,6 +959,44 @@ function commitBandEdit(sel,ri){
 }
 
 /* ── Checkbox / bulk ── */
+/* ── 拖曳排序 ── */
+let dragSrcRi = null;
+
+function dragStart(e, ri){
+  dragSrcRi = ri;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function dragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('#badge-tbody tr').forEach(r=>r.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+
+function dragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function dragDrop(e, targetRi){
+  e.preventDefault();
+  document.querySelectorAll('#badge-tbody tr').forEach(r=>{
+    r.classList.remove('drag-over');
+    r.classList.remove('dragging');
+  });
+  if(dragSrcRi === null || dragSrcRi === targetRi) return;
+
+  // 在 badges 陣列中移動
+  const item = badges.splice(dragSrcRi, 1)[0];
+  badges.splice(targetRi, 0, item);
+
+  dragSrcRi = null;
+  persist();
+  renderList();
+  showToast('✓ 順序已更新');
+}
+
 function handleRowClick(e, id){
   // 如果點到按鈕或雙擊編輯區域則不處理
   if(e.target.closest('button') || e.target.closest('.cell-input') || e.target.closest('select')) return;
@@ -926,7 +1079,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["MyGO!!!!!","Ave Mujica","夢限大MewType","Poppin'Party","Roselia","Afterglow","Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","75mm圓形","60mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","60mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
@@ -1145,6 +1298,214 @@ function editGitHub(){
   }
 }
 
+
+
+/* ── 批次建資料（先建文字，圖片後補）── */
+function updateTextChars(){
+  const band = document.getElementById('t-band').value;
+  const chars = CHAR_MAP[band] || [];
+  const container = document.getElementById('t-char-list');
+  if(!container) return;
+  if(!chars.length){
+    container.innerHTML = '<input type="text" id="t-char-custom" placeholder="輸入角色名稱" style="padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;width:200px;"/>';
+    return;
+  }
+  container.innerHTML = chars.map(c=>`
+    <label style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.6rem;border:1.5px solid #ddd;border-radius:20px;cursor:pointer;font-size:0.82rem;user-select:none;" id="tchar-label-${c.replace(/[^a-z0-9]/gi,'_')}">
+      <input type="checkbox" value="${c}" class="t-char-cb" style="cursor:pointer;"/> ${c}
+    </label>`).join('');
+}
+
+function getNextId(){
+  if(!badges.length) return '001';
+  const maxId = Math.max(...badges.map(b=>parseInt(b.id)||0));
+  return String(maxId+1).padStart(3, '0');
+}
+
+function getTextBatchItems(){
+  const band = document.getElementById('t-band').value;
+  const year = document.getElementById('t-year').value.trim();
+  const event = document.getElementById('t-event').value.trim();
+  const short_event = document.getElementById('t-short_event').value.trim();
+  const type = document.getElementById('t-type').value;
+  const size = document.getElementById('t-size').value;
+  const country = document.getElementById('t-country').value;
+  const series = document.getElementById('t-series').value.trim();
+  const url = document.getElementById('t-url').value.trim();
+  const note = document.getElementById('t-note').value.trim();
+  const ext = document.getElementById('t-ext').value;
+
+  // 收集勾選的角色
+  let chars = [];
+  const custom = document.getElementById('t-char-custom');
+  if(custom){
+    const v = custom.value.trim();
+    if(v) chars = [v];
+  } else {
+    document.querySelectorAll('.t-char-cb:checked').forEach(cb=>chars.push(cb.value));
+  }
+
+  if(!chars.length) return null;
+
+  let nextId = parseInt(getNextId());
+  return chars.map(char=>({
+    id: String(nextId++).padStart(String(nextId).length > 3 ? String(nextId).length : 3, '0'),
+    ext, band, character: char, series, year, event, short_event, type, size, country, url, note
+  }));
+}
+
+function previewTextBatch(){
+  const items = getTextBatchItems();
+  const preview = document.getElementById('t-preview');
+  const list = document.getElementById('t-preview-list');
+  if(!items){ showToast('請至少勾選一個角色'); return; }
+
+  list.innerHTML = items.map((b,i)=>`
+    <div style="display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.85rem;background:${i%2===1?'#fafafa':'#fff'};border-top:${i>0?'1px solid #eee':'none'}">
+      <span style="font-size:0.75rem;color:#aaa;min-width:50px;">#${b.id}</span>
+      <span style="font-size:0.82rem;font-weight:600;">${b.character}</span>
+      <span style="font-size:0.78rem;color:#777;">${b.event||'—'}</span>
+      <span style="font-size:0.78rem;color:#aaa;">${b.year||'—'}</span>
+      <span style="font-size:0.78rem;color:#aaa;">${b.size||'—'}</span>
+    </div>`).join('');
+  preview.style.display = 'block';
+}
+
+function saveTextBatch(){
+  const items = getTextBatchItems();
+  if(!items){ showToast('請至少勾選一個角色'); return; }
+
+  // 重新計算 id（避免預覽後又有新增）
+  let nextId = parseInt(getNextId());
+  const finalItems = items.map(b=>({
+    ...b,
+    id: String(nextId++).padStart(String(nextId).length > 3 ? String(nextId).length : 3, '0'),
+  }));
+
+  finalItems.forEach(b=>badges.push(b));
+  persist();
+  renderList();
+  showToast(`✓ 已建立 ${finalItems.length} 筆資料（編號 #${finalItems[0].id}～#${finalItems[finalItems.length-1].id}）`);
+
+  // 清空勾選
+  document.querySelectorAll('.t-char-cb').forEach(cb=>cb.checked=false);
+  document.getElementById('t-preview').style.display='none';
+  setTimeout(()=>switchTab('list'), 800);
+}
+
+/* ── 更新日誌 ── */
+let prevBadges = null; // 上次從 GitHub 載入的快照
+
+function openChangelogModal(){
+  // 今天日期
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+  document.getElementById('cl-date').value = dateStr;
+
+  // 自動比較差異產生內容
+  const content = generateChangelogContent();
+  document.getElementById('cl-content').value = content;
+
+  document.getElementById('changelog-overlay').style.display = 'flex';
+}
+
+function closeChangelogModal(){
+  document.getElementById('changelog-overlay').style.display = 'none';
+}
+
+function generateChangelogContent(){
+  if(!prevBadges || prevBadges.length === 0){
+    return `共 ${badges.length} 筆徽章資料`;
+  }
+
+  const prevIds = new Set(prevBadges.map(b=>b.id));
+  const newItems = badges.filter(b=>!prevIds.has(b.id));
+
+  if(newItems.length === 0){
+    // 看看有沒有欄位更新
+    let updCount = 0;
+    badges.forEach(b=>{
+      const prev = prevBadges.find(p=>p.id===b.id);
+      if(prev && JSON.stringify(b) !== JSON.stringify(prev)) updCount++;
+    });
+    if(updCount > 0) return `更新 ${updCount} 筆資料的欄位內容`;
+    return `資料維護更新`;
+  }
+
+  // 統計新增的活動
+  const eventMap = {};
+  newItems.forEach(b=>{
+    const key = b.short_event || b.event || '（未填活動）';
+    if(!eventMap[key]) eventMap[key] = [];
+    eventMap[key].push(b.character || b.band || '');
+  });
+
+  const lines = [`新增 ${newItems.length} 筆徽章資料`];
+  Object.entries(eventMap).forEach(([event, chars])=>{
+    const unique = [...new Set(chars)].join('、');
+    lines.push(`・${event}（${unique}）`);
+  });
+
+  return lines.join('\n');
+}
+
+async function syncChangelog(){
+  const token = localStorage.getItem('gh_token');
+  if(!token){ alert('請先設定 GitHub Token'); return; }
+
+  const date = document.getElementById('cl-date').value.trim();
+  const content = document.getElementById('cl-content').value.trim();
+  if(!date || !content){ alert('日期和內容不能為空'); return; }
+
+  const btn = document.querySelector('[onclick="syncChangelog()"]');
+  btn.textContent = '同步中...'; btn.disabled = true;
+
+  try{
+    // 1. 讀取現有 changelog.json
+    const getRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}`,{
+      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}
+    });
+
+    let existing = [];
+    let sha = null;
+    if(getRes.ok){
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+      existing = JSON.parse(atob(fileData.content.replace(/\n/g,'')));
+    }
+
+    // 2. 加入新一筆（最新放最前）
+    existing.unshift({date, content});
+
+    // 3. 推送
+    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
+    const body = {
+      message:`更新 changelog.json（${date}）`,
+      content: base64,
+      branch: GH_BRANCH,
+    };
+    if(sha) body.sha = sha;
+
+    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
+      method:'PUT',
+      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    });
+
+    if(putRes.ok){
+      showToast('✓ changelog.json 已同步到 GitHub！');
+      closeChangelogModal();
+    } else {
+      const err = await putRes.json();
+      showToast(`✗ 同步失敗：${err.message||putRes.status}`);
+    }
+  } catch(e){
+    showToast('✗ 發生錯誤：' + e.message);
+  }
+
+  btn.textContent = '☁ 同步到 GitHub'; btn.disabled = false;
+}
+
 async function syncToGitHub(){
   const token = localStorage.getItem('gh_token');
   if(!token){
@@ -1225,5 +1586,33 @@ renderList();
   }
 })();
 </script>
+
+<!-- 更新日誌 Modal -->
+<div id="changelog-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:min(560px,96vw);max-height:90vh;overflow-y:auto;padding:1.5rem;font-family:inherit;">
+    <h2 style="margin:0 0 1rem;font-size:1rem;font-weight:700;">📝 產生更新日誌</h2>
+
+    <div style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
+      <input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/>
+    </div>
+
+    <div style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容 <span style="font-weight:400;color:#aaa;">（自動產生，可自行編輯）</span></label>
+      <textarea id="cl-content" rows="6" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea>
+    </div>
+
+    <div id="cl-preview" style="margin-bottom:1rem;padding:0.75rem;background:#f8f8f8;border-radius:8px;font-size:0.82rem;color:#555;display:none;">
+      <strong>目前 changelog.json 內容預覽：</strong>
+      <pre id="cl-preview-text" style="margin:0.5rem 0 0;white-space:pre-wrap;font-size:0.78rem;"></pre>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;flex-wrap:wrap;">
+      <button onclick="closeChangelogModal()" style="padding:0.5rem 1.25rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;">取消</button>
+      <button onclick="syncChangelog()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;">☁ 同步到 GitHub</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
