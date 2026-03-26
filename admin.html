@@ -1475,7 +1475,10 @@ async function syncChangelog(){
     if(getRes.ok){
       const fileData = await getRes.json();
       sha = fileData.sha;
-      existing = JSON.parse(atob(fileData.content.replace(/\n/g,'')));
+      const b64 = fileData.content.replace(/\n/g,'');
+      const binary = atob(b64);
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      existing = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     }
 
     // 2. 加入新一筆（最新放最前）
