@@ -1969,10 +1969,10 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "付費特典",
     "year": "2024年3月8日",
-    "event": "バンドリ！ ガールズバンドパーティ！コミックアンソロジー おんぱれーど!!Gamers 付費特典",
-    "short_event": "邦邦漫畫付費特典",
+    "event": "バンドリ！ ガールズバンドパーティ！コミックアンソロジー おんぱれーど!!Gamers",
+    "short_event": "邦邦漫畫",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -3686,7 +3686,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "倉鼠"
+    "short_event": "倉鼠",
+    "url": "https://bushiroad-store.com/products/2000178759654"
   },
   {
     "id": "249",
@@ -3700,7 +3701,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "倉鼠"
+    "short_event": "倉鼠",
+    "url": "https://bushiroad-store.com/products/2000178759654"
   },
   {
     "id": "250",
@@ -3714,7 +3716,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "倉鼠"
+    "short_event": "倉鼠",
+    "url": "https://bushiroad-store.com/products/2000178759654"
   },
   {
     "id": "251",
@@ -3728,7 +3731,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "倉鼠"
+    "short_event": "倉鼠",
+    "url": "https://bushiroad-store.com/products/2000178759654"
   },
   {
     "id": "252",
@@ -8573,7 +8577,7 @@
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
-    "url": "",
+    "url": "https://bushiroad-store.com/products/2000200080244",
     "note": ""
   },
   {
@@ -8588,7 +8592,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "Avoid Note"
+    "short_event": "Avoid Note",
+    "url": "https://bushiroad-store.com/products/2000200080244"
   },
   {
     "id": "577",
@@ -8602,7 +8607,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "Avoid Note"
+    "short_event": "Avoid Note",
+    "url": "https://bushiroad-store.com/products/2000200080244"
   },
   {
     "id": "578",
@@ -8616,7 +8622,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "Avoid Note"
+    "short_event": "Avoid Note",
+    "url": "https://bushiroad-store.com/products/2000200080244"
   },
   {
     "id": "579",
@@ -8630,7 +8637,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "Avoid Note"
+    "short_event": "Avoid Note",
+    "url": "https://bushiroad-store.com/products/2000200080244"
   },
   {
     "id": "580",
@@ -9904,7 +9912,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第一卷",
+    "short_event": "Ave Mujica漫畫第一卷",
     "url": "https://prtimes.jp/main/html/rd/p/000008392.000014827.html"
   },
   {
@@ -9919,7 +9927,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第一卷",
+    "short_event": "Ave Mujica漫畫第一卷",
     "url": "https://prtimes.jp/main/html/rd/p/000008392.000014827.html"
   },
   {
@@ -9934,7 +9942,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第一卷",
+    "short_event": "Ave Mujica漫畫第一卷",
     "url": "https://prtimes.jp/main/html/rd/p/000008392.000014827.html"
   },
   {
@@ -9949,7 +9957,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第一卷",
+    "short_event": "Ave Mujica漫畫第一卷",
     "url": "https://prtimes.jp/main/html/rd/p/000008392.000014827.html"
   },
   {
@@ -9964,7 +9972,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第一卷",
+    "short_event": "Ave Mujica漫畫第一卷",
     "url": "https://prtimes.jp/main/html/rd/p/000008392.000014827.html"
   },
   {
@@ -11415,11 +11423,12 @@
     "series": "",
     "year": "2025年3月19日",
     "event": "春の推し活応援フェア！2025",
-    "note": "連結已失效",
-    "size": "56mm圓形",
+    "short_event": "GAMERS春季應援2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Gamers春季應援2025"
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "766",
@@ -11429,11 +11438,12 @@
     "series": "",
     "year": "2025年3月19日",
     "event": "春の推し活応援フェア！2025",
-    "note": "連結已失效",
-    "size": "56mm圓形",
+    "short_event": "GAMERS春季應援2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Gamers春季應援2025"
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "767",
@@ -11601,6 +11611,21 @@
     "url": "https://bushiroad-store.com/products/2000219274702"
   },
   {
+    "id": "1841",
+    "ext": "jpg",
+    "band": "Ave Mujica",
+    "character": "三角初華",
+    "series": "レンチキュラー",
+    "year": "2025年3月26日",
+    "event": "玉座 ver.(AnimeJapan 2025)",
+    "short_event": "玉座",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000219274702",
+    "note": "鏡面動態徽章其中一面"
+  },
+  {
     "id": "778",
     "ext": "jpg",
     "band": "Ave Mujica",
@@ -11614,6 +11639,21 @@
     "country": "日本",
     "short_event": "玉座",
     "url": "https://bushiroad-store.com/products/2000219274702"
+  },
+  {
+    "id": "1842",
+    "ext": "jpg",
+    "band": "Ave Mujica",
+    "character": "若葉睦",
+    "series": "レンチキュラー",
+    "year": "2025年3月26日",
+    "event": "玉座 ver.(AnimeJapan 2025)",
+    "short_event": "玉座",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000219274702",
+    "note": "鏡面動態徽章其中一面"
   },
   {
     "id": "779",
@@ -11631,6 +11671,21 @@
     "url": "https://bushiroad-store.com/products/2000219274702"
   },
   {
+    "id": "1843",
+    "ext": "jpg",
+    "band": "Ave Mujica",
+    "character": "八幡海鈴",
+    "series": "レンチキュラー",
+    "year": "2025年3月26日",
+    "event": "玉座 ver.(AnimeJapan 2025)",
+    "short_event": "玉座",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000219274702",
+    "note": "鏡面動態徽章其中一面"
+  },
+  {
     "id": "780",
     "ext": "jpg",
     "band": "Ave Mujica",
@@ -11644,6 +11699,21 @@
     "country": "日本",
     "short_event": "玉座",
     "url": "https://bushiroad-store.com/products/2000219274702"
+  },
+  {
+    "id": "1844",
+    "ext": "jpg",
+    "band": "Ave Mujica",
+    "character": "祐天寺若麥",
+    "series": "レンチキュラー",
+    "year": "2025年3月26日",
+    "event": "玉座 ver.(AnimeJapan 2025)",
+    "short_event": "玉座",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000219274702",
+    "note": "鏡面動態徽章其中一面"
   },
   {
     "id": "781",
@@ -11661,6 +11731,21 @@
     "url": "https://bushiroad-store.com/products/2000219274702"
   },
   {
+    "id": "1845",
+    "ext": "jpg",
+    "band": "Ave Mujica",
+    "character": "豐川祥子",
+    "series": "レンチキュラー",
+    "year": "2025年3月26日",
+    "event": "玉座 ver.(AnimeJapan 2025)",
+    "short_event": "玉座",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000219274702",
+    "note": "鏡面動態徽章其中一面"
+  },
+  {
     "id": "782",
     "ext": "jpg",
     "band": "Ave Mujica",
@@ -11668,11 +11753,12 @@
     "series": "",
     "year": "2025年3月27日",
     "event": "Birthday ver. vol.1Amoris",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/products/2000221217711",
+    "note": ""
   },
   {
     "id": "783",
@@ -11682,11 +11768,12 @@
     "series": "",
     "year": "2025年3月27日",
     "event": "Birthday ver. vol.1Amoris",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/products/2000221217711",
+    "note": ""
   },
   {
     "id": "784",
@@ -14751,7 +14838,7 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年5月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 1",
     "note": "",
@@ -14766,7 +14853,7 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年5月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 1",
     "note": "",
@@ -14781,7 +14868,7 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年5月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 1",
     "note": "",
@@ -14796,7 +14883,7 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年5月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 1",
     "note": "",
@@ -14811,7 +14898,7 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年5月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 1",
     "note": "",
@@ -15327,7 +15414,7 @@
     "short_event": "星夜迷夢",
     "type": "角色本身",
     "size": "58mm圓形",
-    "country": "日本",
+    "country": "中國",
     "url": "https://m.weibo.cn/status/5168721481698644",
     "note": ""
   },
@@ -16888,22 +16975,22 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "Gamers有償特典",
+    "series": "GAMERS有償特典",
     "year": "2025年7月30日",
     "event": "TVアニメ「BanG Dream! Ave Mujica」official guidebook Fatiscriptum",
-    "note": "",
-    "size": "56mm圓形",
-    "type": "角色本身",
-    "country": "日本",
     "short_event": "Ave Mujica官方導覽書",
-    "url": "https://www.gamers.co.jp/products/detail.php?product_id=10815799"
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://www.gamers.co.jp/products/detail.php?product_id=10815799",
+    "note": ""
   },
   {
     "id": "1133",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "Gamers有償特典",
+    "series": "GAMERS有償特典",
     "year": "2025年7月30日",
     "event": "TVアニメ「BanG Dream! Ave Mujica」official guidebook Fatiscriptum",
     "note": "",
@@ -16918,7 +17005,7 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "Gamers有償特典",
+    "series": "GAMERS有償特典",
     "year": "2025年7月30日",
     "event": "TVアニメ「BanG Dream! Ave Mujica」official guidebook Fatiscriptum",
     "note": "",
@@ -16933,7 +17020,7 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "Gamers有償特典",
+    "series": "GAMERS有償特典",
     "year": "2025年7月30日",
     "event": "TVアニメ「BanG Dream! Ave Mujica」official guidebook Fatiscriptum",
     "note": "",
@@ -16948,7 +17035,7 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "Gamers有償特典",
+    "series": "GAMERS有償特典",
     "year": "2025年7月30日",
     "event": "TVアニメ「BanG Dream! Ave Mujica」official guidebook Fatiscriptum",
     "note": "",
@@ -17788,28 +17875,30 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "PET雙閃",
     "year": "2025年8月11日",
-    "event": "中國Bang Dream!羅森聯動PET雙閃",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "中國Bang Dream!羅森聯動",
+    "short_event": "中國邦邦羅森聯動",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "58mm圓形",
+    "country": "中國",
+    "url": "https://m.weibo.cn/detail/5195934574576072",
+    "note": ""
   },
   {
     "id": "1194",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "迷你徽章",
     "year": "2025年8月11日",
-    "event": "中國Bang Dream!羅森聯動迷你徽章",
-    "note": "",
-    "size": "未確定",
+    "event": "中國Bang Dream!羅森聯動",
+    "short_event": "中國邦邦羅森聯動",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "未確定",
+    "country": "中國",
+    "url": "https://m.weibo.cn/detail/5195934574576072",
+    "note": ""
   },
   {
     "id": "1195",
@@ -17819,39 +17908,42 @@
     "series": "",
     "year": "2025年8月16日",
     "event": "生日紀念商品2025仲町あられ",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/arale-birthday2025/products/2000249724338",
+    "note": ""
   },
   {
     "id": "1196",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "ホログラムver.",
     "year": "2025年8月16日",
-    "event": "生日紀念商品2025仲町あられホログラムver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025仲町あられ",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/arale-birthday2025/products/2000249724338",
+    "note": ""
   },
   {
     "id": "1197",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "紀念徽章",
     "year": "2025年8月16日",
-    "event": "生日紀念商品2025仲町あられ紀念徽章",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025仲町あられ",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/arale-birthday2025/products/2000249724345",
+    "note": ""
   },
   {
     "id": "1198",
@@ -18011,11 +18103,11 @@
     "series": "",
     "year": "2025年8月28日",
     "event": "BanG Dream! Dream Vacation正比款",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1209",
@@ -18025,11 +18117,11 @@
     "series": "",
     "year": "2025年8月28日",
     "event": "BanG Dream! Dream Vacation正比款",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1210",
@@ -18039,221 +18131,221 @@
     "series": "",
     "year": "2025年8月28日",
     "event": "BanG Dream! Dream Vacation正比款",
-    "note": "",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1211",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－D盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－D盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1212",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－D盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－D盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1213",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－D盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－D盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1214",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－D盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－D盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1215",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－D盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－D盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1216",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1217",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1218",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1219",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1220",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1221",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1222",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "宮永野乃花",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1223",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "峰月律",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1224",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "藤都子",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1225",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "千石由乃",
-    "series": "",
+    "series": "ミニキャラ",
     "year": "2025年8月28日",
-    "event": "BanG Dream! Dream VacationQ版款－E盒",
-    "note": "",
+    "event": "BanG Dream! Dream Vacation－E盒",
+    "note": "連結已失效",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Dream Vacation"
   },
   {
     "id": "1226",
@@ -18262,12 +18354,13 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”歌いましょう鳴らしましょうver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!歌曲插圖歌いましょう鳴らしましょう",
+    "short_event": "歌曲插圖一同歌唱一同奏響",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-mygo/products/2000250125766",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\""
   },
   {
     "id": "1227",
@@ -18276,12 +18369,13 @@
     "character": "千早愛音",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”歌いましょう鳴らしましょうver.",
-    "note": "",
+    "event": "MyGO!!!!!歌曲插圖歌いましょう鳴らしましょう",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖一同歌唱一同奏響",
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-mygo/products/2000250125766"
   },
   {
     "id": "1228",
@@ -18290,12 +18384,13 @@
     "character": "要樂奈",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”歌いましょう鳴らしましょうver.",
-    "note": "",
+    "event": "MyGO!!!!!歌曲插圖歌いましょう鳴らしましょう",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖一同歌唱一同奏響",
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-mygo/products/2000250125766"
   },
   {
     "id": "1229",
@@ -18304,12 +18399,13 @@
     "character": "長崎爽世",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”歌いましょう鳴らしましょうver.",
-    "note": "",
+    "event": "MyGO!!!!!歌曲插圖歌いましょう鳴らしましょう",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖一同歌唱一同奏響",
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-mygo/products/2000250125766"
   },
   {
     "id": "1230",
@@ -18318,12 +18414,13 @@
     "character": "椎名立希",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”歌いましょう鳴らしましょうver.",
-    "note": "",
+    "event": "MyGO!!!!!歌曲插圖歌いましょう鳴らしましょう",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖一同歌唱一同奏響",
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-mygo/products/2000250125766"
   },
   {
     "id": "1231",
@@ -18332,12 +18429,13 @@
     "character": "三角初華",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”Symbol II: Air ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "Ave Mujica 歌曲插圖Symbol II: Air",
+    "short_event": "歌曲插圖Symbol II: Air",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/animelo-summer-live-2025-thanxx-ave-mujica/products/2000250125773",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\""
   },
   {
     "id": "1232",
@@ -18346,12 +18444,12 @@
     "character": "若葉睦",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”Symbol II: Air ver.",
-    "note": "",
+    "event": "Ave Mujica 歌曲插圖Symbol II: Air",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖Symbol II: Air"
   },
   {
     "id": "1233",
@@ -18360,12 +18458,12 @@
     "character": "八幡海鈴",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”Symbol II: Air ver.",
-    "note": "",
+    "event": "Ave Mujica 歌曲插圖Symbol II: Air",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖Symbol II: Air"
   },
   {
     "id": "1234",
@@ -18374,12 +18472,12 @@
     "character": "祐天寺若麥",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”Symbol II: Air ver.",
-    "note": "",
+    "event": "Ave Mujica 歌曲插圖Symbol II: Air",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖Symbol II: Air"
   },
   {
     "id": "1235",
@@ -18388,26 +18486,27 @@
     "character": "豐川祥子",
     "series": "",
     "year": "2025年8月29日",
-    "event": "Animelo Summer Live 2025 “ThanXX!”Symbol II: Air ver.",
-    "note": "",
+    "event": "Ave Mujica 歌曲插圖Symbol II: Air",
+    "note": "Animelo Summer Live 2025 \"ThanXX!\"",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "歌曲插圖Symbol II: Air"
   },
   {
     "id": "1236",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ホログラム",
     "year": "2025年8月1日",
     "event": "SUMMERSKY ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "SUMMER SKY",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-creative.com/items/89695/",
+    "note": ""
   },
   {
     "id": "1237",
@@ -18564,14 +18663,15 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ホロ",
     "year": "2025年9月5日",
-    "event": "2025年キービジュアルver.日版手遊八周年",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "BanG Dream! ガールズバンドパーティ！ 2025年キービジュアルver.",
+    "short_event": "日版手遊八周年",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/20250905_topics3/products/2000254531327",
+    "note": ""
   },
   {
     "id": "1248",
@@ -18803,70 +18903,75 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年9月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻ゲーマーズ限定版B",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻",
+    "short_event": "Ave Mujica漫畫第二卷",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://www.gamers.co.jp/pd/10819482/",
+    "note": ""
   },
   {
     "id": "1264",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年9月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10819482/"
   },
   {
     "id": "1265",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年9月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10819482/"
   },
   {
     "id": "1266",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年9月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10819482/"
   },
   {
     "id": "1267",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年9月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第2巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10819482/"
   },
   {
     "id": "1268",
@@ -18876,11 +18981,12 @@
     "series": "",
     "year": "2025年9月11日",
     "event": "Birthday ver. vol.1燈",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/tomori-birthday2025/products/2000251668910",
+    "note": ""
   },
   {
     "id": "1269",
@@ -18890,11 +18996,12 @@
     "series": "",
     "year": "2025年9月11日",
     "event": "Birthday ver. vol.1燈",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/tomori-birthday2025/products/2000251668910",
+    "note": ""
   },
   {
     "id": "1270",
@@ -19103,7 +19210,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1284",
@@ -19117,7 +19225,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1285",
@@ -19131,7 +19240,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1286",
@@ -19145,7 +19255,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1287",
@@ -19159,7 +19270,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1288",
@@ -19168,26 +19280,28 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年9月26日",
-    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.角色徽章",
-    "note": "",
-    "size": "75mm圓形",
+    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.",
+    "short_event": "手遊簡中服2025",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "75mm圓形",
+    "country": "中國",
+    "url": "https://mall.bilibili.com/detail.html?loadingShow=1&noTitleBar=1&saleType=0&itemsId=13183896&track_id=__BGMT__&contentId=&from=&msource=cps_Mdynamic_171818544_cont-2-1115301667070279704",
+    "note": ""
   },
   {
     "id": "1289",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "流沙壓克力",
     "year": "2025年9月26日",
-    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.流沙壓克力徽章",
-    "note": "",
-    "size": "60mm圓形",
+    "event": "《BanG Dream! 少女樂團派對!》簡中限定商品2025ver.",
+    "short_event": "手遊簡中服2025",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": ""
+    "size": "60mm圓形",
+    "country": "中國",
+    "url": "https://mall.bilibili.com/detail.html?loadingShow=1&noTitleBar=1&saleType=0&itemsId=13183919&track_id=__BGMT__&contentId=&from=&msource=cps_Mdynamic_171818544_cont-2-1115301667070279704",
+    "note": ""
   },
   {
     "id": "1290",
@@ -19196,12 +19310,13 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1291",
@@ -19210,12 +19325,13 @@
     "character": "三角初華",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1292",
@@ -19224,306 +19340,328 @@
     "character": "仲町阿拉蕾",
     "series": "",
     "year": "2025年9月27日",
-    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes 開催",
+    "event": "BanG Dream!（バンドリ！）ぬいぐるみFes",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GSCぬいぐるみFES",
+    "url": "https://www.goodsmile.com/ja/event/6463"
   },
   {
     "id": "1293",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
-    "note": "",
-    "size": "25mm圓形",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
+    "short_event": "雞狗聯合演唱會 上海追加公演",
     "type": "角色本身",
+    "size": "25mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://m.weibo.cn/status/5216296243037417",
+    "note": ""
   },
   {
     "id": "1294",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1295",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1296",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1297",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1298",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1299",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1300",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1301",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1302",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "Q版迷你",
     "year": "2025年9月29日",
-    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫Q版迷你徽章",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "25mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1303",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1304",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1305",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1306",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1307",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1308",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1309",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1310",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1311",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1312",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "方形",
     "year": "2025年9月29日",
     "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」上海追加公演分岐路口，前途漫漫",
     "note": "",
     "size": "長方形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗聯合演唱會 上海追加公演",
+    "url": "https://m.weibo.cn/status/5216296243037417"
   },
   {
     "id": "1313",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "初回生産限定盤",
     "year": "2025年10月15日",
-    "event": "バンドリ！ ガールズバンドパーティ！ カバーコレクションVol.10初回生産限定盤",
-    "note": "",
-    "size": "54mm圓形",
+    "event": "バンドリ！ ガールズバンドパーティ！ カバーコレクションVol.10",
+    "short_event": "邦邦翻唱合輯Vol.10",
     "type": "角色本身",
+    "size": "54mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bang-dream.com/discographies/4111/",
+    "note": ""
   },
   {
     "id": "1314",
@@ -19533,11 +19671,12 @@
     "series": "",
     "year": "2025年10月22日",
     "event": "Birthday ver. vol.1Mortis",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/products/2000251668873?_pos=1&_sid=6bcce1385&_ss=r",
+    "note": ""
   },
   {
     "id": "1315",
@@ -19547,11 +19686,12 @@
     "series": "",
     "year": "2025年10月22日",
     "event": "Birthday ver. vol.1Mortis",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/products/2000251668873?_pos=1&_sid=6bcce1385&_ss=r",
+    "note": ""
   },
   {
     "id": "1316",
@@ -19565,7 +19705,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1317",
@@ -19579,7 +19720,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1318",
@@ -19593,7 +19735,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1319",
@@ -19607,7 +19750,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1320",
@@ -19621,512 +19765,547 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1321",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年10月31日",
-    "event": "knight ver.通常ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "knight ver.",
+    "short_event": "knight",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341",
+    "note": ""
   },
   {
     "id": "1322",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年10月31日",
-    "event": "knight ver.通常ver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1323",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年10月31日",
-    "event": "knight ver.通常ver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1324",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年10月31日",
-    "event": "knight ver.通常ver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1325",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年10月31日",
-    "event": "knight ver.通常ver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1326",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年10月31日",
-    "event": "knight ver.ホロver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "knight ver.",
+    "short_event": "knight",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341",
+    "note": ""
   },
   {
     "id": "1327",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年10月31日",
-    "event": "knight ver.ホロver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1328",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年10月31日",
-    "event": "knight ver.ホロver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1329",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年10月31日",
-    "event": "knight ver.ホロver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1330",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年10月31日",
-    "event": "knight ver.ホロver.",
+    "event": "knight ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081341"
   },
   {
     "id": "1331",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ビッグホロ",
     "year": "2025年10月31日",
-    "event": "knight ver.ビッグホロ",
-    "note": "",
-    "size": "75mm圓形",
+    "event": "knight ver.",
+    "short_event": "knight",
     "type": "角色本身",
+    "size": "75mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081334",
+    "note": ""
   },
   {
     "id": "1332",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ビッグホロ",
     "year": "2025年10月31日",
-    "event": "knight ver.ビッグホロ",
+    "event": "knight ver.",
     "note": "",
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081334"
   },
   {
     "id": "1333",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ビッグホロ",
     "year": "2025年10月31日",
-    "event": "knight ver.ビッグホロ",
+    "event": "knight ver.",
     "note": "",
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081334"
   },
   {
     "id": "1334",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ビッグホロ",
     "year": "2025年10月31日",
-    "event": "knight ver.ビッグホロ",
+    "event": "knight ver.",
     "note": "",
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081334"
   },
   {
     "id": "1335",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ビッグホロ",
     "year": "2025年10月31日",
-    "event": "knight ver.ビッグホロ",
+    "event": "knight ver.",
     "note": "",
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-knight-ver/products/2000261081334"
   },
   {
     "id": "1336",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "楕円",
     "year": "2025年10月31日",
-    "event": "knight ver.楕円",
-    "note": "",
-    "size": "橢圓形",
+    "event": "knight ver.",
+    "short_event": "knight",
     "type": "角色本身",
+    "size": "橢圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-bang-dream-knight-ver/products/2000261081266",
+    "note": ""
   },
   {
     "id": "1337",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "楕円",
     "year": "2025年10月31日",
-    "event": "knight ver.楕円",
+    "event": "knight ver.",
     "note": "",
     "size": "橢圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-bang-dream-knight-ver/products/2000261081266"
   },
   {
     "id": "1338",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "楕円",
     "year": "2025年10月31日",
-    "event": "knight ver.楕円",
+    "event": "knight ver.",
     "note": "",
     "size": "橢圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-bang-dream-knight-ver/products/2000261081266"
   },
   {
     "id": "1339",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "楕円",
     "year": "2025年10月31日",
-    "event": "knight ver.楕円",
+    "event": "knight ver.",
     "note": "",
     "size": "橢圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-bang-dream-knight-ver/products/2000261081266"
   },
   {
     "id": "1340",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "楕円",
     "year": "2025年10月31日",
-    "event": "knight ver.楕円",
+    "event": "knight ver.",
     "note": "",
     "size": "橢圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "knight",
+    "url": "https://bushiroad-store.com/collections/%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-bang-dream-knight-ver/products/2000261081266"
   },
   {
     "id": "1341",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125"
   },
   {
     "id": "1342",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125"
   },
   {
     "id": "1343",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125"
   },
   {
     "id": "1344",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125"
   },
   {
     "id": "1345",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125"
   },
   {
     "id": "1346",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132"
   },
   {
     "id": "1347",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132"
   },
   {
     "id": "1348",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132"
   },
   {
     "id": "1349",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132"
   },
   {
     "id": "1350",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ハート型",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "雞狗快閃 PalVerse Illustration",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132"
   },
   {
     "id": "1351",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
     "size": "名牌",
     "country": "日本",
-    "url": "",
-    "note": "",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260634982",
+    "note": ""
   },
   {
     "id": "1352",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "名牌",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260634999",
+    "note": ""
   },
   {
     "id": "1353",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "名牌",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635002",
+    "note": ""
   },
   {
     "id": "1354",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "名牌",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635019",
+    "note": ""
   },
   {
     "id": "1355",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "名牌",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635026",
+    "note": ""
   },
   {
     "id": "1356",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "隱藏版",
+    "series": "ハート型隱藏版",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "short_event": "",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
     "size": "心形",
     "country": "日本",
-    "url": "",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635125",
     "note": ""
   },
   {
@@ -20134,84 +20313,89 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "心形",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635033",
+    "note": ""
   },
   {
     "id": "1358",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "心形",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635040",
+    "note": ""
   },
   {
     "id": "1359",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "心形",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635057",
+    "note": ""
   },
   {
     "id": "1360",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "心形",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635064",
+    "note": ""
   },
   {
     "id": "1361",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "アクリル",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "note": "",
-    "size": "心形",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
+    "size": "名牌",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635071",
+    "note": ""
   },
   {
     "id": "1362",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "隱藏版",
+    "series": "ハート型隱藏版",
     "year": "2025年11月1日",
     "event": "BanG Dream! MyGO!!!!! × Ave Mujica POP UP SHOP -PalVerse Illustration",
-    "short_event": "",
+    "short_event": "雞狗快閃 PalVerse Illustration",
     "type": "角色本身",
     "size": "心形",
     "country": "日本",
-    "url": "",
+    "url": "https://bushiroad-store.com/collections/%E3%83%88%E3%83%AC%E3%83%BC%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E5%95%86%E5%93%81-bang-dream-mygo-ave-mujica-pop-up-shop-palverse-illustration/products/2000260635132",
     "note": ""
   },
   {
@@ -20222,39 +20406,42 @@
     "series": "",
     "year": "2025年11月4日",
     "event": "生日紀念商品2025千石由乃",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/yuno-birthday2025/products/2000263230358",
+    "note": ""
   },
   {
     "id": "1364",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "千石由乃",
-    "series": "",
+    "series": "ホログラムver.",
     "year": "2025年11月4日",
-    "event": "生日紀念商品2025千石由乃ホログラムver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025千石由乃",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/yuno-birthday2025/products/2000263230358",
+    "note": ""
   },
   {
     "id": "1365",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "千石由乃",
-    "series": "",
+    "series": "紀念徽章",
     "year": "2025年11月4日",
-    "event": "生日紀念商品2025千石由乃紀念徽章",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "生日紀念商品2025千石由乃",
+    "short_event": "生日紀念商品2025",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/yuno-birthday2025/products/2000263230365",
+    "note": ""
   },
   {
     "id": "1366",
@@ -20268,7 +20455,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 前篇",
+    "url": "https://bang-dream.com/discographies/4118/"
   },
   {
     "id": "1367",
@@ -20279,10 +20467,11 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 前編 : 春の陽だまり、迷い猫」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 前篇",
+    "url": "https://bang-dream.com/discographies/4118/"
   },
   {
     "id": "1368",
@@ -20296,7 +20485,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 前篇",
+    "url": "https://bang-dream.com/discographies/4118/"
   },
   {
     "id": "1369",
@@ -20307,10 +20497,11 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 前編 : 春の陽だまり、迷い猫」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 前篇",
+    "url": "https://bang-dream.com/discographies/4118/"
   },
   {
     "id": "1370",
@@ -20321,10 +20512,11 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 前編 : 春の陽だまり、迷い猫」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 前篇",
+    "url": "https://bang-dream.com/discographies/4118/"
   },
   {
     "id": "1371",
@@ -20338,7 +20530,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 後篇",
+    "url": "https://bang-dream.com/discographies/4119/"
   },
   {
     "id": "1372",
@@ -20349,10 +20542,11 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 後編 : うたう、僕らになれるうた & FILM LIVE」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 後篇",
+    "url": "https://bang-dream.com/discographies/4119/"
   },
   {
     "id": "1373",
@@ -20366,7 +20560,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 後篇",
+    "url": "https://bang-dream.com/discographies/4119/"
   },
   {
     "id": "1374",
@@ -20377,10 +20572,11 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 後編 : うたう、僕らになれるうた & FILM LIVE」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 後篇",
+    "url": "https://bang-dream.com/discographies/4119/"
   },
   {
     "id": "1375",
@@ -20391,220 +20587,236 @@
     "year": "2025年11月5日",
     "event": "MyGO!!!!!劇場版「BanG Dream! It's MyGO!!!!! 後編 : うたう、僕らになれるうた & FILM LIVE」Blu-ray",
     "note": "",
-    "size": "56mm圓形",
+    "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版MyGO!!!!! Blu-ray 後篇",
+    "url": "https://bang-dream.com/discographies/4119/"
   },
   {
     "id": "1376",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」通常ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
+    "short_event": "MyGO!!!!! 8th LIVE",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809",
+    "note": ""
   },
   {
     "id": "1377",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」通常ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1378",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」通常ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1379",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」通常ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1380",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」通常ver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1381",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」ホロver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
+    "short_event": "MyGO!!!!! 8th LIVE",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809",
+    "note": ""
   },
   {
     "id": "1382",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」ホロver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1383",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」ホロver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1384",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」ホロver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1385",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月6日",
     "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」ホロver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC-mygo-8th-live-%E6%83%B3%E3%81%84%E3%81%AE%E3%81%8B%E3%81%9F%E3%81%A1%E3%81%8C%E7%A9%8D%E3%82%82%E3%82%8B%E3%81%A8%E3%81%8D/products/2000263019809"
   },
   {
     "id": "1386",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年11月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 2",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "MyGO!!!!!漫畫第二卷",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://www.gamers.co.jp/pd/10832063/",
+    "note": ""
   },
   {
     "id": "1387",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年11月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 2",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!!漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10832063/"
   },
   {
     "id": "1388",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年11月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 2",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!!漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10832063/"
   },
   {
     "id": "1389",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年11月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 2",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!!漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10832063/"
   },
   {
     "id": "1390",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "GAMERS限定版B",
     "year": "2025年11月8日",
     "event": "BanG Dream! It's MyGO!!!!!雨にそよいで晴れを請う 2",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!!漫畫第二卷",
+    "url": "https://www.gamers.co.jp/pd/10832063/"
   },
   {
     "id": "1391",
@@ -20836,490 +21048,521 @@
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "雷射膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)雷射膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1407",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "雷射膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)雷射膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1408",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "雷射膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)雷射膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1409",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "雷射膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)雷射膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1410",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "雷射膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)雷射膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1411",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "絲絨膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)絲絨膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1412",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "絲絨膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)絲絨膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1413",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "絲絨膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)絲絨膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1414",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "絲絨膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)絲絨膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1415",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "絲絨膜",
     "year": "2025年11月13日",
-    "event": "MyGO!!!!!劇場版前編特典(台灣)絲絨膜",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "MyGO!!!!!劇場版前編特典(台灣)",
+    "note": "尺寸修正說明 https://www.facebook.com/permalink.php?story_fbid=pfbid0253fXvQFP8CcpUveQcS9Q9Ft8odfhXfZxcareg18Au6cmj9UHjroQa8UMLoLYW1uWl&id=61581420230137",
+    "size": "58mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "劇場版前編(台灣)",
+    "url": "https://www.facebook.com/photo?fbid=122111335437047341&set=pcb.122111335617047341"
   },
   {
     "id": "1416",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」通常ver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
+    "short_event": "Ave Mujica 6th LIVE",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128",
+    "note": ""
   },
   {
     "id": "1417",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」通常ver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1418",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」通常ver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1419",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」通常ver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1420",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "通常ver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」通常ver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1421",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」ホロver.",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
+    "short_event": "Ave Mujica 6th LIVE",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128",
+    "note": ""
   },
   {
     "id": "1422",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」ホロver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1423",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」ホロver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1424",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」ホロver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1425",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ホロver.",
     "year": "2025年11月14日",
-    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」ホロver.",
+    "event": "Ave Mujica 6th LIVE「Ulterius Procedere」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "Ave Mujica 6th LIVE",
+    "url": "https://bushiroad-store.com/collections/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%89-%E3%83%91%E3%82%B9%E3%82%B1%E3%83%BC%E3%82%B9-%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B8-%E3%82%AF%E3%83%AA%E3%82%A2%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB-ave-mujica-6th-live-ulterius-procedere/products/2000263745128"
   },
   {
     "id": "1426",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "正比",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売正比",
-    "note": "",
-    "size": "54mm圓形",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "short_event": "ROUND1聯動",
     "type": "角色本身",
+    "size": "54mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "1427",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "正比",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売正比",
-    "note": "",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "note": "連結已失效",
     "size": "54mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動"
   },
   {
     "id": "1428",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "正比",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売正比",
-    "note": "",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "note": "連結已失效",
     "size": "54mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動"
   },
   {
     "id": "1429",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "Q版",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売Q版",
-    "note": "",
-    "size": "54mm圓形",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "short_event": "ROUND1聯動",
     "type": "角色本身",
+    "size": "54mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "1430",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "Q版",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売Q版",
-    "note": "",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "note": "連結已失效",
     "size": "54mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動"
   },
   {
     "id": "1431",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "Q版",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1カプセルトイ販売Q版",
-    "note": "",
+    "event": "BanG Dream! × ROUND1カプセルトイ販売",
+    "note": "連結已失效",
     "size": "54mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動"
   },
   {
     "id": "1432",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.トレーディンググリッター缶バッジ",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
+    "short_event": "ROUND1聯動",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "https://amnibus.com/products/detail/100586",
+    "note": ""
   },
   {
     "id": "1433",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.トレーディンググリッター缶バッジ",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://amnibus.com/products/detail/100586"
   },
   {
     "id": "1434",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.トレーディンググリッター缶バッジ",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://amnibus.com/products/detail/100586"
   },
   {
     "id": "1435",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1トレーディング ちびキャラ アクティビティver.グリッター缶バッジ",
+    "event": "BanG Dream! × ROUND1 ちびキャラ アクティビティver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://event.amnibus.com/bangdream-round1/"
   },
   {
     "id": "1436",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1トレーディング ちびキャラ アクティビティver.グリッター缶バッジ",
+    "event": "BanG Dream! × ROUND1 ちびキャラ アクティビティver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://event.amnibus.com/bangdream-round1/"
   },
   {
     "id": "1437",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "グリッター",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1トレーディング ちびキャラ アクティビティver.グリッター缶バッジ",
+    "event": "BanG Dream! × ROUND1 ちびキャラ アクティビティver.",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://event.amnibus.com/bangdream-round1/"
   },
   {
     "id": "1438",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "BIG",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.BIG缶バッジ",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
     "note": "",
-    "size": "75mm圓形",
+    "size": "15cm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://amnibus.com/products/detail/99293"
   },
   {
     "id": "1439",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "BIG",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.BIG缶バッジ",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
     "note": "",
-    "size": "75mm圓形",
+    "size": "15cm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://amnibus.com/products/detail/99293"
   },
   {
     "id": "1440",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "BIG",
     "year": "2025年11月21日",
-    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.BIG缶バッジ",
+    "event": "BanG Dream! × ROUND1描き下ろし ボウリングシャツver.",
     "note": "",
-    "size": "75mm圓形",
+    "size": "15cm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "ROUND1聯動",
+    "url": "https://amnibus.com/products/detail/99293"
   },
   {
     "id": "1441",
@@ -21329,11 +21572,12 @@
     "series": "",
     "year": "2025年11月26日",
     "event": "Birthday ver. vol.1樂奈",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/rana-birthday2025/products/2000264118396",
+    "note": ""
   },
   {
     "id": "1442",
@@ -21343,11 +21587,12 @@
     "series": "",
     "year": "2025年11月26日",
     "event": "Birthday ver. vol.1樂奈",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/rana-birthday2025/products/2000264118396",
+    "note": ""
   },
   {
     "id": "1443",
@@ -21361,7 +21606,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1444",
@@ -21375,7 +21621,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1445",
@@ -21389,7 +21636,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1446",
@@ -21403,7 +21651,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1447",
@@ -21417,7 +21666,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "GAMERS邦邦10周年紀念",
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
     "id": "1448",
@@ -21427,11 +21677,12 @@
     "series": "",
     "year": "2025年12月1日",
     "event": "JR東海BanG Dream! 10th Anniversary! × 推し旅",
-    "note": "",
-    "size": "75mm圓形",
+    "short_event": "應援旅行2025",
     "type": "角色本身",
+    "size": "75mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "1449",
@@ -21441,11 +21692,12 @@
     "series": "",
     "year": "2025年12月1日",
     "event": "BanG Dream! It's MyGO!!!!! 雨にそよいで晴れを請うゲーマーズ冬の本まつり",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "GAMERS冬之祭典 2025→2026",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "1450",
@@ -21455,11 +21707,12 @@
     "series": "",
     "year": "2025年12月1日",
     "event": "BanG Dream! Ave Mujica -manuscriptus-ゲーマーズ冬の本まつり",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "GAMERS冬之祭典 2025→2026",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": ""
+    "url": "",
+    "note": "連結已失效"
   },
   {
     "id": "1451",
@@ -21544,11 +21797,12 @@
     "series": "",
     "year": "2025年12月4日",
     "event": "Birthday ver. vol.1Oblivionis",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/oblivionis-birthday2025/products/2000265885068",
+    "note": ""
   },
   {
     "id": "1457",
@@ -21558,81 +21812,87 @@
     "series": "",
     "year": "2025年12月4日",
     "event": "Birthday ver. vol.1Oblivionis",
-    "note": "",
-    "size": "56mm圓形",
+    "short_event": "Birthday vol.1",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "Birthday vol.1"
+    "url": "https://bushiroad-store.com/collections/oblivionis-birthday2025/products/2000265885068",
+    "note": ""
   },
   {
     "id": "1458",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "扭蛋",
     "year": "2025年12月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」扭蛋",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bang-dream.com/events/mygo_8th/"
   },
   {
     "id": "1459",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "扭蛋",
     "year": "2025年12月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」扭蛋",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bang-dream.com/events/mygo_8th/"
   },
   {
     "id": "1460",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "扭蛋",
     "year": "2025年12月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」扭蛋",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bang-dream.com/events/mygo_8th/"
   },
   {
     "id": "1461",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "扭蛋",
     "year": "2025年12月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」扭蛋",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bang-dream.com/events/mygo_8th/"
   },
   {
     "id": "1462",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "扭蛋",
     "year": "2025年12月6日",
-    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」扭蛋",
+    "event": "MyGO!!!!! 8th LIVE「想いのかたちが積もるとき」",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "MyGO!!!!! 8th LIVE",
+    "url": "https://bang-dream.com/events/mygo_8th/"
   },
   {
     "id": "1463",
@@ -21821,7 +22081,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "一專－プログレス サイン"
+    "short_event": "一專－プログレス サイン",
+    "url": "https://bang-dream.com/discographies/4131/"
   },
   {
     "id": "1476",
@@ -21835,7 +22096,8 @@
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "一專－プログレス サイン"
+    "short_event": "一專－プログレス サイン",
+    "url": "https://bang-dream.com/discographies/4131/"
   },
   {
     "id": "1477",
@@ -21849,7 +22111,8 @@
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "一專－プログレス サイン"
+    "short_event": "一專－プログレス サイン",
+    "url": "https://bang-dream.com/discographies/4131/"
   },
   {
     "id": "1478",
@@ -21863,7 +22126,8 @@
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "一專－プログレス サイン"
+    "short_event": "一專－プログレス サイン",
+    "url": "https://bang-dream.com/discographies/4131/"
   },
   {
     "id": "1479",
@@ -21877,7 +22141,8 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "一專－プログレス サイン"
+    "short_event": "一專－プログレス サイン",
+    "url": "https://bang-dream.com/discographies/4131/"
   },
   {
     "id": "1480",
@@ -21965,8 +22230,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1488",
@@ -21979,8 +22245,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1489",
@@ -21993,8 +22260,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1490",
@@ -22007,8 +22275,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1491",
@@ -22021,8 +22290,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1492",
@@ -22035,8 +22305,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1493",
@@ -22049,8 +22320,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1494",
@@ -22063,8 +22335,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1495",
@@ -22077,8 +22350,9 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1496",
@@ -22091,218 +22365,234 @@
     "note": "",
     "size": "58mm圓形",
     "type": "角色本身",
-    "country": "日本",
-    "short_event": "ANIPLUS聯動"
+    "country": "韓國",
+    "short_event": "ANIPLUS聯動",
+    "url": "https://www.aniplustv.com/storeCollaboCafe?i=101"
   },
   {
     "id": "1497",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "高松燈",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94768/"
   },
   {
     "id": "1498",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "千早愛音",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94768/"
   },
   {
     "id": "1499",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "要樂奈",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94768/"
   },
   {
     "id": "1500",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "長崎爽世",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94768/"
   },
   {
     "id": "1501",
     "ext": "jpg",
     "band": "MyGO!!!!!",
     "character": "椎名立希",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94768/"
   },
   {
     "id": "1502",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1503",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1504",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1505",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1506",
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1507",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "仲町阿拉蕾",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1508",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "宮永野乃花",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1509",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "峰月律",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1510",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "藤都子",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1511",
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "千石由乃",
-    "series": "",
+    "series": "ハート",
     "year": "2026年1月8日",
     "event": "BanG Dream! 10th Anniversary LIVE 開催記念POP UP SHOP in Annivroad",
     "note": "",
     "size": "心形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": ""
+    "short_event": "邦邦十周年快閃",
+    "url": "https://bushiroad-creative.com/items/94769/"
   },
   {
     "id": "1512",
@@ -24446,7 +24736,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1655",
@@ -24460,7 +24751,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1656",
@@ -24474,7 +24766,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1657",
@@ -24488,7 +24781,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1658",
@@ -24502,7 +24796,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1659",
@@ -24516,7 +24811,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1660",
@@ -24530,7 +24826,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1661",
@@ -24544,7 +24841,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1662",
@@ -24558,7 +24856,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1663",
@@ -24572,7 +24871,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1664",
@@ -24583,7 +24883,7 @@
     "year": "2026年2月27日",
     "event": "BanG Dream! 10th Anniversary LIVE「In the name of BanG Dream!」会場限定ビッグホログラム缶バッジ賞",
     "note": "",
-    "size": "56mm圓形",
+    "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
     "short_event": "邦邦十周年LIVE",
@@ -24601,7 +24901,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1666",
@@ -24615,7 +24916,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1667",
@@ -24629,7 +24931,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1668",
@@ -24643,7 +24946,8 @@
     "size": "75mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "邦邦十周年LIVE"
+    "short_event": "邦邦十周年LIVE",
+    "url": "https://bang-dream.com/bangdream-10th-specialarea/#Badge_lottery"
   },
   {
     "id": "1669",
@@ -25437,7 +25741,7 @@
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "中國",
-    "url": "",
+    "url": "https://mall.bilibili.com/neul-next/detailuniversal/detail.html?trackId=pbaes.68DUXI7SjAPns3Q9DF7aL5pS4FFGbZxMurKUoM6gPqc-Qg2qLyw7hBj81IC2QBnC63lDZ-G9iZslsvU4DNbS9iAQjXRLCwRC6lE0BBF9lCnQ06dlRlULEZa1F5KxcdwveXYm2BP8aArq39II030n4G6iIKSolTp48KjSJf-EB-I&page=detailuniversal_detail&itemsId=13645487&loadingShow=1&noTitleBar=1&&from=serieslist&msource=1&track_id=pbaes.68DUXI7SjAPns3Q9DF7aL5pS4FFGbZxMurKUoM6gPqc-Qg2qLyw7hBj81IC2QBnC63lDZ-G9iZslsvU4DNbS9iAQjXRLCwRC6lE0BBF9lCnQ06dlRlULEZa1F5KxcdwveXYm2BP8aArq39II030n4G6iIKSolTp48KjSJf-EB-I#noReffer=true",
     "note": ""
   },
   {
@@ -25895,14 +26199,14 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "三角初華",
-    "series": "有償特典",
+    "series": "GAMERS限定版B",
     "year": "2026年4月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第三卷",
+    "short_event": "MyGO!!!!!漫畫第三卷",
     "url": "https://www.gamers.co.jp/pn/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%80%91BanG+Dream%21+Ave+Mujica+-manuscriptus-%283%29+%E3%82%B2%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%BA%E9%99%90%E5%AE%9A%E7%89%88B%E3%80%90%E6%8F%8F%E3%81%8D%E4%B8%8B%E3%82%8D%E3%81%97%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B85%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88%E4%BB%98%E3%80%91/pd/10876712/"
   },
   {
@@ -25910,14 +26214,14 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "若葉睦",
-    "series": "有償特典",
+    "series": "GAMERS限定版B",
     "year": "2026年4月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第三卷",
+    "short_event": "MyGO!!!!!漫畫第三卷",
     "url": "https://www.gamers.co.jp/pn/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%80%91BanG+Dream%21+Ave+Mujica+-manuscriptus-%283%29+%E3%82%B2%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%BA%E9%99%90%E5%AE%9A%E7%89%88B%E3%80%90%E6%8F%8F%E3%81%8D%E4%B8%8B%E3%82%8D%E3%81%97%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B85%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88%E4%BB%98%E3%80%91/pd/10876712/"
   },
   {
@@ -25925,14 +26229,14 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "八幡海鈴",
-    "series": "有償特典",
+    "series": "GAMERS限定版B",
     "year": "2026年4月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第三卷",
+    "short_event": "MyGO!!!!!漫畫第三卷",
     "url": "https://www.gamers.co.jp/pn/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%80%91BanG+Dream%21+Ave+Mujica+-manuscriptus-%283%29+%E3%82%B2%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%BA%E9%99%90%E5%AE%9A%E7%89%88B%E3%80%90%E6%8F%8F%E3%81%8D%E4%B8%8B%E3%82%8D%E3%81%97%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B85%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88%E4%BB%98%E3%80%91/pd/10876712/"
   },
   {
@@ -25940,14 +26244,14 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "有償特典",
+    "series": "GAMERS限定版B",
     "year": "2026年4月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第三卷",
+    "short_event": "MyGO!!!!!漫畫第三卷",
     "url": "https://www.gamers.co.jp/pn/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%80%91BanG+Dream%21+Ave+Mujica+-manuscriptus-%283%29+%E3%82%B2%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%BA%E9%99%90%E5%AE%9A%E7%89%88B%E3%80%90%E6%8F%8F%E3%81%8D%E4%B8%8B%E3%82%8D%E3%81%97%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B85%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88%E4%BB%98%E3%80%91/pd/10876712/"
   },
   {
@@ -25955,14 +26259,14 @@
     "ext": "jpg",
     "band": "Ave Mujica",
     "character": "豐川祥子",
-    "series": "有償特典",
+    "series": "GAMERS限定版B",
     "year": "2026年4月8日",
-    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻ゲーマーズ限定版B",
+    "event": "BanG Dream! Ave Mujica-manuscriptus-第3巻",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "漫畫第三卷",
+    "short_event": "MyGO!!!!!漫畫第三卷",
     "url": "https://www.gamers.co.jp/pn/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%80%91BanG+Dream%21+Ave+Mujica+-manuscriptus-%283%29+%E3%82%B2%E3%83%BC%E3%83%9E%E3%83%BC%E3%82%BA%E9%99%90%E5%AE%9A%E7%89%88B%E3%80%90%E6%8F%8F%E3%81%8D%E4%B8%8B%E3%82%8D%E3%81%97%E7%BC%B6%E3%83%90%E3%83%83%E3%82%B85%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88%E4%BB%98%E3%80%91/pd/10876712/"
   },
   {
@@ -26753,12 +27057,12 @@
     "series": "",
     "year": "2026年3月19日",
     "event": "Birthday ver. vol.2爽世",
+    "short_event": "Birthday vol.2",
     "type": "角色本身",
-    "size": "56-58mm圓形",
+    "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/soyo-birthday2026/products/2000284761336",
-    "note": "",
-    "short_event": "Birthday vol.2"
+    "note": ""
   },
   {
     "id": "1810",
@@ -26768,12 +27072,12 @@
     "series": "",
     "year": "2026年3月19日",
     "event": "Birthday ver. vol.2爽世",
+    "short_event": "Birthday vol.2",
     "type": "角色本身",
-    "size": "56-58mm圓形",
+    "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/soyo-birthday2026/products/2000284761336",
-    "note": "",
-    "short_event": "Birthday vol.2"
+    "note": ""
   },
   {
     "id": "1811",
@@ -27226,78 +27530,258 @@
     "note": ""
   },
   {
-    "id": "1841",
-    "ext": "jpg",
-    "band": "Ave Mujica",
-    "character": "三角初華",
-    "series": "レンチキュラー",
-    "year": "2025年4月1日",
-    "event": "玉座 ver.(AnimeJapan 2025)",
-    "short_event": "玉座",
-    "type": "角色本身",
-    "size": "56mm圓形",
-    "country": "日本",
-    "url": "https://bushiroad-store.com/products/2000219274702",
-    "note": "鏡面動態徽章其中一面"
-  },
-  {
-    "id": "1842",
-    "ext": "jpg",
-    "band": "Ave Mujica",
-    "character": "若葉睦",
-    "series": "レンチキュラー",
-    "year": "2025年4月1日",
-    "event": "玉座 ver.(AnimeJapan 2025)",
-    "short_event": "玉座",
-    "type": "角色本身",
-    "size": "56mm圓形",
-    "country": "日本",
-    "url": "https://bushiroad-store.com/products/2000219274702",
-    "note": "鏡面動態徽章其中一面"
-  },
-  {
-    "id": "1843",
-    "ext": "jpg",
-    "band": "Ave Mujica",
-    "character": "八幡海鈴",
-    "series": "レンチキュラー",
-    "year": "2025年4月1日",
-    "event": "玉座 ver.(AnimeJapan 2025)",
-    "short_event": "玉座",
-    "type": "角色本身",
-    "size": "56mm圓形",
-    "country": "日本",
-    "url": "https://bushiroad-store.com/products/2000219274702",
-    "note": "鏡面動態徽章其中一面"
-  },
-  {
-    "id": "1844",
-    "ext": "jpg",
+    "id": "1846",
+    "ext": "png",
     "band": "Ave Mujica",
     "character": "祐天寺若麥",
-    "series": "レンチキュラー",
-    "year": "2025年4月1日",
-    "event": "玉座 ver.(AnimeJapan 2025)",
-    "short_event": "玉座",
+    "series": "",
+    "year": "2026年3月26日",
+    "event": "Birthday ver. vo2.1Amoris",
+    "short_event": "Birthday vol.2",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
-    "url": "https://bushiroad-store.com/products/2000219274702",
-    "note": "鏡面動態徽章其中一面"
+    "url": "https://bushiroad-store.com/collections/amoris-birthday2026/products/2000285381151",
+    "note": ""
   },
   {
-    "id": "1845",
-    "ext": "jpg",
+    "id": "1847",
+    "ext": "png",
     "band": "Ave Mujica",
-    "character": "豐川祥子",
-    "series": "レンチキュラー",
-    "year": "2025年4月1日",
-    "event": "玉座 ver.(AnimeJapan 2025)",
-    "short_event": "玉座",
+    "character": "祐天寺若麥",
+    "series": "",
+    "year": "2026年3月26日",
+    "event": "Birthday ver. vo2.1Amoris",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
-    "url": "https://bushiroad-store.com/products/2000219274702",
-    "note": "鏡面動態徽章其中一面"
+    "url": "https://bushiroad-store.com/collections/amoris-birthday2026/products/2000285381151",
+    "note": "",
+    "short_event": "Birthday vol.2"
+  },
+  {
+    "id": "1848",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "高松燈",
+    "series": "特装盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1849",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "千早愛音",
+    "series": "特装盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1850",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "要樂奈",
+    "series": "特装盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1851",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "長崎爽世",
+    "series": "特装盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1852",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "椎名立希",
+    "series": "特装盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1853",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "高松燈",
+    "series": "限定盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1854",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "千早愛音",
+    "series": "限定盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1855",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "要樂奈",
+    "series": "限定盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1856",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "長崎爽世",
+    "series": "限定盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1857",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "椎名立希",
+    "series": "限定盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1858",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "高松燈",
+    "series": "通常盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1859",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "千早愛音",
+    "series": "通常盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1860",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "要樂奈",
+    "series": "通常盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1861",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "長崎爽世",
+    "series": "通常盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
+  },
+  {
+    "id": "1862",
+    "ext": "png",
+    "band": "MyGO!!!!!",
+    "character": "椎名立希",
+    "series": "通常盤",
+    "year": "2026年7月15日",
+    "event": "MyGO!!!!!三專－致並跡",
+    "short_event": "三專－致並跡",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4165/",
+    "note": ""
   }
 ]
