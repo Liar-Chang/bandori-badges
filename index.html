@@ -904,10 +904,10 @@ async function loadChangelog(){
     const data = JSON.parse(text);
     const body = document.getElementById('announce-body');
     if(!data.length){ body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>'; return; }
-    body.innerHTML = data.slice().reverse().map(item=>`
+    body.innerHTML = data.map(item=>`
       <div class="announce-item">
         <div class="announce-date">${item.date}</div>
-        <div>${item.content}</div>
+        <div>${item.content.replace(/\n/g,'<br>')}</div>
       </div>`).join('');
   } catch(e){
     document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
