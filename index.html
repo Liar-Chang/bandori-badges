@@ -882,10 +882,19 @@ function applyLang(){
   // sidebar 標題
   const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
   const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
-  // sidebar h3 標題
-  const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
-  const h3Labels = [L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
-  sidebarH3s.forEach((h3, i) => { if(h3Labels[i]) h3.textContent = h3Labels[i]; });
+  // sidebar h3 標題（用 id 精準對應，不靠順序）
+  const sidebarMap = {
+    'year-section':    L.year,
+    'series-section':  L.series,
+    'event-section':   L.event,
+    'type-section':    L.type,
+    'size-section':    L.size,
+    'country-section': L.country,
+  };
+  Object.entries(sidebarMap).forEach(([id, label]) => {
+    const sec = document.getElementById(id);
+    if(sec){ const h3 = sec.querySelector('h3'); if(h3) h3.textContent = label; }
+  });
 
   // detail modal labels
   const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
