@@ -441,7 +441,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="detail-band-tag" id="d-band"></div>
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
-        <div class="detail-field"><label>版本</label><span id="d-series"></span></div>
+        <div class="detail-field"><label>版本/工藝</label><span id="d-series"></span></div>
         <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
         <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
       </div>
@@ -755,7 +755,7 @@ function renderGrid(list){
         ${b.event?`<div class="expand-field"><span class="expand-label">活動</span><span class="expand-value">${eventHtml}</span></div>`:''}
         ${b.year?`<div class="expand-field"><span class="expand-label">發售日期</span><span class="expand-value">${b.year}</span></div>`:''}
         ${b.size?`<div class="expand-field"><span class="expand-label">尺寸</span><span class="expand-value">${b.size}</span></div>`:''}
-        ${b.series?`<div class="expand-field"><span class="expand-label">版本</span><span class="expand-value">${b.series}</span></div>`:''}
+        ${b.series?`<div class="expand-field"><span class="expand-label">版本/工藝</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">類型</span><span class="expand-value">${b.type}</span></div>`:''}
         ${b.country?`<div class="expand-field"><span class="expand-label">活動國家/地區</span><span class="expand-value">${b.country}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">備註</span><span class="expand-value">${b.note}</span></div>`:''}
@@ -904,13 +904,13 @@ async function loadChangelog(){
     const data = JSON.parse(text);
     const body = document.getElementById('announce-body');
     if(!data.length){ body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>'; return; }
-    body.innerHTML = data.map(item=>`
+    body.innerHTML = data.slice().reverse().map(item=>`
       <div class="announce-item">
         <div class="announce-date">${item.date}</div>
-        <div>${item.content.replace(/\n/g,'<br>')}</div>
+        <div>${item.content}</div>
       </div>`).join('');
   } catch(e){
-    document.getElementById('announce-body').innerHTML=`<div style="color:#c0392b;font-size:0.78rem;padding:0.5rem;">載入失敗：${e.message}</div>`;
+    document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
   }
 }
 loadChangelog();
@@ -1041,7 +1041,7 @@ const EXPORT_FIELDS = [
   {key:'character',label:'角色'},
   {key:'event',label:'活動'},
   {key:'year',label:'發售日期'},
-  {key:'series',label:'版本'},
+  {key:'series',label:'版本/工藝'},
 ];
 let selectedFields = new Set(['id','band','character','series','year','event']);
 
