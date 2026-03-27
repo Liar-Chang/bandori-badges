@@ -11,7 +11,7 @@
   gtag('config', 'G-QQ2V3WVRLS');
 /* ── Excel 輸出 ── */
 function doExportXlsx(list, title, btn, progWrap, prog){
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const headers = fields.map(f=>f.label);
   const rows = list.map(b=>{
     return fields.map(f=>{
@@ -32,7 +32,7 @@ function doExportXlsx(list, title, btn, progWrap, prog){
 
 /* ── HTML 輸出 ── */
 function doExportHtml(list, title, btn, progWrap, prog){
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const c = bandColor;
   const rows = list.map(b=>{
     const imgSrc = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
@@ -706,12 +706,13 @@ function applyFilters(){
     selTypes.size||selChars.size||selSizes.size||selCountries.size||
     document.getElementById('search').value.trim();
   if(!hasFilter){
-    document.getElementById('result-count').textContent='請選擇篩選條件';
+    const L=LANGS[currentLang];
+    document.getElementById('result-count').textContent=L.noFilter;
     renderGrid([]);
     document.getElementById('badge-grid').innerHTML=`
       <div class="empty-main">
         <div style="font-size:3rem">🎵</div>
-        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">請從左側選擇篩選條件</div>
+        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
         <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
       </div>`;
     return;
@@ -723,7 +724,8 @@ function applyFilters(){
 function renderGrid(list){
   const g=document.getElementById('badge-grid');
   if(!list.length){
-    g.innerHTML=`<div class="empty-main"><div style="font-size:3rem">🔍</div><div style="margin-top:0.75rem">找不到符合的徽章</div></div>`;
+    const L=LANGS[currentLang];
+    g.innerHTML=`<div class="empty-main"><div style="font-size:3rem">🔍</div><div style="margin-top:0.75rem">${L.noResult}</div></div>`;
     return;
   }
   g.innerHTML=list.map(b=>{
@@ -824,6 +826,7 @@ const LANGS = {
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
+    announceTitle:'📢 更新日誌', noData:'無符合資料',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -842,6 +845,7 @@ const LANGS = {
     expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
     expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
     expCancel:'取消', expDownload:'⬇ 下载',
+    announceTitle:'📢 更新日志', noData:'无符合资料',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -860,8 +864,9 @@ const LANGS = {
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
+    announceTitle:'📢 更新ログ', noData:'該当データなし',
   },
-}
+};
 
 let currentLang = localStorage.getItem('lang') || 'zh-TW';
 
@@ -900,7 +905,7 @@ function applyLang(){
   // sidebar 標題
   const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
   const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
-  // sidebar h3 (用 id 精準對應)
+  // sidebar h3
   const sidebarMap = {
     'search-section':  L.search,
     'band-section':    L.band,
@@ -919,37 +924,35 @@ function applyLang(){
   // 重置按鈕
   const resetBtn = document.querySelector('[onclick="resetFilters()"]');
   if(resetBtn && L.reset) resetBtn.textContent = L.reset;
-
   // detail modal labels
   const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
   const dlY=document.getElementById('dl-year');   if(dlY) dlY.textContent=L.dlYear||L.year;
   const dlE=document.getElementById('dl-event');  if(dlE) dlE.textContent=L.dlEvent||L.event;
-
   // table headers
-  const thB=document.getElementById('th-band');   if(thB) thB.textContent=L.thBand||L.band;
-  const thC=document.getElementById('th-char');   if(thC) thC.textContent=L.thChar||L.char;
-  const thEv=document.getElementById('th-event'); if(thEv) thEv.textContent=L.thEvent||L.event;
-  const thY=document.getElementById('th-year');   if(thY) thY.textContent=L.thYear||L.year;
-  const thSr=document.getElementById('th-series');if(thSr) thSr.textContent=L.thSeries||L.series;
-
+  const thB=document.getElementById('th-band');    if(thB) thB.textContent=L.thBand||L.band;
+  const thC=document.getElementById('th-char');    if(thC) thC.textContent=L.thChar||L.char;
+  const thEv=document.getElementById('th-event');  if(thEv) thEv.textContent=L.thEvent||L.event;
+  const thY=document.getElementById('th-year');    if(thY) thY.textContent=L.thYear||L.year;
+  const thSr=document.getElementById('th-series'); if(thSr) thSr.textContent=L.thSeries||L.series;
   // export modal
-  const eh2=document.getElementById('exp-title-h2'); if(eh2&&L.expTitle) eh2.textContent=L.expTitle;
-  const edp=document.getElementById('exp-desc-pre');  if(edp&&L.expDescPre) edp.textContent=L.expDescPre;
-  const edo=document.getElementById('exp-desc-post'); if(edo&&L.expDescPost) edo.textContent=L.expDescPost;
-  const ehl=document.getElementById('exp-h3-layout'); if(ehl&&L.expLayout) ehl.textContent=L.expLayout;
-  const ehc=document.getElementById('exp-h3-cols');   if(ehc&&L.expCols) ehc.textContent=L.expCols;
-  const ehf=document.getElementById('exp-h3-fields'); if(ehf&&L.expFields) ehf.textContent=L.expFields;
-  const ehfm=document.getElementById('exp-h3-fmt');   if(ehfm&&L.expFmt) ehfm.textContent=L.expFmt;
-  const ehtl=document.getElementById('exp-h3-ttl');   if(ehtl&&L.expTitleLabel) ehtl.textContent=L.expTitleLabel;
-  const egt=document.getElementById('exp-grid-title');if(egt&&L.expGrid) egt.textContent=L.expGrid;
-  const egd=document.getElementById('exp-grid-desc'); if(egd&&L.expGridDesc) egd.textContent=L.expGridDesc;
+  const eh2=document.getElementById('exp-title-h2');  if(eh2&&L.expTitle) eh2.textContent=L.expTitle;
+  const edp=document.getElementById('exp-desc-pre');   if(edp&&L.expDescPre) edp.textContent=L.expDescPre;
+  const edo=document.getElementById('exp-desc-post');  if(edo&&L.expDescPost) edo.textContent=L.expDescPost;
+  const ehl=document.getElementById('exp-h3-layout');  if(ehl&&L.expLayout) ehl.textContent=L.expLayout;
+  const ehc=document.getElementById('exp-h3-cols');    if(ehc&&L.expCols) ehc.textContent=L.expCols;
+  const ehf=document.getElementById('exp-h3-fields');  if(ehf&&L.expFields) ehf.textContent=L.expFields;
+  const ehfm=document.getElementById('exp-h3-fmt');    if(ehfm&&L.expFmt) ehfm.textContent=L.expFmt;
+  const ehtl=document.getElementById('exp-h3-ttl');    if(ehtl&&L.expTitleLabel) ehtl.textContent=L.expTitleLabel;
+  const egt=document.getElementById('exp-grid-title'); if(egt&&L.expGrid) egt.textContent=L.expGrid;
+  const egd=document.getElementById('exp-grid-desc');  if(egd&&L.expGridDesc) egd.textContent=L.expGridDesc;
   const ett=document.getElementById('exp-table-title');if(ett&&L.expTable) ett.textContent=L.expTable;
-  const etd=document.getElementById('exp-table-desc');if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
-  const ebc=document.getElementById('exp-btn-cancel');if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
-  const ebd=document.getElementById('btn-dl');        if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
-
+  const etd=document.getElementById('exp-table-desc'); if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
+  const ebc=document.getElementById('exp-btn-cancel'); if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
+  const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
+  // 更新日誌標題
+  const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
   // 排序
-  const sortSel = document.getElementById('sort-sel');
+  const sortSel = document.getElementById('sort');
   if(sortSel){
     sortSel.options[0].text = L.sortNew;
     sortSel.options[1].text = L.sortOld;
@@ -1058,7 +1061,7 @@ function setView(v){
 
 function renderTable(list){
   const tbody = document.getElementById('badge-tbody');
-  if(!list.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">無符合資料</td></tr>'; return; }
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">${(LANGS[currentLang]||LANGS['zh-TW']).noData||'無符合資料'}</td></tr>`; return; }
   tbody.innerHTML = list.map((b,i)=>{
     const c = bandColor(b.band);
     const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
@@ -1108,19 +1111,42 @@ function selectFmt(fmt){
 
 
 let exportCols = 4;
-const EXPORT_FIELDS = [
-  {key:'band',label:'樂團'},
-  {key:'character',label:'角色'},
-  {key:'event',label:'活動'},
-  {key:'year',label:'發售日期'},
-  {key:'series',label:'版本/工藝'},
-];
+const EXPORT_FIELDS = [];
+function getExportFields(){
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  return [
+    {key:'band',      label: L.thBand   || '樂團'},
+    {key:'character', label: L.thChar   || '角色'},
+    {key:'event',     label: L.thEvent  || '活動'},
+    {key:'year',      label: L.thYear   || '發售日期'},
+    {key:'series',    label: L.thSeries || '版本/工藝'},
+  ];
+}
 let selectedFields = new Set(['id','band','character','series','year','event']);
 
 function openExport(){
   document.getElementById('export-count').textContent = currentFiltered.length;
   buildFieldChips();
   document.getElementById('export-overlay').classList.add('active');
+  applyExportLang();
+}
+
+function applyExportLang(){
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  const eh2=document.getElementById('exp-title-h2');  if(eh2&&L.expTitle) eh2.textContent=L.expTitle;
+  const edp=document.getElementById('exp-desc-pre');   if(edp&&L.expDescPre) edp.textContent=L.expDescPre;
+  const edo=document.getElementById('exp-desc-post');  if(edo&&L.expDescPost) edo.textContent=L.expDescPost;
+  const ehl=document.getElementById('exp-h3-layout');  if(ehl&&L.expLayout) ehl.textContent=L.expLayout;
+  const ehc=document.getElementById('exp-h3-cols');    if(ehc&&L.expCols) ehc.textContent=L.expCols;
+  const ehf=document.getElementById('exp-h3-fields');  if(ehf&&L.expFields) ehf.textContent=L.expFields;
+  const ehfm=document.getElementById('exp-h3-fmt');    if(ehfm&&L.expFmt) ehfm.textContent=L.expFmt;
+  const ehtl=document.getElementById('exp-h3-ttl');    if(ehtl&&L.expTitleLabel) ehtl.textContent=L.expTitleLabel;
+  const egt=document.getElementById('exp-grid-title'); if(egt&&L.expGrid) egt.textContent=L.expGrid;
+  const egd=document.getElementById('exp-grid-desc');  if(egd&&L.expGridDesc) egd.textContent=L.expGridDesc;
+  const ett=document.getElementById('exp-table-title');if(ett&&L.expTable) ett.textContent=L.expTable;
+  const etd=document.getElementById('exp-table-desc'); if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
+  const ebc=document.getElementById('exp-btn-cancel'); if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
+  const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
 }
 function closeExport(){ document.getElementById('export-overlay').classList.remove('active'); }
 function maybeCloseExport(e){ if(e.target===document.getElementById('export-overlay')) closeExport(); }
@@ -1139,7 +1165,8 @@ function selectCols(n){
 }
 
 function buildFieldChips(){
-  document.getElementById('field-chips').innerHTML = EXPORT_FIELDS.map(f=>`
+  const fields = getExportFields();
+  document.getElementById('field-chips').innerHTML = fields.map(f=>`
     <div class="export-field-chip ${selectedFields.has(f.key)?'on':''}" onclick="toggleField('${f.key}',this)">
       ${f.label}
     </div>`).join('');
@@ -1435,7 +1462,7 @@ async function doExport(){
 }
 
 async function doExportTable(list, title, btn, progWrap, prog){
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const PAD=32, TH=40, ROW_H=52, THUMB=40, HEADER_H=64;
   // 各欄位寬度
   const FIELD_WIDTHS = {band:120, character:100, event:320, year:130, series:150};
@@ -1541,7 +1568,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 
 /* ── HTML 匯出 ── */
 function doExportHTML(list, title, btn, progWrap, prog){
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const rows = list.map(b=>{
     const eventVal = b.short_event || getEventShortName(b.event||'');
     const c = bandColor(b.band);
@@ -1589,7 +1616,7 @@ function doExportHTML(list, title, btn, progWrap, prog){
 
 /* ── Excel 匯出 ── */
 function doExportExcel(list, title, btn, progWrap, prog){
-  const fields = EXPORT_FIELDS.filter(f=>selectedFields.has(f.key));
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const headers = ['圖片連結', ...fields.map(f=>f.label)];
   const rows = list.map(b=>{
     const eventVal = b.short_event || getEventShortName(b.event||'');
@@ -1683,7 +1710,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
 <!-- 更新日誌公告框 -->
 <div class="announce-box" id="announce-box">
   <div class="announce-header" onclick="toggleAnnounce()">
-    <span>📢 更新日誌</span>
+    <span id="announce-title">📢 更新日誌</span>
     <button class="announce-close" id="announce-arrow">▾</button>
   </div>
   <div class="announce-body" id="announce-body" style="max-height:160px;overflow-y:auto;padding:0.75rem 0.85rem;color:var(--text);">
