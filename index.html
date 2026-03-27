@@ -441,7 +441,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="detail-band-tag" id="d-band"></div>
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
-        <div class="detail-field"><label>版本/工藝</label><span id="d-series"></span></div>
+        <div class="detail-field"><label>版本</label><span id="d-series"></span></div>
         <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
         <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
       </div>
@@ -755,7 +755,7 @@ function renderGrid(list){
         ${b.event?`<div class="expand-field"><span class="expand-label">活動</span><span class="expand-value">${eventHtml}</span></div>`:''}
         ${b.year?`<div class="expand-field"><span class="expand-label">發售日期</span><span class="expand-value">${b.year}</span></div>`:''}
         ${b.size?`<div class="expand-field"><span class="expand-label">尺寸</span><span class="expand-value">${b.size}</span></div>`:''}
-        ${b.series?`<div class="expand-field"><span class="expand-label">版本/工藝</span><span class="expand-value">${b.series}</span></div>`:''}
+        ${b.series?`<div class="expand-field"><span class="expand-label">版本</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">類型</span><span class="expand-value">${b.type}</span></div>`:''}
         ${b.country?`<div class="expand-field"><span class="expand-label">活動國家/地區</span><span class="expand-value">${b.country}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">備註</span><span class="expand-value">${b.note}</span></div>`:''}
@@ -1041,7 +1041,7 @@ const EXPORT_FIELDS = [
   {key:'character',label:'角色'},
   {key:'event',label:'活動'},
   {key:'year',label:'發售日期'},
-  {key:'series',label:'版本/工藝'},
+  {key:'series',label:'版本'},
 ];
 let selectedFields = new Set(['id','band','character','series','year','event']);
 
@@ -1118,13 +1118,13 @@ async function doExport(){
   const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', ''];
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
-    '15.2cm圓形','15cm圓形','75mm圓形','60mm圓形',
+    '15.2cm圓形','15cm圓形','75mm圓形','60mm圓形','65mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
     '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
-  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','60mm圓形','54mm圓形',
+  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','60mm圓形','65mm圓形','54mm圓形',
     '50mm圓形','30mm圓形','25mm圓形','未確定','15.2cm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
