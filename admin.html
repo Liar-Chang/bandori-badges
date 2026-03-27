@@ -207,8 +207,8 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field">
-          <label>版本/工藝</label>
-          <input type="text" id="d-series" placeholder="如 Ani-Art / 全息圖"/>
+          <label>版本</label>
+          <input type="text" id="d-series" placeholder="如 Ani-Art"/>
         </div>
         <div class="field">
           <label>發售日期</label>
@@ -256,6 +256,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>15cm圓形</option>
             <option>75mm圓形</option>
             <option>60mm圓形</option>
+            <option>65mm圓形</option>
             <option>54mm圓形</option>
             <option>50mm圓形</option>
             <option>30mm圓形</option>
@@ -351,7 +352,8 @@ td.editable:hover .edit-hint{opacity:1;}
             <option value="">請選擇</option>
             <option>56mm圓形</option><option>57mm圓形</option><option>58mm圓形</option>
             <option>15.2cm圓形</option><option>15cm圓形</option><option>75mm圓形</option>
-            <option>60mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
+            <option>60mm圓形</option>
+            <option>65mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
             <option>橢圓形</option><option>長方形</option><option>心形</option>
             <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option>
@@ -366,8 +368,8 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field">
-          <label>版本/工藝</label>
-          <input type="text" id="t-series" placeholder="如 通常ver. / 雙閃"/>
+          <label>版本</label>
+          <input type="text" id="t-series" placeholder="如 通常ver."/>
         </div>
         <div class="field" style="grid-column:1/-1">
           <label>相關連結</label>
@@ -438,7 +440,7 @@ td.editable:hover .edit-hint{opacity:1;}
       <label>修改欄位：</label>
       <select id="bulk-field" onchange="updateBulkValueInput()">
         <option value="band">樂團</option>
-        <option value="series">版本/工藝</option>
+        <option value="series">版本</option>
         <option value="year">發售日期</option>
         <option value="event">活動名稱</option>
         <option value="short_event">活動簡稱</option>
@@ -464,7 +466,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <th class="cb-col"></th>
           <th style="width:28px;"></th>
           <th>圖片</th><th>編號</th><th>樂團</th><th>角色</th>
-          <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
+          <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本</th><th>操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -517,7 +519,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="">請選擇</option>
         </select>
       </div>
-      <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
+      <div class="field"><label>版本</label><input type="text" id="f-series" placeholder="如 Ani-Art"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
       <div class="field" style="grid-column:1/-1"><label>活動名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
       <div class="field" style="grid-column:1/-1"><label>活動簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
@@ -539,6 +541,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="15cm圓形">15cm圓形</option>
           <option>75mm圓形</option>
           <option>60mm圓形</option>
+            <option>65mm圓形</option>
           <option>54mm圓形</option>
           <option>50mm圓形</option>
           <option>30mm圓形</option>
@@ -669,8 +672,8 @@ function renderBatchGrid(){
         <div class="bf"><label>角色名稱</label>
           <input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value"/>
         </div>
-        <div class="bf"><label>版本/工藝</label>
-          <input type="text" value="${item.series}" placeholder="如 Ani-Art / 全息圖" oninput="batchItems[${i}].series=this.value"/>
+        <div class="bf"><label>版本</label>
+          <input type="text" value="${item.series}" placeholder="如 Ani-Art" oninput="batchItems[${i}].series=this.value"/>
         </div>
         <div class="bf"><label>發售日期</label>
           <input type="text" value="${item.year}" placeholder="2024年7月10日" oninput="batchItems[${i}].year=this.value"/>
@@ -1083,7 +1086,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["MyGO!!!!!","Ave Mujica","夢限大MewType","Poppin'Party","Roselia","Afterglow","Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","60mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","60mm圓形","65mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
