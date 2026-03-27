@@ -623,7 +623,9 @@ function toggleBand(b){
 
 function buildCharList(){
   const sec=document.getElementById('char-section');
-  const source = selBands.size>0 ? all.filter(b=>selBands.has(b.band)) : all;
+  // 必須先選樂團才顯示角色
+  if(selBands.size===0){ sec.style.display='none'; return; }
+  const source = all.filter(b=>selBands.has(b.band));
   const CHAR_ORDER = [
     // MyGO!!!!!
     '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
