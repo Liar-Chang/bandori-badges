@@ -910,7 +910,7 @@ async function loadChangelog(){
         <div>${item.content.replace(/\n/g,'<br>')}</div>
       </div>`).join('');
   } catch(e){
-    document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
+    document.getElementById('announce-body').innerHTML=`<div style="color:#c0392b;font-size:0.78rem;padding:0.5rem;">載入失敗：${e.message}</div>`;
   }
 }
 loadChangelog();
