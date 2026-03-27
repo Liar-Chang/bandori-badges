@@ -362,11 +362,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
     </div>
 
-    <div class="sidebar-section">
+    <div class="sidebar-section" id="search-section">
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
     </div>
-    <div class="sidebar-section">
+    <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
       <div class="band-list" id="band-list"></div>
     </div>
@@ -441,9 +441,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="detail-band-tag" id="d-band"></div>
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
-        <div class="detail-field"><label id="dl-series">版本/工藝</label><span id="d-series"></span></div>
-        <div class="detail-field"><label id="dl-year">發售年份</label><span id="d-year"></span></div>
-        <div class="detail-field" style="grid-column:1/-1"><label id="dl-event">活動</label><span id="d-event"></span></div>
+        <div class="detail-field"><label>版本/工藝</label><span id="d-series"></span></div>
+        <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
+        <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
     </div>
@@ -816,8 +816,14 @@ const LANGS = {
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
     filterTip:'請從左側選擇篩選條件',
+    search:'搜尋', band:'樂團', char:'角色', reset:'重置所有篩選',
     dlSeries:'版本/工藝', dlYear:'發售年份', dlEvent:'活動',
     thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
+    expTitle:'⬇ 下載徽章表格圖檔', expDescPre:'將目前篩選的', expDescPost:'枚徽章輸出為圖片',
+    expLayout:'版面配置', expCols:'每列欄數', expFields:'顯示欄位', expFmt:'輸出格式', expTitleLabel:'標題文字',
+    expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
+    expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
+    expCancel:'取消', expDownload:'⬇ 下載',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -828,8 +834,14 @@ const LANGS = {
     gridView:'图鉴', tableView:'表格', download:'⬇ 下载图档',
     noFilter:'请选择筛选条件', noResult:'找不到符合的徽章',
     filterTip:'请从左侧选择筛选条件',
+    search:'搜索', band:'乐团', char:'角色', reset:'重置所有筛选',
     dlSeries:'版本/工艺', dlYear:'发售年份', dlEvent:'活动',
     thBand:'乐团', thChar:'角色', thEvent:'活动', thYear:'发售日期', thSeries:'版本/工艺',
+    expTitle:'⬇ 下载徽章表格图档', expDescPre:'将目前筛选的', expDescPost:'枚徽章输出为图片',
+    expLayout:'版面配置', expCols:'每列栏数', expFields:'显示栏位', expFmt:'输出格式', expTitleLabel:'标题文字',
+    expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
+    expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
+    expCancel:'取消', expDownload:'⬇ 下载',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -840,10 +852,16 @@ const LANGS = {
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
     filterTip:'左側からフィルターを選択してください',
+    search:'検索', band:'バンド', char:'キャラクター', reset:'フィルターをリセット',
     dlSeries:'バージョン/工芸', dlYear:'発売年', dlEvent:'イベント',
     thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
+    expTitle:'⬇ バッジ一覧をダウンロード', expDescPre:'現在フィルター中の', expDescPost:'枚のバッジを出力',
+    expLayout:'レイアウト', expCols:'列数', expFields:'表示フィールド', expFmt:'出力形式', expTitleLabel:'タイトル',
+    expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
+    expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
+    expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
   },
-};
+}
 
 let currentLang = localStorage.getItem('lang') || 'zh-TW';
 
@@ -882,8 +900,11 @@ function applyLang(){
   // sidebar 標題
   const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
   const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
-  // sidebar h3 標題（用 id 精準對應，不靠順序）
+  // sidebar h3 (用 id 精準對應)
   const sidebarMap = {
+    'search-section':  L.search,
+    'band-section':    L.band,
+    'char-section':    L.char,
     'year-section':    L.year,
     'series-section':  L.series,
     'event-section':   L.event,
@@ -893,8 +914,11 @@ function applyLang(){
   };
   Object.entries(sidebarMap).forEach(([id, label]) => {
     const sec = document.getElementById(id);
-    if(sec){ const h3 = sec.querySelector('h3'); if(h3) h3.textContent = label; }
+    if(sec){ const h3 = sec.querySelector('h3'); if(h3 && label) h3.textContent = label; }
   });
+  // 重置按鈕
+  const resetBtn = document.querySelector('[onclick="resetFilters()"]');
+  if(resetBtn && L.reset) resetBtn.textContent = L.reset;
 
   // detail modal labels
   const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
@@ -907,6 +931,22 @@ function applyLang(){
   const thEv=document.getElementById('th-event'); if(thEv) thEv.textContent=L.thEvent||L.event;
   const thY=document.getElementById('th-year');   if(thY) thY.textContent=L.thYear||L.year;
   const thSr=document.getElementById('th-series');if(thSr) thSr.textContent=L.thSeries||L.series;
+
+  // export modal
+  const eh2=document.getElementById('exp-title-h2'); if(eh2&&L.expTitle) eh2.textContent=L.expTitle;
+  const edp=document.getElementById('exp-desc-pre');  if(edp&&L.expDescPre) edp.textContent=L.expDescPre;
+  const edo=document.getElementById('exp-desc-post'); if(edo&&L.expDescPost) edo.textContent=L.expDescPost;
+  const ehl=document.getElementById('exp-h3-layout'); if(ehl&&L.expLayout) ehl.textContent=L.expLayout;
+  const ehc=document.getElementById('exp-h3-cols');   if(ehc&&L.expCols) ehc.textContent=L.expCols;
+  const ehf=document.getElementById('exp-h3-fields'); if(ehf&&L.expFields) ehf.textContent=L.expFields;
+  const ehfm=document.getElementById('exp-h3-fmt');   if(ehfm&&L.expFmt) ehfm.textContent=L.expFmt;
+  const ehtl=document.getElementById('exp-h3-ttl');   if(ehtl&&L.expTitleLabel) ehtl.textContent=L.expTitleLabel;
+  const egt=document.getElementById('exp-grid-title');if(egt&&L.expGrid) egt.textContent=L.expGrid;
+  const egd=document.getElementById('exp-grid-desc'); if(egd&&L.expGridDesc) egd.textContent=L.expGridDesc;
+  const ett=document.getElementById('exp-table-title');if(ett&&L.expTable) ett.textContent=L.expTable;
+  const etd=document.getElementById('exp-table-desc');if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
+  const ebc=document.getElementById('exp-btn-cancel');if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
+  const ebd=document.getElementById('btn-dl');        if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
 
   // 排序
   const sortSel = document.getElementById('sort-sel');
@@ -1579,27 +1619,27 @@ function doExportExcel(list, title, btn, progWrap, prog){
 <!-- Export Modal -->
 <div class="export-overlay" id="export-overlay" onclick="maybeCloseExport(event)">
   <div class="export-modal">
-    <h2>⬇ 下載徽章表格圖檔</h2>
+    <h2 id="exp-title-h2">⬇ 下載徽章表格圖檔</h2>
     <div style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem;">
-      將目前篩選的 <strong id="export-count">0</strong> 枚徽章輸出為圖片
+      <span id="exp-desc-pre">將目前篩選的</span> <strong id="export-count">0</strong> <span id="exp-desc-post">枚徽章輸出為圖片</span>
     </div>
 
     <div class="sidebar-section" style="margin-bottom:1rem;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">版面配置</h3>
+      <h3 id="exp-h3-layout" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">版面配置</h3>
       <div class="export-options">
         <div class="export-opt selected" id="layout-grid" onclick="selectLayout('grid')">
-          <div class="export-opt-title">⊞ 圖片網格</div>
-          <div class="export-opt-desc">每列顯示多枚徽章圖片</div>
+          <div class="export-opt-title" id="exp-grid-title">⊞ 圖片網格</div>
+          <div class="export-opt-desc" id="exp-grid-desc">每列顯示多枚徽章圖片</div>
         </div>
         <div class="export-opt" id="layout-table" onclick="selectLayout('table')">
-          <div class="export-opt-title">☰ 清單表格</div>
-          <div class="export-opt-desc">含文字資訊的表格形式</div>
+          <div class="export-opt-title" id="exp-table-title">☰ 清單表格</div>
+          <div class="export-opt-desc" id="exp-table-desc">含文字資訊的表格形式</div>
         </div>
       </div>
     </div>
 
     <div class="sidebar-section" id="grid-cols-section" style="margin-bottom:1rem;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">每列欄數</h3>
+      <h3 id="exp-h3-cols" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">每列欄數</h3>
       <div style="display:flex;gap:0.5rem;">
         <button class="export-field-chip on" id="col-4" onclick="selectCols(4)">4</button>
         <button class="export-field-chip" id="col-6" onclick="selectCols(6)">6</button>
@@ -1609,12 +1649,12 @@ function doExportExcel(list, title, btn, progWrap, prog){
     </div>
 
     <div class="sidebar-section" id="table-fields-section" style="margin-bottom:1rem;display:none;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">顯示欄位</h3>
+      <h3 id="exp-h3-fields" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">顯示欄位</h3>
       <div class="export-field-row" id="field-chips"></div>
     </div>
 
     <div class="sidebar-section" style="margin-bottom:1rem;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">輸出格式</h3>
+      <h3 id="exp-h3-fmt" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">輸出格式</h3>
       <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
         <button class="export-field-chip on" id="fmt-png" onclick="selectFmt('png')">PNG</button>
         <button class="export-field-chip" id="fmt-jpg" onclick="selectFmt('jpg')">JPG</button>
@@ -1625,7 +1665,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
     </div>
 
     <div class="sidebar-section" style="margin-bottom:1.25rem;">
-      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
+      <h3 id="exp-h3-ttl" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
       <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑"
         style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
     </div>
@@ -1635,7 +1675,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
     </div>
 
     <div class="export-actions">
-      <button class="btn-cancel" onclick="closeExport()">取消</button>
+      <button class="btn-cancel" id="exp-btn-cancel" onclick="closeExport()">取消</button>
       <button class="btn-download" id="btn-dl" onclick="doExport()">⬇ 下載</button>
     </div>
   </div>
