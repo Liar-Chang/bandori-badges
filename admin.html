@@ -165,7 +165,6 @@ td.editable:hover .edit-hint{opacity:1;}
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
     <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
     <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
-    <button class="btn btn-secondary btn-sm" onclick="openJsonValidator()">🔍 JSON 驗證修復</button>
     <button class="btn btn-danger btn-sm" onclick="clearAll()">清除全部</button>
   </div>
 </header>
@@ -208,8 +207,8 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field">
-          <label>版本</label>
-          <input type="text" id="d-series" placeholder="如 Ani-Art"/>
+          <label>版本/工藝</label>
+          <input type="text" id="d-series" placeholder="如 Ani-Art / 全息圖"/>
         </div>
         <div class="field">
           <label>發售日期</label>
@@ -367,8 +366,8 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field">
-          <label>版本</label>
-          <input type="text" id="t-series" placeholder="如 通常ver."/>
+          <label>版本/工藝</label>
+          <input type="text" id="t-series" placeholder="如 通常ver. / 雙閃"/>
         </div>
         <div class="field" style="grid-column:1/-1">
           <label>相關連結</label>
@@ -439,7 +438,7 @@ td.editable:hover .edit-hint{opacity:1;}
       <label>修改欄位：</label>
       <select id="bulk-field" onchange="updateBulkValueInput()">
         <option value="band">樂團</option>
-        <option value="series">版本</option>
+        <option value="series">版本/工藝</option>
         <option value="year">發售日期</option>
         <option value="event">活動名稱</option>
         <option value="short_event">活動簡稱</option>
@@ -465,7 +464,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <th class="cb-col"></th>
           <th style="width:28px;"></th>
           <th>圖片</th><th>編號</th><th>樂團</th><th>角色</th>
-          <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本</th><th>操作</th>
+          <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -518,7 +517,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="">請選擇</option>
         </select>
       </div>
-      <div class="field"><label>版本</label><input type="text" id="f-series" placeholder="如 Ani-Art"/></div>
+      <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
       <div class="field" style="grid-column:1/-1"><label>活動名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
       <div class="field" style="grid-column:1/-1"><label>活動簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
@@ -670,8 +669,8 @@ function renderBatchGrid(){
         <div class="bf"><label>角色名稱</label>
           <input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value"/>
         </div>
-        <div class="bf"><label>版本</label>
-          <input type="text" value="${item.series}" placeholder="如 Ani-Art" oninput="batchItems[${i}].series=this.value"/>
+        <div class="bf"><label>版本/工藝</label>
+          <input type="text" value="${item.series}" placeholder="如 Ani-Art / 全息圖" oninput="batchItems[${i}].series=this.value"/>
         </div>
         <div class="bf"><label>發售日期</label>
           <input type="text" value="${item.year}" placeholder="2024年7月10日" oninput="batchItems[${i}].year=this.value"/>
@@ -1408,14 +1407,10 @@ function openChangelogModal(){
   document.getElementById('cl-date').value = dateStr;
 
   // 自動比較差異產生內容
-  const autoContent = generateChangelogContent();
-  document.getElementById('cl-content').value = autoContent;
+  const content = generateChangelogContent();
+  document.getElementById('cl-content').value = content;
 
-  // 預設顯示「全部日誌」tab 並從 GitHub 載入
   document.getElementById('changelog-overlay').style.display = 'flex';
-  clSwitchTab('list');
-  clData = []; clSha = null;
-  clLoadFromGH();
 }
 
 function closeChangelogModal(){
@@ -1480,10 +1475,7 @@ async function syncChangelog(){
     if(getRes.ok){
       const fileData = await getRes.json();
       sha = fileData.sha;
-      const b64 = fileData.content.replace(/\n/g,'');
-      const binary = atob(b64);
-      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-      existing = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+      existing = JSON.parse(atob(fileData.content.replace(/\n/g,'')));
     }
 
     // 2. 加入新一筆（最新放最前）
@@ -1516,181 +1508,6 @@ async function syncChangelog(){
   }
 
   btn.textContent = '☁ 同步到 GitHub'; btn.disabled = false;
-}
-
-/* ══════════════════════════════════════════
-   完整日誌管理功能
-══════════════════════════════════════════ */
-let clData = [];      // 目前從 GitHub 載入的日誌陣列
-let clSha  = null;    // GitHub 檔案 SHA
-let clEditIdx = null; // 正在編輯的索引
-
-function clSwitchTab(tab){
-  const isList = tab === 'list';
-  document.getElementById('cl-panel-list').style.display = isList ? 'block' : 'none';
-  document.getElementById('cl-panel-add').style.display  = isList ? 'none'  : 'block';
-  document.getElementById('cl-tab-list').style.background = isList ? '#3d3d8f' : '#fff';
-  document.getElementById('cl-tab-list').style.color      = isList ? '#fff'    : '#555';
-  document.getElementById('cl-tab-list').style.borderColor= isList ? '#3d3d8f' : '#ddd';
-  document.getElementById('cl-tab-add').style.background  = isList ? '#fff'    : '#3d3d8f';
-  document.getElementById('cl-tab-add').style.color       = isList ? '#555'    : '#fff';
-  document.getElementById('cl-tab-add').style.borderColor = isList ? '#ddd'    : '#3d3d8f';
-  document.getElementById('cl-save-btn').textContent = isList ? '☁ 同步到 GitHub' : '➕ 新增並同步';
-  document.getElementById('cl-status').textContent = isList
-    ? (clData.length ? `共 ${clData.length} 筆` : '')
-    : '';
-}
-
-function clRender(){
-  const wrap = document.getElementById('cl-items');
-  if(!clData.length){ wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>'; return; }
-  wrap.innerHTML = clData.map((item, i) => `
-    <div id="cl-row-${i}" style="border:1.5px solid #e8e8e8;border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:#fff;">
-      <div style="display:flex;align-items:flex-start;gap:0.6rem;">
-        <!-- 順序按鈕 -->
-        <div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;margin-top:0.1rem;">
-          <button onclick="clMove(${i},-1)" ${i===0?'disabled':''} title="上移"
-            style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button>
-          <button onclick="clMove(${i},1)" ${i===clData.length-1?'disabled':''} title="下移"
-            style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===clData.length-1?'0.3':'1'};">▼</button>
-        </div>
-        <!-- 內容 -->
-        <div style="flex:1;min-width:0;" id="cl-view-${i}">
-          <div style="font-weight:700;color:#3d3d8f;font-size:0.85rem;margin-bottom:0.25rem;">${item.date}</div>
-          <div style="font-size:0.83rem;color:#444;white-space:pre-wrap;line-height:1.55;">${item.content}</div>
-        </div>
-        <div style="flex:1;min-width:0;display:none;" id="cl-edit-${i}">
-          <input id="cl-edit-date-${i}" value="${item.date}"
-            style="width:100%;margin-bottom:0.4rem;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;"/>
-          <textarea id="cl-edit-content-${i}" rows="4"
-            style="width:100%;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;resize:vertical;">${item.content}</textarea>
-        </div>
-        <!-- 動作按鈕 -->
-        <div style="display:flex;gap:0.35rem;flex-shrink:0;" id="cl-btns-${i}">
-          <button onclick="clStartEdit(${i})" id="cl-edit-btn-${i}"
-            style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;color:#3d3d8f;cursor:pointer;">✏ 編輯</button>
-          <button onclick="clDelete(${i})"
-            style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #e0aaaa;border-radius:6px;background:#fff;color:#c0392b;cursor:pointer;">🗑</button>
-        </div>
-        <div style="display:none;gap:0.35rem;flex-shrink:0;" id="cl-editbtns-${i}">
-          <button onclick="clConfirmEdit(${i})"
-            style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.75rem;border:none;border-radius:6px;background:#238636;color:#fff;cursor:pointer;">✓ 確認</button>
-          <button onclick="clCancelEdit(${i})"
-            style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;">取消</button>
-        </div>
-      </div>
-    </div>`).join('');
-  document.getElementById('cl-status').textContent = `共 ${clData.length} 筆`;
-}
-
-function clStartEdit(i){
-  document.getElementById('cl-view-'+i).style.display='none';
-  document.getElementById('cl-edit-'+i).style.display='block';
-  document.getElementById('cl-btns-'+i).style.display='none';
-  document.getElementById('cl-editbtns-'+i).style.display='flex';
-}
-function clCancelEdit(i){
-  document.getElementById('cl-view-'+i).style.display='block';
-  document.getElementById('cl-edit-'+i).style.display='none';
-  document.getElementById('cl-btns-'+i).style.display='flex';
-  document.getElementById('cl-editbtns-'+i).style.display='none';
-}
-function clConfirmEdit(i){
-  const newDate = document.getElementById('cl-edit-date-'+i).value.trim();
-  const newContent = document.getElementById('cl-edit-content-'+i).value.trim();
-  if(!newDate || !newContent){ alert('日期和內容不能為空'); return; }
-  clData[i] = {date: newDate, content: newContent};
-  clRender();
-}
-function clDelete(i){
-  if(!confirm(`確定刪除「${clData[i].date}」這筆日誌？`)) return;
-  clData.splice(i, 1);
-  clRender();
-}
-function clMove(i, dir){
-  const j = i + dir;
-  if(j < 0 || j >= clData.length) return;
-  [clData[i], clData[j]] = [clData[j], clData[i]];
-  clRender();
-}
-
-async function clSave(){
-  const token = localStorage.getItem('gh_token');
-  if(!token){ alert('請先設定 GitHub Token'); return; }
-
-  const isAdd = document.getElementById('cl-panel-add').style.display !== 'none';
-
-  if(isAdd){
-    // 新增模式
-    const date = document.getElementById('cl-date').value.trim();
-    const cont = document.getElementById('cl-content').value.trim();
-    if(!date || !cont){ alert('日期和內容不能為空'); return; }
-    // 先確保 clData 是最新的
-    if(!clData.length) await clLoadFromGH(false);
-    clData.unshift({date, content: cont});
-  }
-
-  const btn = document.getElementById('cl-save-btn');
-  btn.textContent = '同步中...'; btn.disabled = true;
-
-  try{
-    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(clData, null, 2))));
-    const body = {
-      message: `更新 changelog.json`,
-      content: base64,
-      branch: GH_BRANCH,
-    };
-    if(clSha) body.sha = clSha;
-
-    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
-      method:'PUT',
-      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body: JSON.stringify(body),
-    });
-
-    if(putRes.ok){
-      const result = await putRes.json();
-      clSha = result.content.sha;
-      showToast('✓ changelog.json 已同步到 GitHub！');
-      if(isAdd) clSwitchTab('list');
-    } else {
-      const err = await putRes.json();
-      showToast('✗ 同步失敗：' + (err.message || putRes.status));
-    }
-  } catch(e){
-    showToast('✗ 錯誤：' + e.message);
-  }
-
-  btn.textContent = isAdd ? '➕ 新增並同步' : '☁ 同步到 GitHub';
-  btn.disabled = false;
-}
-
-async function clLoadFromGH(showErr = true){
-  const token = localStorage.getItem('gh_token');
-  document.getElementById('cl-loading').style.display = 'block';
-  document.getElementById('cl-list-wrap').style.display = 'none';
-  document.getElementById('cl-list-err').style.display = 'none';
-
-  try{
-    const headers = {'Accept':'application/vnd.github.v3+json'};
-    if(token) headers['Authorization'] = 'token ' + token;
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`, {headers});
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const fd = await res.json();
-    clSha = fd.sha;
-    const binary = atob(fd.content.replace(/\n/g,''));
-    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    clData = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    document.getElementById('cl-loading').style.display = 'none';
-    document.getElementById('cl-list-wrap').style.display = 'block';
-    clRender();
-  } catch(e){
-    document.getElementById('cl-loading').style.display = 'none';
-    if(showErr){
-      document.getElementById('cl-list-err').style.display = 'block';
-      document.getElementById('cl-list-err').textContent = '載入失敗：' + e.message;
-    }
-  }
 }
 
 async function syncToGitHub(){
@@ -1774,133 +1591,29 @@ renderList();
 })();
 </script>
 
-<!-- JSON 驗證工具 Modal -->
-<div id="json-validator-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:600;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;width:min(600px,96vw);max-height:90vh;overflow-y:auto;padding:1.5rem;font-family:inherit;">
-    <h2 style="margin:0 0 0.25rem;font-size:1rem;font-weight:700;">&#128269; changelog.json &#26684;&#24335;&#39564;&#35388;</h2>
-    <p style="font-size:0.8rem;color:#888;margin:0 0 1rem;">&#36028;&#19978;&#20320;&#30340; JSON &#20839;&#23481;&#65292;&#21010;&#26178;&#26908;&#26597;&#26684;&#24335;&#26159;&#21542;&#27491;&#30906;</p>
-    <textarea id="jv-input" rows="12" placeholder="&#36028;&#19978; changelog.json &#20839;&#23481;&#8230;"
-      oninput="validateJson()"
-      style="width:100%;padding:0.6rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:monospace;font-size:0.82rem;box-sizing:border-box;resize:vertical;outline:none;"></textarea>
-    <div id="jv-result" style="margin-top:0.75rem;padding:0.65rem 0.85rem;border-radius:8px;font-size:0.82rem;display:none;"></div>
-    <div id="jv-preview" style="margin-top:0.75rem;display:none;">
-      <div style="font-size:0.78rem;font-weight:600;color:#555;margin-bottom:0.4rem;">&#39023;&#35230;&#65288;&#20849; <span id="jv-count"></span> &#31558;&#65289;&#65306;</div>
-      <div id="jv-preview-list" style="border:1px solid #eee;border-radius:8px;padding:0.6rem 0.85rem;max-height:200px;overflow-y:auto;font-size:0.82rem;"></div>
-    </div>
-    <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1rem;">
-      <button onclick="document.getElementById('json-validator-overlay').style.display='none'"
-        style="padding:0.5rem 1.25rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;">&#38364;&#38381;</button>
-      <button onclick="pushValidatedJson()" id="jv-push-btn" disabled
-        style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;opacity:0.4;">&#9729; &#30452;&#25509;&#35986;&#23531;&#26356;&#21521;&#21015;&#21040; GitHub</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function openJsonValidator(){
-  document.getElementById("json-validator-overlay").style.display="flex";
-  document.getElementById("jv-input").value="";
-  document.getElementById("jv-result").style.display="none";
-  document.getElementById("jv-preview").style.display="none";
-  var btn=document.getElementById("jv-push-btn");
-  btn.disabled=true; btn.style.opacity="0.4";
-}
-function validateJson(){
-  var raw=document.getElementById("jv-input").value.trim();
-  var res=document.getElementById("jv-result");
-  var prev=document.getElementById("jv-preview");
-  var btn=document.getElementById("jv-push-btn");
-  res.style.display="block";
-  if(!raw){res.style.display="none";prev.style.display="none";btn.disabled=true;btn.style.opacity="0.4";return;}
-  try{
-    var data=JSON.parse(raw);
-    if(!Array.isArray(data)) throw new Error("\u6700\u5916\u5c64\u5fc5\u9808\u662f\u9663\u5217 [ ]");
-    data.forEach(function(item,i){
-      if(!item.date) throw new Error("\u7b2c "+(i+1)+" \u7b46\u7f3a\u5c11 \"date\" \u6b04\u4f4d");
-      if(!item.content) throw new Error("\u7b2c "+(i+1)+" \u7b46\u7f3a\u5c11 \"content\" \u6b04\u4f4d");
-    });
-    res.style.background="#edfbf0";res.style.color="#1a7f37";res.style.border="1.5px solid #b0e4bc";
-    res.innerHTML="\u2705 \u683c\u5f0f\u6b63\u78ba\uff01\u5171 "+data.length+" \u7b46\u8cc7\u6599";
-    document.getElementById("jv-count").textContent=data.length;
-    document.getElementById("jv-preview-list").innerHTML=data.map(function(item){
-      return "<div style=\"padding:0.4rem 0;border-bottom:1px solid #f0f0f0;\"><span style=\"font-weight:600;color:#3d3d8f;\">"+item.date+"</span><span style=\"color:#555;margin-left:0.5rem;\">"+item.content.replace(/\n/g," \uff0f ")+"</span></div>";
-    }).join("");
-    prev.style.display="block";
-    btn.disabled=false;btn.style.opacity="1";
-  } catch(e){
-    res.style.background="#fdf0f0";res.style.color="#c0392b";res.style.border="1.5px solid #e0aaaa";
-    res.innerHTML="\u274c \u683c\u5f0f\u932f\u8aa4\uff1a"+e.message;
-    prev.style.display="none";btn.disabled=true;btn.style.opacity="0.4";
-  }
-}
-async function pushValidatedJson(){
-  var token=localStorage.getItem("gh_token");
-  if(!token){alert("\u8acb\u5148\u8a2d\u5b9a GitHub Token");return;}
-  var raw=document.getElementById("jv-input").value.trim();
-  var data=JSON.parse(raw);
-  var btn=document.getElementById("jv-push-btn");
-  btn.textContent="\u540c\u6b65\u4e2d...";btn.disabled=true;
-  try{
-    var getRes=await fetch("https://api.github.com/repos/"+GH_REPO+"/contents/changelog.json?ref="+GH_BRANCH,{headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json"}});
-    var sha=null;
-    if(getRes.ok){var fd=await getRes.json();sha=fd.sha;}
-    var base64=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-    var body={message:"\u624b\u52d5\u8986\u5beb changelog.json",content:base64,branch:GH_BRANCH};
-    if(sha) body.sha=sha;
-    var putRes=await fetch("https://api.github.com/repos/"+GH_REPO+"/contents/changelog.json",{method:"PUT",headers:{"Authorization":"token "+token,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(putRes.ok){showToast("\u2713 changelog.json \u5df2\u8986\u5beb\u540c\u6b65\uff01");document.getElementById("json-validator-overlay").style.display="none";}
-    else{var err=await putRes.json();showToast("\u2717 \u5931\u6557\uff1a"+(err.message||putRes.status));}
-  }catch(e){showToast("\u2717 \u932f\u8aa4\uff1a"+e.message);}
-  btn.textContent="\u2601 \u76f4\u63a5\u8986\u5beb\u4e26\u540c\u6b65\u5230 GitHub";btn.disabled=false;btn.style.opacity="1";
-}
-</script>
-
-<!-- 更新日誌管理 Modal -->
+<!-- 更新日誌 Modal -->
 <div id="changelog-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;width:min(680px,96vw);max-height:92vh;display:flex;flex-direction:column;font-family:inherit;">
+  <div style="background:#fff;border-radius:16px;width:min(560px,96vw);max-height:90vh;overflow-y:auto;padding:1.5rem;font-family:inherit;">
+    <h2 style="margin:0 0 1rem;font-size:1rem;font-weight:700;">📝 產生更新日誌</h2>
 
-    <!-- Header -->
-    <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <h2 style="margin:0;font-size:1rem;font-weight:700;">📝 更新日誌管理</h2>
-        <div style="display:flex;gap:0.5rem;">
-          <button id="cl-tab-list" onclick="clSwitchTab('list')"
-            style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #3d3d8f;background:#3d3d8f;color:#fff;cursor:pointer;font-weight:600;">📋 全部日誌</button>
-          <button id="cl-tab-add" onclick="clSwitchTab('add')"
-            style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;color:#555;cursor:pointer;">➕ 新增</button>
-        </div>
-      </div>
+    <div style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
+      <input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/>
     </div>
 
-    <!-- Tab: 全部日誌 -->
-    <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;">
-      <div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div>
-      <div id="cl-list-wrap" style="display:none;">
-        <div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div>
-        <div id="cl-items"></div>
-      </div>
-      <div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div>
+    <div style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容 <span style="font-weight:400;color:#aaa;">（自動產生，可自行編輯）</span></label>
+      <textarea id="cl-content" rows="6" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea>
     </div>
 
-    <!-- Tab: 新增 -->
-    <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;">
-      <div style="margin-bottom:0.75rem;">
-        <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
-        <input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/>
-      </div>
-      <div style="margin-bottom:0.75rem;">
-        <label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容 <span style="font-weight:400;color:#aaa;">（可用換行分隔多項）</span></label>
-        <textarea id="cl-content" rows="7" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea>
-      </div>
+    <div id="cl-preview" style="margin-bottom:1rem;padding:0.75rem;background:#f8f8f8;border-radius:8px;font-size:0.82rem;color:#555;display:none;">
+      <strong>目前 changelog.json 內容預覽：</strong>
+      <pre id="cl-preview-text" style="margin:0.5rem 0 0;white-space:pre-wrap;font-size:0.78rem;"></pre>
     </div>
 
-    <!-- Footer -->
-    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;">
-      <div id="cl-status" style="font-size:0.78rem;color:#888;"></div>
-      <div style="display:flex;gap:0.6rem;">
-        <button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
-        <button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button>
-      </div>
+    <div style="display:flex;gap:0.75rem;justify-content:flex-end;flex-wrap:wrap;">
+      <button onclick="closeChangelogModal()" style="padding:0.5rem 1.25rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;">取消</button>
+      <button onclick="syncChangelog()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;">☁ 同步到 GitHub</button>
     </div>
   </div>
 </div>
