@@ -422,7 +422,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
-          <th>圖片</th><th>樂團</th><th>角色</th><th>活動</th><th>發售日期</th><th>版本/工藝</th>
+          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -441,9 +441,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="detail-band-tag" id="d-band"></div>
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
-        <div class="detail-field"><label>版本/工藝</label><span id="d-series"></span></div>
-        <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
-        <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
+        <div class="detail-field"><label id="dl-series">版本/工藝</label><span id="d-series"></span></div>
+        <div class="detail-field"><label id="dl-year">發售年份</label><span id="d-year"></span></div>
+        <div class="detail-field" style="grid-column:1/-1"><label id="dl-event">活動</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
     </div>
@@ -816,6 +816,8 @@ const LANGS = {
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
     filterTip:'請從左側選擇篩選條件',
+    dlSeries:'版本/工藝', dlYear:'發售年份', dlEvent:'活動',
+    thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -826,6 +828,8 @@ const LANGS = {
     gridView:'图鉴', tableView:'表格', download:'⬇ 下载图档',
     noFilter:'请选择筛选条件', noResult:'找不到符合的徽章',
     filterTip:'请从左侧选择筛选条件',
+    dlSeries:'版本/工艺', dlYear:'发售年份', dlEvent:'活动',
+    thBand:'乐团', thChar:'角色', thEvent:'活动', thYear:'发售日期', thSeries:'版本/工艺',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -836,6 +840,8 @@ const LANGS = {
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
     filterTip:'左側からフィルターを選択してください',
+    dlSeries:'バージョン/工芸', dlYear:'発売年', dlEvent:'イベント',
+    thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
   },
 };
 
@@ -876,6 +882,23 @@ function applyLang(){
   // sidebar 標題
   const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
   const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
+  // sidebar h3 標題
+  const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
+  const h3Labels = [L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
+  sidebarH3s.forEach((h3, i) => { if(h3Labels[i]) h3.textContent = h3Labels[i]; });
+
+  // detail modal labels
+  const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
+  const dlY=document.getElementById('dl-year');   if(dlY) dlY.textContent=L.dlYear||L.year;
+  const dlE=document.getElementById('dl-event');  if(dlE) dlE.textContent=L.dlEvent||L.event;
+
+  // table headers
+  const thB=document.getElementById('th-band');   if(thB) thB.textContent=L.thBand||L.band;
+  const thC=document.getElementById('th-char');   if(thC) thC.textContent=L.thChar||L.char;
+  const thEv=document.getElementById('th-event'); if(thEv) thEv.textContent=L.thEvent||L.event;
+  const thY=document.getElementById('th-year');   if(thY) thY.textContent=L.thYear||L.year;
+  const thSr=document.getElementById('th-series');if(thSr) thSr.textContent=L.thSeries||L.series;
+
   // 排序
   const sortSel = document.getElementById('sort-sel');
   if(sortSel){
@@ -904,10 +927,10 @@ async function loadChangelog(){
     const data = JSON.parse(text);
     const body = document.getElementById('announce-body');
     if(!data.length){ body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>'; return; }
-    body.innerHTML = data.slice().reverse().map(item=>`
+    body.innerHTML = data.map(item=>`
       <div class="announce-item">
         <div class="announce-date">${item.date}</div>
-        <div>${item.content}</div>
+        <div>${item.content.replace(/\n/g,'<br>')}</div>
       </div>`).join('');
   } catch(e){
     document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
