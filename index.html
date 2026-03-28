@@ -711,9 +711,16 @@ function applyFilters(){
       const bandDiff = bandIdxA - bandIdxB;
       if(bandDiff !== 0) return bandDiff;
       // 樂團相同：按角色名稱
-      return (a.character||'').localeCompare(b.character||'');
+      const charDiff2 = (a.character||'').localeCompare(b.character||'');
+      if(charDiff2 !== 0) return charDiff2;
+      // 角色相同：按編號
+      return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     }
-    if(sort==='char') return (a.character||'').localeCompare(b.character||'');
+    if(sort==='char'){
+      const charDiff = (a.character||'').localeCompare(b.character||'');
+      if(charDiff !== 0) return charDiff;
+      return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
+    }
     // 預設：依原始陣列順序
     return all.indexOf(a) - all.indexOf(b);
   });
