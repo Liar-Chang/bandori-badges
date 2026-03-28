@@ -198,7 +198,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <label>樂團</label>
           <select id="d-band" onchange="updateDefaultChars()">
             <option value="">不套用</option>
-            <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+            <option>Poppin'Party</option><option>Afterglow</option><option>Pastel*Palettes</option><option>Roselia</option><option>Hello, Happy World!</option><option>Morfonica</option><option>RAISE A SUILEN</option><option>MyGO!!!!!</option><option>Ave Mujica</option><option>夢限大MewType</option><option>millsage</option><option>一家Dumb Rock!</option>
             <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
             <option>RAISE A SUILEN</option><option>Morfonica</option>
             <option>MyGO!!!!!</option><option>Ave Mujica</option>
@@ -255,8 +255,8 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>15.2cm圓形</option>
             <option>15cm圓形</option>
             <option>75mm圓形</option>
-            <option>60mm圓形</option>
             <option>65mm圓形</option>
+            <option>60mm圓形</option>
             <option>54mm圓形</option>
             <option>50mm圓形</option>
             <option>30mm圓形</option>
@@ -321,7 +321,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option value="">請選擇</option>
             <option>MyGO!!!!!</option><option>Ave Mujica</option>
             <option>夢限大MewType</option>
-            <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+            <option>Poppin'Party</option><option>Afterglow</option><option>Pastel*Palettes</option><option>Roselia</option><option>Hello, Happy World!</option><option>Morfonica</option><option>RAISE A SUILEN</option><option>MyGO!!!!!</option><option>Ave Mujica</option><option>夢限大MewType</option><option>millsage</option><option>一家Dumb Rock!</option>
             <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
             <option>RAISE A SUILEN</option><option>Morfonica</option>
             <option>millsage</option><option>一家Dumb Rock!</option><option>其他</option>
@@ -352,8 +352,8 @@ td.editable:hover .edit-hint{opacity:1;}
             <option value="">請選擇</option>
             <option>56mm圓形</option><option>57mm圓形</option><option>58mm圓形</option>
             <option>15.2cm圓形</option><option>15cm圓形</option><option>75mm圓形</option>
-            <option>60mm圓形</option>
-            <option>65mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
+            <option>65mm圓形</option>
+            <option>60mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
             <option>橢圓形</option><option>長方形</option><option>心形</option>
             <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option>
@@ -465,7 +465,7 @@ td.editable:hover .edit-hint{opacity:1;}
         <thead><tr>
           <th class="cb-col"></th>
           <th style="width:28px;"></th>
-          <th>圖片</th><th>編號</th><th>樂團</th><th>角色</th>
+          <th>圖片</th><th id="th-sort-id" onclick="toggleIdSort()" style="cursor:pointer;user-select:none;" title="點擊排序">編號 <span id="th-sort-arrow">↕</span></th><th>樂團</th><th>角色</th>
           <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
@@ -506,7 +506,7 @@ td.editable:hover .edit-hint{opacity:1;}
       <div class="field"><label>樂團</label>
         <select id="f-band" onchange="updateModalChars()">
           <option value="">請選擇</option>
-          <option>Poppin'Party</option><option>Roselia</option><option>Afterglow</option>
+          <option>Poppin'Party</option><option>Afterglow</option><option>Pastel*Palettes</option><option>Roselia</option><option>Hello, Happy World!</option><option>Morfonica</option><option>RAISE A SUILEN</option><option>MyGO!!!!!</option><option>Ave Mujica</option><option>夢限大MewType</option><option>millsage</option><option>一家Dumb Rock!</option>
           <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
           <option>RAISE A SUILEN</option><option>Morfonica</option>
           <option>MyGO!!!!!</option><option>Ave Mujica</option>
@@ -515,9 +515,11 @@ td.editable:hover .edit-hint{opacity:1;}
         </select>
       </div>
       <div class="field"><label>角色名稱</label>
-        <select id="f-character">
+        <select id="f-character" style="width:100%;">
           <option value="">請選擇</option>
         </select>
+        <input type="text" id="f-character-text" placeholder="如 湊友希那"
+          style="display:none;width:100%;font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;box-sizing:border-box;outline:none;"/>
       </div>
       <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
@@ -540,8 +542,8 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="15.2cm圓形">15.2cm圓形</option>
           <option value="15cm圓形">15cm圓形</option>
           <option>75mm圓形</option>
-          <option>60mm圓形</option>
             <option>65mm圓形</option>
+          <option>60mm圓形</option>
           <option>54mm圓形</option>
           <option>50mm圓形</option>
           <option>30mm圓形</option>
@@ -587,10 +589,9 @@ const BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc
   "Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020",
   "Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111",
   "夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#aaa"};
-const BAND_LIST=["MyGO!!!!!","Ave Mujica","夢限大MewType",
-  "Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
-  "Hello, Happy World!","RAISE A SUILEN","Morfonica",
-  "millsage","一家Dumb Rock!","其他"];
+const BAND_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
+  "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
+  "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"];
 
 let badges=JSON.parse(localStorage.getItem('bandori_badges')||'[]');
 let editingIdx=-1;
@@ -664,13 +665,23 @@ function renderBatchGrid(){
           ${item.isDupe?'<span class="dupe-badge">⚠ 已存在</span>':''}
         </div>
         <div class="bf"><label>樂團</label>
-          <select onchange="batchItems[${i}].band=this.value">
+          <select onchange="batchItems[${i}].band=this.value;renderBatchGrid();">
             <option value="">請選擇</option>
             ${BAND_LIST.map(b=>`<option${item.band===b?' selected':''}>${b}</option>`).join('')}
           </select>
         </div>
         <div class="bf"><label>角色名稱</label>
-          <input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value"/>
+          ${(()=>{
+            const chars = CHAR_MAP[item.band] || [];
+            if(chars.length){
+              return `<select onchange="batchItems[${i}].character=this.value" style="width:100%;">
+                <option value="">請選擇</option>
+                ${chars.map(c=>`<option value="${c}"${item.character===c?' selected':''}>${c}</option>`).join('')}
+              </select>`;
+            } else {
+              return `<input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value" style="width:100%;"/>`;
+            }
+          })()}
         </div>
         <div class="bf"><label>版本/工藝</label>
           <input type="text" value="${item.series}" placeholder="如 Ani-Art / 全息圖" oninput="batchItems[${i}].series=this.value"/>
@@ -742,31 +753,33 @@ function clearBatch(){
 
 const CHAR_MAP = {
   "MyGO!!!!!": ["高松燈", "千早愛音", "要樂奈", "長崎爽世", "椎名立希"],
-  "Ave Mujica": ["三角初華", "若葉睦", "八幡海鈴", "祐天寺若麥", "豐川祥子"],
+  "Ave Mujica": ["三角初華(Doloris)", "若葉睦(Mortis)", "八幡海鈴(Timoris)", "祐天寺若麥(Amoris)", "豐川祥子(Oblivionis)"],
   "夢限大MewType": ["仲町阿拉蕾", "宮永野乃花", "峰月律", "藤都子", "千石由乃"],
   "millsage": ["汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
   "一家Dumb Rock!": ["須賀蕾叶", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
-  "Poppin'Party": ["戸山香澄", "花園多惠", "牛込りみ", "山吹沙綾", "市ヶ谷有咲"],
-  "Roselia": ["湊友希那", "氷川紗夜", "今井リサ", "宇田川あこ", "白金燐子"],
-  "Afterglow": ["美竹蘭", "青葉モカ", "上原ひまり", "宇田川巴", "羽沢つぐみ"],
-  "Pastel*Palettes": ["丸山彩", "氷川日菜", "白鷺千聖", "大和麻弥", "若宮イヴ"],
-  "Hello, Happy World!": ["弦巻こころ", "瀬田薫", "北沢はぐみ", "松原花音", "奥沢美咲"],
-  "RAISE A SUILEN": ["レイヤ", "ロック", "モカ", "パレオ", "チュチュ"],
-  "Morfonica": ["倉田ましろ", "桐ヶ谷透子", "広町七深", "二葉つくし", "八潮瑠唯"],
+  "Poppin'Party": ["戶山香澄", "花園多惠", "牛込里美", "山吹紗綾", "市谷有咲"],
+  "Roselia": ["湊友希那", "冰川紗夜", "今井莉莎", "宇田川亞子", "白金燐子"],
+  "Afterglow": ["美竹蘭", "青葉摩卡", "上原緋瑪麗", "宇田川巴", "羽澤鶇"],
+  "Pastel*Palettes": ["丸山彩", "冰川日菜", "白鷺千聖", "大和麻彌", "若宮伊芙"],
+  "Hello, Happy World!": ["弦卷心", "瀨田薰", "北澤育美", "松原花音", "奧澤美咲"],
+  "RAISE A SUILEN": ["和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
+  "Morfonica": ["倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
   "其他": []
 };
 function updateModalChars(band){
   const b = band !== undefined ? band : document.getElementById('f-band').value;
   const sel = document.getElementById('f-character');
+  const txt = document.getElementById('f-character-text');
   const chars = CHAR_MAP[b] || [];
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">請選擇</option>' +
-    chars.map(c=>`<option value="${c}">${c}</option>`).join('');
-  // 若有其他樂團則允許手動輸入
-  if(!chars.length){
-    sel.outerHTML = sel.outerHTML.replace('<select', '<input type="text" placeholder="如 湊友希那"').replace('</select>', '');
+  if(chars.length){
+    const cur = txt && txt.style.display !== 'none' ? txt.value : sel.value;
+    sel.innerHTML = '<option value="">請選擇</option>' + chars.map(c=>`<option value="${c}">${c}</option>`).join('');
+    sel.style.display = ''; if(txt) txt.style.display = 'none';
+    if(cur) sel.value = cur;
+  } else {
+    const cur = sel.value; sel.style.display = 'none';
+    if(txt){ txt.style.display = ''; if(cur) txt.value = cur; }
   }
-  if(cur) sel.value = cur;
 }
 
 function updateDefaultChars(){
@@ -835,8 +848,9 @@ function saveBatch(){
 function updateBandFilter(){
   const sel=document.getElementById('filter-band');
   const cur=sel.value;
-  const BAND_ORDER=["MyGO!!!!!","Ave Mujica","夢限大MewType","Poppin'Party","Roselia","Afterglow",
-    "Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","millsage","一家Dumb Rock!","其他"];
+  const BAND_ORDER=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
+    "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
+    "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"];
   const existing=new Set(badges.map(b=>b.band).filter(Boolean));
   const bands=[...BAND_ORDER.filter(b=>existing.has(b)),...[...existing].filter(b=>!BAND_ORDER.includes(b)).sort()];
   sel.innerHTML='<option value="">所有樂團</option>'+bands.map(b=>`<option${b===cur?' selected':''}>${b}</option>`).join('');
@@ -845,6 +859,15 @@ function updateBandFilter(){
 let selectedIds = new Set();
 let lastClickedId = null;
 let filteredCache = []; // 快取目前 filtered 清單供 Shift 選取用
+
+let listSortField = null; // 'id-asc' | 'id-desc' | null
+function toggleIdSort(){
+  if(listSortField === 'id-asc') listSortField = 'id-desc';
+  else listSortField = 'id-asc';
+  const arrow = document.getElementById('th-sort-arrow');
+  if(arrow) arrow.textContent = listSortField === 'id-asc' ? '↑' : '↓';
+  renderList();
+}
 
 function renderList(){
   const q=document.getElementById('search').value.toLowerCase();
@@ -861,13 +884,20 @@ function renderList(){
     else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
     return mq&&bandOk&&missingOk;
   });
-  filteredCache = filtered;
-  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';updateBulkBar();return;}
+  // 依編號排序
+  let sorted = filtered.slice();
+  if(listSortField === 'id-asc'){
+    sorted.sort((a,b)=>(a.id||'').localeCompare(b.id||'',undefined,{numeric:true}));
+  } else if(listSortField === 'id-desc'){
+    sorted.sort((a,b)=>(b.id||'').localeCompare(a.id||'',undefined,{numeric:true}));
+  }
+  filteredCache = sorted;
+  if(!sorted.length){tbody.innerHTML='';empty.style.display='block';updateBulkBar();return;}
   empty.style.display='none';
 
   const EDITABLE = ['character','year','event','short_event','series','note'];
 
-  tbody.innerHTML=filtered.map(b=>{
+  tbody.innerHTML=sorted.map(b=>{
     const ri=badges.indexOf(b);
     const c=BAND_COLORS[b.band]||'#aaa';
     const checked=selectedIds.has(b.id)?'checked':'';
@@ -1084,9 +1114,9 @@ function bulkDelete(){
 }
 // 各欄位的選項設定
 const BULK_SELECT_OPTIONS = {
-  band: ["MyGO!!!!!","Ave Mujica","夢限大MewType","Poppin'Party","Roselia","Afterglow","Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","millsage","一家Dumb Rock!","其他"],
+  band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","60mm圓形","65mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","65mm圓形","60mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
@@ -1146,7 +1176,10 @@ function openModal(idx=-1){
   document.getElementById('f-ext').value=b.ext||'jpg';
   document.getElementById('f-band').value=b.band||'';
   updateModalChars(b.band||'');
-  document.getElementById('f-character').value=b.character||'';
+  const fcharSel=document.getElementById('f-character');
+  const fcharTxt=document.getElementById('f-character-text');
+  if(fcharSel.style.display==='none'&&fcharTxt){ fcharTxt.value=b.character||''; }
+  else { fcharSel.value=b.character||''; if(b.character&&fcharSel.value!==b.character){ fcharSel.style.display='none'; if(fcharTxt){fcharTxt.style.display='';fcharTxt.value=b.character;} } }
   document.getElementById('f-series').value=b.series||'';
   document.getElementById('f-year').value=b.year||'';
   document.getElementById('f-event').value=b.event||'';
@@ -1219,7 +1252,7 @@ function saveSingle(){
   const id=document.getElementById('f-id').value.trim();
   if(!id){showToast('請填寫編號');return;}
   const badge={id,ext:document.getElementById('f-ext').value,band:document.getElementById('f-band').value,
-    character:document.getElementById('f-character').value.trim(),series:document.getElementById('f-series').value.trim(),
+    character:(()=>{ const sel=document.getElementById('f-character'); const txt=document.getElementById('f-character-text'); return (txt&&txt.style.display!=='none')?txt.value.trim():sel.value.trim(); })(),series:document.getElementById('f-series').value.trim(),
     year:document.getElementById('f-year').value,event:document.getElementById('f-event').value.trim(),short_event:document.getElementById('f-short_event').value.trim(),
     type:document.getElementById('f-type').value,
     size:document.getElementById('f-size').value,
@@ -1404,15 +1437,11 @@ function saveTextBatch(){
 let prevBadges = null; // 上次從 GitHub 載入的快照
 
 function openChangelogModal(){
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
-  document.getElementById('cl-date').value = dateStr;
-  const autoContent = generateChangelogContent();
-  document.getElementById('cl-content').value = autoContent;
-  document.getElementById('changelog-overlay').style.display = 'flex';
-  clSwitchTab('list');
-  clData = []; clSha = null;
-  clLoadFromGH();
+  const today=new Date();
+  document.getElementById('cl-date').value=`${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+  document.getElementById('cl-content').value=generateChangelogContent();
+  document.getElementById('changelog-overlay').style.display='flex';
+  clSwitchTab('list'); clData=[]; clSha=null; clLoadFromGH();
 }
 
 function closeChangelogModal(){
@@ -1517,127 +1546,16 @@ async function syncChangelog(){
 
 /* ══ 完整日誌管理 ══ */
 let clData=[], clSha=null;
-
-function clSwitchTab(tab){
-  const isList=tab==='list';
-  document.getElementById('cl-panel-list').style.display=isList?'block':'none';
-  document.getElementById('cl-panel-add').style.display=isList?'none':'block';
-  const tl=document.getElementById('cl-tab-list'), ta=document.getElementById('cl-tab-add');
-  tl.style.background=isList?'#3d3d8f':'#fff'; tl.style.color=isList?'#fff':'#555'; tl.style.borderColor=isList?'#3d3d8f':'#ddd';
-  ta.style.background=isList?'#fff':'#3d3d8f'; ta.style.color=isList?'#555':'#fff'; ta.style.borderColor=isList?'#ddd':'#3d3d8f';
-  document.getElementById('cl-save-btn').textContent=isList?'☁ 同步到 GitHub':'➕ 新增並同步';
-  document.getElementById('cl-status').textContent=isList&&clData.length?`共 ${clData.length} 筆`:'';
+function clSwitchTab(tab){const isList=tab==='list';document.getElementById('cl-panel-list').style.display=isList?'block':'none';document.getElementById('cl-panel-add').style.display=isList?'none':'block';const tl=document.getElementById('cl-tab-list'),ta=document.getElementById('cl-tab-add');tl.style.background=isList?'#3d3d8f':'#fff';tl.style.color=isList?'#fff':'#555';tl.style.borderColor=isList?'#3d3d8f':'#ddd';ta.style.background=isList?'#fff':'#3d3d8f';ta.style.color=isList?'#555':'#fff';ta.style.borderColor=isList?'#ddd':'#3d3d8f';document.getElementById('cl-save-btn').textContent=isList?'☁ 同步到 GitHub':'➕ 新增並同步';document.getElementById('cl-status').textContent=isList&&clData.length?`共 ${clData.length} 筆`:'';
 }
-
-function clRender(){
-  const wrap=document.getElementById('cl-items');
-  if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';return;}
-  wrap.innerHTML=clData.map((item,i)=>`
-    <div id="cl-row-${i}" style="border:1.5px solid #e8e8e8;border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:#fff;">
-      <div style="display:flex;align-items:flex-start;gap:0.6rem;">
-        <div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;margin-top:0.1rem;">
-          <button onclick="clMove(${i},-1)" ${i===0?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button>
-          <button onclick="clMove(${i},1)" ${i===clData.length-1?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===clData.length-1?'0.3':'1'};">▼</button>
-        </div>
-        <div style="flex:1;min-width:0;" id="cl-view-${i}">
-          <div style="font-weight:700;color:#3d3d8f;font-size:0.85rem;margin-bottom:0.25rem;">${item.date}</div>
-          <div style="font-size:0.83rem;color:#444;white-space:pre-wrap;line-height:1.55;">${item.content}</div>
-        </div>
-        <div style="flex:1;min-width:0;display:none;" id="cl-edit-${i}">
-          <input id="cl-edit-date-${i}" value="${item.date}" style="width:100%;margin-bottom:0.4rem;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;"/>
-          <textarea id="cl-edit-content-${i}" rows="4" style="width:100%;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;resize:vertical;">${item.content}</textarea>
-        </div>
-        <div style="display:flex;gap:0.35rem;flex-shrink:0;" id="cl-btns-${i}">
-          <button onclick="clStartEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;color:#3d3d8f;cursor:pointer;">✏ 編輯</button>
-          <button onclick="clDelete(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #e0aaaa;border-radius:6px;background:#fff;color:#c0392b;cursor:pointer;">🗑</button>
-        </div>
-        <div style="display:none;gap:0.35rem;flex-shrink:0;" id="cl-editbtns-${i}">
-          <button onclick="clConfirmEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.75rem;border:none;border-radius:6px;background:#238636;color:#fff;cursor:pointer;">✓</button>
-          <button onclick="clCancelEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;">取消</button>
-        </div>
-      </div>
-    </div>`).join('');
-  document.getElementById('cl-status').textContent=`共 ${clData.length} 筆`;
-}
-function clStartEdit(i){
-  document.getElementById('cl-view-'+i).style.display='none';
-  document.getElementById('cl-edit-'+i).style.display='block';
-  document.getElementById('cl-btns-'+i).style.display='none';
-  document.getElementById('cl-editbtns-'+i).style.display='flex';
-}
-function clCancelEdit(i){
-  document.getElementById('cl-view-'+i).style.display='block';
-  document.getElementById('cl-edit-'+i).style.display='none';
-  document.getElementById('cl-btns-'+i).style.display='flex';
-  document.getElementById('cl-editbtns-'+i).style.display='none';
-}
-function clConfirmEdit(i){
-  const d=document.getElementById('cl-edit-date-'+i).value.trim();
-  const c=document.getElementById('cl-edit-content-'+i).value.trim();
-  if(!d||!c){alert('日期和內容不能為空');return;}
-  clData[i]={date:d,content:c};
-  clRender();
-}
-function clDelete(i){
-  if(!confirm(`確定刪除「${clData[i].date}」這筆日誌？`))return;
-  clData.splice(i,1);clRender();
-}
-function clMove(i,dir){
-  const j=i+dir;
-  if(j<0||j>=clData.length)return;
-  [clData[i],clData[j]]=[clData[j],clData[i]];clRender();
-}
-async function clSave(){
-  const token=localStorage.getItem('gh_token');
-  if(!token){alert('請先設定 GitHub Token');return;}
-  const isAdd=document.getElementById('cl-panel-add').style.display!=='none';
-  if(isAdd){
-    const date=document.getElementById('cl-date').value.trim();
-    const cont=document.getElementById('cl-content').value.trim();
-    if(!date||!cont){alert('日期和內容不能為空');return;}
-    if(!clData.length)await clLoadFromGH(false);
-    clData.unshift({date,content:cont});
-  }
-  const btn=document.getElementById('cl-save-btn');
-  btn.textContent='同步中...';btn.disabled=true;
-  try{
-    const base64=btoa(unescape(encodeURIComponent(JSON.stringify(clData,null,2))));
-    const body={message:'更新 changelog.json',content:base64,branch:GH_BRANCH};
-    if(clSha)body.sha=clSha;
-    const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
-      method:'PUT',headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(putRes.ok){
-      const result=await putRes.json();clSha=result.content.sha;
-      showToast('✓ changelog.json 已同步到 GitHub！');
-      if(isAdd)clSwitchTab('list');
-    }else{const err=await putRes.json();showToast('✗ 失敗：'+(err.message||putRes.status));}
-  }catch(e){showToast('✗ 錯誤：'+e.message);}
-  btn.textContent=isAdd?'➕ 新增並同步':'☁ 同步到 GitHub';btn.disabled=false;
-}
-async function clLoadFromGH(showErr=true){
-  const token=localStorage.getItem('gh_token');
-  document.getElementById('cl-loading').style.display='block';
-  document.getElementById('cl-list-wrap').style.display='none';
-  document.getElementById('cl-list-err').style.display='none';
-  try{
-    const headers={'Accept':'application/vnd.github.v3+json'};
-    if(token)headers['Authorization']='token '+token;
-    const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`,{headers});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const fd=await res.json();clSha=fd.sha;
-    const binary=atob(fd.content.replace(/\n/g,''));
-    const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));
-    clData=JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    document.getElementById('cl-loading').style.display='none';
-    document.getElementById('cl-list-wrap').style.display='block';
-    clRender();
-  }catch(e){
-    document.getElementById('cl-loading').style.display='none';
-    if(showErr){document.getElementById('cl-list-err').style.display='block';document.getElementById('cl-list-err').textContent='載入失敗：'+e.message;}
-  }
-}
+function clRender(){const wrap=document.getElementById('cl-items');if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';return;}wrap.innerHTML=clData.map((item,i)=>`<div style="border:1.5px solid #e8e8e8;border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:#fff;"><div style="display:flex;align-items:flex-start;gap:0.6rem;"><div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;"><button onclick="clMove(${i},-1)" ${i===0?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button><button onclick="clMove(${i},1)" ${i===clData.length-1?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===clData.length-1?'0.3':'1'};">▼</button></div><div style="flex:1;min-width:0;" id="cl-view-${i}"><div style="font-weight:700;color:#3d3d8f;font-size:0.85rem;margin-bottom:0.25rem;">${item.date}</div><div style="font-size:0.83rem;color:#444;white-space:pre-wrap;line-height:1.55;">${item.content}</div></div><div style="flex:1;min-width:0;display:none;" id="cl-edit-${i}"><input id="cl-edit-date-${i}" value="${item.date}" style="width:100%;margin-bottom:0.4rem;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;"/><textarea id="cl-edit-content-${i}" rows="4" style="width:100%;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;resize:vertical;">${item.content}</textarea></div><div style="display:flex;gap:0.35rem;flex-shrink:0;" id="cl-btns-${i}"><button onclick="clStartEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;color:#3d3d8f;cursor:pointer;">✏ 編輯</button><button onclick="clDelete(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #e0aaaa;border-radius:6px;background:#fff;color:#c0392b;cursor:pointer;">🗑</button></div><div style="display:none;gap:0.35rem;flex-shrink:0;" id="cl-editbtns-${i}"><button onclick="clConfirmEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.75rem;border:none;border-radius:6px;background:#238636;color:#fff;cursor:pointer;">✓</button><button onclick="clCancelEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;">取消</button></div></div></div>`).join('');document.getElementById('cl-status').textContent=`共 ${clData.length} 筆`;}
+function clStartEdit(i){document.getElementById('cl-view-'+i).style.display='none';document.getElementById('cl-edit-'+i).style.display='block';document.getElementById('cl-btns-'+i).style.display='none';document.getElementById('cl-editbtns-'+i).style.display='flex';}
+function clCancelEdit(i){document.getElementById('cl-view-'+i).style.display='block';document.getElementById('cl-edit-'+i).style.display='none';document.getElementById('cl-btns-'+i).style.display='flex';document.getElementById('cl-editbtns-'+i).style.display='none';}
+function clConfirmEdit(i){const d=document.getElementById('cl-edit-date-'+i).value.trim();const c=document.getElementById('cl-edit-content-'+i).value.trim();if(!d||!c){alert('日期和內容不能為空');return;}clData[i]={date:d,content:c};clRender();}
+function clDelete(i){if(!confirm(`確定刪除「${clData[i].date}」這筆日誌？`))return;clData.splice(i,1);clRender();}
+function clMove(i,dir){const j=i+dir;if(j<0||j>=clData.length)return;[clData[i],clData[j]]=[clData[j],clData[i]];clRender();}
+async function clSave(){const token=localStorage.getItem('gh_token');if(!token){alert('請先設定 GitHub Token');return;}const isAdd=document.getElementById('cl-panel-add').style.display!=='none';if(isAdd){const date=document.getElementById('cl-date').value.trim();const cont=document.getElementById('cl-content').value.trim();if(!date||!cont){alert('日期和內容不能為空');return;}if(!clData.length)await clLoadFromGH(false);clData.unshift({date,content:cont});}const btn=document.getElementById('cl-save-btn');btn.textContent='同步中...';btn.disabled=true;try{const base64=btoa(unescape(encodeURIComponent(JSON.stringify(clData,null,2))));const body={message:'更新 changelog.json',content:base64,branch:GH_BRANCH};if(clSha)body.sha=clSha;const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{method:'PUT',headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});if(putRes.ok){const result=await putRes.json();clSha=result.content.sha;showToast('✓ changelog.json 已同步！');if(isAdd)clSwitchTab('list');}else{const err=await putRes.json();showToast('✗ 失敗：'+(err.message||putRes.status));}}catch(e){showToast('✗ 錯誤：'+e.message);}btn.textContent=isAdd?'➕ 新增並同步':'☁ 同步到 GitHub';btn.disabled=false;}
+async function clLoadFromGH(showErr=true){const token=localStorage.getItem('gh_token');document.getElementById('cl-loading').style.display='block';document.getElementById('cl-list-wrap').style.display='none';document.getElementById('cl-list-err').style.display='none';try{const headers={'Accept':'application/vnd.github.v3+json'};if(token)headers['Authorization']='token '+token;const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`,{headers});if(!res.ok)throw new Error('HTTP '+res.status);const fd=await res.json();clSha=fd.sha;const binary=atob(fd.content.replace(/\n/g,''));const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));clData=JSON.parse(new TextDecoder('utf-8').decode(bytes));document.getElementById('cl-loading').style.display='none';document.getElementById('cl-list-wrap').style.display='block';clRender();}catch(e){document.getElementById('cl-loading').style.display='none';if(showErr){document.getElementById('cl-list-err').style.display='block';document.getElementById('cl-list-err').textContent='載入失敗：'+e.message;}}}
 
 async function syncToGitHub(){
   const token = localStorage.getItem('gh_token');
@@ -1709,6 +1627,14 @@ if(savedImgBase) window.IMG_BASE_URL = savedImgBase;
 
 persist();
 renderList();
+(function initBandSelects(){
+  const withOther = [...BAND_LIST.filter(b=>b!=='其他'), '其他'];
+  [['d-band','不套用'],['t-band','請選擇'],['f-band','請選擇']].forEach(([id,ph])=>{
+    const el=document.getElementById(id); if(!el) return;
+    while(el.options.length > 1) el.remove(1);
+    withOther.forEach(b=>{ const o=document.createElement('option'); o.value=b; o.textContent=b; el.appendChild(o); });
+  });
+})();
 
 // 自動從 GitHub 載入最新資料
 (async function(){
@@ -1723,40 +1649,10 @@ renderList();
 <!-- 更新日誌管理 Modal -->
 <div id="changelog-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:16px;width:min(680px,96vw);max-height:92vh;display:flex;flex-direction:column;font-family:inherit;">
-    <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <h2 style="margin:0;font-size:1rem;font-weight:700;">📝 更新日誌管理</h2>
-        <div style="display:flex;gap:0.5rem;">
-          <button id="cl-tab-list" onclick="clSwitchTab('list')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #3d3d8f;background:#3d3d8f;color:#fff;cursor:pointer;font-weight:600;">📋 全部日誌</button>
-          <button id="cl-tab-add" onclick="clSwitchTab('add')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;color:#555;cursor:pointer;">➕ 新增</button>
-        </div>
-      </div>
-    </div>
-    <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;">
-      <div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div>
-      <div id="cl-list-wrap" style="display:none;">
-        <div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div>
-        <div id="cl-items"></div>
-      </div>
-      <div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div>
-    </div>
-    <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;">
-      <div style="margin-bottom:0.75rem;">
-        <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
-        <input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/>
-      </div>
-      <div style="margin-bottom:0.75rem;">
-        <label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容 <span style="font-weight:400;color:#aaa;">（可用換行分隔多項）</span></label>
-        <textarea id="cl-content" rows="7" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea>
-      </div>
-    </div>
-    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;">
-      <div id="cl-status" style="font-size:0.78rem;color:#888;"></div>
-      <div style="display:flex;gap:0.6rem;">
-        <button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
-        <button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button>
-      </div>
-    </div>
+    <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;"><h2 style="margin:0;font-size:1rem;font-weight:700;">📝 更新日誌管理</h2><div style="display:flex;gap:0.5rem;"><button id="cl-tab-list" onclick="clSwitchTab('list')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #3d3d8f;background:#3d3d8f;color:#fff;cursor:pointer;font-weight:600;">📋 全部日誌</button><button id="cl-tab-add" onclick="clSwitchTab('add')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;color:#555;cursor:pointer;">➕ 新增</button></div></div></div>
+    <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;"><div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div><div id="cl-list-wrap" style="display:none;"><div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div><div id="cl-items"></div></div><div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div></div>
+    <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;"><div style="margin-bottom:0.75rem;"><label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label><input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/></div><div style="margin-bottom:0.75rem;"><label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容</label><textarea id="cl-content" rows="7" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea></div></div>
+    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;"><div id="cl-status" style="font-size:0.78rem;color:#888;"></div><div style="display:flex;gap:0.6rem;"><button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button><button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button></div></div>
   </div>
 </div>
 
