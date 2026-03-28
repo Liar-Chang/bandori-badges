@@ -695,9 +695,23 @@ function applyFilters(){
       const by2 = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
       const ad = new Date(ay||0), bd = new Date(by2||0);
       const dateDiff = sort==='year-desc' ? bd-ad : ad-bd;
-      // 日期相同時，依 badges.json 陣列順序排列
       if(dateDiff !== 0) return dateDiff;
-      return all.indexOf(a) - all.indexOf(b);
+      // 日期相同：先按活動名稱排序
+      const evA = a.event||'', evB = b.event||'';
+      const evDiff = evA.localeCompare(evB);
+      if(evDiff !== 0) return evDiff;
+      // 活動相同：按樂團順序
+      const BAND_ORDER_SORT = ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
+        "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
+        "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!"];
+      const bIdxA = BAND_ORDER_SORT.indexOf(a.band);
+      const bIdxB = BAND_ORDER_SORT.indexOf(b.band);
+      const bandIdxA = bIdxA === -1 ? 999 : bIdxA;
+      const bandIdxB = bIdxB === -1 ? 999 : bIdxB;
+      const bandDiff = bandIdxA - bandIdxB;
+      if(bandDiff !== 0) return bandDiff;
+      // 樂團相同：按角色名稱
+      return (a.character||'').localeCompare(b.character||'');
     }
     if(sort==='char') return (a.character||'').localeCompare(b.character||'');
     // 預設：依原始陣列順序
