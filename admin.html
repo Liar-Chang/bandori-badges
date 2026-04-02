@@ -589,6 +589,11 @@ const BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc
   "Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020",
   "Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111",
   "夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#aaa"};
+const BATCH_SIZES = [
+  '56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形',
+  '75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形',
+  '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'
+];
 const BAND_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
   "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
   "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"];
@@ -703,21 +708,7 @@ function renderBatchGrid(){
         <div class="bf"><label>尺寸</label>
           <select onchange="batchItems[${i}].size=this.value">
             <option value="">請選擇</option>
-            <option${item.size==='56-58mm圓形'?' selected':''}>56-58mm圓形</option>
-            <option${item.size==='15.2cm圓形'?' selected':''}>15.2cm圓形</option>
-            <option${item.size==='75mm圓形'?' selected':''}>75mm圓形</option>
-            <option${item.size==='60mm圓形'?' selected':''}>60mm圓形</option>
-            <option${item.size==='54mm圓形'?' selected':''}>54mm圓形</option>
-            <option${item.size==='50mm圓形'?' selected':''}>50mm圓形</option>
-            <option${item.size==='30mm圓形'?' selected':''}>30mm圓形</option>
-            <option${item.size==='25mm圓形'?' selected':''}>25mm圓形</option>
-            <option${item.size==='橢圓形'?' selected':''}>橢圓形</option>
-            <option${item.size==='長方形'?' selected':''}>長方形</option>
-            <option${item.size==='心形'?' selected':''}>心形</option>
-            <option${item.size==='名牌'?' selected':''}>名牌</option>
-            <option${item.size==='磁鐵'?' selected':''}>磁鐵</option>
-            <option${item.size==='約80mm布偶胸章'?' selected':''}>約80mm布偶胸章</option>
-            <option${item.size==='未確定'?' selected':''}>未確定</option>
+            ${BATCH_SIZES.map(s=>`<option${item.size===s?' selected':''}>${s}</option>`).join('')}
           </select>
         </div>
         <div class="bf"><label>活動國家/地區</label>

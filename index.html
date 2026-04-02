@@ -343,6 +343,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <button id="lang-zh" onclick="setLang('zh-TW')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">繁中</button>
     <button id="lang-cn" onclick="setLang('zh-CN')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">简中</button>
     <button id="lang-ja" onclick="setLang('ja')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">日本語</button>
+    <button id="lang-en" onclick="setLang('en')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">EN</button>
+    <button id="lang-ko" onclick="setLang('ko')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">한국어</button>
     <button id="theme-toggle" onclick="toggleTheme()" title="切換夜間模式" style="background:transparent;border:none;color:#fff;font-size:1.1rem;cursor:pointer;opacity:0.8;padding:0.1rem 0.2rem;">🌙</button>
   </div>
     <div class="site-logo">
@@ -359,12 +361,15 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
       <button onclick="setLang('zh-CN')" id="mlang-cn" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">简中</button>
       <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
+      <button onclick="setLang('en')" id="mlang-en" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">EN</button>
+      <button onclick="setLang('ko')" id="mlang-ko" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">한국어</button>
       <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
     </div>
 
     <div class="sidebar-section" id="search-section">
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
+      <button id="btn-reset-top" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-family:inherit;font-size:0.78rem;padding:0.38rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#5a4fcf';this.style.color='#5a4fcf'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">重置所有篩選</button>
     </div>
     <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
@@ -590,12 +595,23 @@ function buildSidebar(){
   buildCheckList('year-list','year-section',[...new Set(all.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
   buildCheckList('series-list','series-section',[...new Set(all.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
   buildCheckList('event-list','event-section',[...new Set(all.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
-  buildCheckList('type-list','type-section',['角色本身','角色相關','角色聲優'],selTypes,'toggleType');
-  const SIZE_FIRST = ['56mm圓形','57mm圓形','58mm圓形'];
+  const typeList = {
+    'zh-TW': ['角色本身','角色相關','角色聲優'],
+    'zh-CN': ['角色本身','角色相关','角色声优'],
+    'ja':    ['キャラクター本人','キャラクター関連','声優'],
+    'en':    ['Character','Character Related','Voice Actor'],
+    'ko':    ['캐릭터 본인','캐릭터 관련','성우'],
+  };
+  buildCheckList('type-list','type-section', typeList[currentLang]||typeList['zh-TW'], selTypes,'toggleType');
+  const SIZE_DISPLAY_ORDER = [
+    '56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形',
+    '75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形',
+    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'
+  ];
   const allSizes = [...new Set(all.map(b=>b.size).filter(Boolean))];
   const sortedSizes = [
-    ...SIZE_FIRST.filter(s=>allSizes.includes(s)),
-    ...allSizes.filter(s=>!SIZE_FIRST.includes(s)).sort()
+    ...SIZE_DISPLAY_ORDER.filter(s=>allSizes.includes(s)),
+    ...allSizes.filter(s=>!SIZE_DISPLAY_ORDER.includes(s))
   ];
   buildCheckList('size-list','size-section',sortedSizes,selSizes,'toggleSize');
   buildCheckList('country-list','country-section',[...new Set(all.map(b=>b.country).filter(Boolean))].sort(),selCountries,'toggleCountry');
@@ -627,15 +643,29 @@ function buildCharList(){
   if(selBands.size===0){ sec.style.display='none'; return; }
   const source = all.filter(b=>selBands.has(b.band));
   const CHAR_ORDER = [
+    // Poppin'Party
+    '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
+    // Afterglow
+    '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
+    // Pastel*Palettes
+    '丸山彩','冰川日菜','白鷺千聖','大和麻彌','若宮伊芙',
+    // Roselia
+    '湊友希那','冰川紗夜','今井莉莎','宇田川亞子','白金燐子',
+    // Hello, Happy World!
+    '弦卷心','瀨田薰','北澤育美','松原花音','奧澤美咲',
+    // Morfonica
+    '倉田真白','桐谷透子','廣町七深','二葉筑紫','八潮瑠唯',
+    // RAISE A SUILEN
+    '和奏瑞依(LAYER)','朝日六花(ROCK)','佐藤益木(MASKING)','鳰原令王那(PAREO)','珠手知由(CHU2)',
     // MyGO!!!!!
     '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
     // Ave Mujica
-    '三角初華','若葉睦','八幡海鈴','祐天寺若麥','豐川祥子',
+    '三角初華(Doloris)','若葉睦(Mortis)','八幡海鈴(Timoris)','祐天寺若麥(Amoris)','豐川祥子(Oblivionis)',
     // 夢限大MewType
     '仲町阿拉蕾','宮永野乃花','峰月律','藤都子','千石由乃',
-    // millsage（螢、凪、真幌、棗、朋花）
+    // millsage
     '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
-    // 一家Dumb Rock!（蕾叶、心玖、蓬咲、千繪莉、寧月）
+    // 一家Dumb Rock!
     '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
   ];
   const charSet = new Set(source.map(b=>b.character).filter(Boolean));
@@ -736,7 +766,7 @@ function applyFilters(){
       <div class="empty-main">
         <div style="font-size:3rem">🎵</div>
         <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
-        <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${L.filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
       </div>`;
     return;
   }
@@ -849,7 +879,7 @@ const LANGS = {
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
-    announceTitle:'📢 更新日誌', noData:'無符合資料',
+    announceTitle:'📢 更新日誌', noData:'無符合資料', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -868,7 +898,7 @@ const LANGS = {
     expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
     expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
     expCancel:'取消', expDownload:'⬇ 下载',
-    announceTitle:'📢 更新日志', noData:'无符合资料',
+    announceTitle:'📢 更新日志', noData:'无符合资料', filterSub:'选择乐团、角色、类型等条件来显示徽章',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -887,7 +917,45 @@ const LANGS = {
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
-    announceTitle:'📢 更新ログ', noData:'該当データなし',
+    announceTitle:'📢 更新ログ', noData:'該当データなし', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
+  },
+  'en': {
+    title:'BanG Dream! Badge Collection',
+    search:'Character, version, event...',
+    band:'Band', char:'Character', series:'Version/Craft', year:'Release Year',
+    event:'Event', type:'Type', size:'Size', country:'Event Country/Region',
+    sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
+    gridView:'Gallery', tableView:'List', download:'⬇ Download',
+    noFilter:'Please select a filter', noResult:'No badges found',
+    filterTip:'Select filters from the left panel',
+    reset:'Reset All Filters',
+    dlSeries:'Version/Craft', dlYear:'Release Year', dlEvent:'Event',
+    thBand:'Band', thChar:'Character', thEvent:'Event', thYear:'Release Date', thSeries:'Version/Craft',
+    expTitle:'⬇ Download Badge Table', expDescPre:'Export', expDescPost:'filtered badges as image',
+    expLayout:'Layout', expCols:'Columns per Row', expFields:'Show Fields', expFmt:'Format', expTitleLabel:'Title',
+    expGrid:'⊞ Image Grid', expGridDesc:'Show multiple badges per row',
+    expTable:'☰ List Table', expTableDesc:'Table format with text info',
+    expCancel:'Cancel', expDownload:'⬇ Download',
+    announceTitle:'📢 Update Log', noData:'No matching data', filterSub:'Select Band, Character, Type and more',
+  },
+  'ko': {
+    title:'BanG Dream! 배지 도감',
+    search:'캐릭터, 버전, 이벤트...',
+    band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매연도',
+    event:'이벤트', type:'타입', size:'사이즈', country:'이벤트 국가/지역',
+    sortNew:'발매일 (최신→오래된)', sortOld:'발매일 (오래된→최신)', sortChar:'캐릭터 이름',
+    gridView:'갤러리', tableView:'목록', download:'⬇ 다운로드',
+    noFilter:'필터를 선택해 주세요', noResult:'배지를 찾을 수 없습니다',
+    filterTip:'왼쪽 패널에서 필터를 선택하세요',
+    reset:'필터 초기화',
+    dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트',
+    thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트', thYear:'발매일', thSeries:'버전/공예',
+    expTitle:'⬇ 배지 표 다운로드', expDescPre:'현재 필터된', expDescPost:'개 배지를 이미지로 출력',
+    expLayout:'레이아웃', expCols:'열 수', expFields:'표시 필드', expFmt:'형식', expTitleLabel:'제목',
+    expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 배지 이미지 표시',
+    expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표 형식',
+    expCancel:'취소', expDownload:'⬇ 다운로드',
+    announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
   },
 };
 
@@ -897,16 +965,18 @@ function setLang(lang){
   currentLang = lang;
   localStorage.setItem('lang', lang);
   applyLang();
+  // 重新建立側欄，讓類型等資料也跟著切換
+  if(all && all.length) { buildSidebar(); buildCharList(); applyFilters(); }
 }
 
 function applyLang(){
   const L = LANGS[currentLang];
   // 更新按鈕狀態
-  ['zh-TW','zh-CN','ja'].forEach(l=>{
+  ['zh-TW','zh-CN','ja','en','ko'].forEach(l=>{
     const btn = document.getElementById('lang-'+l.replace('-','').replace('TW','zh').replace('CN','cn').replace('ja','ja'));
     if(btn) btn.classList.toggle('active', l===currentLang);
   });
-  [['lang-zh','zh-TW'],['lang-cn','zh-CN'],['lang-ja','ja']].forEach(([id,l])=>{
+  [['lang-zh','zh-TW'],['lang-cn','zh-CN'],['lang-ja','ja'],['lang-en','en'],['lang-ko','ko']].forEach(([id,l])=>{
     const btn=document.getElementById(id);
     if(btn){
       btn.style.background = l===currentLang ? '#ffffff55' : '#ffffff22';
@@ -945,8 +1015,7 @@ function applyLang(){
     if(sec){ const h3 = sec.querySelector('h3'); if(h3 && label) h3.textContent = label; }
   });
   // 重置按鈕
-  const resetBtn = document.querySelector('[onclick="resetFilters()"]');
-  if(resetBtn && L.reset) resetBtn.textContent = L.reset;
+  document.querySelectorAll('[onclick="resetFilters()"]').forEach(btn=>{ if(L.reset) btn.textContent = L.reset; });
   // detail modal labels
   const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
   const dlY=document.getElementById('dl-year');   if(dlY) dlY.textContent=L.dlYear||L.year;
@@ -972,6 +1041,8 @@ function applyLang(){
   const etd=document.getElementById('exp-table-desc'); if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
   const ebc=document.getElementById('exp-btn-cancel'); if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
   const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
+  // filter sub text
+  const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // 更新日誌標題
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
   // 排序
