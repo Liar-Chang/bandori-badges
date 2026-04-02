@@ -766,7 +766,7 @@ function applyFilters(){
       <div class="empty-main">
         <div style="font-size:3rem">🎵</div>
         <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
-        <div style="margin-top:0.5rem;font-size:0.85rem">選擇樂團、角色、類型等條件來顯示徽章</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">選擇樂團、角色、類型等條件來顯示徽章</div>
       </div>`;
     return;
   }
@@ -879,7 +879,7 @@ const LANGS = {
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
-    announceTitle:'📢 更新日誌', noData:'無符合資料',
+    announceTitle:'📢 更新日誌', noData:'無符合資料', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -898,7 +898,7 @@ const LANGS = {
     expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
     expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
     expCancel:'取消', expDownload:'⬇ 下载',
-    announceTitle:'📢 更新日志', noData:'无符合资料',
+    announceTitle:'📢 更新日志', noData:'无符合资料', filterSub:'选择乐团、角色、类型等条件来显示徽章',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -917,7 +917,7 @@ const LANGS = {
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
-    announceTitle:'📢 更新ログ', noData:'該当データなし',
+    announceTitle:'📢 更新ログ', noData:'該当データなし', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
   },
   'en': {
     title:'BanG Dream! Badge Collection',
@@ -936,7 +936,7 @@ const LANGS = {
     expGrid:'⊞ Image Grid', expGridDesc:'Show multiple badges per row',
     expTable:'☰ List Table', expTableDesc:'Table format with text info',
     expCancel:'Cancel', expDownload:'⬇ Download',
-    announceTitle:'📢 Update Log', noData:'No matching data',
+    announceTitle:'📢 Update Log', noData:'No matching data', filterSub:'Select Band, Character, Type and more',
   },
   'ko': {
     title:'BanG Dream! 배지 도감',
@@ -955,7 +955,7 @@ const LANGS = {
     expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 배지 이미지 표시',
     expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표 형식',
     expCancel:'취소', expDownload:'⬇ 다운로드',
-    announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음',
+    announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
   },
 };
 
@@ -1041,6 +1041,8 @@ function applyLang(){
   const etd=document.getElementById('exp-table-desc'); if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
   const ebc=document.getElementById('exp-btn-cancel'); if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
   const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
+  // filter sub text
+  const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // 更新日誌標題
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
   // 排序
