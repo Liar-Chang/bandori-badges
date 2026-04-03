@@ -99,7 +99,7 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&family=Kaisei+Decol:wght@700&family=Jua&display=swap" rel="stylesheet"/>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Cubic+11&display=swap" rel="stylesheet"/>
@@ -351,7 +351,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   </div>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
-      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;" id="header-subtitle"> 徽章圖鑑</span>
+      <span style="font-family:'Boogaloo',sans-serif;" id="header-subtitle"> 徽章圖鑑</span>
     </div>
   </div>
 </header>
@@ -1229,7 +1229,13 @@ function applyLang(){
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // footer 語言切換
   // header subtitle
-  const hs=document.getElementById('header-subtitle'); if(hs&&L.subtitle) hs.textContent=L.subtitle;
+  const hs=document.getElementById('header-subtitle');
+  if(hs&&L.subtitle){
+    hs.textContent=L.subtitle;
+    const fontMap={'zh-TW':"'Boogaloo',sans-serif",'ja':"'Kaisei Decol','Noto Sans TC',sans-serif",'en':"'Boogaloo',sans-serif",'ko':"'Jua','Noto Sans TC',sans-serif"};
+    hs.style.fontFamily = fontMap[currentLang] || fontMap['zh-TW'];
+    const weightMap={'zh-TW':'400','ja':'700','en':'400','ko':'400'}; hs.style.fontWeight = weightMap[currentLang]||'400';
+  }
   const fal=document.getElementById('footer-author-label'); if(fal&&L.authorLabel) fal.textContent=L.authorLabel;
   const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
