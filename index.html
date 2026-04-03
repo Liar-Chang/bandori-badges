@@ -398,7 +398,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="filter-group" id="size-list"></div>
     </div>
     <div class="sidebar-section" id="country-section">
-      <h3>活動國家/地區</h3>
+      <h3>活動國家</h3>
       <div class="filter-group" id="country-list"></div>
     </div>
     <button class="btn-reset" onclick="resetFilters()">重置所有篩選</button>
@@ -869,7 +869,7 @@ function renderGrid(list){
         ${b.size?`<div class="expand-field"><span class="expand-label">尺寸</span><span class="expand-value">${b.size}</span></div>`:''}
         ${b.series?`<div class="expand-field"><span class="expand-label">版本/工藝</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">類型</span><span class="expand-value">${b.type}</span></div>`:''}
-        ${b.country?`<div class="expand-field"><span class="expand-label">活動國家/地區</span><span class="expand-value">${b.country}</span></div>`:''}
+        ${b.country?`<div class="expand-field"><span class="expand-label">活動國家</span><span class="expand-value">${b.country}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">備註</span><span class="expand-value">${b.note}</span></div>`:''}
       </div>
     </div>`;
@@ -945,7 +945,7 @@ const SIZE_TRANS = {
   '未確定':          {'zh-CN':'未确定','ja':'未確定','en':'Unknown','ko':'미확인'},
 };
 
-// ── 活動國家/地區多語言對照表 ──
+// ── 活動國家多語言對照表 ──
 const COUNTRY_TRANS = {
   '日本':  {'zh-CN':'日本','ja':'日本','en':'Japan','ko':'일본'},
   '台灣':  {'zh-CN':'台湾','ja':'台湾','en':'Taiwan','ko':'대만'},
@@ -1063,7 +1063,7 @@ const LANGS = {
     title:'BanG Dream! 徽章圖鑑',
     search:'角色、版本、活動...',
     band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份',
-    event:'活動', type:'類型', size:'尺寸', country:'活動國家/地區',
+    event:'活動', type:'類型', size:'尺寸', country:'活動國家',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
@@ -1092,7 +1092,7 @@ const LANGS = {
     title:'BanG Dream! バッジ図鑑',
     search:'キャラ、バージョン、イベント...',
     band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年',
-    event:'イベント', type:'タイプ', size:'サイズ', country:'活動国/地域',
+    event:'イベント', type:'タイプ', size:'サイズ', country:'活動国',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
@@ -1121,7 +1121,7 @@ const LANGS = {
     title:'BanG Dream! Badge Encyclopedia',
     search:'Character, version, event...',
     band:'Band', char:'Character', series:'Version/Craft', year:'Release Year',
-    event:'Event', type:'Type', size:'Size', country:'Event Region',
+    event:'Event', type:'Type', size:'Size', country:'Event Country',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
     noFilter:'Please select a filter', noResult:'No badges found',
@@ -1141,7 +1141,7 @@ const LANGS = {
     title:'BanG Dream! 뱃지 도감',
     search:'캐릭터, 버전, 이벤트...',
     band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도',
-    event:'이벤트', type:'유형', size:'크기', country:'이벤트 지역',
+    event:'이벤트', type:'유형', size:'크기', country:'이벤트 국가',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
     noFilter:'필터를 선택해 주세요', noResult:'해당하는 뱃지가 없습니다',
