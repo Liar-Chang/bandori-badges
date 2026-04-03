@@ -584,7 +584,8 @@ function buildSidebar(){
   const bands=[...BAND_ORDER.filter(b=>bc[b]),...[...new Set(all.map(b=>b.band))].filter(b=>!BAND_ORDER.includes(b)&&bc[b])];
   document.getElementById('band-list').innerHTML=bands.map(band=>{
     const c=bandColor(band);
-    return `<div class="band-chip" id="bc-${band.replace(/[^a-z0-9]/gi,'_')}"
+    const isActive=selBands.has(band);
+    return `<div class="band-chip${isActive?' active':''}" id="bc-${band.replace(/[^a-z0-9]/gi,'_')}"
       style="--chip-color:${c};--chip-bg:${c}18"
       onclick="toggleBand('${band.replace(/'/g,"\\'")}')">
       <div class="band-dot" style="background:${c}"></div>
@@ -735,15 +736,52 @@ function applyFilters(){
       const bandIdxB = bIdxB === -1 ? 999 : bIdxB;
       const bandDiff = bandIdxA - bandIdxB;
       if(bandDiff !== 0) return bandDiff;
-      // 樂團相同：按角色名稱
-      const charDiff2 = (a.character||'').localeCompare(b.character||'');
-      if(charDiff2 !== 0) return charDiff2;
+      // 樂團相同：按角色 CHAR_ORDER 順序
+      const CHAR_SORT_ORDER2 = [
+        '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
+        '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
+        '丸山彩','冰川日菜','白鷺千聖','大和麻彌','若宮伊芙',
+        '湊友希那','冰川紗夜','今井莉莎','宇田川亞子','白金燐子',
+        '弦卷心','瀨田薰','北澤育美','松原花音','奧澤美咲',
+        '倉田真白','桐谷透子','廣町七深','二葉筑紫','八潮瑠唯',
+        '和奏瑞依(LAYER)','朝日六花(ROCK)','佐藤益木(MASKING)','鳰原令王那(PAREO)','珠手知由(CHU2)',
+        '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
+        '三角初華','若葉睦','八幡海鈴','祐天寺若麥','豐川祥子',
+        '三角初華(Doloris)','若葉睦(Mortis)','八幡海鈴(Timoris)','祐天寺若麥(Amoris)','豐川祥子(Oblivionis)',
+        '仲町阿拉蕾','宮永野乃花','峰月律','藤都子','千石由乃',
+        '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
+        '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
+      ];
+      const ci2 = CHAR_SORT_ORDER2.indexOf(a.character||'');
+      const di2 = CHAR_SORT_ORDER2.indexOf(b.character||'');
+      const cIdx = ci2 === -1 ? 9999 : ci2;
+      const dIdx = di2 === -1 ? 9999 : di2;
+      if(cIdx !== dIdx) return cIdx - dIdx;
       // 角色相同：按編號
       return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     }
     if(sort==='char'){
-      const charDiff = (a.character||'').localeCompare(b.character||'');
-      if(charDiff !== 0) return charDiff;
+      // 按 CHAR_ORDER 預設順序排列
+      const CHAR_SORT_ORDER = [
+        '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
+        '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
+        '丸山彩','冰川日菜','白鷺千聖','大和麻彌','若宮伊芙',
+        '湊友希那','冰川紗夜','今井莉莎','宇田川亞子','白金燐子',
+        '弦卷心','瀨田薰','北澤育美','松原花音','奧澤美咲',
+        '倉田真白','桐谷透子','廣町七深','二葉筑紫','八潮瑠唯',
+        '和奏瑞依(LAYER)','朝日六花(ROCK)','佐藤益木(MASKING)','鳰原令王那(PAREO)','珠手知由(CHU2)',
+        '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
+        '三角初華','若葉睦','八幡海鈴','祐天寺若麥','豐川祥子',
+        '三角初華(Doloris)','若葉睦(Mortis)','八幡海鈴(Timoris)','祐天寺若麥(Amoris)','豐川祥子(Oblivionis)',
+        '仲町阿拉蕾','宮永野乃花','峰月律','藤都子','千石由乃',
+        '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
+        '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
+      ];
+      const ai = CHAR_SORT_ORDER.indexOf(a.character||'');
+      const bi = CHAR_SORT_ORDER.indexOf(b.character||'');
+      const aIdx = ai === -1 ? 9999 : ai;
+      const bIdx = bi === -1 ? 9999 : bi;
+      if(aIdx !== bIdx) return aIdx - bIdx;
       return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     }
     // 預設：依原始陣列順序
