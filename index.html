@@ -341,7 +341,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <div class="header-inner">
   <div id="header-controls" style="position:absolute;bottom:0.5rem;right:0.75rem;display:flex;align-items:center;gap:0.35rem;z-index:10;">
     <button id="lang-zh" onclick="setLang('zh-TW')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">繁中</button>
-    <button id="lang-cn" onclick="setLang('zh-CN')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">简中</button>
     <button id="lang-ja" onclick="setLang('ja')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">日本語</button>
     <button id="lang-en" onclick="setLang('en')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">EN</button>
     <button id="lang-ko" onclick="setLang('ko')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">한국어</button>
@@ -359,7 +358,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <!-- 手機版語言/夜間模式控制列 -->
     <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
       <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
-      <button onclick="setLang('zh-CN')" id="mlang-cn" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">简中</button>
       <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
       <button onclick="setLang('en')" id="mlang-en" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">EN</button>
       <button onclick="setLang('ko')" id="mlang-ko" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">한국어</button>
@@ -620,8 +618,33 @@ function buildSidebar(){
   const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const allSizes = [...new Set(all.map(b=>b.size).filter(Boolean))];
   const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
-  buildCheckList('size-list','size-section',sortedSizes,selSizes,'toggleSize');
-  buildCheckList('country-list','country-section',[...new Set(all.map(b=>b.country).filter(Boolean))].sort(),selCountries,'toggleCountry');
+  // 尺寸：value 存繁中原始值，label 顯示對應語言
+  const sizeSec = document.getElementById('size-section');
+  const sizeListEl = document.getElementById('size-list');
+  if(sizeSec && sizeListEl){
+    if(!sortedSizes.length){ sizeSec.style.display='none'; }
+    else {
+      sizeSec.style.display='';
+      sizeListEl.innerHTML = sortedSizes.map(s => {
+        const label = getSizeName(s, currentLang);
+        return `<label class="filter-item"><input type="checkbox" ${selSizes.has(s)?'checked':''} onchange="toggleSize(this.value)" value="${s}"/><span>${label}</span></label>`;
+      }).join('');
+    }
+  }
+  // 國家/地區：value 存繁中原始值，label 顯示對應語言
+  const countrySec = document.getElementById('country-section');
+  const countryListEl = document.getElementById('country-list');
+  const allCountries = [...new Set(all.map(b=>b.country).filter(Boolean))].sort();
+  if(countrySec && countryListEl){
+    if(!allCountries.length){ countrySec.style.display='none'; }
+    else {
+      countrySec.style.display='';
+      countryListEl.innerHTML = allCountries.map(c => {
+        const label = getCountryName(c, currentLang);
+        return `<label class="filter-item"><input type="checkbox" ${selCountries.has(c)?'checked':''} onchange="toggleCountry(this.value)" value="${c}"/><span>${label}</span></label>`;
+      }).join('');
+    }
+  }
 }
 
 function buildCheckList(listId,secId,items,selSet,fn){
@@ -897,6 +920,54 @@ init();
 /* ── 多語言 ── */
 // ── 角色名稱多語言對照表 ──
 
+
+// ── 尺寸多語言對照表 ──
+const SIZE_TRANS = {
+  '56mm圓形':        {'zh-CN':'56mm圆形','ja':'56mmサークル','en':'56mm Circle','ko':'56mm 원형'},
+  '57mm圓形':        {'zh-CN':'57mm圆形','ja':'57mmサークル','en':'57mm Circle','ko':'57mm 원형'},
+  '58mm圓形':        {'zh-CN':'58mm圆形','ja':'58mmサークル','en':'58mm Circle','ko':'58mm 원형'},
+  '56-58mm圓形':     {'zh-CN':'56-58mm圆形','ja':'56-58mmサークル','en':'56-58mm Circle','ko':'56-58mm 원형'},
+  '15.2cm圓形':      {'zh-CN':'15.2cm圆形','ja':'15.2cmサークル','en':'15.2cm Circle','ko':'15.2cm 원형'},
+  '15cm圓形':        {'zh-CN':'15cm圆形','ja':'15cmサークル','en':'15cm Circle','ko':'15cm 원형'},
+  '75mm圓形':        {'zh-CN':'75mm圆形','ja':'75mmサークル','en':'75mm Circle','ko':'75mm 원형'},
+  '65mm圓形':        {'zh-CN':'65mm圆形','ja':'65mmサークル','en':'65mm Circle','ko':'65mm 원형'},
+  '60mm圓形':        {'zh-CN':'60mm圆形','ja':'60mmサークル','en':'60mm Circle','ko':'60mm 원형'},
+  '54mm圓形':        {'zh-CN':'54mm圆形','ja':'54mmサークル','en':'54mm Circle','ko':'54mm 원형'},
+  '50mm圓形':        {'zh-CN':'50mm圆形','ja':'50mmサークル','en':'50mm Circle','ko':'50mm 원형'},
+  '30mm圓形':        {'zh-CN':'30mm圆形','ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
+  '25mm圓形':        {'zh-CN':'25mm圆形','ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
+  '橢圓形':          {'zh-CN':'椭圆形','ja':'楕円形','en':'Oval','ko':'타원형'},
+  '長方形':          {'zh-CN':'长方形','ja':'長方形','en':'Rectangle','ko':'직사각형'},
+  '心形':            {'zh-CN':'心形','ja':'ハート形','en':'Heart','ko':'하트형'},
+  '名牌':            {'zh-CN':'名牌','ja':'ネームプレート','en':'Name Plate','ko':'명찰'},
+  '磁鐵':            {'zh-CN':'磁铁','ja':'マグネット','en':'Magnet','ko':'마그넷'},
+  '約80mm布偶胸章':  {'zh-CN':'约80mm布偶胸章','ja':'約80mmぬいぐるみバッジ','en':'~80mm Plush Badge','ko':'약80mm 봉제 배지'},
+  '未確定':          {'zh-CN':'未确定','ja':'未確定','en':'Unknown','ko':'미확인'},
+};
+
+// ── 活動國家/地區多語言對照表 ──
+const COUNTRY_TRANS = {
+  '日本':  {'zh-CN':'日本','ja':'日本','en':'Japan','ko':'일본'},
+  '台灣':  {'zh-CN':'台湾','ja':'台湾','en':'Taiwan','ko':'대만'},
+  '香港':  {'zh-CN':'香港','ja':'香港','en':'Hong Kong','ko':'홍콩'},
+  '中國':  {'zh-CN':'中国','ja':'中国','en':'China','ko':'중국'},
+  '韓國':  {'zh-CN':'韩国','ja':'韓国','en':'South Korea','ko':'한국'},
+  '美國':  {'zh-CN':'美国','ja':'アメリカ','en':'USA','ko':'미국'},
+  '泰國':  {'zh-CN':'泰国','ja':'タイ','en':'Thailand','ko':'태국'},
+  '新加坡':{'zh-CN':'新加坡','ja':'シンガポール','en':'Singapore','ko':'싱가포르'},
+};
+
+function getSizeName(size, lang){
+  if(!size || !lang || lang==='zh-TW') return size;
+  const t = SIZE_TRANS[size];
+  return t ? (t[lang]||size) : size;
+}
+function getCountryName(country, lang){
+  if(!country || !lang || lang==='zh-TW') return country;
+  const t = COUNTRY_TRANS[country];
+  return t ? (t[lang]||country) : country;
+}
+
 // ── 樂團名稱多語言對照表 ──
 const BAND_NAME_MAP = {
   '夢限大MewType': {'zh-TW':'夢限大MewType','zh-CN':'梦限大MewType','ja':'夢限大みゅーたいぷ','en':'Mugendai Mewtype','ko':'무겐다이 뮤타입'},
@@ -1017,35 +1088,6 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', noData:'無符合資料',
   },
-  'zh-CN': {
-    title:'BanG Dream! 徽章图鉴',
-    search:'角色、版本、活动...',
-    band:'乐团', char:'角色', series:'版本/工藝', year:'发售年份',
-    event:'活动', type:'类型', size:'尺寸', country:'活动国家/地区',
-    sortNew:'发售日期（新→旧）', sortOld:'发售日期（旧→新）', sortChar:'角色名称',
-    gridView:'图鉴', tableView:'表格', download:'⬇ 下载图档',
-    noFilter:'请选择筛选条件', noResult:'找不到符合的徽章',
-    filterTip:'请从左侧选择筛选条件',
-    search:'搜索', band:'乐团', char:'角色', reset:'重置所有筛选',
-    dlSeries:'版本/工艺', dlYear:'发售年份', dlEvent:'活动',
-    thBand:'乐团', thChar:'角色', thEvent:'活动', thYear:'发售日期', thSeries:'版本/工艺',
-    expTitle:'⬇ 下载徽章表格图档', expDescPre:'将目前筛选的', expDescPost:'枚徽章输出为图片',
-    expLayout:'版面配置', expCols:'每列栏数', expFields:'显示栏位', expFmt:'输出格式', expTitleLabel:'标题文字',
-    expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
-    expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
-    expCancel:'取消', expDownload:'⬇ 下载',
-    announceTitle:'📢 更新日志', noData:'无符合资料', filterSub:'选择乐团、角色、类型等条件来显示徽章',
-    reportLabel:'错误回报', contactLabel:'联系方式',
-    search:'搜索', band:'乐团', char:'角色', reset:'重置所有筛选',
-    dlSeries:'版本/工艺', dlYear:'发售年份', dlEvent:'活动',
-    thBand:'乐团', thChar:'角色', thEvent:'活动', thYear:'发售日期', thSeries:'版本/工艺',
-    expTitle:'⬇ 下载徽章表格图档', expDescPre:'将目前筛选的', expDescPost:'枚徽章输出为图片',
-    expLayout:'版面配置', expCols:'每列栏数', expFields:'显示栏位', expFmt:'输出格式', expTitleLabel:'标题文字',
-    expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
-    expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
-    expCancel:'取消', expDownload:'⬇ 下载',
-    announceTitle:'📢 更新日志', noData:'无符合资料',
-  },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
     search:'キャラ、バージョン、イベント...',
@@ -1117,7 +1159,12 @@ const LANGS = {
   },
 };
 
-let currentLang = localStorage.getItem('lang') || 'zh-TW';
+let currentLang = (()=>{
+  const saved = localStorage.getItem('lang');
+  // 已移除簡中，若舊存檔是 zh-CN 則改為 zh-TW
+  if(saved === 'zh-CN'){ localStorage.setItem('lang','zh-TW'); return 'zh-TW'; }
+  return saved || 'zh-TW';
+})();
 
 function setLang(lang){
   currentLang = lang;
@@ -1133,7 +1180,7 @@ function setLang(lang){
 function applyLang(){
   const L = LANGS[currentLang] || LANGS['zh-TW'];
   // 語言按鈕高亮
-  ['zh-TW','zh-CN','ja','en','ko'].forEach(l=>{
+  ['zh-TW','ja','en','ko'].forEach(l=>{
     const btn = document.getElementById('lang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
     if(btn){ btn.style.background = l===currentLang?'#ffffff55':'#ffffff22'; btn.style.fontWeight = l===currentLang?'700':'400'; }
     const mbtn = document.getElementById('mlang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
@@ -1583,7 +1630,12 @@ async function doExport(){
   for(const g of groups){
     // 類型標題（只在換類型時顯示）
     if(g.type !== prevType){
-      const typeLabel = g.type || '未分類';
+      const typeDisplayMap2 = {
+        '角色本身': {'zh-TW':'角色本身','zh-CN':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
+        '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
+        '角色聲優': {'zh-TW':'角色聲優','zh-CN':'角色声优','ja':'声優','en':'Voice Actor','ko':'성우'},
+      };
+      const typeLabel = ((typeDisplayMap2[g.type]||{})[currentLang]) || g.type || '未分類';
       ctx.fillStyle = '#1a1a2e';
       ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, TYPE_H, 8); ctx.fill();
       ctx.fillStyle = '#fff';
@@ -1598,7 +1650,7 @@ async function doExport(){
     ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, SIZE_H, 6); ctx.fill();
     ctx.fillStyle = '#3d3d8f';
     ctx.font = 'bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-    ctx.fillText(g.sizeLabel, PAD+10, curY+19);
+    ctx.fillText(getSizeName(g.sizeLabel, currentLang), PAD+10, curY+19);
     curY += SIZE_H + 8;
 
     // 徽章
