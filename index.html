@@ -566,9 +566,9 @@ async function init(){
       {id:"006",ext:"jpg",band:"Roselia",character:"氷川紗夜",series:"Ani-Art",year:"2021",event:"",note:""},
     ];
   }
+  applyLang();   // 先套語言，確保後續所有動態內容都用正確語言渲染
   buildSidebar();
   buildCharList();
-  applyLang();   // 資料載入後再套一次語言，確保所有動態內容正確
   applyFilters();
 }
 
@@ -1085,7 +1085,10 @@ function setLang(lang){
   currentLang = lang;
   localStorage.setItem('lang', lang);
   applyLang();
-  if(all.length) buildSidebar();
+  if(all.length){
+    buildSidebar();   // 重建 sidebar
+    buildCharList();  // 重建角色清單（更新顯示語言）
+  }
   applyFilters(); // 無論有無資料都重跑，確保提示語言正確
 }
 
