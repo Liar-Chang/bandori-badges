@@ -568,6 +568,7 @@ async function init(){
   }
   buildSidebar();
   buildCharList();
+  applyLang();   // 資料載入後再套一次語言，確保所有動態內容正確
   applyFilters();
 }
 
@@ -1078,6 +1079,7 @@ function setLang(lang){
   localStorage.setItem('lang', lang);
   applyLang();
   if(all.length) buildSidebar();
+  applyFilters(); // 無論有無資料都重跑，確保提示語言正確
 }
 
 function applyLang(){
