@@ -1080,7 +1080,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報/資料提供', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基',
+    reportLabel:'錯誤回報/資料提供', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -1100,7 +1100,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告/データ提供', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー',
+    reportLabel:'エラー報告/データ提供', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia',
@@ -1120,7 +1120,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Issue / Submit Data', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi",
+    reportLabel:'Report Issue / Submit Data', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감',
@@ -1140,7 +1140,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고/자료 제공', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기',
+    reportLabel:'오류 신고/자료 제공', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!',
   },
 }
 let currentLang = (()=>{
@@ -1281,7 +1281,8 @@ function copyEmail(){
   navigator.clipboard.writeText(email).then(()=>{
     const btn = document.getElementById('email-btn');
     const orig = btn.innerHTML;
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 已複製！';
+    const copiedText = (LANGS[currentLang]||LANGS['zh-TW']).copiedLabel||'✓ 已複製！';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ' + copiedText;
     btn.style.color = '#22c55e';
     setTimeout(()=>{ btn.innerHTML = orig; btn.style.color = '#aaa'; }, 2000);
   }).catch(()=>{
