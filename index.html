@@ -1229,42 +1229,6 @@ function applyLang(){
 }
 applyLang();
 
-/* ── 公告：置頂樣式 ── */
-.announce-pinned {
-  border-left: 3px solid #e05c5c;
-  background: linear-gradient(90deg, rgba(224,92,92,0.08) 0%, transparent 100%);
-  border-radius: 0 6px 6px 0;
-  margin-bottom: 0.5rem;
-  padding: 0.55rem 0.75rem;
-}
-.announce-pinned .announce-pin-badge {
-  display: inline-block;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #e05c5c;
-  background: rgba(224,92,92,0.12);
-  border: 1px solid rgba(224,92,92,0.3);
-  border-radius: 10px;
-  padding: 0.05rem 0.45rem;
-  margin-right: 0.4rem;
-  vertical-align: middle;
-}
-.announce-normal {
-  padding: 0.55rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-.announce-normal:last-child { border-bottom: none; }
-.announce-date-row {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.2rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--muted);
-}
-.announce-text { font-size: 0.8rem; line-height: 1.6; color: var(--text); }
-
 /* ── 公告框 ── */
 // 載入更新日誌（支援置頂公告）
 async function loadChangelog(){
@@ -1286,13 +1250,11 @@ async function loadChangelog(){
               <span class="announce-pin-badge">${(LANGS[currentLang]||LANGS['zh-TW']).pinLabel||'📌 置頂'}</span>
               <span>${item.date}</span>
             </div>
-            <div class="announce-text">${item.content.replace(/
-/g,'<br>')}</div>
+            <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
           </div>`
         : `<div class="announce-normal">
             <div class="announce-date-row">${item.date}</div>
-            <div class="announce-text">${item.content.replace(/
-/g,'<br>')}</div>
+            <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
           </div>`;
     }).join('');
   } catch(e){
@@ -1912,6 +1874,42 @@ function doExportHTML(list, title, btn, progWrap, prog){
   td{padding:8px 12px;border-top:1px solid #ece9e0;vertical-align:middle;}
   tr:hover td{background:#f5f4ff;}
   .footer{margin-top:1rem;font-size:0.75rem;color:#aaa;}
+
+/* ── 公告：置頂樣式 ── */
+.announce-pinned {
+  border-left: 3px solid #e05c5c;
+  background: linear-gradient(90deg, rgba(224,92,92,0.08) 0%, transparent 100%);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 0.5rem;
+  padding: 0.55rem 0.75rem;
+}
+.announce-pinned .announce-pin-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #e05c5c;
+  background: rgba(224,92,92,0.12);
+  border: 1px solid rgba(224,92,92,0.3);
+  border-radius: 10px;
+  padding: 0.05rem 0.45rem;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.announce-normal {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.announce-normal:last-child { border-bottom: none; }
+.announce-date-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.announce-text { font-size: 0.8rem; line-height: 1.6; color: var(--text); }
 </style></head><body>
 <h1>${title}</h1>
 <p style="color:#888;font-size:0.85rem;">共 ${list.length} 枚｜匯出時間：${new Date().toLocaleString('zh-TW')}</p>
