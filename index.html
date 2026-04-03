@@ -351,7 +351,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   </div>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
-      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;"> 徽章圖鑑</span>
+      <span style="font-family:'Cubic 11','Noto Sans TC',sans-serif;" id="header-subtitle"> 徽章圖鑑</span>
     </div>
   </div>
 </header>
@@ -1063,7 +1063,7 @@ function getCharName(charTW, lang) {
 
 const LANGS = {
   'zh-TW': {
-    title:'BanG Dream! 徽章圖鑑',
+    title:'BanG Dream! 徽章圖鑑', subtitle:' 徽章圖鑑',
     search:'搜尋', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份',
     event:'活動', type:'類型', size:'尺寸', country:'活動國家',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
@@ -1083,7 +1083,7 @@ const LANGS = {
     reportLabel:'錯誤回報/資料提供', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！',
   },
   'ja': {
-    title:'BanG Dream! バッジ図鑑',
+    title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
     search:'検索', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年',
     event:'イベント', type:'タイプ', size:'サイズ', country:'活動国',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
@@ -1103,7 +1103,7 @@ const LANGS = {
     reportLabel:'エラー報告/データ提供', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！',
   },
   'en': {
-    title:'BanG Dream! Badge Encyclopedia',
+    title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
     search:'Search', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year',
     event:'Event', type:'Type', size:'Size', country:'Event Country',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
@@ -1123,7 +1123,7 @@ const LANGS = {
     reportLabel:'Report Issue / Submit Data', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!',
   },
   'ko': {
-    title:'BanG Dream! 뱃지 도감',
+    title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
     search:'검색', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도',
     event:'이벤트', type:'유형', size:'크기', country:'이벤트 국가',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
@@ -1228,6 +1228,8 @@ function applyLang(){
   // filter sub text
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // footer 語言切換
+  // header subtitle
+  const hs=document.getElementById('header-subtitle'); if(hs&&L.subtitle) hs.textContent=L.subtitle;
   const fal=document.getElementById('footer-author-label'); if(fal&&L.authorLabel) fal.textContent=L.authorLabel;
   const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
