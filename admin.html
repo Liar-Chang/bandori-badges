@@ -497,7 +497,9 @@ td.editable:hover .edit-hint{opacity:1;}
       </div>
     </div>
     <div class="form-grid">
-      <div class="field"><label>編號 *</label><input type="text" id="f-id" placeholder="如 001" oninput="updateModalPath()"/></div>
+      <div class="field"><label>編號 *</label><input type="text" id="f-id" placeholder="如 001" oninput="updateModalPath()"/>
+        <div id="id-hint" style="font-size:0.72rem;margin-top:0.25rem;min-height:1rem;"></div>
+      </div>
       <div class="field"><label>副檔名</label>
         <select id="f-ext" onchange="updateModalPath()">
           <option value="jpg">jpg</option><option value="png">png</option><option value="webp">webp</option>
@@ -589,11 +591,6 @@ const BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc
   "Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020",
   "Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111",
   "夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#aaa"};
-const BATCH_SIZES = [
-  '56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形',
-  '75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形',
-  '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'
-];
 const BAND_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
   "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
   "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"];
@@ -708,7 +705,21 @@ function renderBatchGrid(){
         <div class="bf"><label>尺寸</label>
           <select onchange="batchItems[${i}].size=this.value">
             <option value="">請選擇</option>
-            ${BATCH_SIZES.map(s=>`<option${item.size===s?' selected':''}>${s}</option>`).join('')}
+            <option${item.size==='56-58mm圓形'?' selected':''}>56-58mm圓形</option>
+            <option${item.size==='15.2cm圓形'?' selected':''}>15.2cm圓形</option>
+            <option${item.size==='75mm圓形'?' selected':''}>75mm圓形</option>
+            <option${item.size==='60mm圓形'?' selected':''}>60mm圓形</option>
+            <option${item.size==='54mm圓形'?' selected':''}>54mm圓形</option>
+            <option${item.size==='50mm圓形'?' selected':''}>50mm圓形</option>
+            <option${item.size==='30mm圓形'?' selected':''}>30mm圓形</option>
+            <option${item.size==='25mm圓形'?' selected':''}>25mm圓形</option>
+            <option${item.size==='橢圓形'?' selected':''}>橢圓形</option>
+            <option${item.size==='長方形'?' selected':''}>長方形</option>
+            <option${item.size==='心形'?' selected':''}>心形</option>
+            <option${item.size==='名牌'?' selected':''}>名牌</option>
+            <option${item.size==='磁鐵'?' selected':''}>磁鐵</option>
+            <option${item.size==='約80mm布偶胸章'?' selected':''}>約80mm布偶胸章</option>
+            <option${item.size==='未確定'?' selected':''}>未確定</option>
           </select>
         </div>
         <div class="bf"><label>活動國家/地區</label>
@@ -743,20 +754,20 @@ function clearBatch(){
 }
 
 const CHAR_MAP = {
+  "Poppin'Party": ["戶山香澄", "花園多惠", "牛込里美", "山吹紗綾", "市谷有咲"],
+  "Afterglow": ["美竹蘭", "青葉摩卡", "上原緋瑪麗", "宇田川巴", "羽澤鶇"],
+  "Pastel*Palettes": ["丸山彩", "冰川日菜", "白鷺千聖", "大和麻彌", "若宮伊芙"],
+  "Roselia": ["湊友希那", "冰川紗夜", "今井莉莎", "宇田川亞子", "白金燐子"],
+  "Hello, Happy World!": ["弦卷心", "瀨田薰", "北澤育美", "松原花音", "奧澤美咲"],
+  "Morfonica": ["倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
+  "RAISE A SUILEN": ["和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
   "MyGO!!!!!": ["高松燈", "千早愛音", "要樂奈", "長崎爽世", "椎名立希"],
-  "Ave Mujica": ["三角初華(Doloris)", "若葉睦(Mortis)", "八幡海鈴(Timoris)", "祐天寺若麥(Amoris)", "豐川祥子(Oblivionis)"],
+  "Ave Mujica": ["三角初華", "若葉睦", "八幡海鈴", "祐天寺若麥", "豐川祥子"],
   "夢限大MewType": ["仲町阿拉蕾", "宮永野乃花", "峰月律", "藤都子", "千石由乃"],
   "millsage": ["汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
   "一家Dumb Rock!": ["須賀蕾叶", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
-  "Poppin'Party": ["戶山香澄", "花園多惠", "牛込里美", "山吹紗綾", "市谷有咲"],
-  "Roselia": ["湊友希那", "冰川紗夜", "今井莉莎", "宇田川亞子", "白金燐子"],
-  "Afterglow": ["美竹蘭", "青葉摩卡", "上原緋瑪麗", "宇田川巴", "羽澤鶇"],
-  "Pastel*Palettes": ["丸山彩", "冰川日菜", "白鷺千聖", "大和麻彌", "若宮伊芙"],
-  "Hello, Happy World!": ["弦卷心", "瀨田薰", "北澤育美", "松原花音", "奧澤美咲"],
-  "RAISE A SUILEN": ["和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
-  "Morfonica": ["倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
   "其他": []
-};
+}
 function updateModalChars(band){
   const b = band !== undefined ? band : document.getElementById('f-band').value;
   const sel = document.getElementById('f-character');
@@ -1163,7 +1174,26 @@ function openModal(idx=-1){
   // Reset local preview
   if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
   document.getElementById('modal-title').textContent=idx>=0?'編輯徽章':'新增徽章';
-  document.getElementById('f-id').value=b.id||'';
+  if(idx<0){
+    // 新增時自動填入建議編號（優先跳號）
+    const nextId = getNextId();
+    document.getElementById('f-id').value=nextId;
+    const missing = getMissingIds();
+    const hint = document.getElementById('id-hint');
+    if(hint){
+      if(missing.length>0){
+        hint.textContent=`⚠ 建議使用跳號 #${nextId}（共 ${missing.length} 個空號）`;
+        hint.style.color='#e07b2a';
+      } else {
+        hint.textContent=`下一個編號：#${nextId}`;
+        hint.style.color='#888';
+      }
+    }
+  } else {
+    document.getElementById('f-id').value=b.id||'';
+    const hint=document.getElementById('id-hint');
+    if(hint) hint.textContent='';
+  }
   document.getElementById('f-ext').value=b.ext||'jpg';
   document.getElementById('f-band').value=b.band||'';
   updateModalChars(b.band||'');
@@ -1349,8 +1379,25 @@ function updateTextChars(){
 
 function getNextId(){
   if(!badges.length) return '001';
-  const maxId = Math.max(...badges.map(b=>parseInt(b.id)||0));
-  return String(maxId+1).padStart(3, '0');
+  const ids = new Set(badges.map(b=>parseInt(b.id)||0).filter(n=>n>0));
+  const maxId = Math.max(...ids);
+  // 找最小的跳號（從1開始找第一個不存在的）
+  for(let i=1; i<=maxId; i++){
+    if(!ids.has(i)) return String(i).padStart(3,'0');
+  }
+  return String(maxId+1).padStart(3,'0');
+}
+
+// 查出所有跳過的流水號
+function getMissingIds(){
+  if(!badges.length) return [];
+  const ids = new Set(badges.map(b=>parseInt(b.id)||0).filter(n=>n>0));
+  const maxId = Math.max(...ids);
+  const missing = [];
+  for(let i=1; i<=maxId; i++){
+    if(!ids.has(i)) missing.push(String(i).padStart(3,'0'));
+  }
+  return missing;
 }
 
 function getTextBatchItems(){
