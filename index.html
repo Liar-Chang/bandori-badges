@@ -1677,13 +1677,6 @@ async function doExport(){
 
   // 浮水印
   drawWatermark(ctx, W, H);
-  // 作者署名
-  ctx.save();
-  ctx.font = '11px "Noto Sans TC",sans-serif';
-  ctx.textAlign = 'right';
-  ctx.fillStyle = '#bbb';
-  ctx.fillText('作者：千早愛音的暴躁柯基', W - PAD, H - 12);
-  ctx.restore();
 
   prog.style.width='95%';
   // 依格式輸出
@@ -1779,19 +1772,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
     });
   });
 
-  // 作者署名
-  ctx.save();
-  ctx.font = '11px "Noto Sans TC",sans-serif';
-  ctx.textAlign = 'right';
-  ctx.fillStyle = '#bbb';
-  ctx.fillText('作者：千早愛音的暴躁柯基', W - PAD, H - 12);
-  ctx.restore();
-
-  // 作者署名
-  ctx.save();
-  ctx.font='11px "Noto Sans TC",sans-serif'; ctx.textAlign='right'; ctx.fillStyle='#bbb';
-  ctx.fillText('作者：千早愛音的暴躁柯基', W-PAD, H-12);
-  ctx.restore();
+  // 浮水印已在 drawWatermark 處理
 
   prog.style.width='95%';
   if(exportFmt==='pdf'){
