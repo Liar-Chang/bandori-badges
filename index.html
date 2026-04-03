@@ -1159,6 +1159,7 @@ function setLang(lang){
     buildCharList();  // 重建角色清單（更新顯示語言）
   }
   applyFilters(); // 無論有無資料都重跑，確保提示語言正確
+  loadChangelog(); // 重新渲染公告（置頂標籤隨語言切換）
 }
 
 function applyLang(){
