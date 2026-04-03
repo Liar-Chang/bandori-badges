@@ -587,7 +587,7 @@ function buildSidebar(){
       style="--chip-color:${c};--chip-bg:${c}18"
       onclick="toggleBand('${band.replace(/'/g,"\\'")}')">
       <div class="band-dot" style="background:${c}"></div>
-      <span style="color:${c}">${band}</span>
+      <span style="color:${c}">${getBandName(band,currentLang)}</span>
       <span class="band-chip-count">${bc[band]}</span>
     </div>`;
   }).join('');
@@ -656,7 +656,7 @@ function buildCharList(){
     '倉田真白','桐谷透子','廣町七深','二葉筑紫','八潮瑠唯',
     '和奏瑞依(LAYER)','朝日六花(ROCK)','佐藤益木(MASKING)','鳰原令王那(PAREO)','珠手知由(CHU2)',
     '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
-    '三角初華(Doloris)','若葉睦(Mortis)','八幡海鈴(Timoris)','祐天寺若麥(Amoris)','豐川祥子(Oblivionis)',
+    '三角初華','若葉睦','八幡海鈴','祐天寺若麥','豐川祥子',
     '仲町阿拉蕾','宮永野乃花','峰月律','藤都子','千石由乃',
     '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
     '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
@@ -796,7 +796,7 @@ function renderGrid(list){
       </div>
       <div class="badge-info">
         <div class="badge-char">${getCharName(b.character,currentLang)||'—'}</div>
-        <span class="badge-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span>
+        <span class="badge-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span>
         ${b.series?`<div class="badge-series">${b.series}</div>`:''}
         ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${shortEventHtml}</div>`:''}
       </div>
@@ -828,7 +828,7 @@ function openDetail(idx){
   dImg.onerror=function(){this.style.display='none';};
   dImg.style.display='block';
   dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
-  document.getElementById('d-band').textContent=b.band||'—';
+  document.getElementById('d-band').textContent=getBandName(b.band,currentLang)||'—';
   document.getElementById('d-band').style.cssText=`background:${c}20;color:${c}`;
   document.getElementById('d-char').textContent=b.character||'—';
   document.getElementById('d-series').textContent=b.series||'—';
@@ -856,6 +856,20 @@ init();
 
 /* ── 多語言 ── */
 // ── 角色名稱多語言對照表 ──
+
+// ── 樂團名稱多語言對照表 ──
+const BAND_NAME_MAP = {
+  '夢限大MewType': {'zh-TW':'夢限大MewType','zh-CN':'梦限大MewType','ja':'夢限大みゅーたいぷ','en':'Mugendai Mewtype','ko':'무겐다이 뮤타입'},
+  // 其他樂團各語言相同，不需特別處理
+};
+
+function getBandName(band, lang){
+  if(!band || !lang || lang === 'zh-TW') return band;
+  const map = BAND_NAME_MAP[band];
+  if(!map) return band;
+  return map[lang] || band;
+}
+
 const CHAR_NAME_MAP = {
   // Poppin'Party
   '戶山香澄': {'zh-CN':'户山香澄','ja':'戸山香澄','en':'Toyama Kasumi','ko':'토야마카스미'},
@@ -905,12 +919,12 @@ const CHAR_NAME_MAP = {
   '要樂奈':    {'zh-CN':'要乐奈','ja':'要楽奈','en':'Kaname Raana','ko':'카나메라나'},
   '長崎爽世':  {'zh-CN':'长崎爽世','ja':'長崎そよ','en':'Nagasaki Soyo','ko':'나가사키소요'},
   '椎名立希':  {'zh-CN':'椎名立希','ja':'椎名立希','en':'Shiina Taki','ko':'시이나타키'},
-  // Ave Mujica (badges.json 存真名)
-  '三角初華':      {'zh-CN':'Doloris/三角初华','ja':'ドロリス/三角初華','en':'Doloris','ko':'돌로리스/미스미우이카'},
-  '若葉睦':        {'zh-CN':'Mortis/若叶睦','ja':'モーティス/若葉睦','en':'Mortis','ko':'모르티스/와카바무츠미'},
-  '八幡海鈴':      {'zh-CN':'Timoris/八幡海铃','ja':'ティモリス/八幡海鈴','en':'Timoris','ko':'티모리스/야하타우미리'},
-  '祐天寺若麥':    {'zh-CN':'Amoris/祐天寺若麦','ja':'アモーリス/祐天寺にゃむ','en':'Amoris','ko':'아모리스/유텐지냐무'},
-  '豐川祥子':      {'zh-CN':'Oblivionis/丰川祥子','ja':'オブリビオニス/豊川祥子','en':'Oblivionis','ko':'오블리비오니스/토가와사키코'},
+  // Ave Mujica (badges.json 存真名，但顯示時含角色名稱前綴)
+  '三角初華':      {'zh-TW':'Doloris/三角初華','zh-CN':'Doloris/三角初华','ja':'ドロリス/三角初華','en':'Doloris','ko':'돌로리스/미스미우이카'},
+  '若葉睦':        {'zh-TW':'Mortis/若葉睦','zh-CN':'Mortis/若叶睦','ja':'モーティス/若葉睦','en':'Mortis','ko':'모르티스/와카바무츠미'},
+  '八幡海鈴':      {'zh-TW':'Timoris/八幡海鈴','zh-CN':'Timoris/八幡海铃','ja':'ティモリス/八幡海鈴','en':'Timoris','ko':'티모리스/야하타우미리'},
+  '祐天寺若麥':    {'zh-TW':'Amoris/祐天寺若麥','zh-CN':'Amoris/祐天寺若麦','ja':'アモーリス/祐天寺にゃむ','en':'Amoris','ko':'아모리스/유텐지냐무'},
+  '豐川祥子':      {'zh-TW':'Oblivionis/豐川祥子','zh-CN':'Oblivionis/丰川祥子','ja':'オブリビオニス/豊川祥子','en':'Oblivionis','ko':'오블리비오니스/토가와사키코'},
   // 夢限大MewType
   '仲町阿拉蕾':{'zh-CN':'仲町阿拉蕾','ja':'仲町あられ','en':'Nakamachi Arale','ko':'나카마치아라레'},
   '宮永野乃花':{'zh-CN':'宫永野乃花','ja':'宮永ののか','en':'Miyanaga Nonoka','ko':'미야나가노노카'},
@@ -920,10 +934,11 @@ const CHAR_NAME_MAP = {
 }
 
 function getCharName(charTW, lang) {
-  if(!charTW || !lang || lang === 'zh-TW') return charTW;
+  if(!charTW || !lang) return charTW;
   const map = CHAR_NAME_MAP[charTW];
   if(!map) return charTW;
-  return map[lang] || charTW;
+  // zh-TW 也查表（Ave Mujica 等有特殊顯示名）
+  return map[lang] || (lang === 'zh-TW' ? charTW : charTW);
 }
 
 const LANGS = {
@@ -1234,7 +1249,7 @@ function renderTable(list){
       : (b.event||'—');
     return `<tr onclick="openDetail(${idx})">
       <td><img class="tbl-thumb" src="${src}" onerror="this.style.visibility='hidden'" alt=""/></td>
-      <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span></td>
+      <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>
       <td>${b.year||'—'}</td>
