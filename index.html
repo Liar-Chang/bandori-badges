@@ -369,7 +369,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <div class="sidebar-section" id="search-section">
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
-      <button id="btn-reset-top" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-family:inherit;font-size:0.78rem;padding:0.38rem 0.75rem;border-radius:7px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.borderColor='#5a4fcf';this.style.color='#5a4fcf'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">重置所有篩選</button>
+      <button class="btn-reset" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
     </div>
     <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
@@ -595,24 +595,29 @@ function buildSidebar(){
   buildCheckList('year-list','year-section',[...new Set(all.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
   buildCheckList('series-list','series-section',[...new Set(all.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
   buildCheckList('event-list','event-section',[...new Set(all.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
-  const typeList = {
-    'zh-TW': ['角色本身','角色相關','角色聲優'],
-    'zh-CN': ['角色本身','角色相关','角色声优'],
-    'ja':    ['キャラクター本人','キャラクター関連','声優'],
-    'en':    ['Character','Character Related','Voice Actor'],
-    'ko':    ['캐릭터 본인','캐릭터 관련','성우'],
+  // 類型：value 存繁中原始值，label 顯示對應語言
+  const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優'];
+  const typeDisplayMap = {
+    '角色本身': {'zh-TW':'角色本身','zh-CN':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
+    '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
+    '角色聲優': {'zh-TW':'角色聲優','zh-CN':'角色声优','ja':'声優','en':'Voice Actor','ko':'성우'},
   };
-  buildCheckList('type-list','type-section', typeList[currentLang]||typeList['zh-TW'], selTypes,'toggleType');
-  const SIZE_DISPLAY_ORDER = [
-    '56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形',
-    '75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形',
-    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'
-  ];
+  const availTypes = TYPE_ZH_LIST.filter(t => all.some(b => b.type === t));
+  const typeSec = document.getElementById('type-section');
+  const typeListEl = document.getElementById('type-list');
+  if(typeSec && typeListEl){
+    if(!availTypes.length){ typeSec.style.display='none'; }
+    else {
+      typeSec.style.display='';
+      typeListEl.innerHTML = availTypes.map(t => {
+        const label = (typeDisplayMap[t]||{})[currentLang] || t;
+        return `<label class="filter-item"><input type="checkbox" ${selTypes.has(t)?'checked':''} onchange="toggleType(this.value)" value="${t}"/><span>${label}</span></label>`;
+      }).join('');
+    }
+  }
+  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const allSizes = [...new Set(all.map(b=>b.size).filter(Boolean))];
-  const sortedSizes = [
-    ...SIZE_DISPLAY_ORDER.filter(s=>allSizes.includes(s)),
-    ...allSizes.filter(s=>!SIZE_DISPLAY_ORDER.includes(s))
-  ];
+  const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
   buildCheckList('size-list','size-section',sortedSizes,selSizes,'toggleSize');
   buildCheckList('country-list','country-section',[...new Set(all.map(b=>b.country).filter(Boolean))].sort(),selCountries,'toggleCountry');
 }
@@ -643,29 +648,17 @@ function buildCharList(){
   if(selBands.size===0){ sec.style.display='none'; return; }
   const source = all.filter(b=>selBands.has(b.band));
   const CHAR_ORDER = [
-    // Poppin'Party
     '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
-    // Afterglow
     '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
-    // Pastel*Palettes
     '丸山彩','冰川日菜','白鷺千聖','大和麻彌','若宮伊芙',
-    // Roselia
     '湊友希那','冰川紗夜','今井莉莎','宇田川亞子','白金燐子',
-    // Hello, Happy World!
     '弦卷心','瀨田薰','北澤育美','松原花音','奧澤美咲',
-    // Morfonica
     '倉田真白','桐谷透子','廣町七深','二葉筑紫','八潮瑠唯',
-    // RAISE A SUILEN
     '和奏瑞依(LAYER)','朝日六花(ROCK)','佐藤益木(MASKING)','鳰原令王那(PAREO)','珠手知由(CHU2)',
-    // MyGO!!!!!
     '高松燈','千早愛音','要樂奈','長崎爽世','椎名立希',
-    // Ave Mujica
     '三角初華(Doloris)','若葉睦(Mortis)','八幡海鈴(Timoris)','祐天寺若麥(Amoris)','豐川祥子(Oblivionis)',
-    // 夢限大MewType
     '仲町阿拉蕾','宮永野乃花','峰月律','藤都子','千石由乃',
-    // millsage
     '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
-    // 一家Dumb Rock!
     '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
   ];
   const charSet = new Set(source.map(b=>b.character).filter(Boolean));
@@ -678,7 +671,7 @@ function buildCharList(){
   document.getElementById('char-list').innerHTML=chars.map(v=>`
     <label class="filter-item">
       <input type="checkbox" ${selChars.has(v)?'checked':''} onchange="toggleChar(this.value)" value="${v.replace(/"/g,'&quot;')}"/>
-      <span>${v}</span>
+      <span>${getCharName(v, currentLang)}</span>
     </label>`).join('');
 }
 
@@ -766,7 +759,7 @@ function applyFilters(){
       <div class="empty-main">
         <div style="font-size:3rem">🎵</div>
         <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
-        <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${L.filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
+        <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${(LANGS[currentLang]||LANGS['zh-TW']).filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
       </div>`;
     return;
   }
@@ -792,7 +785,8 @@ function renderGrid(list){
     const shortEventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${shortEvent}</a>`
       : shortEvent;
-    return `<div class="badge-card" onclick="toggleCard(this,${idx})">
+    return `<div class="badge-card" onclick="toggleCard(this,${idx})" style="position:relative;">
+      <div class="badge-id-tag" style="position:absolute;top:5px;right:5px;z-index:2;background:rgba(0,0,0,0.5);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
@@ -801,7 +795,7 @@ function renderGrid(list){
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
       </div>
       <div class="badge-info">
-        <div class="badge-char">${b.character||'—'}</div>
+        <div class="badge-char">${getCharName(b.character,currentLang)||'—'}</div>
         <span class="badge-band-tag" style="background:${c}20;color:${c}">${b.band||'—'}</span>
         ${b.series?`<div class="badge-series">${b.series}</div>`:''}
         ${b.event?`<div class="badge-series" style="margin-top:0.25rem;">${shortEventHtml}</div>`:''}
@@ -861,6 +855,77 @@ init();
 
 
 /* ── 多語言 ── */
+// ── 角色名稱多語言對照表 ──
+const CHAR_NAME_MAP = {
+  // Poppin'Party
+  '戶山香澄': {'zh-CN':'户山香澄','ja':'戸山香澄','en':'Toyama Kasumi','ko':'토야마카스미'},
+  '花園多惠':  {'zh-CN':'花园多惠','ja':'花園たえ','en':'Hanazono Tae','ko':'하나조노타에'},
+  '牛込里美':  {'zh-CN':'牛込里美','ja':'牛込りみ','en':'Ushigome Rimi','ko':'우시고메리미'},
+  '山吹紗綾':  {'zh-CN':'山吹沙绫','ja':'山吹沙綾','en':'Yamabuki Saaya','ko':'야마부키사아야'},
+  '市谷有咲':  {'zh-CN':'市谷有咲','ja':'市ヶ谷有咲','en':'Ichigaya Arisa','ko':'이치가야아리사'},
+  // Afterglow
+  '美竹蘭':    {'zh-CN':'美竹兰','ja':'美竹蘭','en':'Mitake Ran','ko':'미타케란'},
+  '青葉摩卡':  {'zh-CN':'青叶摩卡','ja':'青葉モカ','en':'Aoba Moca','ko':'아오바모카'},
+  '上原緋瑪麗':{'zh-CN':'上原绯玛丽','ja':'上原ひまり','en':'Uehara Himari','ko':'우에하라히마리'},
+  '宇田川巴':  {'zh-CN':'宇田川巴','ja':'宇田川巴','en':'Udagawa Tomoe','ko':'우다가와토모에'},
+  '羽澤鶇':    {'zh-CN':'羽泽鸫','ja':'羽沢つぐみ','en':'Hazawa Tsugumi','ko':'하자와츠구미'},
+  // Pastel*Palettes
+  '丸山彩':    {'zh-CN':'丸山彩','ja':'丸山彩','en':'Maruyama Aya','ko':'마루야마아야'},
+  '冰川日菜':  {'zh-CN':'冰川日菜','ja':'氷川日菜','en':'Hikawa Hina','ko':'히카와히나'},
+  '白鷺千聖':  {'zh-CN':'白鹭千圣','ja':'白鷺千聖','en':'Shirasagi Chisato','ko':'시라사기치사토'},
+  '大和麻彌':  {'zh-CN':'大和麻弥','ja':'大和麻弥','en':'Yamato Maya','ko':'야마토마야'},
+  '若宮伊芙':  {'zh-CN':'若宫伊芙','ja':'若宮イヴ','en':'Wakamiya Eve','ko':'와카미야이브'},
+  // Roselia
+  '湊友希那':  {'zh-CN':'湊友希那','ja':'湊友希那','en':'Minato Yukina','ko':'미나토유키나'},
+  '冰川紗夜':  {'zh-CN':'冰川纱夜','ja':'氷川紗夜','en':'Hikawa Sayo','ko':'히카와사요'},
+  '今井莉莎':  {'zh-CN':'今井莉莎','ja':'今井リサ','en':'Imai Lisa','ko':'이마이리사'},
+  '宇田川亞子':{'zh-CN':'宇田川亚子','ja':'宇田川あこ','en':'Udagawa Ako','ko':'우다가와아코'},
+  '白金燐子':  {'zh-CN':'白金燐子','ja':'白金燐子','en':'Shirokane Rinko','ko':'시로카네린코'},
+  // Hello, Happy World!
+  '弦卷心':    {'zh-CN':'弦卷心','ja':'弦巻こころ','en':'Tsurumaki Kokoro','ko':'츠루마키코코로'},
+  '瀨田薰':    {'zh-CN':'濑田薰','ja':'瀬田薫','en':'Seta Kaoru','ko':'세타카오루'},
+  '北澤育美':  {'zh-CN':'北泽育美','ja':'北沢はぐみ','en':'Kitazawa Hagumi','ko':'키타자와하구미'},
+  '松原花音':  {'zh-CN':'松原花音','ja':'松原花音','en':'Matsubara Kanon','ko':'마츠바라카논'},
+  '奧澤美咲':  {'zh-CN':'奥泽美咲','ja':'奥沢美咲','en':'Okusawa Misaki','ko':'오쿠사와미사키'},
+  // Morfonica
+  '倉田真白':  {'zh-CN':'仓田真白','ja':'倉田ましろ','en':'Kurata Mashiro','ko':'쿠라타마시로'},
+  '桐谷透子':  {'zh-CN':'桐谷透子','ja':'桐ヶ谷透子','en':'Kirigaya Touko','ko':'키리가야토코'},
+  '廣町七深':  {'zh-CN':'广町七深','ja':'広町七深','en':'Hiromachi Nanami','ko':'히로마치나나미'},
+  '二葉筑紫':  {'zh-CN':'二叶筑紫','ja':'二葉つくし','en':'Futaba Tsukushi','ko':'후타바츠쿠시'},
+  '八潮瑠唯':  {'zh-CN':'八潮瑠唯','ja':'八潮瑠唯','en':'Yashio Rui','ko':'야시오루이'},
+  // RAISE A SUILEN
+  '和奏瑞依(LAYER)': {'zh-CN':'和奏瑞依(LAYER)','ja':'レイヤ','en':'LAYER','ko':'레이어'},
+  '朝日六花(ROCK)':  {'zh-CN':'朝日六花(ROCK)','ja':'ロック','en':'LOCK','ko':'록'},
+  '佐藤益木(MASKING)':{'zh-CN':'佐藤益木(MASKING)','ja':'マスキング','en':'MASKING','ko':'마스킹'},
+  '鳰原令王那(PAREO)':{'zh-CN':'鳰原令王那(PAREO)','ja':'パレオ','en':'PAREO','ko':'파레오'},
+  '珠手知由(CHU2)':  {'zh-CN':'珠手知由(CHU2)','ja':'チュチュ','en':'CHU²','ko':'츄츄'},
+  // MyGO!!!!!
+  '高松燈':    {'zh-CN':'高松灯','ja':'高松燈','en':'Takamatsu Tomori','ko':'타카마츠토모리'},
+  '千早愛音':  {'zh-CN':'千早爱音','ja':'千早愛音','en':'Chihaya Anon','ko':'치하야아논'},
+  '要樂奈':    {'zh-CN':'要乐奈','ja':'要楽奈','en':'Kaname Raana','ko':'카나메라나'},
+  '長崎爽世':  {'zh-CN':'长崎爽世','ja':'長崎そよ','en':'Nagasaki Soyo','ko':'나가사키소요'},
+  '椎名立希':  {'zh-CN':'椎名立希','ja':'椎名立希','en':'Shiina Taki','ko':'시이나타키'},
+  // Ave Mujica (badges.json 存真名)
+  '三角初華':      {'zh-CN':'Doloris/三角初华','ja':'ドロリス/三角初華','en':'Doloris','ko':'돌로리스/미스미우이카'},
+  '若葉睦':        {'zh-CN':'Mortis/若叶睦','ja':'モーティス/若葉睦','en':'Mortis','ko':'모르티스/와카바무츠미'},
+  '八幡海鈴':      {'zh-CN':'Timoris/八幡海铃','ja':'ティモリス/八幡海鈴','en':'Timoris','ko':'티모리스/야하타우미리'},
+  '祐天寺若麥':    {'zh-CN':'Amoris/祐天寺若麦','ja':'アモーリス/祐天寺にゃむ','en':'Amoris','ko':'아모리스/유텐지냐무'},
+  '豐川祥子':      {'zh-CN':'Oblivionis/丰川祥子','ja':'オブリビオニス/豊川祥子','en':'Oblivionis','ko':'오블리비오니스/토가와사키코'},
+  // 夢限大MewType
+  '仲町阿拉蕾':{'zh-CN':'仲町阿拉蕾','ja':'仲町あられ','en':'Nakamachi Arale','ko':'나카마치아라레'},
+  '宮永野乃花':{'zh-CN':'宫永野乃花','ja':'宮永ののか','en':'Miyanaga Nonoka','ko':'미야나가노노카'},
+  '峰月律':    {'zh-CN':'峰月律','ja':'峰月律','en':'Minetsuki Ritsu','ko':'미네츠키리츠'},
+  '藤都子':    {'zh-CN':'藤都子','ja':'藤都子','en':'Fuji Miyako','ko':'후지미야코'},
+  '千石由乃':  {'zh-CN':'千石由乃','ja':'千石ユノ','en':'Sengoku Yuno','ko':'센고쿠유노'},
+}
+
+function getCharName(charTW, lang) {
+  if(!charTW || !lang || lang === 'zh-TW') return charTW;
+  const map = CHAR_NAME_MAP[charTW];
+  if(!map) return charTW;
+  return map[lang] || charTW;
+}
+
 const LANGS = {
   'zh-TW': {
     title:'BanG Dream! 徽章圖鑑',
@@ -880,6 +945,16 @@ const LANGS = {
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', noData:'無符合資料', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式',
+    search:'搜尋', band:'樂團', char:'角色', reset:'重置所有篩選',
+    dlSeries:'版本/工藝', dlYear:'發售年份', dlEvent:'活動',
+    thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
+    expTitle:'⬇ 下載徽章表格圖檔', expDescPre:'將目前篩選的', expDescPost:'枚徽章輸出為圖片',
+    expLayout:'版面配置', expCols:'每列欄數', expFields:'顯示欄位', expFmt:'輸出格式', expTitleLabel:'標題文字',
+    expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
+    expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
+    expCancel:'取消', expDownload:'⬇ 下載',
+    announceTitle:'📢 更新日誌', noData:'無符合資料',
   },
   'zh-CN': {
     title:'BanG Dream! 徽章图鉴',
@@ -899,6 +974,16 @@ const LANGS = {
     expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
     expCancel:'取消', expDownload:'⬇ 下载',
     announceTitle:'📢 更新日志', noData:'无符合资料', filterSub:'选择乐团、角色、类型等条件来显示徽章',
+    reportLabel:'错误回报', contactLabel:'联系方式',
+    search:'搜索', band:'乐团', char:'角色', reset:'重置所有筛选',
+    dlSeries:'版本/工艺', dlYear:'发售年份', dlEvent:'活动',
+    thBand:'乐团', thChar:'角色', thEvent:'活动', thYear:'发售日期', thSeries:'版本/工艺',
+    expTitle:'⬇ 下载徽章表格图档', expDescPre:'将目前筛选的', expDescPost:'枚徽章输出为图片',
+    expLayout:'版面配置', expCols:'每列栏数', expFields:'显示栏位', expFmt:'输出格式', expTitleLabel:'标题文字',
+    expGrid:'⊞ 图片网格', expGridDesc:'每列显示多枚徽章图片',
+    expTable:'☰ 清单表格', expTableDesc:'含文字资讯的表格形式',
+    expCancel:'取消', expDownload:'⬇ 下载',
+    announceTitle:'📢 更新日志', noData:'无符合资料',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -918,44 +1003,56 @@ const LANGS = {
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', noData:'該当データなし', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ',
+    search:'検索', band:'バンド', char:'キャラクター', reset:'フィルターをリセット',
+    dlSeries:'バージョン/工芸', dlYear:'発売年', dlEvent:'イベント',
+    thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
+    expTitle:'⬇ バッジ一覧をダウンロード', expDescPre:'現在フィルター中の', expDescPost:'枚のバッジを出力',
+    expLayout:'レイアウト', expCols:'列数', expFields:'表示フィールド', expFmt:'出力形式', expTitleLabel:'タイトル',
+    expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
+    expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
+    expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
+    announceTitle:'📢 更新ログ', noData:'該当データなし',
   },
   'en': {
-    title:'BanG Dream! Badge Collection',
+    title:'BanG Dream! Badge Encyclopedia',
     search:'Character, version, event...',
     band:'Band', char:'Character', series:'Version/Craft', year:'Release Year',
-    event:'Event', type:'Type', size:'Size', country:'Event Country/Region',
+    event:'Event', type:'Type', size:'Size', country:'Event Region',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
     noFilter:'Please select a filter', noResult:'No badges found',
-    filterTip:'Select filters from the left panel',
-    reset:'Reset All Filters',
-    dlSeries:'Version/Craft', dlYear:'Release Year', dlEvent:'Event',
+    filterTip:'Left panel → select filters',
+    search:'Search', band:'Band', char:'Character', reset:'Reset All Filters',
+    dlSeries:'Version/Craft', dlYear:'Release Date', dlEvent:'Event',
     thBand:'Band', thChar:'Character', thEvent:'Event', thYear:'Release Date', thSeries:'Version/Craft',
-    expTitle:'⬇ Download Badge Table', expDescPre:'Export', expDescPost:'filtered badges as image',
-    expLayout:'Layout', expCols:'Columns per Row', expFields:'Show Fields', expFmt:'Format', expTitleLabel:'Title',
-    expGrid:'⊞ Image Grid', expGridDesc:'Show multiple badges per row',
-    expTable:'☰ List Table', expTableDesc:'Table format with text info',
+    expTitle:'⬇ Download Badge Sheet', expDescPre:'Export', expDescPost:'filtered badges as image',
+    expLayout:'Layout', expCols:'Columns', expFields:'Fields', expFmt:'Format', expTitleLabel:'Title',
+    expGrid:'⊞ Image Grid', expGridDesc:'Display multiple badges per row',
+    expTable:'☰ List Table', expTableDesc:'Table with text information',
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', noData:'No matching data', filterSub:'Select Band, Character, Type and more',
+    reportLabel:'Report Error', contactLabel:'Contact',
   },
   'ko': {
-    title:'BanG Dream! 배지 도감',
+    title:'BanG Dream! 뱃지 도감',
     search:'캐릭터, 버전, 이벤트...',
-    band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매연도',
-    event:'이벤트', type:'타입', size:'사이즈', country:'이벤트 국가/지역',
-    sortNew:'발매일 (최신→오래된)', sortOld:'발매일 (오래된→최신)', sortChar:'캐릭터 이름',
-    gridView:'갤러리', tableView:'목록', download:'⬇ 다운로드',
-    noFilter:'필터를 선택해 주세요', noResult:'배지를 찾을 수 없습니다',
-    filterTip:'왼쪽 패널에서 필터를 선택하세요',
-    reset:'필터 초기화',
+    band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도',
+    event:'이벤트', type:'유형', size:'크기', country:'이벤트 지역',
+    sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
+    gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
+    noFilter:'필터를 선택해 주세요', noResult:'해당하는 뱃지가 없습니다',
+    filterTip:'왼쪽 패널에서 필터를 선택해 주세요',
+    search:'검색', band:'밴드', char:'캐릭터', reset:'전체 필터 초기화',
     dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트',
     thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트', thYear:'발매일', thSeries:'버전/공예',
-    expTitle:'⬇ 배지 표 다운로드', expDescPre:'현재 필터된', expDescPost:'개 배지를 이미지로 출력',
-    expLayout:'레이아웃', expCols:'열 수', expFields:'표시 필드', expFmt:'형식', expTitleLabel:'제목',
-    expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 배지 이미지 표시',
-    expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표 형식',
+    expTitle:'⬇ 뱃지 시트 다운로드', expDescPre:'필터된', expDescPost:'개의 뱃지를 이미지로 출력',
+    expLayout:'레이아웃', expCols:'열 수', expFields:'표시 필드', expFmt:'출력 형식', expTitleLabel:'제목',
+    expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 뱃지 표시',
+    expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표',
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
+    reportLabel:'오류 신고', contactLabel:'연락처',
   },
 };
 
@@ -965,57 +1062,45 @@ function setLang(lang){
   currentLang = lang;
   localStorage.setItem('lang', lang);
   applyLang();
-  // 重新建立側欄，讓類型等資料也跟著切換
-  if(all && all.length) { buildSidebar(); buildCharList(); applyFilters(); }
+  if(all.length) buildSidebar();
 }
 
 function applyLang(){
-  const L = LANGS[currentLang];
-  // 更新按鈕狀態
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  // 語言按鈕高亮
   ['zh-TW','zh-CN','ja','en','ko'].forEach(l=>{
-    const btn = document.getElementById('lang-'+l.replace('-','').replace('TW','zh').replace('CN','cn').replace('ja','ja'));
-    if(btn) btn.classList.toggle('active', l===currentLang);
+    const btn = document.getElementById('lang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
+    if(btn){ btn.style.background = l===currentLang?'#ffffff55':'#ffffff22'; btn.style.fontWeight = l===currentLang?'700':'400'; }
+    const mbtn = document.getElementById('mlang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
+    if(mbtn){ mbtn.style.background=l===currentLang?'#5a4fcf':'var(--bg)'; mbtn.style.color=l===currentLang?'#fff':'var(--text)'; mbtn.style.borderColor=l===currentLang?'#5a4fcf':'var(--border)'; }
   });
-  [['lang-zh','zh-TW'],['lang-cn','zh-CN'],['lang-ja','ja'],['lang-en','en'],['lang-ko','ko']].forEach(([id,l])=>{
-    const btn=document.getElementById(id);
-    if(btn){
-      btn.style.background = l===currentLang ? '#ffffff55' : '#ffffff22';
-      btn.style.fontWeight = l===currentLang ? '700' : '400';
-    }
-    // 手機版按鈕
-    const mbtn=document.getElementById('m'+id);
-    if(mbtn){
-      mbtn.style.background = l===currentLang ? '#5a4fcf' : 'var(--bg)';
-      mbtn.style.color = l===currentLang ? '#fff' : 'var(--text)';
-      mbtn.style.borderColor = l===currentLang ? '#5a4fcf' : 'var(--border)';
-    }
-  });
-  // 更新標題
+  // 標題
   document.title = L.title;
   // 搜尋框
   const searchEl = document.getElementById('search');
   if(searchEl) searchEl.placeholder = L.search;
-  // sidebar 標題
-  const sidebarH3s = document.querySelectorAll('.sidebar-section h3');
-  const h3Labels = [L.search, L.band, L.char, L.year, L.series, L.event, L.type, L.size, L.country];
   // sidebar h3
   const sidebarMap = {
-    'search-section':  L.search,
-    'band-section':    L.band,
-    'char-section':    L.char,
-    'year-section':    L.year,
-    'series-section':  L.series,
-    'event-section':   L.event,
-    'type-section':    L.type,
-    'size-section':    L.size,
-    'country-section': L.country,
+    'search-section': L.search, 'band-section': L.band, 'char-section': L.char,
+    'year-section': L.year, 'series-section': L.series, 'event-section': L.event,
+    'type-section': L.type, 'size-section': L.size, 'country-section': L.country,
   };
   Object.entries(sidebarMap).forEach(([id, label]) => {
     const sec = document.getElementById(id);
     if(sec){ const h3 = sec.querySelector('h3'); if(h3 && label) h3.textContent = label; }
   });
-  // 重置按鈕
+  // 重置按鈕（兩個）
   document.querySelectorAll('[onclick="resetFilters()"]').forEach(btn=>{ if(L.reset) btn.textContent = L.reset; });
+  // 排序選單
+  const sortSel = document.getElementById('sort');
+  if(sortSel){ sortSel.options[0].text=L.sortNew; sortSel.options[1].text=L.sortOld; sortSel.options[2].text=L.sortChar; }
+  // 視圖/下載按鈕
+  const dlBtn = document.querySelector('[onclick="openExport()"]');
+  if(dlBtn) dlBtn.textContent = L.download;
+  const gridBtn = document.getElementById('btn-grid');
+  const tableBtn = document.getElementById('btn-table');
+  if(gridBtn) gridBtn.textContent = '⊞ ' + L.gridView;
+  if(tableBtn) tableBtn.textContent = '☰ ' + L.tableView;
   // detail modal labels
   const dlS=document.getElementById('dl-series'); if(dlS) dlS.textContent=L.dlSeries||L.series;
   const dlY=document.getElementById('dl-year');   if(dlY) dlY.textContent=L.dlYear||L.year;
@@ -1041,27 +1126,11 @@ function applyLang(){
   const etd=document.getElementById('exp-table-desc'); if(etd&&L.expTableDesc) etd.textContent=L.expTableDesc;
   const ebc=document.getElementById('exp-btn-cancel'); if(ebc&&L.expCancel) ebc.textContent=L.expCancel;
   const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
-  // filter sub text
-  const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // 更新日誌標題
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
-  // 排序
-  const sortSel = document.getElementById('sort');
-  if(sortSel){
-    sortSel.options[0].text = L.sortNew;
-    sortSel.options[1].text = L.sortOld;
-    sortSel.options[2].text = L.sortChar;
-  }
-  // 下載按鈕
-  const dlBtn = document.querySelector('[onclick="openExport()"]');
-  if(dlBtn) dlBtn.textContent = L.download;
-  // 視圖按鈕
-  const gridBtn = document.getElementById('btn-grid');
-  const tableBtn = document.getElementById('btn-table');
-  if(gridBtn) gridBtn.textContent = '⊞ ' + L.gridView;
-  if(tableBtn) tableBtn.textContent = '☰ ' + L.tableView;
+  // filter sub text
+  const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
 }
-
 applyLang();
 
 /* ── 公告框 ── */
@@ -1268,6 +1337,24 @@ function buildFieldChips(){
 function toggleField(k,el){
   selectedFields.has(k)?selectedFields.delete(k):selectedFields.add(k);
   el.classList.toggle('on', selectedFields.has(k));
+}
+
+// ── 浮水印 ──
+function drawWatermark(ctx, W, H){
+  const text = '千早愛音的暴躁柯基製作';
+  const PAD = 16;
+  ctx.save();
+  ctx.font = 'bold 13px "Noto Sans TC",sans-serif';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  const metrics = ctx.measureText(text);
+  const tw = metrics.width + 10;
+  const th = 20;
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.fillRect(W - PAD - tw, H - PAD - th, tw, th);
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillText(text, W - PAD, H - PAD);
+  ctx.restore();
 }
 
 async function doExport(){
@@ -1523,6 +1610,8 @@ async function doExport(){
     curY += rows * ITEM_H + PAD;
   }
 
+  // 浮水印
+  drawWatermark(ctx, W, H);
   // 作者署名
   ctx.save();
   ctx.font = '11px "Noto Sans TC",sans-serif';
@@ -1815,6 +1904,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
 <footer style="text-align:center;padding:1rem 1.5rem;font-family:'Noto Sans TC',sans-serif;
   font-size:0.78rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
   <div style="margin-bottom:0.4rem;">作者：千早愛音的暴躁柯基</div>
+  <div style="margin-bottom:0.5rem;font-size:0.72rem;color:var(--muted);" id="footer-contact-label">聯絡方式</div>
   <div style="display:flex;justify-content:center;align-items:center;gap:1.25rem;flex-wrap:wrap;">
     <a href="https://www.threads.com/@liarforbarexamination?xmt=AQF0oq3Jx5SkltQciqWXSPxn7QuSMPsAoDrN73lXBGG4iWw" target="_blank" rel="noopener"
       style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
@@ -1828,4 +1918,12 @@ function doExportExcel(list, title, btn, progWrap, prog){
     </a>
     <a href="/cdn-cgi/l/email-protection#8ce0e5edfeeae3fef8fbeaebe3ccebe1ede5e0a2efe3e1" style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      <span class="__cf_email__" d
+      📧 Email
+    </a>
+    <a href="#" id="btn-report" target="_blank" rel="noopener"
+      style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span id="footer-report-label">錯誤回報</span>
+    </a>
+  </div>
+</footer>
