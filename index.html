@@ -1080,7 +1080,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式',
+    reportLabel:'錯誤回報/資料提供', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑',
@@ -1100,7 +1100,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ',
+    reportLabel:'エラー報告/データ提供', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia',
@@ -1120,7 +1120,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact',
+    reportLabel:'Report Issue / Submit Data', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi",
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감',
@@ -1140,7 +1140,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처',
+    reportLabel:'오류 신고/자료 제공', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기',
   },
 }
 let currentLang = (()=>{
@@ -1227,6 +1227,10 @@ function applyLang(){
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
   // filter sub text
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
+  // footer 語言切換
+  const fal=document.getElementById('footer-author-label'); if(fal&&L.authorLabel) fal.textContent=L.authorLabel;
+  const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
+  const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
 }
 applyLang();
 
@@ -2050,7 +2054,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
 
 <footer style="text-align:center;padding:1rem 1.5rem;font-family:'Noto Sans TC',sans-serif;
   font-size:0.78rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
-  <div style="margin-bottom:0.4rem;">作者：千早愛音的暴躁柯基</div>
+  <div style="margin-bottom:0.4rem;" id="footer-author-label">作者：千早愛音的暴躁柯基</div>
   <div style="margin-bottom:0.5rem;font-size:0.72rem;color:var(--muted);" id="footer-contact-label">聯絡方式</div>
   <div style="display:flex;justify-content:center;align-items:center;gap:1.25rem;flex-wrap:wrap;">
     <a href="https://www.threads.com/@liarforbarexamination?xmt=AQF0oq3Jx5SkltQciqWXSPxn7QuSMPsAoDrN73lXBGG4iWw" target="_blank" rel="noopener"
@@ -2071,7 +2075,7 @@ function doExportExcel(list, title, btn, progWrap, prog){
     <a href="#" id="btn-report" target="_blank" rel="noopener"
       style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span id="footer-report-label">錯誤回報</span>
+      <span id="footer-report-label">錯誤回報/資料提供</span>
     </a>
   </div>
 </footer>
