@@ -1079,7 +1079,7 @@ const LANGS = {
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
-    announceTitle:'📢 更新日誌', noData:'無符合資料',
+    announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
     reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！',
   },
@@ -1099,7 +1099,7 @@ const LANGS = {
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
-    announceTitle:'📢 更新ログ', noData:'該当データなし',
+    announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
     reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！',
   },
@@ -1119,7 +1119,7 @@ const LANGS = {
     expGrid:'⊞ Image Grid', expGridDesc:'Display multiple badges per row',
     expTable:'☰ List Table', expTableDesc:'Table with text information',
     expCancel:'Cancel', expDownload:'⬇ Download',
-    announceTitle:'📢 Update Log', noData:'No matching data',
+    announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
     reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!',
   },
@@ -1139,7 +1139,7 @@ const LANGS = {
     expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 뱃지 표시',
     expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표',
     expCancel:'취소', expDownload:'⬇ 다운로드',
-    announceTitle:'📢 업데이트 로그', noData:'해당 데이터 없음',
+    announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
     reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!',
   },
@@ -1226,6 +1226,7 @@ function applyLang(){
   const ebd=document.getElementById('btn-dl');         if(ebd&&L.expDownload) ebd.textContent=L.expDownload;
   // 更新日誌標題
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
+  const pt=document.getElementById('pin-title'); if(pt&&L.pinBoxTitle) pt.textContent=L.pinBoxTitle;
   // filter sub text
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // footer 語言切換
@@ -1250,36 +1251,48 @@ async function loadChangelog(){
     const res = await fetch('changelog.json?t=' + Date.now());
     const text = await res.text();
     const data = JSON.parse(text);
-    const body = document.getElementById('announce-body');
-    if(!data.length){ body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>'; return; }
-    // 置頂排前，其餘照原順序
     const pinned = data.filter(d=>d.pinned);
     const normal = data.filter(d=>!d.pinned);
-    const allItems = [...pinned, ...normal];
-    body.innerHTML = allItems.map(item=>{
-      const isPinned = item.pinned;
-      return isPinned
-        ? `<div class="announce-pinned">
-            <div class="announce-date-row">
-              <span class="announce-pin-badge">${(LANGS[currentLang]||LANGS['zh-TW']).pinLabel||'📌 置頂'}</span>
-              <span>${item.date}</span>
-            </div>
-            <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
-          </div>`
-        : `<div class="announce-normal">
-            <div class="announce-date-row">${item.date}</div>
-            <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
-          </div>`;
-    }).join('');
+    const L = LANGS[currentLang]||LANGS['zh-TW'];
+
+    // ── 公告框（置頂）──
+    const pinBox = document.getElementById('pin-box');
+    const pinBody = document.getElementById('pin-body');
+    if(pinned.length){
+      pinBox.style.display='';
+      pinBody.innerHTML = pinned.map(item=>`
+        <div class="announce-pinned">
+          <div class="announce-date-row">
+            <span class="announce-pin-badge">${L.pinLabel||'📌 置頂'}</span>
+            <span>${item.date}</span>
+          </div>
+          <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
+        </div>`).join('');
+    } else {
+      pinBox.style.display='none';
+    }
+
+    // ── 更新日誌框 ──
+    const body = document.getElementById('announce-body');
+    if(!normal.length){
+      body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>';
+      return;
+    }
+    body.innerHTML = normal.map(item=>`
+      <div class="announce-normal">
+        <div class="announce-date-row">${item.date}</div>
+        <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
+      </div>`).join('');
   } catch(e){
     document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
   }
 }
 loadChangelog();
 
-function toggleAnnounce(){
-  const body = document.getElementById('announce-body');
-  const arrow = document.getElementById('announce-arrow');
+function toggleBox(boxId, arrowId){
+  const box = document.getElementById(boxId);
+  const arrow = document.getElementById(arrowId);
+  const body = box.querySelector('.announce-body');
   const hidden = body.classList.toggle('hidden');
   arrow.textContent = hidden ? '▸' : '▾';
 }
@@ -2051,13 +2064,22 @@ function doExportExcel(list, title, btn, progWrap, prog){
     </div>
   </div>
 </div>
-<!-- 更新日誌公告框 -->
+<!-- 公告框（置頂） -->
+<div class="announce-box" id="pin-box" style="display:none;">
+  <div class="announce-header" onclick="toggleBox('pin-box','pin-arrow')">
+    <span id="pin-title">📌 公告</span>
+    <button class="announce-close" id="pin-arrow">▾</button>
+  </div>
+  <div class="announce-body" id="pin-body" style="padding:0.5rem 0.85rem;color:var(--text);">
+  </div>
+</div>
+<!-- 更新日誌框 -->
 <div class="announce-box" id="announce-box">
-  <div class="announce-header" onclick="toggleAnnounce()">
+  <div class="announce-header" onclick="toggleBox('announce-box','announce-arrow')">
     <span id="announce-title">📢 更新日誌</span>
     <button class="announce-close" id="announce-arrow">▾</button>
   </div>
-  <div class="announce-body" id="announce-body" style="max-height:160px;overflow-y:auto;padding:0.75rem 0.85rem;color:var(--text);">
+  <div class="announce-body" id="announce-body" style="max-height:180px;overflow-y:auto;padding:0.5rem 0.85rem;color:var(--text);">
     <div style="text-align:center;color:var(--muted);padding:0.5rem;font-size:0.78rem;">載入中...</div>
   </div>
 </div>
