@@ -518,11 +518,26 @@ td.editable:hover .edit-hint{opacity:1;}
         </select>
       </div>
       <div class="field"><label>角色名稱</label>
+        <!-- 模式切換 -->
+        <div id="f-char-mode-wrap" style="display:none;display:flex;gap:0.75rem;margin-bottom:0.4rem;font-size:0.78rem;">
+          <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+            <input type="radio" name="f-char-mode" id="f-char-mode-single" value="single" checked onchange="switchCharMode('single')" style="accent-color:#3d3d8f;"/>
+            單一角色
+          </label>
+          <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;">
+            <input type="radio" name="f-char-mode" id="f-char-mode-multi" value="multi" onchange="switchCharMode('multi')" style="accent-color:#3d3d8f;"/>
+            複數角色
+          </label>
+        </div>
+        <!-- 單一模式 -->
         <select id="f-character" style="width:100%;">
           <option value="">請選擇</option>
         </select>
         <input type="text" id="f-character-text" placeholder="如 湊友希那"
           style="display:none;width:100%;font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;box-sizing:border-box;outline:none;"/>
+        <!-- 複數模式 -->
+        <div id="f-char-multi-wrap" style="display:none;border:1.5px solid #ddd;border-radius:6px;padding:0.5rem 0.75rem;max-height:160px;overflow-y:auto;"></div>
+        <div id="f-char-multi-preview" style="display:none;font-size:0.75rem;color:#3d3d8f;margin-top:0.3rem;"></div>
       </div>
       <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
@@ -761,33 +776,118 @@ function clearBatch(){
 }
 
 const CHAR_MAP = {
-  "Poppin'Party": ["戶山香澄", "花園多惠", "牛込里美", "山吹紗綾", "市谷有咲"],
-  "Afterglow": ["美竹蘭", "青葉摩卡", "上原緋瑪麗", "宇田川巴", "羽澤鶇"],
-  "Pastel*Palettes": ["丸山彩", "冰川日菜", "白鷺千聖", "大和麻彌", "若宮伊芙"],
-  "Roselia": ["湊友希那", "冰川紗夜", "今井莉莎", "宇田川亞子", "白金燐子"],
-  "Hello, Happy World!": ["弦卷心", "瀨田薰", "北澤育美", "松原花音", "奧澤美咲"],
-  "Morfonica": ["倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
-  "RAISE A SUILEN": ["和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
-  "MyGO!!!!!": ["高松燈", "千早愛音", "要樂奈", "長崎爽世", "椎名立希"],
-  "Ave Mujica": ["三角初華", "若葉睦", "八幡海鈴", "祐天寺若麥", "豐川祥子"],
-  "夢限大MewType": ["仲町阿拉蕾", "宮永野乃花", "峰月律", "藤都子", "千石由乃"],
-  "millsage": ["汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
-  "一家Dumb Rock!": ["須賀蕾叶", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
+  "Poppin'Party": ["Poppin'Party全團", "戶山香澄", "花園多惠", "牛込里美", "山吹紗綾", "市谷有咲"],
+  "Afterglow": ["Afterglow全團", "美竹蘭", "青葉摩卡", "上原緋瑪麗", "宇田川巴", "羽澤鶇"],
+  "Pastel*Palettes": ["Pastel*Palettes全團", "丸山彩", "冰川日菜", "白鷺千聖", "大和麻彌", "若宮伊芙"],
+  "Roselia": ["Roselia全團", "湊友希那", "冰川紗夜", "今井莉莎", "宇田川亞子", "白金燐子"],
+  "Hello, Happy World!": ["Hello, Happy World!全團", "弦卷心", "瀨田薰", "北澤育美", "松原花音", "奧澤美咲"],
+  "Morfonica": ["Morfonica全團", "倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
+  "RAISE A SUILEN": ["RAISE A SUILEN全團", "和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
+  "MyGO!!!!!": ["MyGO!!!!!全團", "高松燈", "千早愛音", "要樂奈", "長崎爽世", "椎名立希"],
+  "Ave Mujica": ["Ave Mujica全團", "三角初華", "若葉睦", "八幡海鈴", "祐天寺若麥", "豐川祥子"],
+  "夢限大MewType": ["夢限大MewType全團", "仲町阿拉蕾", "宮永野乃花", "峰月律", "藤都子", "千石由乃"],
+  "millsage": ["millsage全團", "汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
+  "一家Dumb Rock!": ["一家Dumb Rock!全團", "須賀蕾叶", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
   "其他": []
 }
 function updateModalChars(band){
   const b = band !== undefined ? band : document.getElementById('f-band').value;
   const sel = document.getElementById('f-character');
   const txt = document.getElementById('f-character-text');
+  const modeWrap = document.getElementById('f-char-mode-wrap');
+  const multiWrap = document.getElementById('f-char-multi-wrap');
   const chars = CHAR_MAP[b] || [];
+  // 單一成員（非全團）供複數模式勾選
+  const memberChars = chars.filter(c=>!c.includes('全團'));
+
   if(chars.length){
-    const cur = txt && txt.style.display !== 'none' ? txt.value : sel.value;
+    // 模式切換列
+    if(modeWrap) modeWrap.style.display='';
+    // 重建下拉選單
     sel.innerHTML = '<option value="">請選擇</option>' + chars.map(c=>`<option value="${c}">${c}</option>`).join('');
-    sel.style.display = ''; if(txt) txt.style.display = 'none';
+    const cur = txt && txt.style.display!=='none' ? txt.value : sel.value;
     if(cur) sel.value = cur;
+    // 複數模式勾選框
+    // 複數模式由 buildMultiCharList 處理，這裡只在模式已開啟時更新
+    if(multiWrap && multiWrap.style.display!=='none'){
+      buildMultiCharList('');
+    }
+    // 初始顯示單一模式
+    const isSingle = document.getElementById('f-char-mode-single')?.checked !== false;
+    if(isSingle || !document.getElementById('f-char-mode-multi')?.checked){
+      sel.style.display=''; if(txt) txt.style.display='none';
+      if(multiWrap) multiWrap.style.display='none';
+    }
   } else {
-    const cur = sel.value; sel.style.display = 'none';
-    if(txt){ txt.style.display = ''; if(cur) txt.value = cur; }
+    if(modeWrap) modeWrap.style.display='none';
+    if(multiWrap) multiWrap.style.display='none';
+    sel.style.display='none';
+    if(txt){ txt.style.display=''; }
+  }
+}
+
+function switchCharMode(mode){
+  const sel=document.getElementById('f-character');
+  const txt=document.getElementById('f-character-text');
+  const multiWrap=document.getElementById('f-char-multi-wrap');
+  const multiPreview=document.getElementById('f-char-multi-preview');
+  if(mode==='single'){
+    sel.style.display=''; if(txt) txt.style.display='none';
+    if(multiWrap) multiWrap.style.display='none';
+    if(multiPreview) multiPreview.style.display='none';
+  } else {
+    sel.style.display='none'; if(txt) txt.style.display='none';
+    if(multiWrap){ multiWrap.style.display='block'; buildMultiCharList(''); }
+    if(multiPreview) multiPreview.style.display='block';
+    updateMultiCharValue();
+  }
+}
+
+// 建立複數角色勾選清單（可跨樂團，支援搜尋）
+function buildMultiCharList(filter){
+  const multiWrap=document.getElementById('f-char-multi-wrap');
+  if(!multiWrap) return;
+  // 收集所有樂團成員（排除全團選項）
+  const allMembers=[];
+  Object.entries(CHAR_MAP).forEach(([band,members])=>{
+    if(band==='其他') return;
+    members.filter(m=>!m.includes('全團')).forEach(m=>{
+      allMembers.push({band,name:m});
+    });
+  });
+  const filtered = filter
+    ? allMembers.filter(m=>m.name.includes(filter)||m.band.includes(filter))
+    : allMembers;
+  // 已勾選的值
+  const checked=new Set([...document.querySelectorAll('.f-char-cb:checked')].map(cb=>cb.value));
+  // 按樂團分組顯示
+  const byBand={};
+  filtered.forEach(m=>{ if(!byBand[m.band]) byBand[m.band]=[]; byBand[m.band].push(m.name); });
+  const BAND_ORDER_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!"];
+  const orderedBands=[...BAND_ORDER_LIST.filter(b=>byBand[b]),...Object.keys(byBand).filter(b=>!BAND_ORDER_LIST.includes(b))];
+  multiWrap.innerHTML=`
+    <input type="text" placeholder="搜尋角色或樂團…" oninput="buildMultiCharList(this.value)"
+      style="width:100%;padding:0.3rem 0.5rem;border:1px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.78rem;margin-bottom:0.4rem;box-sizing:border-box;"/>
+    ${orderedBands.map(band=>`
+      <div style="font-size:0.7rem;font-weight:700;color:#888;margin:0.4rem 0 0.15rem;">${band}</div>
+      ${byBand[band].map(name=>`
+        <label style="display:flex;align-items:center;gap:0.35rem;padding:0.15rem 0;font-size:0.82rem;cursor:pointer;">
+          <input type="checkbox" value="${name}" class="f-char-cb" ${checked.has(name)?'checked':''}
+            onchange="updateMultiCharValue()" style="cursor:pointer;accent-color:#3d3d8f;"/>
+          ${name}
+        </label>`).join('')}
+    `).join('')}`;
+}
+
+function updateMultiCharValue(){
+  const checked=[...document.querySelectorAll('.f-char-cb:checked')].map(cb=>cb.value);
+  const sel=document.getElementById('f-character');
+  sel.dataset.multiValue = checked.join('x');
+  // 顯示預覽
+  const preview=document.getElementById('f-char-multi-preview');
+  if(preview){
+    preview.style.display = checked.length ? 'block' : 'none';
+    preview.textContent = checked.length ? '▶ ' + checked.join('x') : '';
   }
 }
 
@@ -1280,7 +1380,15 @@ function saveSingle(){
   const id=document.getElementById('f-id').value.trim();
   if(!id){showToast('請填寫編號');return;}
   const badge={id,ext:document.getElementById('f-ext').value,band:document.getElementById('f-band').value,
-    character:(()=>{ const sel=document.getElementById('f-character'); const txt=document.getElementById('f-character-text'); return (txt&&txt.style.display!=='none')?txt.value.trim():sel.value.trim(); })(),series:document.getElementById('f-series').value.trim(),
+    character:(()=>{
+      const sel=document.getElementById('f-character');
+      const txt=document.getElementById('f-character-text');
+      const multiMode=document.getElementById('f-char-mode-multi');
+      if(multiMode&&multiMode.checked){
+        return sel.dataset.multiValue||'';
+      }
+      return (txt&&txt.style.display!=='none')?txt.value.trim():sel.value.trim();
+    })(),series:document.getElementById('f-series').value.trim(),
     year:document.getElementById('f-year').value,event:document.getElementById('f-event').value.trim(),short_event:document.getElementById('f-short_event').value.trim(),
     type:document.getElementById('f-type').value,
     size:document.getElementById('f-size').value,
