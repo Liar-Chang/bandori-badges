@@ -595,17 +595,20 @@ function buildSidebar(){
     </div>`;
   }).join('');
 
-  buildCheckList('year-list','year-section',[...new Set(all.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
-  buildCheckList('series-list','series-section',[...new Set(all.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
-  buildCheckList('event-list','event-section',[...new Set(all.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
+  // 有選樂團時只顯示該樂團的選項，否則顯示全部
+  const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
+
+  buildCheckList('year-list','year-section',[...new Set(source.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
+  buildCheckList('series-list','series-section',[...new Set(source.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
+  buildCheckList('event-list','event-section',[...new Set(source.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
   // 類型：value 存繁中原始值，label 顯示對應語言
   const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優'];
   const typeDisplayMap = {
     '角色本身': {'zh-TW':'角色本身','zh-CN':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
-    '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
+    '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター關連','en':'Character-related','ko':'캐릭터 관련'},
     '角色聲優': {'zh-TW':'角色聲優','zh-CN':'角色声优','ja':'声優','en':'Voice Actor','ko':'성우'},
   };
-  const availTypes = TYPE_ZH_LIST.filter(t => all.some(b => b.type === t));
+  const availTypes = TYPE_ZH_LIST.filter(t => source.some(b => b.type === t));
   const typeSec = document.getElementById('type-section');
   const typeListEl = document.getElementById('type-list');
   if(typeSec && typeListEl){
@@ -619,7 +622,7 @@ function buildSidebar(){
     }
   }
   const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
-  const allSizes = [...new Set(all.map(b=>b.size).filter(Boolean))];
+  const allSizes = [...new Set(source.map(b=>b.size).filter(Boolean))];
   const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
   // 尺寸：value 存繁中原始值，label 顯示對應語言
   const sizeSec = document.getElementById('size-section');
@@ -637,7 +640,7 @@ function buildSidebar(){
   // 國家/地區：value 存繁中原始值，label 顯示對應語言
   const countrySec = document.getElementById('country-section');
   const countryListEl = document.getElementById('country-list');
-  const allCountries = [...new Set(all.map(b=>b.country).filter(Boolean))].sort();
+  const allCountries = [...new Set(source.map(b=>b.country).filter(Boolean))].sort();
   if(countrySec && countryListEl){
     if(!allCountries.length){ countrySec.style.display='none'; }
     else {
@@ -666,6 +669,8 @@ function toggleBand(b){
   const el=document.getElementById('bc-'+b.replace(/[^a-z0-9]/gi,'_'));
   if(el) el.classList.toggle('active',selBands.has(b));
   selChars.clear();
+  // 重新建立 sidebar（讓年份/版本/活動/類型/尺寸/國家只顯示選定樂團的選項）
+  buildSidebar();
   buildCharList();
   applyFilters();
 }
