@@ -64,6 +64,30 @@ th{background:#f0eff9;color:#3d3d8f;padding:10px 14px;text-align:left;font-size:
 td{padding:8px 14px;border-top:1px solid #ece9e0;vertical-align:middle;font-size:0.9rem;}
 tr:hover td{background:#fafaf8;}
 footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
+
+/* ── 活動選擇 Modal ── */
+.event-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;display:none;align-items:center;justify-content:center;}
+.event-modal-overlay.open{display:flex;}
+.event-modal{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.event-modal-header{padding:0.85rem 1rem 0.65rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.6rem;}
+.event-modal-header h3{font-size:0.88rem;font-weight:700;flex:1;}
+.event-modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted);padding:0.1rem 0.3rem;border-radius:4px;}
+.event-modal-close:hover{color:var(--text);}
+.event-search-bar{padding:0.6rem 1rem;border-bottom:1px solid var(--border);}
+.event-search-bar input{width:100%;padding:0.45rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;}
+.event-search-bar input:focus{border-color:var(--chip-color, #5a4fcf);}
+.event-modal-list{flex:1;overflow-y:auto;padding:0.5rem 0.75rem;}
+.event-modal-list label{display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.55rem;border-radius:6px;cursor:pointer;font-size:0.82rem;transition:background 0.12s;font-weight:400;letter-spacing:0.01em;line-height:1.5;}
+.event-modal-list label:hover{background:var(--surface);}
+.event-modal-list input[type=checkbox]{accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;}
+.event-modal-footer{padding:0.65rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;}
+.event-modal-footer span{font-size:0.75rem;color:var(--muted);}
+.event-open-btn{display:flex;align-items:center;gap:0.45rem;width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:all 0.15s;text-align:left;}
+.event-open-btn:hover{border-color:#5a4fcf;}
+.event-open-btn .event-count-badge{font-size:0.65rem;background:#5a4fcf;color:#fff;border-radius:10px;padding:0.05rem 0.45rem;font-weight:700;flex-shrink:0;}
+[data-theme="dark"] .event-modal{background:#1a1a2e;}
+[data-theme="dark"] .event-search-bar input{background:#0f0f1a;}
+[data-theme="dark"] .event-modal-list label:hover{background:#252540;}
 </style>
 </head>
 <body>
@@ -390,8 +414,31 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </div>
     <div class="sidebar-section" id="event-section">
       <h3>活動</h3>
-      <div class="filter-group" id="event-list"></div>
+      <button class="event-open-btn" onclick="openEventModal()" id="event-open-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;opacity:0.5;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span id="event-btn-label" style="flex:1;text-align:left;font-size:0.78rem;">選擇活動...</span>
+        <span class="event-count-badge" id="event-count-badge" style="display:none;"></span>
+        <span style="font-size:0.65rem;color:var(--muted);flex-shrink:0;">▾</span>
+      </button>
     </div>
+
+<!-- 活動選擇 Modal -->
+<div class="event-modal-overlay" id="event-modal-overlay" onclick="closeEventModal(event)">
+  <div class="event-modal">
+    <div class="event-modal-header">
+      <h3 id="event-modal-title">選擇活動</h3>
+      <button class="event-modal-close" onclick="closeEventModal()">✕</button>
+    </div>
+    <div class="event-search-bar">
+      <input type="text" id="event-search-input" placeholder="搜尋活動名稱..." oninput="filterEventList(this.value)"/>
+    </div>
+    <div class="event-modal-list" id="event-modal-list"></div>
+    <div class="event-modal-footer">
+      <span id="event-modal-count">0 個活動</span>
+      <button onclick="clearEventSel()" style="font-size:0.75rem;padding:0.28rem 0.7rem;border:1px solid var(--border);border-radius:6px;background:none;color:var(--muted);cursor:pointer;font-family:inherit;">清除選取</button>
+    </div>
+  </div>
+</div>
     <div class="sidebar-section" id="type-section">
       <h3>類型</h3>
       <div class="filter-group" id="type-list"></div>
@@ -600,7 +647,14 @@ function buildSidebar(){
 
   buildCheckList('year-list','year-section',[...new Set(source.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
   buildCheckList('series-list','series-section',[...new Set(source.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
-  buildCheckList('event-list','event-section',[...new Set(source.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
+  // 活動：改用 Modal 方式
+  const eventSec = document.getElementById('event-section');
+  const allEvents = [...new Set(source.map(b=>b.event).filter(Boolean))].sort();
+  window._allEvents = allEvents;
+  if(eventSec){
+    eventSec.style.display = allEvents.length ? '' : 'none';
+  }
+  updateEventBtn();
   // 類型：value 存繁中原始值，label 顯示對應語言
   const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影'];
   const typeDisplayMap = {
@@ -622,7 +676,7 @@ function buildSidebar(){
       }).join('');
     }
   }
-  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
+  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const allSizes = [...new Set(source.map(b=>b.size).filter(Boolean))];
   const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
   // 尺寸：value 存繁中原始值，label 顯示對應語言
@@ -726,13 +780,66 @@ function buildCharList(){
 function toggleChar(c){selChars.has(c)?selChars.delete(c):selChars.add(c);applyFilters();}
 function toggleYear(y){selYears.has(y)?selYears.delete(y):selYears.add(y);applyFilters();}
 function toggleSeries(s){selSeries.has(s)?selSeries.delete(s):selSeries.add(s);applyFilters();}
-function toggleEvent(e){selEvents.has(e)?selEvents.delete(e):selEvents.add(e);applyFilters();}
+function toggleEvent(e){selEvents.has(e)?selEvents.delete(e):selEvents.add(e);applyFilters();updateEventBtn();}
+
+function updateEventBtn(){
+  const badge = document.getElementById('event-count-badge');
+  const label = document.getElementById('event-btn-label');
+  const L = LANGS[currentLang]||LANGS['zh-TW'];
+  if(selEvents.size){
+    if(badge){ badge.style.display=''; badge.textContent=selEvents.size; }
+    if(label) label.textContent = [...selEvents].slice(0,2).join('、') + (selEvents.size>2?'…':'');
+  } else {
+    if(badge) badge.style.display='none';
+    if(label) label.textContent = L.event ? L.event+'...' : '選擇活動...';
+  }
+}
+
+function openEventModal(){
+  const overlay = document.getElementById('event-modal-overlay');
+  if(overlay) overlay.classList.add('open');
+  document.getElementById('event-search-input').value='';
+  renderEventModal('');
+  setTimeout(()=>document.getElementById('event-search-input').focus(), 100);
+}
+
+function closeEventModal(e){
+  if(e && e.target !== document.getElementById('event-modal-overlay')) return;
+  document.getElementById('event-modal-overlay').classList.remove('open');
+}
+
+function renderEventModal(filter){
+  const list = document.getElementById('event-modal-list');
+  const events = (window._allEvents||[]).filter(ev=>!filter||ev.includes(filter));
+  const countEl = document.getElementById('event-modal-count');
+  if(countEl) countEl.textContent = events.length + ' 個活動';
+  if(!events.length){
+    list.innerHTML='<div style="color:var(--muted);font-size:0.8rem;padding:1rem;text-align:center;">找不到符合的活動</div>';
+    return;
+  }
+  list.innerHTML = events.map(ev=>`
+    <label>
+      <input type="checkbox" ${selEvents.has(ev)?'checked':''} onchange="toggleEvent('${ev.replace(/'/g,"\'")}')" value="${ev.replace(/"/g,'&quot;')}"/>
+      ${ev}
+    </label>`).join('');
+}
+
+function filterEventList(val){
+  renderEventModal(val);
+}
+
+function clearEventSel(){
+  selEvents.clear();
+  applyFilters();
+  updateEventBtn();
+  renderEventModal(document.getElementById('event-search-input').value);
+}
 function toggleType(t){selTypes.has(t)?selTypes.delete(t):selTypes.add(t);applyFilters();}
 function toggleSize(s){selSizes.has(s)?selSizes.delete(s):selSizes.add(s);applyFilters();}
 function toggleCountry(c){selCountries.has(c)?selCountries.delete(c):selCountries.add(c);applyFilters();}
 
 function resetFilters(){
-  selBands.clear();selYears.clear();selSeries.clear();selEvents.clear();selTypes.clear();selChars.clear();selSizes.clear();selCountries.clear();
+  selBands.clear();selYears.clear();selSeries.clear();selEvents.clear();selTypes.clear();selChars.clear();selSizes.clear();selCountries.clear();updateEventBtn();
   document.getElementById('search').value='';
   document.querySelectorAll('.band-chip').forEach(c=>c.classList.remove('active'));
   document.querySelectorAll('.filter-item input').forEach(i=>i.checked=false);
@@ -976,7 +1083,7 @@ const SIZE_TRANS = {
   '30mm圓形':        {'zh-CN':'30mm圆形','ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
   '25mm圓形':        {'zh-CN':'25mm圆形','ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
   '橢圓形':          {'zh-CN':'椭圆形','ja':'楕円形','en':'Oval','ko':'타원형'},
-  '長方形':          {'zh-CN':'长方形','ja':'長方形','en':'Rectangle','ko':'직사각형'},
+  '方形':          {'zh-CN':'方形','ja':'方形','en':'Square/Rectangle','ko':'방형'},
   '心形':            {'zh-CN':'心形','ja':'ハート形','en':'Heart','ko':'하트형'},
   '名牌':            {'zh-CN':'名牌','ja':'ネームプレート','en':'Name Plate','ko':'명찰'},
   '磁鐵':            {'zh-CN':'磁铁','ja':'マグネット','en':'Magnet','ko':'마그넷'},
@@ -1128,7 +1235,7 @@ const LANGS = {
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
-    pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
+    pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章', eventSearch:'搜尋活動名稱...',
     reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！',
   },
   'ja': {
@@ -1148,7 +1255,7 @@ const LANGS = {
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
-    pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
+    pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む', eventSearch:'イベント名を検索...',
     reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！',
   },
   'en': {
@@ -1168,7 +1275,7 @@ const LANGS = {
     expTable:'☰ List Table', expTableDesc:'Table with text information',
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
-    pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
+    pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more', eventSearch:'Search event name...',
     reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!',
   },
   'ko': {
@@ -1188,7 +1295,7 @@ const LANGS = {
     expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표',
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
-    pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
+    pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링', eventSearch:'이벤트 이름 검색...',
     reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!',
   },
 }
@@ -1277,6 +1384,8 @@ function applyLang(){
   const pt=document.getElementById('pin-title'); if(pt&&L.pinBoxTitle) pt.textContent=L.pinBoxTitle;
   // filter sub text
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
+  updateEventBtn(); // 活動按鈕文字隨語言切換
+  const esi=document.getElementById('event-search-input'); if(esi&&L.eventSearch) esi.placeholder=L.eventSearch;
   // footer 語言切換
   // header subtitle
   const hs=document.getElementById('header-subtitle');
@@ -1600,7 +1709,7 @@ async function doExport(){
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
-    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
+    '橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
