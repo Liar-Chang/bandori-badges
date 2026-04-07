@@ -576,7 +576,7 @@ async function init(){
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
 
 const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
-  '75mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
+  '75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
 function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
@@ -602,11 +602,12 @@ function buildSidebar(){
   buildCheckList('series-list','series-section',[...new Set(source.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
   buildCheckList('event-list','event-section',[...new Set(source.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
   // 類型：value 存繁中原始值，label 顯示對應語言
-  const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優'];
+  const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影'];
   const typeDisplayMap = {
     '角色本身': {'zh-TW':'角色本身','zh-CN':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
     '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター關連','en':'Character-related','ko':'캐릭터 관련'},
     '角色聲優': {'zh-TW':'角色聲優','zh-CN':'角色声优','ja':'声優','en':'Voice Actor','ko':'성우'},
+    '角色合影': {'zh-TW':'角色合影','zh-CN':'角色合影','ja':'キャラクター集合','en':'Group Shot','ko':'캐릭터 단체샷'},
   };
   const availTypes = TYPE_ZH_LIST.filter(t => source.some(b => b.type === t));
   const typeSec = document.getElementById('type-section');
@@ -681,6 +682,11 @@ function buildCharList(){
   if(selBands.size===0){ sec.style.display='none'; return; }
   const source = all.filter(b=>selBands.has(b.band));
   const CHAR_ORDER = [
+    // 全團
+    "Poppin'Party全團",'Afterglow全團','Pastel*Palettes全團','Roselia全團',
+    'Hello, Happy World!全團','Morfonica全團','RAISE A SUILEN全團',
+    'MyGO!!!!!全團','Ave Mujica全團','夢限大MewType全團','millsage全團','一家Dumb Rock!全團',
+    // Poppin'Party
     '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
     '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
     '丸山彩','冰川日菜','白鷺千聖','大和麻彌','若宮伊芙',
@@ -695,7 +701,15 @@ function buildCharList(){
     '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
     '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
   ];
-  const charSet = new Set(source.map(b=>b.character).filter(Boolean));
+  // 展開角色：複數組合拆開，讓單一角色可被選取；全團和複數組合也保留
+  const charSet = new Set();
+  source.forEach(b=>{
+    if(!b.character) return;
+    charSet.add(b.character); // 保留原始值（全團、複數組合）
+    if(b.character.includes('x')){
+      b.character.split('x').forEach(c=>{ if(c.trim()) charSet.add(c.trim()); });
+    }
+  });
   const chars = [
     ...CHAR_ORDER.filter(c=>charSet.has(c)),
     ...[...charSet].filter(c=>!CHAR_ORDER.includes(c)).sort((a,b)=>a.localeCompare(b))
@@ -730,7 +744,23 @@ function applyFilters(){
   const sort=document.getElementById('sort').value;
   let res=all.filter(b=>{
     if(selBands.size&&!selBands.has(b.band)) return false;
-    if(selChars.size&&!selChars.has(b.character)) return false;
+    // 角色篩選：支援複數組合（x分隔）和全團
+    if(selChars.size){
+      const charMatch = [...selChars].some(sel=>{
+        if(!sel || !b.character) return false;
+        // 完全符合
+        if(b.character === sel) return true;
+        // 篩選「單一角色」時，也要找含該角色的複數組合（如「千早愛音x高松燈」）
+        // 反之：篩選複數組合時只完全比對
+        if(!sel.includes('x') && !sel.includes('全團')){
+          // 選的是單一角色，b.character 是複數組合或全團時，檢查是否包含
+          const parts = b.character.split('x');
+          return parts.includes(sel);
+        }
+        return false;
+      });
+      if(!charMatch) return false;
+    }
     if(selYears.size&&!selYears.has(getYear(b.year))) return false;
     if(selSeries.size&&!selSeries.has(b.series)) return false;
     if(selEvents.size&&!selEvents.has(b.event)) return false;
@@ -991,6 +1021,19 @@ function getBandName(band, lang){
 }
 
 const CHAR_NAME_MAP = {
+  // 全團
+  "Poppin'Party全團": {'ja':"Poppin'Party全員",'en':"Poppin'Party (All)",'ko':"Poppin'Party 전원"},
+  'Afterglow全團':       {'ja':'Afterglow全員','en':'Afterglow (All)','ko':'Afterglow 전원'},
+  'Pastel*Palettes全團': {'ja':'Pastel*Palettes全員','en':'Pastel*Palettes (All)','ko':'Pastel*Palettes 전원'},
+  'Roselia全團':         {'ja':'Roselia全員','en':'Roselia (All)','ko':'Roselia 전원'},
+  'Hello, Happy World!全團': {'ja':'Hello, Happy World!全員','en':'Hello, Happy World! (All)','ko':'Hello, Happy World! 전원'},
+  'Morfonica全團':       {'ja':'Morfonica全員','en':'Morfonica (All)','ko':'Morfonica 전원'},
+  'RAISE A SUILEN全團':  {'ja':'RAISE A SUILEN全員','en':'RAISE A SUILEN (All)','ko':'RAISE A SUILEN 전원'},
+  'MyGO!!!!!全團':       {'ja':'MyGO!!!!!全員','en':'MyGO!!!!! (All)','ko':'MyGO!!!!! 전원'},
+  'Ave Mujica全團':      {'ja':'Ave Mujica全員','en':'Ave Mujica (All)','ko':'Ave Mujica 전원'},
+  '夢限大MewType全團':   {'ja':'夢限大みゅーたいぷ全員','en':'Mugendai Mewtype (All)','ko':'무겐다이 뮤타입 전원'},
+  'millsage全團':        {'ja':'millsage全員','en':'millsage (All)','ko':'millsage 전원'},
+  '一家Dumb Rock!全團':  {'ja':'一家Dumb Rock!全員','en':'Dumb Rock! (All)','ko':'Dumb Rock! 전원'},
   // Poppin'Party
   '戶山香澄': {'zh-CN':'户山香澄','ja':'戸山香澄','en':'Toyama Kasumi','ko':'토야마카스미'},
   '花園多惠':  {'zh-CN':'花园多惠','ja':'花園たえ','en':'Hanazono Tae','ko':'하나조노타에'},
@@ -1555,13 +1598,13 @@ async function doExport(){
   const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', ''];
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
-    '15.2cm圓形','15cm圓形','75mm圓形','60mm圓形',
+    '15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
     '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
-  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','60mm圓形','54mm圓形',
+  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形',
     '50mm圓形','30mm圓形','25mm圓形','未確定','15.2cm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
@@ -1679,6 +1722,7 @@ async function doExport(){
         '角色本身': {'zh-TW':'角色本身','zh-CN':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
         '角色相關': {'zh-TW':'角色相關','zh-CN':'角色相关','ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
         '角色聲優': {'zh-TW':'角色聲優','zh-CN':'角色声优','ja':'声優','en':'Voice Actor','ko':'성우'},
+    '角色合影': {'zh-TW':'角色合影','zh-CN':'角色合影','ja':'キャラクター集合','en':'Group Shot','ko':'캐릭터 단체샷'},
       };
       const typeLabel = ((typeDisplayMap2[g.type]||{})[currentLang]) || g.type || '未分類';
       ctx.fillStyle = '#1a1a2e';
