@@ -426,24 +426,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
         <span class="event-arrow">▾</span>
       </button>
     </div>
-
-<!-- 活動選擇 Modal -->
-<div class="event-modal-overlay" id="event-modal-overlay" onclick="closeEventModal(event)">
-  <div class="event-modal">
-    <div class="event-modal-header">
-      <h3 id="event-modal-title">選擇活動</h3>
-      <button class="event-modal-close" onclick="closeEventModal()">✕</button>
-    </div>
-    <div class="event-search-bar">
-      <input type="text" id="event-search-input" placeholder="搜尋活動名稱..." oninput="filterEventList(this.value)"/>
-    </div>
-    <div class="event-modal-list" id="event-modal-list"></div>
-    <div class="event-modal-footer">
-      <span id="event-modal-count">0 個活動</span>
-      <button class="event-footer-clear" onclick="clearEventSel()" id="event-clear-btn">清除選取</button>
-    </div>
-  </div>
-</div>
     <div class="sidebar-section" id="type-section">
       <h3>類型</h3>
       <div class="filter-group" id="type-list"></div>
@@ -486,6 +468,24 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       </table>
     </div>
   </main>
+  </div>
+</div>
+
+<!-- 活動選擇 Modal（放在 body 層級，不受 sidebar overflow 影響）-->
+<div class="event-modal-overlay" id="event-modal-overlay" onclick="closeEventModal(event)">
+  <div class="event-modal">
+    <div class="event-modal-header">
+      <h3 id="event-modal-title">選擇活動</h3>
+      <button class="event-modal-close" onclick="closeEventModal()">✕</button>
+    </div>
+    <div class="event-search-bar">
+      <input type="text" id="event-search-input" placeholder="搜尋活動名稱..." oninput="filterEventList(this.value)"/>
+    </div>
+    <div class="event-modal-list" id="event-modal-list"></div>
+    <div class="event-modal-footer">
+      <span id="event-modal-count">0 個活動</span>
+      <button class="event-footer-clear" onclick="clearEventSel()" id="event-clear-btn">清除選取</button>
+    </div>
   </div>
 </div>
 
