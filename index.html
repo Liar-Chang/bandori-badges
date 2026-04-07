@@ -66,28 +66,34 @@ tr:hover td{background:#fafaf8;}
 footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 
 /* ── 活動選擇 Modal ── */
-.event-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;display:none;align-items:center;justify-content:center;}
+.event-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center;}
 .event-modal-overlay.open{display:flex;}
-.event-modal{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;width:min(520px,92vw);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
-.event-modal-header{padding:0.85rem 1rem 0.65rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.6rem;}
-.event-modal-header h3{font-size:0.88rem;font-weight:700;flex:1;}
-.event-modal-close{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted);padding:0.1rem 0.3rem;border-radius:4px;}
+.event-modal{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;width:min(480px,90vw);max-height:78vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.25);}
+.event-modal-header{padding:0.7rem 0.9rem 0.55rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem;}
+.event-modal-header h3{font-size:0.78rem;font-weight:700;flex:1;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;}
+.event-modal-close{background:none;border:none;font-size:0.95rem;cursor:pointer;color:var(--muted);padding:0.15rem 0.35rem;border-radius:4px;line-height:1;}
 .event-modal-close:hover{color:var(--text);}
-.event-search-bar{padding:0.6rem 1rem;border-bottom:1px solid var(--border);}
-.event-search-bar input{width:100%;padding:0.45rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;}
-.event-search-bar input:focus{border-color:var(--chip-color, #5a4fcf);}
-.event-modal-list{flex:1;overflow-y:auto;padding:0.5rem 0.75rem;}
-.event-modal-list label{display:flex;align-items:center;gap:0.5rem;padding:0.38rem 0.55rem;border-radius:6px;cursor:pointer;font-size:0.82rem;transition:background 0.12s;font-weight:400;letter-spacing:0.01em;line-height:1.5;}
+.event-search-bar{padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);}
+.event-search-bar input{width:100%;padding:0.4rem 0.65rem;border:1.5px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-family:inherit;font-size:0.78rem;outline:none;transition:border 0.15s;}
+.event-search-bar input:focus{border-color:#5a4fcf;}
+.event-modal-list{flex:1;overflow-y:auto;padding:0.35rem 0.6rem;}
+.event-modal-list label{display:flex;align-items:center;gap:0.6rem;padding:0.2rem 0.35rem;border-radius:5px;cursor:pointer;font-size:0.83rem;transition:background 0.1s;line-height:1.5;color:var(--text);}
 .event-modal-list label:hover{background:var(--surface);}
-.event-modal-list input[type=checkbox]{accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;}
-.event-modal-footer{padding:0.65rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;}
-.event-modal-footer span{font-size:0.75rem;color:var(--muted);}
-.event-open-btn{display:flex;align-items:center;gap:0.45rem;width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:all 0.15s;text-align:left;}
+.event-modal-list label.selected{background:rgba(90,79,207,0.08);color:#5a4fcf;font-weight:600;}
+.event-modal-list input[type=checkbox]{accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;width:15px;height:15px;}
+.event-modal-footer{padding:0.5rem 0.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:0.5rem;background:var(--surface);}
+.event-modal-footer span{font-size:0.72rem;color:var(--muted);}
+.event-footer-clear{font-size:0.72rem;padding:0.25rem 0.65rem;border:1.5px solid var(--border);border-radius:5px;background:var(--bg);color:var(--muted);cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.event-footer-clear:hover{border-color:#e05c5c;color:#e05c5c;}
+/* 活動按鈕 */
+.event-open-btn{display:flex;align-items:center;gap:0.35rem;width:100%;padding:0.35rem 0.55rem;border:1.5px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-family:inherit;cursor:pointer;transition:border 0.15s;text-align:left;font-size:0.75rem;}
 .event-open-btn:hover{border-color:#5a4fcf;}
-.event-open-btn .event-count-badge{font-size:0.65rem;background:#5a4fcf;color:#fff;border-radius:10px;padding:0.05rem 0.45rem;font-weight:700;flex-shrink:0;}
-[data-theme="dark"] .event-modal{background:#1a1a2e;}
-[data-theme="dark"] .event-search-bar input{background:#0f0f1a;}
-[data-theme="dark"] .event-modal-list label:hover{background:#252540;}
+.event-open-btn .event-count-badge{font-size:0.62rem;background:#5a4fcf;color:#fff;border-radius:9px;padding:0.03rem 0.4rem;font-weight:700;flex-shrink:0;}
+.event-arrow{font-size:0.6rem;color:var(--muted);flex-shrink:0;margin-left:auto;}
+[data-theme="dark"] .event-modal{background:var(--bg);}
+[data-theme="dark"] .event-modal-footer{background:var(--surface);}
+[data-theme="dark"] .event-modal-list label:hover{background:rgba(255,255,255,0.05);}
+[data-theme="dark"] .event-modal-list label.selected{background:rgba(90,79,207,0.15);}
 </style>
 </head>
 <body>
@@ -413,12 +419,11 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div class="filter-group" id="series-list"></div>
     </div>
     <div class="sidebar-section" id="event-section">
-      <h3>活動</h3>
+      <h3 id="event-h3">活動</h3>
       <button class="event-open-btn" onclick="openEventModal()" id="event-open-btn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;opacity:0.5;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span id="event-btn-label" style="flex:1;text-align:left;font-size:0.78rem;">選擇活動...</span>
+        <span id="event-btn-label">選擇活動...</span>
         <span class="event-count-badge" id="event-count-badge" style="display:none;"></span>
-        <span style="font-size:0.65rem;color:var(--muted);flex-shrink:0;">▾</span>
+        <span class="event-arrow">▾</span>
       </button>
     </div>
 
@@ -435,7 +440,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <div class="event-modal-list" id="event-modal-list"></div>
     <div class="event-modal-footer">
       <span id="event-modal-count">0 個活動</span>
-      <button onclick="clearEventSel()" style="font-size:0.75rem;padding:0.28rem 0.7rem;border:1px solid var(--border);border-radius:6px;background:none;color:var(--muted);cursor:pointer;font-family:inherit;">清除選取</button>
+      <button class="event-footer-clear" onclick="clearEventSel()" id="event-clear-btn">清除選取</button>
     </div>
   </div>
 </div>
@@ -812,16 +817,18 @@ function renderEventModal(filter){
   const list = document.getElementById('event-modal-list');
   const events = (window._allEvents||[]).filter(ev=>!filter||ev.includes(filter));
   const countEl = document.getElementById('event-modal-count');
-  if(countEl) countEl.textContent = events.length + ' 個活動';
+  if(countEl) countEl.textContent = `${events.length} 個活動${selEvents.size?' · 已選 '+selEvents.size:''}`;
   if(!events.length){
-    list.innerHTML='<div style="color:var(--muted);font-size:0.8rem;padding:1rem;text-align:center;">找不到符合的活動</div>';
+    list.innerHTML='<div style="color:var(--muted);font-size:0.75rem;padding:1rem;text-align:center;">找不到符合的活動</div>';
     return;
   }
-  list.innerHTML = events.map(ev=>`
-    <label>
-      <input type="checkbox" ${selEvents.has(ev)?'checked':''} onchange="toggleEvent('${ev.replace(/'/g,"\'")}')" value="${ev.replace(/"/g,'&quot;')}"/>
+  list.innerHTML = events.map(ev=>{
+    const sel = selEvents.has(ev);
+    return `<label class="${sel?'selected':''}">
+      <input type="checkbox" ${sel?'checked':''} onchange="toggleEvent('${ev.replace(/'/g,"\'")}');renderEventModal(document.getElementById('event-search-input').value)" value="${ev.replace(/"/g,'&quot;')}"/>
       ${ev}
-    </label>`).join('');
+    </label>`;
+  }).join('');
 }
 
 function filterEventList(val){
