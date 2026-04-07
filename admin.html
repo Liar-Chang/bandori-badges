@@ -243,6 +243,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>角色本身</option>
             <option>角色相關</option>
             <option>角色聲優</option>
+            <option>角色合影</option>
           </select>
         </div>
         <div class="field">
@@ -344,7 +345,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <label>類型</label>
           <select id="t-type">
             <option value="">請選擇</option>
-            <option>角色本身</option><option>角色相關</option><option>角色聲優</option>
+            <option>角色本身</option><option>角色相關</option><option>角色聲優</option><option>角色合影</option>
           </select>
         </div>
         <div class="field">
@@ -549,6 +550,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option>角色本身</option>
           <option>角色相關</option>
           <option>角色聲優</option>
+          <option>角色合影</option>
         </select>
       </div>
       <div class="field"><label>尺寸</label>
@@ -717,6 +719,7 @@ function renderBatchGrid(){
             <option${item.type==='角色本身'?' selected':''}>角色本身</option>
             <option${item.type==='角色相關'?' selected':''}>角色相關</option>
             <option${item.type==='角色聲優'?' selected':''}>角色聲優</option>
+            <option${item.type==='角色合影'?' selected':''}>角色合影</option>
           </select>
         </div>
         <div class="bf"><label>尺寸</label>
@@ -1224,7 +1227,7 @@ function bulkDelete(){
 // 各欄位的選項設定
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
-  type: ["角色本身","角色相關","角色聲優"],
+  type: ["角色本身","角色相關","角色聲優","角色合影"],
   size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
