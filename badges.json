@@ -14390,8 +14390,8 @@
     "character": "仲町阿拉蕾",
     "series": "特典",
     "year": "2025年4月30日",
-    "event": "夢限大みゅーたいぷ二單－Hi-Vision",
-    "short_event": "二單－Hi-Vision",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
+    "short_event": "2nd Single「Hi-Vision」",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -14405,12 +14405,12 @@
     "character": "宮永野乃花",
     "series": "特典",
     "year": "2025年4月30日",
-    "event": "夢限大みゅーたいぷ二單－Hi-Vision",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
     "note": "",
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "二單－Hi-Vision",
+    "short_event": "2nd Single「Hi-Vision」",
     "url": "https://bang-dream.com/discographies/3931/"
   },
   {
@@ -14420,12 +14420,12 @@
     "character": "峰月律",
     "series": "特典",
     "year": "2025年4月30日",
-    "event": "夢限大みゅーたいぷ二單－Hi-Vision",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
     "note": "",
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "二單－Hi-Vision",
+    "short_event": "2nd Single「Hi-Vision」",
     "url": "https://bang-dream.com/discographies/3931/"
   },
   {
@@ -14435,12 +14435,12 @@
     "character": "藤都子",
     "series": "特典",
     "year": "2025年4月30日",
-    "event": "夢限大みゅーたいぷ二單－Hi-Vision",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
     "note": "",
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "二單－Hi-Vision",
+    "short_event": "2nd Single「Hi-Vision」",
     "url": "https://bang-dream.com/discographies/3931/"
   },
   {
@@ -14450,12 +14450,12 @@
     "character": "千石由乃",
     "series": "特典",
     "year": "2025年4月30日",
-    "event": "夢限大みゅーたいぷ二單－Hi-Vision",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
     "note": "",
     "size": "57mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "二單－Hi-Vision",
+    "short_event": "2nd Single「Hi-Vision」",
     "url": "https://bang-dream.com/discographies/3931/"
   },
   {
@@ -30978,5 +30978,20 @@
     "url": "https://bang-dream.com/discographies/4053/",
     "note": "",
     "short_event": "13th Single「HOWLING AMBITION」"
+  },
+  {
+    "id": "229",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "夢限大MewType全團",
+    "series": "特典",
+    "year": "2025年4月30日",
+    "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
+    "short_event": "2nd Single「Hi-Vision」",
+    "type": "角色合影",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/3931/",
+    "note": "76mm圓形"
   }
 ]
