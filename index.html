@@ -622,7 +622,7 @@ function buildSidebar(){
       }).join('');
     }
   }
-  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
+  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const allSizes = [...new Set(source.map(b=>b.size).filter(Boolean))];
   const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
   // 尺寸：value 存繁中原始值，label 顯示對應語言
@@ -976,7 +976,7 @@ const SIZE_TRANS = {
   '30mm圓形':        {'zh-CN':'30mm圆形','ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
   '25mm圓形':        {'zh-CN':'25mm圆形','ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
   '橢圓形':          {'zh-CN':'椭圆形','ja':'楕円形','en':'Oval','ko':'타원형'},
-  '長方形':          {'zh-CN':'长方形','ja':'長方形','en':'Rectangle','ko':'직사각형'},
+  '方形':          {'zh-CN':'长方形','ja':'方形','en':'Rectangle','ko':'직사각형'},
   '心形':            {'zh-CN':'心形','ja':'ハート形','en':'Heart','ko':'하트형'},
   '名牌':            {'zh-CN':'名牌','ja':'ネームプレート','en':'Name Plate','ko':'명찰'},
   '磁鐵':            {'zh-CN':'磁铁','ja':'マグネット','en':'Magnet','ko':'마그넷'},
@@ -1600,7 +1600,7 @@ async function doExport(){
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
-    '橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
+    '橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);

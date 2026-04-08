@@ -264,7 +264,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>30mm圓形</option>
             <option>25mm圓形</option>
             <option>橢圓形</option>
-            <option>長方形</option>
+            <option>方形</option>
             <option>心形</option>
             <option>名牌</option>
             <option>磁鐵</option>
@@ -357,7 +357,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>65mm圓形</option>
             <option>60mm圓形</option><option>55mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
-            <option>橢圓形</option><option>長方形</option><option>心形</option>
+            <option>橢圓形</option><option>方形</option><option>心形</option>
             <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option>
           </select>
         </div>
@@ -570,7 +570,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option>30mm圓形</option>
           <option>25mm圓形</option>
           <option>橢圓形</option>
-          <option>長方形</option>
+          <option>方形</option>
           <option>心形</option>
           <option>名牌</option>
           <option>磁鐵</option>
@@ -739,7 +739,7 @@ function renderBatchGrid(){
             <option${item.size==='30mm圓形'?' selected':''}>30mm圓形</option>
             <option${item.size==='25mm圓形'?' selected':''}>25mm圓形</option>
             <option${item.size==='橢圓形'?' selected':''}>橢圓形</option>
-            <option${item.size==='長方形'?' selected':''}>長方形</option>
+            <option${item.size==='方形'?' selected':''}>方形</option>
             <option${item.size==='心形'?' selected':''}>心形</option>
             <option${item.size==='名牌'?' selected':''}>名牌</option>
             <option${item.size==='磁鐵'?' selected':''}>磁鐵</option>
@@ -1049,7 +1049,7 @@ function renderList(){
       <td onclick="event.stopPropagation()">
         <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
           onchange="commitSizeEdit(this,${ri})">
-          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','長方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
+          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       ${editableCell('year',b.year)}
@@ -1228,7 +1228,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","長方形","心形","名牌","磁鐵","約80mm布偶胸章"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","名牌","磁鐵","約80mm布偶胸章"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
