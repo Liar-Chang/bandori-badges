@@ -233,7 +233,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .badge-band-tag{display:inline-block;font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:10px;font-weight:500;}
 .badge-series{font-size:0.7rem;color:var(--muted);margin-top:0.3rem;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  white-space:normal;overflow:visible;word-break:break-word;line-height:1.4;}
 
 .detail-overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;
   justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s;}
@@ -315,7 +315,33 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .export-preview{margin-top:1rem;border:1px solid var(--border);border-radius:8px;overflow:hidden;max-height:200px;overflow-y:auto;}
 
 
-/* ── 手機版 RWD ── */
+/* 活動選擇 Modal */
+.event-modal-overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:250;}
+.event-modal{background:var(--surface);border-radius:16px;width:min(520px,96vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px #0003;}
+.event-modal-header{padding:1.25rem 1.5rem 0.75rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.event-modal-header h3{font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--text);}
+.event-modal-search{width:100%;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;background:var(--bg);color:var(--text);outline:none;transition:border 0.15s;}
+.event-modal-search:focus{border-color:#5a4fcf;}
+.event-modal-body{flex:1;overflow-y:auto;padding:0.75rem 1.5rem;}
+.event-modal-footer{padding:0.85rem 1.5rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;}
+.event-selected-count{font-size:0.82rem;color:var(--muted);}
+[data-theme="dark"] .event-modal{background:#1e1e1e;}
+[data-theme="dark"] .event-modal-search{background:#252525;color:#f0f0f0;border-color:#3a3a3a;}
+
+/* 公告/日誌角落按鈕 */
+.changelog-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:400;display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;}
+.changelog-fab-btn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff6eb4,#c0005a);border:none;color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 16px #c0005a44;transition:transform 0.2s,box-shadow 0.2s;display:flex;align-items:center;justify-content:center;}
+.changelog-fab-btn:hover{transform:scale(1.1);box-shadow:0 6px 24px #c0005a66;}
+.changelog-fab-modal{position:fixed;bottom:5.5rem;right:1.5rem;width:min(400px,92vw);background:var(--surface);border-radius:16px;box-shadow:0 8px 40px #0003;border:1px solid var(--border);overflow:hidden;display:none;flex-direction:column;max-height:70vh;z-index:399;}
+.changelog-fab-modal.open{display:flex;}
+.changelog-fab-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.changelog-fab-tab{flex:1;font-family:inherit;font-size:0.82rem;font-weight:600;padding:0.65rem;border:none;background:transparent;cursor:pointer;color:var(--muted);transition:all 0.15s;border-bottom:2px solid transparent;}
+.changelog-fab-tab.active{color:#5a4fcf;border-bottom-color:#5a4fcf;background:var(--bg);}
+.changelog-fab-content{flex:1;overflow-y:auto;padding:0.85rem 1.1rem;}
+[data-theme="dark"] .changelog-fab-modal{background:#1e1e1e;}
+[data-theme="dark"] .changelog-fab-tab.active{background:#141414;}
+
+
 @media(max-width:800px){
   .sidebar{max-height:60vh;overflow-y:auto;}
   .badge-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:0.6rem;}
@@ -390,7 +416,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </div>
     <div class="sidebar-section" id="event-section">
       <h3>活動</h3>
-      <div class="filter-group" id="event-list"></div>
+      <button id="event-modal-btn" onclick="openEventModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;">
+        <span id="event-btn-label">選擇活動...</span>
+        <span style="font-size:0.75rem;opacity:0.5;">▾</span>
+      </button>
     </div>
     <div class="sidebar-section" id="type-section">
       <h3>類型</h3>
@@ -571,6 +600,7 @@ async function init(){
   buildSidebar();
   buildCharList();
   applyFilters();
+  loadChangelog(); // 載入公告與更新日誌
 }
 
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
@@ -600,7 +630,12 @@ function buildSidebar(){
 
   buildCheckList('year-list','year-section',[...new Set(source.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
   buildCheckList('series-list','series-section',[...new Set(source.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
-  buildCheckList('event-list','event-section',[...new Set(source.map(b=>b.event).filter(Boolean))].sort(),selEvents,'toggleEvent');
+  // 活動：改為 modal 選擇，這裡只更新按鈕標籤
+  updateEventBtnLabel();
+  // 若 modal 已開啟則更新清單
+  if(document.getElementById('event-modal-overlay').style.display==='flex'){
+    buildEventList();
+  }
   // 類型：value 存繁中原始值，label 顯示對應語言
   const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影'];
   const typeDisplayMap = {
@@ -622,19 +657,41 @@ function buildSidebar(){
       }).join('');
     }
   }
-  const SIZE_ORDER = ['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
-  const allSizes = [...new Set(source.map(b=>b.size).filter(Boolean))];
-  const sortedSizes = [...SIZE_ORDER.filter(s=>allSizes.includes(s)),...allSizes.filter(s=>!SIZE_ORDER.includes(s)).sort()];
-  // 尺寸：value 存繁中原始值，label 顯示對應語言
+  // 尺寸：分類篩選
+  // 56-58mm圓形常駐；其他圓形/方形/橢圓形/心形分類；其他歸到「其他」
+  const SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
+  const SIZE_ROUND_OTHERS = ['76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形','15cm圓形'];
+  const SIZE_NAMED = ['橢圓形','方形','心形'];
+  const SIZE_OTHER_VALS = new Set(['名牌','磁鐵','約80mm布偶胸章','未確定']);
+
+  const allSizesRaw = [...new Set(source.map(b=>b.size).filter(Boolean))];
+  const has56 = allSizesRaw.some(s=>SIZE_56_VALS.has(s));
+  const roundOthers = SIZE_ROUND_OTHERS.filter(s=>allSizesRaw.includes(s));
+  const namedSizes = SIZE_NAMED.filter(s=>allSizesRaw.includes(s));
+  const otherSizes = allSizesRaw.filter(s=>!SIZE_56_VALS.has(s)&&!SIZE_ROUND_OTHERS.includes(s)&&!SIZE_NAMED.includes(s)&&!SIZE_OTHER_VALS.has(s));
+  const hasOther = allSizesRaw.some(s=>SIZE_OTHER_VALS.has(s));
+
+  // 建立最終篩選項目清單（含特殊 __other__ 項目）
+  const sizeFilterItems = [];
+  if(has56) sizeFilterItems.push({value:'__56__', label:'56-58mm圓形'});
+  roundOthers.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
+  otherSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
+  namedSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
+  if(hasOther) sizeFilterItems.push({value:'__other__', label:({'zh-TW':'其他','ja':'その他','en':'Other','ko':'기타'})[currentLang]||'其他'});
+
   const sizeSec = document.getElementById('size-section');
   const sizeListEl = document.getElementById('size-list');
   if(sizeSec && sizeListEl){
-    if(!sortedSizes.length){ sizeSec.style.display='none'; }
+    if(!sizeFilterItems.length){ sizeSec.style.display='none'; }
     else {
       sizeSec.style.display='';
-      sizeListEl.innerHTML = sortedSizes.map(s => {
-        const label = getSizeName(s, currentLang);
-        return `<label class="filter-item"><input type="checkbox" ${selSizes.has(s)?'checked':''} onchange="toggleSize(this.value)" value="${s}"/><span>${label}</span></label>`;
+      sizeListEl.innerHTML = sizeFilterItems.map(item => {
+        const checked = item.value==='__56__'
+          ? [...SIZE_56_VALS].some(v=>selSizes.has(v))
+          : item.value==='__other__'
+            ? [...SIZE_OTHER_VALS].some(v=>selSizes.has(v))
+            : selSizes.has(item.value);
+        return `<label class="filter-item"><input type="checkbox" ${checked?'checked':''} onchange="toggleSizeGroup('${item.value}')" value="${item.value}"/><span>${item.label}</span></label>`;
       }).join('');
     }
   }
@@ -730,6 +787,24 @@ function toggleEvent(e){selEvents.has(e)?selEvents.delete(e):selEvents.add(e);ap
 function toggleType(t){selTypes.has(t)?selTypes.delete(t):selTypes.add(t);applyFilters();}
 function toggleSize(s){selSizes.has(s)?selSizes.delete(s):selSizes.add(s);applyFilters();}
 function toggleCountry(c){selCountries.has(c)?selCountries.delete(c):selCountries.add(c);applyFilters();}
+
+const _SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
+const _SIZE_OTHER_VALS = new Set(['名牌','磁鐵','約80mm布偶胸章','未確定']);
+function toggleSizeGroup(val){
+  if(val==='__56__'){
+    const allSelected = [..._SIZE_56_VALS].every(v=>selSizes.has(v));
+    if(allSelected){ _SIZE_56_VALS.forEach(v=>selSizes.delete(v)); }
+    else { _SIZE_56_VALS.forEach(v=>selSizes.add(v)); }
+  } else if(val==='__other__'){
+    const allSelected = [..._SIZE_OTHER_VALS].every(v=>selSizes.has(v));
+    if(allSelected){ _SIZE_OTHER_VALS.forEach(v=>selSizes.delete(v)); }
+    else { _SIZE_OTHER_VALS.forEach(v=>selSizes.add(v)); }
+  } else {
+    selSizes.has(val)?selSizes.delete(val):selSizes.add(val);
+  }
+  buildSidebar();
+  applyFilters();
+}
 
 function resetFilters(){
   selBands.clear();selYears.clear();selSeries.clear();selEvents.clear();selTypes.clear();selChars.clear();selSizes.clear();selCountries.clear();
@@ -1292,58 +1367,183 @@ function applyLang(){
 }
 applyLang();
 
-/* ── 公告框 ── */
-// 載入更新日誌（支援置頂公告）
+/* ── 活動 Modal ── */
+let _eventAllItems = []; // 當前可選的活動清單
+
+function updateEventBtnLabel(){
+  const btn = document.getElementById('event-btn-label');
+  if(!btn) return;
+  const L = LANGS[currentLang]||LANGS['zh-TW'];
+  if(selEvents.size===0){
+    btn.textContent = ({'zh-TW':'選擇活動...','ja':'イベントを選択...','en':'Select Event...','ko':'이벤트 선택...'})[currentLang]||'選擇活動...';
+  } else {
+    const countLabel = ({'zh-TW':`已選 ${selEvents.size} 個活動`,'ja':`${selEvents.size} 件選択済み`,'en':`${selEvents.size} selected`,'ko':`${selEvents.size}개 선택됨`})[currentLang]||`已選 ${selEvents.size} 個`;
+    btn.textContent = countLabel;
+    document.getElementById('event-modal-btn').style.borderColor = '#5a4fcf';
+  }
+  if(selEvents.size===0) document.getElementById('event-modal-btn').style.borderColor = '';
+}
+
+function openEventModal(){
+  const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
+  _eventAllItems = [...new Set(source.map(b=>b.event).filter(Boolean))].sort();
+  document.getElementById('event-search').value = '';
+  document.getElementById('event-modal-overlay').style.display = 'flex';
+  buildEventList();
+  document.getElementById('event-search').focus();
+}
+
+function closeEventModal(){
+  document.getElementById('event-modal-overlay').style.display = 'none';
+  updateEventBtnLabel();
+  applyFilters();
+}
+
+function maybeCloseEventModal(e){
+  if(e.target===document.getElementById('event-modal-overlay')) closeEventModal();
+}
+
+function buildEventList(){
+  const q = (document.getElementById('event-search').value||'').toLowerCase();
+  const items = q ? _eventAllItems.filter(e=>e.toLowerCase().includes(q)) : _eventAllItems;
+  const el = document.getElementById('event-list-inner');
+  if(!items.length){
+    el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的活動</div>`;
+  } else {
+    el.innerHTML = items.map(e=>`
+      <label class="filter-item" style="padding:0.3rem 0;">
+        <input type="checkbox" ${selEvents.has(e)?'checked':''} onchange="toggleEventInModal('${e.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')" value="${e.replace(/"/g,'&quot;')}"/>
+        <span style="font-size:0.83rem;">${e}</span>
+      </label>`).join('');
+  }
+  updateEventSelCount();
+}
+
+function filterEventList(){ buildEventList(); }
+
+function toggleEventInModal(e){
+  selEvents.has(e)?selEvents.delete(e):selEvents.add(e);
+  updateEventSelCount();
+}
+
+function updateEventSelCount(){
+  const el = document.getElementById('event-sel-count');
+  if(!el) return;
+  const labels = {'zh-TW':`已選 ${selEvents.size} 個`,'ja':`${selEvents.size} 件選択`,'en':`${selEvents.size} selected`,'ko':`${selEvents.size}개 선택`};
+  el.textContent = (labels[currentLang]||labels['zh-TW']);
+}
+
+function clearEventSel(){
+  selEvents.clear();
+  buildEventList();
+}
+
+/* ── Changelog FAB ── */
+let fabOpen = false;
+let fabTab = 'pin';
+
+function toggleChangelogFab(){
+  fabOpen = !fabOpen;
+  const modal = document.getElementById('changelog-fab-modal');
+  modal.classList.toggle('open', fabOpen);
+  if(fabOpen) renderFabContent();
+}
+
+function switchFabTab(tab){
+  fabTab = tab;
+  document.getElementById('fab-tab-pin').classList.toggle('active', tab==='pin');
+  document.getElementById('fab-tab-log').classList.toggle('active', tab==='log');
+  document.getElementById('fab-pin-content').style.display = tab==='pin' ? '' : 'none';
+  document.getElementById('fab-log-content').style.display = tab==='log' ? '' : 'none';
+}
+
+let _changelogData = null;
+
 async function loadChangelog(){
   try{
     const res = await fetch('changelog.json?t=' + Date.now());
-    const text = await res.text();
-    const data = JSON.parse(text);
+    if(!res.ok) return; // changelog.json 不存在時靜默略過
+    const data = await res.json();
+    _changelogData = data;
+    renderFabContent();
+    // 置頂公告：首次進入且未看過，自動彈出
     const pinned = data.filter(d=>d.pinned);
-    const normal = data.filter(d=>!d.pinned);
-    const L = LANGS[currentLang]||LANGS['zh-TW'];
-
-    // ── 公告框（置頂）──
-    const pinBox = document.getElementById('pin-box');
-    const pinBody = document.getElementById('pin-body');
     if(pinned.length){
-      pinBox.style.display='';
-      pinBody.innerHTML = pinned.map(item=>`
-        <div class="announce-pinned">
-          <div class="announce-date-row">
-            <span class="announce-pin-badge">${L.pinLabel||'📌 置頂'}</span>
-            <span>${item.date}</span>
-          </div>
-          <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
-        </div>`).join('');
-    } else {
-      pinBox.style.display='none';
+      const seenKey = 'pin_seen_' + pinned.map(p=>p.date).join('_');
+      if(!localStorage.getItem(seenKey)){
+        // 自動開啟 FAB 並顯示公告
+        fabOpen = true;
+        fabTab = 'pin';
+        document.getElementById('changelog-fab-modal').classList.add('open');
+        renderFabContent();
+        // 不自動標記為已看，讓使用者自己點「不再顯示」
+        showPinNotice(pinned, seenKey);
+      }
     }
-
-    // ── 更新日誌框 ──
-    const body = document.getElementById('announce-body');
-    if(!normal.length){
-      body.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">暫無更新記錄</div>';
-      return;
-    }
-    body.innerHTML = normal.map(item=>`
-      <div class="announce-normal">
-        <div class="announce-date-row">${item.date}</div>
-        <div class="announce-text">${item.content.replace(/\n/g,'<br>')}</div>
-      </div>`).join('');
   } catch(e){
-    document.getElementById('announce-body').innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:0.5rem;">載入失敗</div>';
+    // changelog.json 不存在或格式錯誤時靜默略過，不影響主功能
   }
 }
-loadChangelog();
+
+function renderFabContent(){
+  if(!_changelogData) return;
+  const L = LANGS[currentLang]||LANGS['zh-TW'];
+  const pinned = _changelogData.filter(d=>d.pinned);
+  const normal = _changelogData.filter(d=>!d.pinned);
+
+  const pinEl = document.getElementById('fab-pin-content');
+  const logEl = document.getElementById('fab-log-content');
+
+  if(pinned.length){
+    pinEl.innerHTML = pinned.map(item=>`
+      <div class="announce-pinned" style="margin-bottom:0.75rem;">
+        <div class="announce-date-row" style="display:flex;align-items:center;gap:0.3rem;margin-bottom:0.2rem;font-size:0.72rem;font-weight:600;">
+          <span class="announce-pin-badge">${L.pinLabel||'📌 置頂'}</span>
+          <span>${item.date}</span>
+        </div>
+        <div class="announce-text" style="font-size:0.82rem;line-height:1.6;color:var(--text);">${item.content.replace(/\n/g,'<br>')}</div>
+      </div>`).join('');
+  } else {
+    pinEl.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">暫無公告</div>`;
+  }
+
+  if(normal.length){
+    logEl.innerHTML = normal.map(item=>`
+      <div class="announce-normal" style="padding:0.55rem 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:0.72rem;font-weight:600;margin-bottom:0.2rem;color:var(--muted);">${item.date}</div>
+        <div style="font-size:0.82rem;line-height:1.6;color:var(--text);">${item.content.replace(/\n/g,'<br>')}</div>
+      </div>`).join('');
+  } else {
+    logEl.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">暫無更新記錄</div>`;
+  }
+
+  // 更新 tab 顯示
+  document.getElementById('fab-pin-content').style.display = fabTab==='pin' ? '' : 'none';
+  document.getElementById('fab-log-content').style.display = fabTab==='log' ? '' : 'none';
+}
+
+function showPinNotice(pinned, seenKey){
+  // 在 FAB 按鈕上顯示紅點提示
+  const fabBtn = document.querySelector('.changelog-fab-btn');
+  if(fabBtn && !localStorage.getItem(seenKey)){
+    const dot = document.createElement('span');
+    dot.id = 'fab-red-dot';
+    dot.style.cssText = 'position:absolute;top:2px;right:2px;width:10px;height:10px;background:#e05c5c;border-radius:50%;border:2px solid #fff;';
+    fabBtn.style.position = 'relative';
+    fabBtn.appendChild(dot);
+    // 點開後標記已讀
+    fabBtn.addEventListener('click', function markSeen(){
+      localStorage.setItem(seenKey, '1');
+      const d = document.getElementById('fab-red-dot');
+      if(d) d.remove();
+    }, {once:true});
+  }
+}
 
 function toggleBox(boxId, arrowId){
-  const box = document.getElementById(boxId);
-  const arrow = document.getElementById(arrowId);
-  const body = box.querySelector('.announce-body');
-  const hidden = body.classList.toggle('hidden');
-  arrow.textContent = hidden ? '▸' : '▾';
+  // 保留舊函數名稱相容性（目前無使用）
 }
+
 
 /* ── Dark mode ── */
 function copyEmail(){
@@ -1936,120 +2136,44 @@ async function doExportTable(list, title, btn, progWrap, prog){
   setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='⬇ 下載';}if(progWrap){progWrap.style.display='none';}if(prog){prog.style.width='0%';}},600);
 }
 
-/* ── HTML 匯出 ── */
-function doExportHTML(list, title, btn, progWrap, prog){
-  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
-  const rows = list.map(b=>{
-    const eventVal = b.short_event || getEventShortName(b.event||'');
-    const c = bandColor(b.band);
-    const imgSrc = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
-    return `<tr>
-      <td><img src="${imgSrc}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;"/></td>
-      ${fields.map(f=>{
-        let val = b[f.key]||'—';
-        if(f.key==='event') val=eventVal;
-        if(f.key==='band') return `<td><span style="background:${c}22;color:${c};padding:2px 8px;border-radius:10px;font-size:0.8rem;">${val}</span></td>`;
-        return `<td>${val}</td>`;
-      }).join('')}
-    </tr>`;
-  }).join('');
-
-  const htmlContent = `<!DOCTYPE html>
-<html lang="zh-TW"><head><meta charset="UTF-8"/>
-<title>${title}</title>
-<style>
-  body{font-family:'Noto Sans TC',sans-serif;background:#faf9f5;color:#1a1a1a;padding:2rem;}
-  h1{color:#13122b;margin-bottom:1rem;}
-  table{border-collapse:collapse;width:100%;}
-  th{background:#f0eff9;color:#3d3d8f;padding:10px 12px;text-align:left;font-size:0.8rem;}
-  td{padding:8px 12px;border-top:1px solid #ece9e0;vertical-align:middle;}
-  tr:hover td{background:#f5f4ff;}
-  .footer{margin-top:1rem;font-size:0.75rem;color:#aaa;}
-
-/* ── 公告：置頂樣式 ── */
-.announce-pinned {
-  border-left: 3px solid #e05c5c;
-  background: linear-gradient(90deg, rgba(224,92,92,0.08) 0%, transparent 100%);
-  border-radius: 0 6px 6px 0;
-  margin-bottom: 0.5rem;
-  padding: 0.55rem 0.75rem;
-}
-.announce-pinned .announce-pin-badge {
-  display: inline-block;
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #e05c5c;
-  background: rgba(224,92,92,0.12);
-  border: 1px solid rgba(224,92,92,0.3);
-  border-radius: 10px;
-  padding: 0.05rem 0.45rem;
-  margin-right: 0.4rem;
-  vertical-align: middle;
-}
-.announce-normal {
-  padding: 0.55rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-.announce-normal:last-child { border-bottom: none; }
-.announce-date-row {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-bottom: 0.2rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--muted);
-}
-.announce-text { font-size: 0.8rem; line-height: 1.6; color: var(--text); }
-</style></head><body>
-<h1>${title}</h1>
-<p style="color:#888;font-size:0.85rem;">共 ${list.length} 枚｜匯出時間：${new Date().toLocaleString('zh-TW')}</p>
-<table>
-  <thead><tr><th>圖片</th>${fields.map(f=>`<th>${f.label}</th>`).join('')}</tr></thead>
-  <tbody>${rows}</tbody>
-</table>
-<div class="footer">作者：千早愛音的暴躁柯基</div>
-</body></html>`;
-
-  const blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=`bandori-badges-${Date.now()}.html`;
-  a.click(); URL.revokeObjectURL(url);
-  btn.disabled=false; btn.textContent='⬇ 下載';
-  progWrap.style.display='none';
-}
-
-/* ── Excel 匯出 ── */
-function doExportExcel(list, title, btn, progWrap, prog){
-  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
-  const headers = ['圖片連結', ...fields.map(f=>f.label)];
-  const rows = list.map(b=>{
-    const eventVal = b.short_event || getEventShortName(b.event||'');
-    const imgUrl = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
-    return [imgUrl, ...fields.map(f=>{
-      if(f.key==='event') return eventVal;
-      return b[f.key]||'';
-    })];
-  });
-
-  // 產生 CSV（Excel 可直接開啟）
-  const csvRows = [headers, ...rows].map(row=>
-    row.map(val=>'"'+(String(val||'').replace(/"/g,'""'))+'"').join(',')
-  ).join('\n');
-  const bom = '﻿'; // UTF-8 BOM for Excel
-  const blob = new Blob([bom+csvRows], {type:'text/csv;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download=`bandori-badges-${Date.now()}.csv`;
-  a.click(); URL.revokeObjectURL(url);
-  btn.disabled=false; btn.textContent='⬇ 下載';
-  progWrap.style.display='none';
-}
 
 </script>
 
+<!-- 活動選擇 Modal -->
+<div id="event-modal-overlay" style="display:none;" class="event-modal-overlay" onclick="maybeCloseEventModal(event)">
+  <div class="event-modal">
+    <div class="event-modal-header">
+      <h3 id="event-modal-title">選擇活動</h3>
+      <input class="event-modal-search" type="text" id="event-search" placeholder="搜尋活動..." oninput="filterEventList()"/>
+    </div>
+    <div class="event-modal-body">
+      <div id="event-list-inner"></div>
+    </div>
+    <div class="event-modal-footer">
+      <span class="event-selected-count" id="event-sel-count"></span>
+      <div style="display:flex;gap:0.6rem;">
+        <button onclick="clearEventSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
+        <button onclick="closeEventModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 公告/日誌角落浮動按鈕 -->
+<div class="changelog-fab">
+  <div class="changelog-fab-modal" id="changelog-fab-modal">
+    <div class="changelog-fab-tabs">
+      <button class="changelog-fab-tab active" id="fab-tab-pin" onclick="switchFabTab('pin')">📌 公告</button>
+      <button class="changelog-fab-tab" id="fab-tab-log" onclick="switchFabTab('log')">📢 更新日誌</button>
+    </div>
+    <div class="changelog-fab-content" id="fab-pin-content"></div>
+    <div class="changelog-fab-content" id="fab-log-content" style="display:none;"></div>
+  </div>
+  <button class="changelog-fab-btn" onclick="toggleChangelogFab()" title="公告/更新日誌">📋</button>
+</div>
+
 <!-- Export Modal -->
+
 <div class="export-overlay" id="export-overlay" onclick="maybeCloseExport(event)">
   <div class="export-modal">
     <h2 id="exp-title-h2">⬇ 下載徽章表格圖檔</h2>
@@ -2111,25 +2235,6 @@ function doExportExcel(list, title, btn, progWrap, prog){
       <button class="btn-cancel" id="exp-btn-cancel" onclick="closeExport()">取消</button>
       <button class="btn-download" id="btn-dl" onclick="doExport()">⬇ 下載</button>
     </div>
-  </div>
-</div>
-<!-- 公告框（置頂） -->
-<div class="announce-box" id="pin-box" style="display:none;">
-  <div class="announce-header" onclick="toggleBox('pin-box','pin-arrow')">
-    <span id="pin-title">📌 公告</span>
-    <button class="announce-close" id="pin-arrow">▾</button>
-  </div>
-  <div class="announce-body" id="pin-body" style="padding:0.5rem 0.85rem;color:var(--text);">
-  </div>
-</div>
-<!-- 更新日誌框 -->
-<div class="announce-box" id="announce-box">
-  <div class="announce-header" onclick="toggleBox('announce-box','announce-arrow')">
-    <span id="announce-title">📢 更新日誌</span>
-    <button class="announce-close" id="announce-arrow">▾</button>
-  </div>
-  <div class="announce-body" id="announce-body" style="max-height:180px;overflow-y:auto;padding:0.5rem 0.85rem;color:var(--text);">
-    <div style="text-align:center;color:var(--muted);padding:0.5rem;font-size:0.78rem;">載入中...</div>
   </div>
 </div>
 
