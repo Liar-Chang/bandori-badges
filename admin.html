@@ -159,6 +159,7 @@ td.editable:hover .edit-hint{opacity:1;}
   <div class="header-actions">
     <button class="btn btn-secondary btn-sm" onclick="editImgBase()">🖼 圖片來源設定</button>
     <button class="btn btn-secondary btn-sm" onclick="editGitHub()">⚙ GitHub 設定</button>
+    <button class="btn btn-secondary btn-sm" onclick="editClaudeKey()">🤖 Claude API Key</button>
     <button class="btn btn-secondary btn-sm" onclick="loadFromGitHub()">☁ 從 GitHub 載入</button>
     <button class="btn btn-secondary btn-sm" onclick="document.getElementById('json-import').click()">📂 匯入 JSON</button>
     <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
@@ -250,11 +251,12 @@ td.editable:hover .edit-hint{opacity:1;}
           <label>尺寸</label>
           <select id="d-size">
             <option value="">不套用</option>
-<option>56mm圓形</option>
+            <option>56mm圓形</option>
             <option>57mm圓形</option>
             <option>58mm圓形</option>
             <option>15.2cm圓形</option>
             <option>15cm圓形</option>
+            <option>76mm圓形</option>
             <option>75mm圓形</option>
             <option>65mm圓形</option>
             <option>60mm圓形</option>
@@ -353,12 +355,12 @@ td.editable:hover .edit-hint{opacity:1;}
           <select id="t-size">
             <option value="">請選擇</option>
             <option>56mm圓形</option><option>57mm圓形</option><option>58mm圓形</option>
-            <option>15.2cm圓形</option><option>15cm圓形</option><option>75mm圓形</option>
-            <option>65mm圓形</option>
-            <option>60mm圓形</option><option>55mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
+            <option>15.2cm圓形</option><option>15cm圓形</option>
+            <option>76mm圓形</option><option>75mm圓形</option>
+            <option>65mm圓形</option><option>60mm圓形</option><option>55mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
             <option>橢圓形</option><option>方形</option><option>心形</option>
-            <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option>
+            <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option><option>未確定</option>
           </select>
         </div>
         <div class="field">
@@ -561,21 +563,22 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="58mm圓形">58mm圓形</option>
           <option value="15.2cm圓形">15.2cm圓形</option>
           <option value="15cm圓形">15cm圓形</option>
-          <option>75mm圓形</option>
-            <option>65mm圓形</option>
-          <option>60mm圓形</option>
-          <option>55mm圓形</option>
-          <option>54mm圓形</option>
-          <option>50mm圓形</option>
-          <option>30mm圓形</option>
-          <option>25mm圓形</option>
-          <option>橢圓形</option>
-          <option>方形</option>
-          <option>心形</option>
-          <option>名牌</option>
-          <option>磁鐵</option>
-          <option>約80mm布偶胸章</option>
-          <option>未確定</option>
+          <option value="76mm圓形">76mm圓形</option>
+          <option value="75mm圓形">75mm圓形</option>
+          <option value="65mm圓形">65mm圓形</option>
+          <option value="60mm圓形">60mm圓形</option>
+          <option value="55mm圓形">55mm圓形</option>
+          <option value="54mm圓形">54mm圓形</option>
+          <option value="50mm圓形">50mm圓形</option>
+          <option value="30mm圓形">30mm圓形</option>
+          <option value="25mm圓形">25mm圓形</option>
+          <option value="橢圓形">橢圓形</option>
+          <option value="方形">方形</option>
+          <option value="心形">心形</option>
+          <option value="名牌">名牌</option>
+          <option value="磁鐵">磁鐵</option>
+          <option value="約80mm布偶胸章">約80mm布偶胸章</option>
+          <option value="未確定">未確定</option>
         </select>
       </div>
       <div class="field"><label>活動國家</label>
@@ -730,6 +733,7 @@ function renderBatchGrid(){
             <option${item.size==='58mm圓形'?' selected':''}>58mm圓形</option>
             <option${item.size==='15.2cm圓形'?' selected':''}>15.2cm圓形</option>
             <option${item.size==='15cm圓形'?' selected':''}>15cm圓形</option>
+            <option${item.size==='76mm圓形'?' selected':''}>76mm圓形</option>
             <option${item.size==='75mm圓形'?' selected':''}>75mm圓形</option>
             <option${item.size==='65mm圓形'?' selected':''}>65mm圓形</option>
             <option${item.size==='60mm圓形'?' selected':''}>60mm圓形</option>
@@ -1049,7 +1053,7 @@ function renderList(){
       <td onclick="event.stopPropagation()">
         <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
           onchange="commitSizeEdit(this,${ri})">
-          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','75mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
+          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       ${editableCell('year',b.year)}
@@ -1228,7 +1232,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","名牌","磁鐵","約80mm布偶胸章"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","名牌","磁鐵","約80mm布偶胸章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
@@ -1477,6 +1481,53 @@ function editGitHub(){
   }
 }
 
+function editClaudeKey(){
+  const cur = localStorage.getItem('claude_api_key') || '';
+  const key = prompt('請輸入 Claude API Key（sk-ant-xxx...）：\n（只存在你的瀏覽器，不會外傳）', cur ? '（已設定，留空不變）' : '');
+  if(key && key !== '（已設定，留空不變）'){
+    localStorage.setItem('claude_api_key', key.trim());
+    showToast('✓ Claude API Key 已儲存');
+  }
+}
+
+async function translateWithClaude(zhText){
+  const apiKey = localStorage.getItem('claude_api_key');
+  if(!apiKey) return null;
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `請將以下繁體中文文字翻譯成日文、英文、韓文。
+只回傳 JSON 格式，不要其他說明，格式如下：
+{"ja":"日文翻譯","en":"英文翻譯","ko":"韓文翻譯"}
+
+原文：
+${zhText}`
+        }]
+      })
+    });
+    if(!res.ok) return null;
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '';
+    const match = raw.match(/\{[\s\S]*\}/);
+    if(!match) return null;
+    return JSON.parse(match[0]);
+  } catch(e){
+    console.error('Claude 翻譯失敗:', e);
+    return null;
+  }
+}
+
 
 
 /* ── 批次建資料（先建文字，圖片後補）── */
@@ -1711,7 +1762,65 @@ function clCancelEdit(i){document.getElementById('cl-view-'+i).style.display='bl
 function clConfirmEdit(i){const d=document.getElementById('cl-edit-date-'+i).value.trim();const c=document.getElementById('cl-edit-content-'+i).value.trim();if(!d||!c){alert('日期和內容不能為空');return;}clData[i]={date:d,content:c};clRender();}
 function clDelete(i){if(!confirm(`確定刪除「${clData[i].date}」這筆日誌？`))return;clData.splice(i,1);clRender();}
 function clMove(i,dir){const j=i+dir;if(j<0||j>=clData.length)return;[clData[i],clData[j]]=[clData[j],clData[i]];clRender();}
-async function clSave(){const token=localStorage.getItem('gh_token');if(!token){alert('請先設定 GitHub Token');return;}const isAdd=document.getElementById('cl-panel-add').style.display!=='none';if(isAdd){const date=document.getElementById('cl-date').value.trim();const cont=document.getElementById('cl-content').value.trim();if(!date||!cont){alert('日期和內容不能為空');return;}const pinned=document.getElementById('cl-pinned')?.checked||false;if(!clData.length)await clLoadFromGH(false);clData.unshift({date,content:cont,...(pinned?{pinned:true}:{})});}const btn=document.getElementById('cl-save-btn');btn.textContent='同步中...';btn.disabled=true;try{const base64=btoa(unescape(encodeURIComponent(JSON.stringify(clData,null,2))));const body={message:'更新 changelog.json',content:base64,branch:GH_BRANCH};if(clSha)body.sha=clSha;const putRes=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{method:'PUT',headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});if(putRes.ok){const result=await putRes.json();clSha=result.content.sha;showToast('✓ changelog.json 已同步！');if(isAdd)clSwitchTab('list');}else{const err=await putRes.json();showToast('✗ 失敗：'+(err.message||putRes.status));}}catch(e){showToast('✗ 錯誤：'+e.message);}btn.textContent=isAdd?'➕ 新增並同步':'☁ 同步到 GitHub';btn.disabled=false;}
+async function clSave(){
+  const token = localStorage.getItem('gh_token');
+  if(!token){alert('請先設定 GitHub Token');return;}
+  const isAdd = document.getElementById('cl-panel-add').style.display !== 'none';
+  if(isAdd){
+    const date = document.getElementById('cl-date').value.trim();
+    const cont = document.getElementById('cl-content').value.trim();
+    if(!date||!cont){alert('日期和內容不能為空');return;}
+    const pinned = document.getElementById('cl-pinned')?.checked||false;
+    if(!clData.length) await clLoadFromGH(false);
+
+    const btn = document.getElementById('cl-save-btn');
+    btn.textContent = '翻譯中...'; btn.disabled = true;
+
+    // 呼叫 Claude API 翻譯
+    let contentObj;
+    const apiKey = localStorage.getItem('claude_api_key');
+    if(apiKey){
+      showToast('🤖 正在翻譯成日文、英文、韓文...');
+      const translations = await translateWithClaude(cont);
+      if(translations){
+        contentObj = {zh: cont, ja: translations.ja, en: translations.en, ko: translations.ko};
+      } else {
+        showToast('⚠ 翻譯失敗，僅儲存中文版本');
+        contentObj = cont; // fallback 舊格式
+      }
+    } else {
+      contentObj = cont; // 未設定 API Key，用舊格式
+    }
+
+    clData.unshift({date, content: contentObj, ...(pinned?{pinned:true}:{})});
+  }
+
+  const btn = document.getElementById('cl-save-btn');
+  btn.textContent = '同步中...'; btn.disabled = true;
+  try{
+    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(clData,null,2))));
+    const body = {message:'更新 changelog.json', content:base64, branch:GH_BRANCH};
+    if(clSha) body.sha = clSha;
+    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
+      method:'PUT',
+      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(putRes.ok){
+      const result = await putRes.json();
+      clSha = result.content.sha;
+      showToast('✓ changelog.json 已同步！');
+      if(isAdd) clSwitchTab('list');
+    } else {
+      const err = await putRes.json();
+      showToast('✗ 失敗：'+(err.message||putRes.status));
+    }
+  } catch(e){
+    showToast('✗ 錯誤：'+e.message);
+  }
+  btn.textContent = isAdd ? '➕ 新增並同步' : '☁ 同步到 GitHub';
+  btn.disabled = false;
+}
 async function clLoadFromGH(showErr=true){const token=localStorage.getItem('gh_token');document.getElementById('cl-loading').style.display='block';document.getElementById('cl-list-wrap').style.display='none';document.getElementById('cl-list-err').style.display='none';try{const headers={'Accept':'application/vnd.github.v3+json'};if(token)headers['Authorization']='token '+token;const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`,{headers});if(!res.ok)throw new Error('HTTP '+res.status);const fd=await res.json();clSha=fd.sha;const binary=atob(fd.content.replace(/\n/g,''));const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));clData=JSON.parse(new TextDecoder('utf-8').decode(bytes));document.getElementById('cl-loading').style.display='none';document.getElementById('cl-list-wrap').style.display='block';clRender();}catch(e){document.getElementById('cl-loading').style.display='none';if(showErr){document.getElementById('cl-list-err').style.display='block';document.getElementById('cl-list-err').textContent='載入失敗：'+e.message;}}}
 
 async function syncToGitHub(){
