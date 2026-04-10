@@ -1821,6 +1821,7 @@ async function clSave(){
   btn.textContent = isAdd ? '➕ 新增並同步' : '☁ 同步到 GitHub';
   btn.disabled = false;
 }
+<<<<<<< HEAD
 async function clBatchTranslate(){
   const apiKey = localStorage.getItem('claude_api_key');
   if(!apiKey){ alert('請先設定 Claude API Key'); return; }
@@ -1879,6 +1880,8 @@ async function clBatchTranslate(){
   btn.disabled = false;
 }
 
+=======
+>>>>>>> cf8d507757055cef2a5f22f528b251bc32e2fb4a
 async function clLoadFromGH(showErr=true){const token=localStorage.getItem('gh_token');document.getElementById('cl-loading').style.display='block';document.getElementById('cl-list-wrap').style.display='none';document.getElementById('cl-list-err').style.display='none';try{const headers={'Accept':'application/vnd.github.v3+json'};if(token)headers['Authorization']='token '+token;const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`,{headers});if(!res.ok)throw new Error('HTTP '+res.status);const fd=await res.json();clSha=fd.sha;const binary=atob(fd.content.replace(/\n/g,''));const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));clData=JSON.parse(new TextDecoder('utf-8').decode(bytes));document.getElementById('cl-loading').style.display='none';document.getElementById('cl-list-wrap').style.display='block';clRender();}catch(e){document.getElementById('cl-loading').style.display='none';if(showErr){document.getElementById('cl-list-err').style.display='block';document.getElementById('cl-list-err').textContent='載入失敗：'+e.message;}}}
 
 async function syncToGitHub(){
