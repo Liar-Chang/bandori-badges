@@ -12,7 +12,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f5f4f0;color:#1a1a1a;min-
 header{background:#1a1a2e;color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;}
 header h1{font-size:1.15rem;font-weight:700;}
 header span{font-size:0.82rem;opacity:0.5;}
-.header-actions{display:flex;gap:0.6rem;flex-wrap:wrap;}
+.header-actions{display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;}
+.header-dropdown{position:relative;display:inline-block;}
+.header-dropdown-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1.5px solid #ddd;border-radius:10px;box-shadow:0 4px 20px #0002;z-index:200;min-width:160px;overflow:hidden;}
+.header-dropdown-menu.open{display:block;}
+.header-dropdown-item{display:block;width:100%;text-align:left;padding:0.55rem 1rem;font-family:inherit;font-size:0.83rem;font-weight:500;background:#fff;border:none;cursor:pointer;color:#333;transition:background 0.1s;}
+.header-dropdown-item:hover{background:#f5f4f0;}
+.header-dropdown-item.danger{color:#c0392b;}
+.header-dropdown-item.danger:hover{background:#fdf0f0;}
 
 .container{max-width:1600px;margin:0 auto;padding:1.75rem 1.5rem;}
 
@@ -157,16 +164,21 @@ td.editable:hover .edit-hint{opacity:1;}
     <span>admin.html</span>
   </div>
   <div class="header-actions">
-    <button class="btn btn-secondary btn-sm" onclick="editImgBase()">🖼 圖片來源設定</button>
-    <button class="btn btn-secondary btn-sm" onclick="editGitHub()">⚙ GitHub 設定</button>
-    <button class="btn btn-secondary btn-sm" onclick="editClaudeKey()">🤖 Claude API Key</button>
     <button class="btn btn-secondary btn-sm" onclick="loadFromGitHub()">☁ 從 GitHub 載入</button>
-    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('json-import').click()">📂 匯入 JSON</button>
-    <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
     <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
     <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
-    <button class="btn btn-danger btn-sm" onclick="clearAll()">清除全部</button>
+    <div class="header-dropdown" id="more-dropdown">
+      <button class="btn btn-secondary btn-sm" onclick="toggleMoreMenu(event)">⚙ 更多 ▾</button>
+      <div class="header-dropdown-menu" id="more-menu">
+        <button class="header-dropdown-item" onclick="editImgBase();closeMoreMenu()">🖼 圖片來源設定</button>
+        <button class="header-dropdown-item" onclick="editGitHub();closeMoreMenu()">⚙ GitHub 設定</button>
+        <button class="header-dropdown-item" onclick="document.getElementById('json-import').click();closeMoreMenu()">📂 匯入 JSON</button>
+        <button class="header-dropdown-item" onclick="openExportByDateModal();closeMoreMenu()">📅 依日期匯出圖檔</button>
+        <button class="header-dropdown-item danger" onclick="clearAll();closeMoreMenu()">🗑 清除全部</button>
+      </div>
+    </div>
+    <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)"/>
   </div>
 </header>
 
@@ -1481,54 +1493,6 @@ function editGitHub(){
   }
 }
 
-function editClaudeKey(){
-  const cur = localStorage.getItem('claude_api_key') || '';
-  const key = prompt('請輸入 Claude API Key（sk-ant-xxx...）：\n（只存在你的瀏覽器，不會外傳）', cur ? '（已設定，留空不變）' : '');
-  if(key && key !== '（已設定，留空不變）'){
-    localStorage.setItem('claude_api_key', key.trim());
-    showToast('✓ Claude API Key 已儲存');
-  }
-}
-
-async function translateWithClaude(zhText){
-  const apiKey = localStorage.getItem('claude_api_key');
-  if(!apiKey) return null;
-  try{
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `請將以下繁體中文文字翻譯成日文、英文、韓文。
-只回傳 JSON 格式，不要其他說明，格式如下：
-{"ja":"日文翻譯","en":"英文翻譯","ko":"韓文翻譯"}
-
-原文：
-${zhText}`
-        }]
-      })
-    });
-    if(!res.ok) return null;
-    const data = await res.json();
-    const raw = data.content?.[0]?.text || '';
-    const match = raw.match(/\{[\s\S]*\}/);
-    if(!match) return null;
-    return JSON.parse(match[0]);
-  } catch(e){
-    console.error('Claude 翻譯失敗:', e);
-    return null;
-  }
-}
-
-
 
 /* ── 批次建資料（先建文字，圖片後補）── */
 function updateTextChars(){
@@ -1646,7 +1610,10 @@ let prevBadges = null; // 上次從 GitHub 載入的快照
 function openChangelogModal(){
   const today=new Date();
   document.getElementById('cl-date').value=`${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
-  document.getElementById('cl-content').value=generateChangelogContent();
+  document.getElementById('cl-content-zh').value=generateChangelogContent();
+  document.getElementById('cl-content-ja').value='';
+  document.getElementById('cl-content-en').value='';
+  document.getElementById('cl-content-ko').value='';
   document.getElementById('changelog-overlay').style.display='flex';
   clSwitchTab('list'); clData=[]; clSha=null; clLoadFromGH();
 }
@@ -1691,75 +1658,81 @@ function generateChangelogContent(){
   return lines.join('\n');
 }
 
-async function syncChangelog(){
-  const token = localStorage.getItem('gh_token');
-  if(!token){ alert('請先設定 GitHub Token'); return; }
-
-  const date = document.getElementById('cl-date').value.trim();
-  const content = document.getElementById('cl-content').value.trim();
-  if(!date || !content){ alert('日期和內容不能為空'); return; }
-
-  const btn = document.querySelector('[onclick="syncChangelog()"]');
-  btn.textContent = '同步中...'; btn.disabled = true;
-
-  try{
-    // 1. 讀取現有 changelog.json
-    const getRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}`,{
-      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}
-    });
-
-    let existing = [];
-    let sha = null;
-    if(getRes.ok){
-      const fileData = await getRes.json();
-      sha = fileData.sha;
-      const b64 = fileData.content.replace(/\n/g,'');
-      const binary = atob(b64);
-      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-      existing = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    }
-
-    // 2. 加入新一筆（最新放最前）
-    existing.unshift({date, content});
-
-    // 3. 推送
-    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(existing, null, 2))));
-    const body = {
-      message:`更新 changelog.json（${date}）`,
-      content: base64,
-      branch: GH_BRANCH,
-    };
-    if(sha) body.sha = sha;
-
-    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
-      method:'PUT',
-      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body: JSON.stringify(body),
-    });
-
-    if(putRes.ok){
-      showToast('✓ changelog.json 已同步到 GitHub！');
-      closeChangelogModal();
-    } else {
-      const err = await putRes.json();
-      showToast(`✗ 同步失敗：${err.message||putRes.status}`);
-    }
-  } catch(e){
-    showToast('✗ 發生錯誤：' + e.message);
-  }
-
-  btn.textContent = '☁ 同步到 GitHub'; btn.disabled = false;
-}
-
 /* ══ 完整日誌管理 ══ */
 let clData=[], clSha=null;
 function clSwitchTab(tab){const isList=tab==='list';document.getElementById('cl-panel-list').style.display=isList?'block':'none';document.getElementById('cl-panel-add').style.display=isList?'none':'block';const tl=document.getElementById('cl-tab-list'),ta=document.getElementById('cl-tab-add');tl.style.background=isList?'#3d3d8f':'#fff';tl.style.color=isList?'#fff':'#555';tl.style.borderColor=isList?'#3d3d8f':'#ddd';ta.style.background=isList?'#fff':'#3d3d8f';ta.style.color=isList?'#555':'#fff';ta.style.borderColor=isList?'#ddd':'#3d3d8f';document.getElementById('cl-save-btn').textContent=isList?'☁ 同步到 GitHub':'➕ 新增並同步';document.getElementById('cl-status').textContent=isList&&clData.length?`共 ${clData.length} 筆`:'';
 }
-function clRender(){const wrap=document.getElementById('cl-items');if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';return;}wrap.innerHTML=clData.map((item,i)=>{const isPinned=!!item.pinned;const borderColor=isPinned?'#e05c5c':'#e8e8e8';const bgColor=isPinned?'rgba(224,92,92,0.04)':'#fff';return`<div style="border:1.5px solid ${borderColor};border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:${bgColor};"><div style="display:flex;align-items:flex-start;gap:0.6rem;"><div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;"><button onclick="clMove(${i},-1)" ${i===0?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button><button onclick="clMove(${i},1)" ${i===clData.length-1?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===clData.length-1?'0.3':'1'};">▼</button></div><div style="flex:1;min-width:0;" id="cl-view-${i}"><div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.25rem;">${isPinned?'<span style="font-size:0.6rem;font-weight:700;color:#e05c5c;background:rgba(224,92,92,0.12);border:1px solid rgba(224,92,92,0.3);border-radius:10px;padding:0.05rem 0.4rem;">📌 置頂</span>':''}<span style="font-weight:700;color:#3d3d8f;font-size:0.85rem;">${item.date}</span></div><div style="font-size:0.83rem;color:#444;white-space:pre-wrap;line-height:1.55;">${item.content}</div></div><div style="flex:1;min-width:0;display:none;" id="cl-edit-${i}"><input id="cl-edit-date-${i}" value="${item.date}" style="width:100%;margin-bottom:0.4rem;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;"/><textarea id="cl-edit-content-${i}" rows="4" style="width:100%;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;resize:vertical;">${item.content}</textarea></div><div style="display:flex;gap:0.35rem;flex-shrink:0;align-items:center;" id="cl-btns-${i}"><button onclick="clTogglePin(${i})" title="${isPinned?'取消置頂':'設為置頂'}" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.55rem;border:1.5px solid ${isPinned?'#e05c5c':'#ddd'};border-radius:6px;background:#fff;color:${isPinned?'#e05c5c':'#999'};cursor:pointer;">${isPinned?'📌':'📍'}</button><button onclick="clStartEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;color:#3d3d8f;cursor:pointer;">✏ 編輯</button><button onclick="clDelete(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #e0aaaa;border-radius:6px;background:#fff;color:#c0392b;cursor:pointer;">🗑</button></div><div style="display:none;gap:0.35rem;flex-shrink:0;" id="cl-editbtns-${i}"><button onclick="clConfirmEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.75rem;border:none;border-radius:6px;background:#238636;color:#fff;cursor:pointer;">✓</button><button onclick="clCancelEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;">取消</button></div></div></div>`}).join('');document.getElementById('cl-status').textContent=`共 ${clData.length} 筆`;}
+function clGetContent(item, lang){
+  if(typeof item.content === 'object' && item.content !== null){
+    return item.content[lang||'zh'] || item.content['zh'] || '';
+  }
+  return item.content || '';
+}
+function clRender(){
+  const wrap=document.getElementById('cl-items');
+  if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';return;}
+  const TA = (id,val,ph)=>`<div style="margin-bottom:0.4rem;"><label style="font-size:0.7rem;font-weight:600;color:#888;">${ph}</label><textarea id="${id}" rows="2" style="width:100%;margin-top:0.15rem;padding:0.35rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.82rem;box-sizing:border-box;resize:vertical;">${val}</textarea></div>`;
+  wrap.innerHTML=clData.map((item,i)=>{
+    const isPinned=!!item.pinned;
+    const borderColor=isPinned?'#e05c5c':'#e8e8e8';
+    const bgColor=isPinned?'rgba(224,92,92,0.04)':'#fff';
+    const isMulti = typeof item.content === 'object' && item.content !== null;
+    const displayText = isMulti ? (item.content.zh||'') : (item.content||'');
+    const zh = isMulti ? (item.content.zh||'') : (item.content||'');
+    const ja = isMulti ? (item.content.ja||'') : '';
+    const en = isMulti ? (item.content.en||'') : '';
+    const ko = isMulti ? (item.content.ko||'') : '';
+    const badge = isMulti ? '<span style="font-size:0.6rem;background:#e8f5e9;color:#27ae60;border:1px solid #a5d6a7;border-radius:8px;padding:0.05rem 0.35rem;margin-left:0.3rem;">🌐 多語</span>' : '';
+    return `<div style="border:1.5px solid ${borderColor};border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:${bgColor};">
+      <div style="display:flex;align-items:flex-start;gap:0.6rem;">
+        <div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;">
+          <button onclick="clMove(${i},-1)" ${i===0?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button>
+          <button onclick="clMove(${i},1)" ${i===clData.length-1?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===clData.length-1?'0.3':'1'};">▼</button>
+        </div>
+        <div style="flex:1;min-width:0;" id="cl-view-${i}">
+          <div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.25rem;">
+            ${isPinned?'<span style="font-size:0.6rem;font-weight:700;color:#e05c5c;background:rgba(224,92,92,0.12);border:1px solid rgba(224,92,92,0.3);border-radius:10px;padding:0.05rem 0.4rem;">📌 置頂</span>':''}
+            <span style="font-weight:700;color:#3d3d8f;font-size:0.85rem;">${item.date}</span>${badge}
+          </div>
+          <div style="font-size:0.83rem;color:#444;white-space:pre-wrap;line-height:1.55;">${displayText}</div>
+        </div>
+        <div style="flex:1;min-width:0;display:none;" id="cl-edit-${i}">
+          <input id="cl-edit-date-${i}" value="${item.date}" style="width:100%;margin-bottom:0.5rem;padding:0.38rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.83rem;box-sizing:border-box;"/>
+          ${TA(`cl-edit-zh-${i}`,zh,'🇹🇼 繁中')}
+          ${TA(`cl-edit-ja-${i}`,ja,'🇯🇵 日文')}
+          ${TA(`cl-edit-en-${i}`,en,'🇺🇸 英文')}
+          ${TA(`cl-edit-ko-${i}`,ko,'🇰🇷 韓文')}
+        </div>
+        <div style="display:flex;gap:0.35rem;flex-shrink:0;align-items:center;" id="cl-btns-${i}">
+          <button onclick="clTogglePin(${i})" title="${isPinned?'取消置頂':'設為置頂'}" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.55rem;border:1.5px solid ${isPinned?'#e05c5c':'#ddd'};border-radius:6px;background:#fff;color:${isPinned?'#e05c5c':'#999'};cursor:pointer;">${isPinned?'📌':'📍'}</button>
+          <button onclick="clStartEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #c0bef0;border-radius:6px;background:#fff;color:#3d3d8f;cursor:pointer;">✏ 編輯</button>
+          <button onclick="clDelete(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #e0aaaa;border-radius:6px;background:#fff;color:#c0392b;cursor:pointer;">🗑</button>
+        </div>
+        <div style="display:none;gap:0.35rem;flex-shrink:0;" id="cl-editbtns-${i}">
+          <button onclick="clConfirmEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.75rem;border:none;border-radius:6px;background:#238636;color:#fff;cursor:pointer;">✓</button>
+          <button onclick="clCancelEdit(${i})" style="font-family:inherit;font-size:0.75rem;padding:0.3rem 0.65rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;">取消</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('cl-status').textContent=`共 ${clData.length} 筆`;
+}
 function clTogglePin(i){ clData[i].pinned = !clData[i].pinned; clRender(); }
 function clStartEdit(i){document.getElementById('cl-view-'+i).style.display='none';document.getElementById('cl-edit-'+i).style.display='block';document.getElementById('cl-btns-'+i).style.display='none';document.getElementById('cl-editbtns-'+i).style.display='flex';}
 function clCancelEdit(i){document.getElementById('cl-view-'+i).style.display='block';document.getElementById('cl-edit-'+i).style.display='none';document.getElementById('cl-btns-'+i).style.display='flex';document.getElementById('cl-editbtns-'+i).style.display='none';}
-function clConfirmEdit(i){const d=document.getElementById('cl-edit-date-'+i).value.trim();const c=document.getElementById('cl-edit-content-'+i).value.trim();if(!d||!c){alert('日期和內容不能為空');return;}clData[i]={date:d,content:c};clRender();}
+function clConfirmEdit(i){
+  const d=document.getElementById('cl-edit-date-'+i).value.trim();
+  const zh=document.getElementById('cl-edit-zh-'+i).value.trim();
+  if(!d||!zh){alert('日期和繁中內容不能為空');return;}
+  const ja=document.getElementById('cl-edit-ja-'+i).value.trim();
+  const en=document.getElementById('cl-edit-en-'+i).value.trim();
+  const ko=document.getElementById('cl-edit-ko-'+i).value.trim();
+  const hasMulti = ja||en||ko;
+  const contentObj = hasMulti ? {zh,ja,en,ko} : zh;
+  const pinned = clData[i].pinned;
+  clData[i]={date:d, content:contentObj, ...(pinned?{pinned:true}:{})};
+  clRender();
+}
 function clDelete(i){if(!confirm(`確定刪除「${clData[i].date}」這筆日誌？`))return;clData.splice(i,1);clRender();}
 function clMove(i,dir){const j=i+dir;if(j<0||j>=clData.length)return;[clData[i],clData[j]]=[clData[j],clData[i]];clRender();}
 async function clSave(){
@@ -1768,33 +1741,18 @@ async function clSave(){
   const isAdd = document.getElementById('cl-panel-add').style.display !== 'none';
   if(isAdd){
     const date = document.getElementById('cl-date').value.trim();
-    const cont = document.getElementById('cl-content').value.trim();
-    if(!date||!cont){alert('日期和內容不能為空');return;}
+    const zh = document.getElementById('cl-content-zh').value.trim();
+    if(!date||!zh){alert('日期和繁中內容不能為空');return;}
+    const ja = document.getElementById('cl-content-ja').value.trim();
+    const en = document.getElementById('cl-content-en').value.trim();
+    const ko = document.getElementById('cl-content-ko').value.trim();
     const pinned = document.getElementById('cl-pinned')?.checked||false;
     if(!clData.length) await clLoadFromGH(false);
-
-    const btn = document.getElementById('cl-save-btn');
-    btn.textContent = '翻譯中...'; btn.disabled = true;
-
-    // 呼叫 Claude API 翻譯
-    let contentObj;
-    const apiKey = localStorage.getItem('claude_api_key');
-    if(apiKey){
-      showToast('🤖 正在翻譯成日文、英文、韓文...');
-      const translations = await translateWithClaude(cont);
-      if(translations){
-        contentObj = {zh: cont, ja: translations.ja, en: translations.en, ko: translations.ko};
-      } else {
-        showToast('⚠ 翻譯失敗，僅儲存中文版本');
-        contentObj = cont; // fallback 舊格式
-      }
-    } else {
-      contentObj = cont; // 未設定 API Key，用舊格式
-    }
-
+    // 只有填了其他語言才存物件格式，否則存純字串
+    const hasMulti = ja||en||ko;
+    const contentObj = hasMulti ? {zh, ja, en, ko} : zh;
     clData.unshift({date, content: contentObj, ...(pinned?{pinned:true}:{})});
   }
-
   const btn = document.getElementById('cl-save-btn');
   btn.textContent = '同步中...'; btn.disabled = true;
   try{
@@ -1821,67 +1779,7 @@ async function clSave(){
   btn.textContent = isAdd ? '➕ 新增並同步' : '☁ 同步到 GitHub';
   btn.disabled = false;
 }
-<<<<<<< HEAD
-async function clBatchTranslate(){
-  const apiKey = localStorage.getItem('claude_api_key');
-  if(!apiKey){ alert('請先設定 Claude API Key'); return; }
-  const token = localStorage.getItem('gh_token');
-  if(!token){ alert('請先設定 GitHub Token'); return; }
 
-  // 找出所有純字串格式的舊日誌
-  const toTranslate = clData.filter(d => typeof d.content === 'string');
-  if(!toTranslate.length){ showToast('沒有需要翻譯的舊格式日誌'); return; }
-
-  if(!confirm(`找到 ${toTranslate.length} 筆舊格式日誌，將逐筆翻譯成日文、英文、韓文。\n翻譯完成後自動同步到 GitHub，確定開始？`)) return;
-
-  const btn = document.getElementById('cl-batch-translate-btn');
-  btn.disabled = true;
-
-  let done = 0;
-  for(const item of clData){
-    if(typeof item.content !== 'string') continue;
-    btn.textContent = `🤖 翻譯中 (${done+1}/${toTranslate.length})...`;
-    showToast(`🤖 翻譯第 ${done+1}/${toTranslate.length} 筆...`);
-    const zhText = item.content;
-    const translations = await translateWithClaude(zhText);
-    if(translations){
-      item.content = {zh: zhText, ja: translations.ja, en: translations.en, ko: translations.ko};
-    }
-    done++;
-    // 每筆間隔 500ms 避免速率限制
-    await new Promise(r => setTimeout(r, 500));
-  }
-
-  // 翻譯完成，同步到 GitHub
-  btn.textContent = '☁ 同步中...';
-  showToast(`✓ 翻譯完成！共 ${done} 筆，正在同步...`);
-  try{
-    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(clData, null, 2))));
-    const body = {message:`批次翻譯 ${done} 筆日誌`, content: base64, branch: GH_BRANCH};
-    if(clSha) body.sha = clSha;
-    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json`,{
-      method:'PUT',
-      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
-      body: JSON.stringify(body)
-    });
-    if(putRes.ok){
-      const result = await putRes.json();
-      clSha = result.content.sha;
-      showToast(`✓ 已同步！${done} 筆日誌翻譯完成`);
-      clRender();
-    } else {
-      const err = await putRes.json();
-      showToast('✗ 同步失敗：'+(err.message||putRes.status));
-    }
-  } catch(e){
-    showToast('✗ 同步錯誤：'+e.message);
-  }
-  btn.textContent = '🤖 批次翻譯舊日誌';
-  btn.disabled = false;
-}
-
-=======
->>>>>>> cf8d507757055cef2a5f22f528b251bc32e2fb4a
 async function clLoadFromGH(showErr=true){const token=localStorage.getItem('gh_token');document.getElementById('cl-loading').style.display='block';document.getElementById('cl-list-wrap').style.display='none';document.getElementById('cl-list-err').style.display='none';try{const headers={'Accept':'application/vnd.github.v3+json'};if(token)headers['Authorization']='token '+token;const res=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/changelog.json?ref=${GH_BRANCH}&t=${Date.now()}`,{headers});if(!res.ok)throw new Error('HTTP '+res.status);const fd=await res.json();clSha=fd.sha;const binary=atob(fd.content.replace(/\n/g,''));const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));clData=JSON.parse(new TextDecoder('utf-8').decode(bytes));document.getElementById('cl-loading').style.display='none';document.getElementById('cl-list-wrap').style.display='block';clRender();}catch(e){document.getElementById('cl-loading').style.display='none';if(showErr){document.getElementById('cl-list-err').style.display='block';document.getElementById('cl-list-err').textContent='載入失敗：'+e.message;}}}
 
 async function syncToGitHub(){
@@ -1948,6 +1846,15 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
+function toggleMoreMenu(e){
+  e.stopPropagation();
+  document.getElementById('more-menu').classList.toggle('open');
+}
+function closeMoreMenu(){
+  document.getElementById('more-menu').classList.remove('open');
+}
+document.addEventListener('click', ()=>closeMoreMenu());
+
 // 載入儲存的圖片來源設定
 const savedImgBase = localStorage.getItem('img_base_url');
 if(savedImgBase) window.IMG_BASE_URL = savedImgBase;
@@ -1978,8 +1885,38 @@ renderList();
   <div style="background:#fff;border-radius:16px;width:min(680px,96vw);max-height:92vh;display:flex;flex-direction:column;font-family:inherit;">
     <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;"><h2 style="margin:0;font-size:1rem;font-weight:700;">📝 更新日誌管理</h2><div style="display:flex;gap:0.5rem;"><button id="cl-tab-list" onclick="clSwitchTab('list')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #3d3d8f;background:#3d3d8f;color:#fff;cursor:pointer;font-weight:600;">📋 全部日誌</button><button id="cl-tab-add" onclick="clSwitchTab('add')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;color:#555;cursor:pointer;">➕ 新增</button></div></div></div>
     <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;"><div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div><div id="cl-list-wrap" style="display:none;"><div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div><div id="cl-items"></div></div><div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div></div>
-    <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;"><div style="margin-bottom:0.75rem;"><label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label><input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/></div><div style="margin-bottom:0.75rem;"><label style="font-size:0.82rem;font-weight:600;color:#555;">更新內容</label><textarea id="cl-content" rows="7" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;"></textarea></div><div style="margin-bottom:0.75rem;"><label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.82rem;color:#555;"><input type="checkbox" id="cl-pinned" style="accent-color:#e05c5c;width:15px;height:15px;cursor:pointer;"/> <span>📌 設為置頂公告</span></label></div></div>
-    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;"><div id="cl-status" style="font-size:0.78rem;color:#888;"></div><div style="display:flex;gap:0.6rem;flex-wrap:wrap;"><button id="cl-batch-translate-btn" onclick="clBatchTranslate()" style="padding:0.5rem 1.1rem;border:1.5px solid #7c3aed;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;color:#7c3aed;">🤖 批次翻譯舊日誌</button><button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button><button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button></div></div>
+    <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;">
+      <div style="margin-bottom:0.75rem;">
+        <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
+        <input id="cl-date" type="text" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;"/>
+      </div>
+      <div style="margin-bottom:0.5rem;">
+        <div style="font-size:0.78rem;color:#888;margin-bottom:0.6rem;">各語言內容（至少填繁中；其他語言可空白，空白時前台顯示繁中版本）</div>
+        <div style="margin-bottom:0.6rem;">
+          <label style="font-size:0.82rem;font-weight:600;color:#555;">🇹🇼 繁中</label>
+          <textarea id="cl-content-zh" rows="3" placeholder="繁體中文內容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div style="margin-bottom:0.6rem;">
+          <label style="font-size:0.82rem;font-weight:600;color:#555;">🇯🇵 日文</label>
+          <textarea id="cl-content-ja" rows="3" placeholder="日本語の内容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div style="margin-bottom:0.6rem;">
+          <label style="font-size:0.82rem;font-weight:600;color:#555;">🇺🇸 英文</label>
+          <textarea id="cl-content-en" rows="3" placeholder="English content" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div style="margin-bottom:0.6rem;">
+          <label style="font-size:0.82rem;font-weight:600;color:#555;">🇰🇷 韓文</label>
+          <textarea id="cl-content-ko" rows="3" placeholder="한국어 내용" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div style="margin-bottom:0.75rem;">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.82rem;color:#555;">
+          <input type="checkbox" id="cl-pinned" style="accent-color:#e05c5c;width:15px;height:15px;cursor:pointer;"/>
+          <span>📌 設為置頂公告</span>
+        </label>
+      </div>
+    </div>
+    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;"><div id="cl-status" style="font-size:0.78rem;color:#888;"></div><div style="display:flex;gap:0.6rem;flex-wrap:wrap;"><button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button><button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button></div></div>
   </div>
 </div>
 
