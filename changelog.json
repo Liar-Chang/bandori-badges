@@ -13,7 +13,12 @@
   },
   {
     "date": "2026/4/5",
-    "content": "徵求Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SUILEN七個樂團角色徽章圖檔及資料，煩請用電子郵件聯絡，謝謝！\nPoppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SULENの7バンドのキャラクターバッジの画像とデータを募集しています。メールにてご連絡ください。よろしくお願いします！\nSeeking badge images and data for characters from Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, and RAISE A SUILEN. Please contact us via email. Thank you!\nPoppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, RAISE A SUILEN 7개 밴드의 캐릭터 배지 이미지 및 데이터를 구합니다. 이메일로 연락해 주세요. 감사합니다！",
+    "content": {
+      "zh": "徵求Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SUILEN七個樂團角色徽章圖檔及資料，煩請用電子郵件聯絡，謝謝！",
+      "ja": "Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SULENの7バンドのキャラクターバッジの画像とデータを募集しています。メールにてご連絡ください。よろしくお願いします！",
+      "en": "Seeking badge images and data for characters from Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, and RAISE A SUILEN. Please contact us via email. Thank you!",
+      "ko": "Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, RAISE A SUILEN 7개 밴드의 캐릭터 배지 이미지 및 데이터를 구합니다. 이메일로 연락해 주세요. 감사합니다！"
+    },
     "pinned": true
   },
   {
@@ -22,7 +27,12 @@
   },
   {
     "date": "2026/4/4",
-    "content": "因鼓子的事務所受到壓力主動辭演一事，本網頁刪除簡中頁面且未來不再恢復。",
+    "content": {
+      "zh": "因鼓子的事務所受到壓力主動辭演一事，本網頁刪除簡中頁面且未來不再恢復。",
+      "ja": "因鼓子の事務所からの圧力により自ら降板したことを受け、本サイトでは簡体字中国語ページを削除し、今後も復旧する予定はありません。",
+      "en": "Due to Koko's agency pressuring her into withdrawing from the role, this site has removed the Simplified Chinese page and will not be restoring it in the future.",
+      "ko": "코코의 소속사 압력으로 인해 자진 하차한 사건을 계기로, 본 사이트는 간체자 중국어 페이지를 삭제하였으며 향후에도 복구할 계획이 없습니다。"
+    },
     "pinned": true
   },
   {
