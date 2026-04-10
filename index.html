@@ -678,7 +678,7 @@ function buildSidebar(){
 
   // 建立最終篩選項目清單（含特殊 __other__ 項目）
   const sizeFilterItems = [];
-  if(has56) sizeFilterItems.push({value:'__56__', label:'56-58mm圓形'});
+  if(has56) sizeFilterItems.push({value:'__56__', label:getSizeName('56-58mm圓形',currentLang)});
   roundOthers.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
   otherSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
   namedSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
@@ -1371,6 +1371,28 @@ function applyLang(){
   const fal=document.getElementById('footer-author-label'); if(fal&&L.authorLabel) fal.textContent=L.authorLabel;
   const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
+  // 活動 modal 標題、搜尋、按鈕
+  const emt=document.getElementById('event-modal-title');
+  if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
+  const es=document.getElementById('event-search');
+  if(es) es.placeholder=({'zh-TW':'搜尋活動...','ja':'イベントを検索...','en':'Search events...','ko':'이벤트 검색...'})[currentLang]||'搜尋活動...';
+  const ecb=document.getElementById('event-clear-btn');
+  if(ecb) ecb.textContent=({'zh-TW':'清除','ja':'クリア','en':'Clear','ko':'초기화'})[currentLang]||'清除';
+  const ecfb=document.getElementById('event-confirm-btn');
+  if(ecfb) ecfb.textContent=({'zh-TW':'確認','ja':'確定','en':'Confirm','ko':'확인'})[currentLang]||'確認';
+  // 版本/工藝 modal 標題、搜尋、按鈕
+  const smt=document.getElementById('series-modal-title');
+  if(smt) smt.textContent=({'zh-TW':'選擇版本/工藝','ja':'バージョン/工芸を選択','en':'Select Version/Craft','ko':'버전/공예 선택'})[currentLang]||'選擇版本/工藝';
+  const ss=document.getElementById('series-search');
+  if(ss) ss.placeholder=({'zh-TW':'搜尋版本/工藝...','ja':'バージョン/工芸を検索...','en':'Search version/craft...','ko':'버전/공예 검색...'})[currentLang]||'搜尋版本/工藝...';
+  const scb=document.getElementById('series-clear-btn');
+  if(scb) scb.textContent=({'zh-TW':'清除','ja':'クリア','en':'Clear','ko':'초기화'})[currentLang]||'清除';
+  const scfb=document.getElementById('series-confirm-btn');
+  if(scfb) scfb.textContent=({'zh-TW':'確認','ja':'確定','en':'Confirm','ko':'확인'})[currentLang]||'確認';
+  // 版本/工藝按鈕預設文字（未選時）
+  updateSeriesBtnLabel();
+  // 活動按鈕預設文字（未選時）
+  updateEventBtnLabel();
 }
 applyLang();
 
@@ -1458,10 +1480,11 @@ function updateSeriesBtnLabel(){
   const label = document.getElementById('series-btn-label');
   if(!btn||!label) return;
   if(selSeries.size > 0){
-    label.textContent = `已選 ${selSeries.size} 個版本/工藝`;
+    const countLabel=({'zh-TW':`已選 ${selSeries.size} 個版本/工藝`,'ja':`${selSeries.size} 件選択済み`,'en':`${selSeries.size} selected`,'ko':`${selSeries.size}개 선택됨`})[currentLang]||`已選 ${selSeries.size} 個`;
+    label.textContent = countLabel;
     btn.style.borderColor = '#5a4fcf';
   } else {
-    label.textContent = '選擇版本/工藝...';
+    label.textContent=({'zh-TW':'選擇版本/工藝...','ja':'バージョン/工芸を選択...','en':'Select Version/Craft...','ko':'버전/공예 선택...'})[currentLang]||'選擇版本/工藝...';
     btn.style.borderColor = '';
   }
 }
@@ -2295,8 +2318,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div class="event-modal-footer">
       <span class="event-selected-count" id="event-sel-count"></span>
       <div style="display:flex;gap:0.6rem;">
-        <button onclick="clearEventSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
-        <button onclick="closeEventModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
+        <button id="event-clear-btn" onclick="clearEventSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
+        <button id="event-confirm-btn" onclick="closeEventModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
       </div>
     </div>
   </div>
@@ -2306,7 +2329,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 <div id="series-modal-overlay" style="display:none;" class="event-modal-overlay" onclick="maybeCloseSeriesModal(event)">
   <div class="event-modal">
     <div class="event-modal-header">
-      <h3>選擇版本/工藝</h3>
+      <h3 id="series-modal-title">選擇版本/工藝</h3>
       <input class="event-modal-search" type="text" id="series-search" placeholder="搜尋版本/工藝..." oninput="filterSeriesList()"/>
     </div>
     <div class="event-modal-body">
@@ -2315,8 +2338,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div class="event-modal-footer">
       <span class="event-selected-count" id="series-sel-count"></span>
       <div style="display:flex;gap:0.6rem;">
-        <button onclick="clearSeriesSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
-        <button onclick="closeSeriesModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
+        <button id="series-clear-btn" onclick="clearSeriesSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
+        <button id="series-confirm-btn" onclick="closeSeriesModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
       </div>
     </div>
   </div>
