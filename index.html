@@ -1567,6 +1567,14 @@ function renderFabContent(){
   const pinned = _changelogData.filter(d=>d.pinned);
   const normal = _changelogData.filter(d=>!d.pinned);
 
+  // 取得對應語言的內容（相容舊格式字串和新格式物件）
+  function getContent(item){
+    if(typeof item.content === 'object' && item.content !== null){
+      return (item.content[currentLang] || item.content['zh'] || item.content['zh-TW'] || '').replace(/\n/g,'<br>');
+    }
+    return (item.content||'').replace(/\n/g,'<br>');
+  }
+
   const pinEl = document.getElementById('fab-pin-content');
   const logEl = document.getElementById('fab-log-content');
 
@@ -1577,7 +1585,7 @@ function renderFabContent(){
           <span class="announce-pin-badge">${L.pinLabel||'📌 置頂'}</span>
           <span>${item.date}</span>
         </div>
-        <div class="announce-text" style="font-size:0.82rem;line-height:1.6;color:var(--text);">${item.content.replace(/\n/g,'<br>')}</div>
+        <div class="announce-text" style="font-size:0.82rem;line-height:1.6;color:var(--text);">${getContent(item)}</div>
       </div>`).join('');
   } else {
     pinEl.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">暫無公告</div>`;
@@ -1587,7 +1595,7 @@ function renderFabContent(){
     logEl.innerHTML = normal.map(item=>`
       <div class="announce-normal" style="padding:0.55rem 0;border-bottom:1px solid var(--border);">
         <div style="font-size:0.72rem;font-weight:600;margin-bottom:0.2rem;color:var(--muted);">${item.date}</div>
-        <div style="font-size:0.82rem;line-height:1.6;color:var(--text);">${item.content.replace(/\n/g,'<br>')}</div>
+        <div style="font-size:0.82rem;line-height:1.6;color:var(--text);">${getContent(item)}</div>
       </div>`).join('');
   } else {
     logEl.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:0.5rem 0;">暫無更新記錄</div>`;
