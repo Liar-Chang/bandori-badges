@@ -412,7 +412,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     </div>
     <div class="sidebar-section" id="series-section">
       <h3>版本/工藝</h3>
-      <div class="filter-group" id="series-list"></div>
+      <button id="series-modal-btn" onclick="openSeriesModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;">
+        <span id="series-btn-label">選擇版本/工藝...</span>
+        <span style="font-size:0.75rem;opacity:0.5;">▾</span>
+      </button>
     </div>
     <div class="sidebar-section" id="event-section">
       <h3>活動</h3>
@@ -629,7 +632,9 @@ function buildSidebar(){
   const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
 
   buildCheckList('year-list','year-section',[...new Set(source.map(b=>getYear(b.year)).filter(Boolean))].sort((a,b)=>b-a),selYears,'toggleYear');
-  buildCheckList('series-list','series-section',[...new Set(source.map(b=>b.series).filter(Boolean))].sort(),selSeries,'toggleSeries');
+  // 版本/工藝：改為 modal 選擇，這裡只更新按鈕標籤
+  updateSeriesBtnLabel();
+  if(document.getElementById('series-section')) document.getElementById('series-section').style.display='';
   // 活動：改為 modal 選擇，這裡只更新按鈕標籤
   updateEventBtnLabel();
   // 若 modal 已開啟則更新清單
@@ -811,6 +816,8 @@ function resetFilters(){
   document.getElementById('search').value='';
   document.querySelectorAll('.band-chip').forEach(c=>c.classList.remove('active'));
   document.querySelectorAll('.filter-item input').forEach(i=>i.checked=false);
+  updateSeriesBtnLabel();
+  updateEventBtnLabel();
   applyFilters();
 }
 
@@ -1391,12 +1398,81 @@ function openEventModal(){
   document.getElementById('event-modal-overlay').style.display = 'flex';
   buildEventList();
   document.getElementById('event-search').focus();
+  // 隱藏 FAB 避免遮住確認按鈕
+  const fab = document.querySelector('.changelog-fab');
+  if(fab) fab.style.display = 'none';
+}
+
+// ── 版本/工藝 Modal ──
+let _seriesAllItems = [];
+function openSeriesModal(){
+  const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
+  _seriesAllItems = [...new Set(source.map(b=>b.series).filter(Boolean))].sort();
+  document.getElementById('series-search').value = '';
+  document.getElementById('series-modal-overlay').style.display = 'flex';
+  buildSeriesList();
+  document.getElementById('series-search').focus();
+  const fab = document.querySelector('.changelog-fab');
+  if(fab) fab.style.display = 'none';
+}
+function closeSeriesModal(){
+  document.getElementById('series-modal-overlay').style.display = 'none';
+  updateSeriesBtnLabel();
+  applyFilters();
+  const fab = document.querySelector('.changelog-fab');
+  if(fab) fab.style.display = '';
+}
+function maybeCloseSeriesModal(e){
+  if(e.target===document.getElementById('series-modal-overlay')) closeSeriesModal();
+}
+function buildSeriesList(){
+  const q = (document.getElementById('series-search').value||'').toLowerCase();
+  const items = q ? _seriesAllItems.filter(s=>s.toLowerCase().includes(q)) : _seriesAllItems;
+  const el = document.getElementById('series-list-inner');
+  if(!items.length){
+    el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的版本/工藝</div>`;
+  } else {
+    el.innerHTML = items.map(s=>`
+      <label class="filter-item" style="padding:0.3rem 0;">
+        <input type="checkbox" ${selSeries.has(s)?'checked':''} onchange="toggleSeriesInModal('${s.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')" value="${s.replace(/"/g,'&quot;')}"/>
+        <span style="font-size:0.83rem;">${s}</span>
+      </label>`).join('');
+  }
+  updateSeriesSelCount();
+}
+function filterSeriesList(){ buildSeriesList(); }
+function toggleSeriesInModal(s){
+  selSeries.has(s)?selSeries.delete(s):selSeries.add(s);
+  updateSeriesSelCount();
+}
+function updateSeriesSelCount(){
+  const el = document.getElementById('series-sel-count');
+  if(el) el.textContent = selSeries.size > 0 ? `已選 ${selSeries.size} 個` : '';
+}
+function clearSeriesSel(){
+  selSeries.clear();
+  buildSeriesList();
+}
+function updateSeriesBtnLabel(){
+  const btn = document.getElementById('series-modal-btn');
+  const label = document.getElementById('series-btn-label');
+  if(!btn||!label) return;
+  if(selSeries.size > 0){
+    label.textContent = `已選 ${selSeries.size} 個版本/工藝`;
+    btn.style.borderColor = '#5a4fcf';
+  } else {
+    label.textContent = '選擇版本/工藝...';
+    btn.style.borderColor = '';
+  }
 }
 
 function closeEventModal(){
   document.getElementById('event-modal-overlay').style.display = 'none';
   updateEventBtnLabel();
   applyFilters();
+  // 恢復 FAB
+  const fab = document.querySelector('.changelog-fab');
+  if(fab) fab.style.display = '';
 }
 
 function maybeCloseEventModal(e){
@@ -1757,6 +1833,51 @@ function drawWatermark(ctx, W, H){
   ctx.restore();
 }
 
+// ── 國家圖例 ──
+function drawCountryLegend(ctx, W, H, list){
+  const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+  // 只顯示實際出現在 list 裡的國家
+  const usedCountries = Object.keys(COUNTRY_COLORS).filter(c => list.some(b => b.country === c));
+  if(!usedCountries.length) return;
+
+  const PAD = 16;
+  const DOT_R = 6;
+  const ITEM_H = 18;
+  const FONT_SIZE = 11;
+  ctx.save();
+  ctx.font = `${FONT_SIZE}px "Noto Sans TC",sans-serif`;
+
+  // 計算圖例寬度
+  const maxTextW = Math.max(...usedCountries.map(c => ctx.measureText(c).width));
+  const legendW = DOT_R*2 + 6 + maxTextW + 16;
+  const legendH = usedCountries.length * ITEM_H + 10;
+  const lx = PAD;
+  const ly = H - PAD - legendH;
+
+  // 背景
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.beginPath(); ctx.roundRect(lx, ly, legendW, legendH, 6); ctx.fill();
+
+  // 各國圖例
+  usedCountries.forEach((country, i) => {
+    const iy = ly + 8 + i * ITEM_H;
+    const cx = lx + 8 + DOT_R;
+    const cy = iy + DOT_R - 1;
+    // 白色外圈
+    ctx.beginPath(); ctx.arc(cx, cy, DOT_R, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    // 顏色圓點
+    ctx.beginPath(); ctx.arc(cx, cy, DOT_R - 1.5, 0, Math.PI*2);
+    ctx.fillStyle = COUNTRY_COLORS[country]; ctx.fill();
+    // 文字
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(country, cx + DOT_R + 5, cy);
+  });
+  ctx.restore();
+}
+
 async function doExport(){
   const btn = document.getElementById('btn-dl');
   const progWrap = document.getElementById('prog-wrap');
@@ -1798,14 +1919,15 @@ async function doExport(){
   const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', ''];
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
-    '15.2cm圓形','15cm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
+    '15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
     '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
     '橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
-  const ROUND_SIZES = new Set(['56-58mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形',
-    '50mm圓形','30mm圓形','25mm圓形','未確定','15.2cm圓形']);
+  const ROUND_SIZES = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
+    '76mm圓形','75mm圓形','15.2cm圓形','15cm圓形',
+    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
 
@@ -1984,6 +2106,17 @@ async function doExport(){
         ctx.fillText('🎵', x+CELL/2, y+CELL/2+8);
       }
 
+      // 國家顏色標記（日本不標）
+      const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+      const countryColor = COUNTRY_COLORS[b.country];
+      if(countryColor){
+        const dotR = 7, dotX = x+CELL-dotR-4, dotY = y+dotR+4;
+        ctx.beginPath(); ctx.arc(dotX, dotY, dotR, 0, Math.PI*2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        ctx.beginPath(); ctx.arc(dotX, dotY, dotR-1.5, 0, Math.PI*2);
+        ctx.fillStyle = countryColor; ctx.fill();
+      }
+
       // 活動簡稱 label（支援換行）
       const shortName = b.short_event || getEventShortName(b.event||'');
       ctx.fillStyle = '#333';
@@ -2018,6 +2151,8 @@ async function doExport(){
 
   // 浮水印
   drawWatermark(ctx, W, H);
+  // 國家圖例
+  drawCountryLegend(ctx, W, H, list);
 
   prog.style.width='95%';
   // 依格式輸出
@@ -2161,6 +2296,26 @@ async function doExportTable(list, title, btn, progWrap, prog){
 
 <!-- 公告/日誌角落浮動按鈕 -->
 <div class="changelog-fab">
+
+<!-- 版本/工藝選擇 Modal -->
+<div id="series-modal-overlay" style="display:none;" class="event-modal-overlay" onclick="maybeCloseSeriesModal(event)">
+  <div class="event-modal">
+    <div class="event-modal-header">
+      <h3>選擇版本/工藝</h3>
+      <input class="event-modal-search" type="text" id="series-search" placeholder="搜尋版本/工藝..." oninput="filterSeriesList()"/>
+    </div>
+    <div class="event-modal-body">
+      <div id="series-list-inner"></div>
+    </div>
+    <div class="event-modal-footer">
+      <span class="event-selected-count" id="series-sel-count"></span>
+      <div style="display:flex;gap:0.6rem;">
+        <button onclick="clearSeriesSel()" style="font-family:inherit;font-size:0.82rem;padding:0.45rem 1rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);">清除</button>
+        <button onclick="closeSeriesModal()" style="font-family:inherit;font-size:0.875rem;padding:0.45rem 1.25rem;border-radius:7px;background:#13122b;color:#fff;border:none;cursor:pointer;font-weight:600;">確認</button>
+      </div>
+    </div>
+  </div>
+</div>
   <div class="changelog-fab-modal" id="changelog-fab-modal">
     <div class="changelog-fab-tabs">
       <button class="changelog-fab-tab active" id="fab-tab-pin" onclick="switchFabTab('pin')">📌 公告</button>
