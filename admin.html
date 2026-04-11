@@ -399,8 +399,11 @@ td.editable:hover .edit-hint{opacity:1;}
 
       <!-- 角色清單（勾選要建立的角色） -->
       <div style="margin-bottom:1rem;">
-        <label style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;display:block;">選擇角色 <span style="font-weight:400;color:#aaa;font-size:0.78rem;">（勾選要建立的角色，可多選）</span></label>
-        <div id="t-char-list" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem;"></div>
+        <label style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;display:block;">選擇角色 <span style="font-weight:400;color:#aaa;font-size:0.78rem;">（可跨樂團多選，每個角色建一筆）</span></label>
+        <input type="text" id="t-char-search" placeholder="搜尋角色或樂團..." oninput="buildTextCharList(this.value)"
+          style="width:100%;padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;margin-bottom:0.5rem;outline:none;"/>
+        <div id="t-char-list" style="border:1.5px solid #ddd;border-radius:8px;max-height:200px;overflow-y:auto;padding:0.5rem 0.75rem;background:#fafafa;"></div>
+        <div id="t-char-preview" style="font-size:0.78rem;color:#3d3d8f;margin-top:0.35rem;"></div>
       </div>
 
       <!-- 圖片副檔名 -->
@@ -1495,19 +1498,43 @@ function editGitHub(){
 
 
 /* ── 批次建資料（先建文字，圖片後補）── */
-function updateTextChars(){
-  const band = document.getElementById('t-band').value;
-  const chars = CHAR_MAP[band] || [];
+function buildTextCharList(filter){
   const container = document.getElementById('t-char-list');
   if(!container) return;
-  if(!chars.length){
-    container.innerHTML = '<input type="text" id="t-char-custom" placeholder="輸入角色名稱" style="padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;width:200px;"/>';
+  const allMembers = [];
+  const BAND_ORDER_LIST = ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!"];
+  BAND_ORDER_LIST.forEach(band=>{
+    (CHAR_MAP[band]||[]).forEach(name=>{ allMembers.push({band,name}); });
+  });
+  const f = (filter||'').toLowerCase();
+  const filtered = f ? allMembers.filter(m=>m.name.includes(f)||m.band.toLowerCase().includes(f)) : allMembers;
+  const checked = new Set([...document.querySelectorAll('.t-char-cb:checked')].map(cb=>cb.value));
+  const byBand = {};
+  filtered.forEach(m=>{ if(!byBand[m.band]) byBand[m.band]=[]; byBand[m.band].push(m.name); });
+  const orderedBands = [...BAND_ORDER_LIST.filter(b=>byBand[b]),...Object.keys(byBand).filter(b=>!BAND_ORDER_LIST.includes(b))];
+  if(!orderedBands.length){
+    container.innerHTML='<div style="font-size:0.82rem;color:#aaa;padding:0.5rem 0;">找不到符合的角色</div>';
     return;
   }
-  container.innerHTML = chars.map(c=>`
-    <label style="display:flex;align-items:center;gap:0.3rem;padding:0.3rem 0.6rem;border:1.5px solid #ddd;border-radius:20px;cursor:pointer;font-size:0.82rem;user-select:none;" id="tchar-label-${c.replace(/[^a-z0-9]/gi,'_')}">
-      <input type="checkbox" value="${c}" class="t-char-cb" style="cursor:pointer;"/> ${c}
-    </label>`).join('');
+  container.innerHTML = orderedBands.map(band=>`
+    <div style="font-size:0.72rem;font-weight:700;color:#888;margin:0.4rem 0 0.15rem;">${band}</div>
+    ${byBand[band].map(name=>`
+      <label style="display:flex;align-items:center;gap:0.35rem;padding:0.15rem 0;font-size:0.82rem;cursor:pointer;">
+        <input type="checkbox" value="${name}" class="t-char-cb" ${checked.has(name)?'checked':''}
+          onchange="updateTextCharPreview()" style="cursor:pointer;accent-color:#3d3d8f;"/>
+        ${name}
+      </label>`).join('')}`).join('');
+  updateTextCharPreview();
+}
+
+function updateTextCharPreview(){
+  const checked = [...document.querySelectorAll('.t-char-cb:checked')].map(cb=>cb.value);
+  const preview = document.getElementById('t-char-preview');
+  if(preview) preview.textContent = checked.length ? `已選 ${checked.length} 個：${checked.join('、')}` : '';
+}
+
+function updateTextChars(){
+  buildTextCharList('');
 }
 
 function getNextId(){
@@ -1548,13 +1575,7 @@ function getTextBatchItems(){
 
   // 收集勾選的角色
   let chars = [];
-  const custom = document.getElementById('t-char-custom');
-  if(custom){
-    const v = custom.value.trim();
-    if(v) chars = [v];
-  } else {
-    document.querySelectorAll('.t-char-cb:checked').forEach(cb=>chars.push(cb.value));
-  }
+  document.querySelectorAll('.t-char-cb:checked').forEach(cb=>chars.push(cb.value));
 
   if(!chars.length) return null;
 
@@ -1593,13 +1614,15 @@ function saveTextBatch(){
     id: String(nextId++).padStart(String(nextId).length > 3 ? String(nextId).length : 3, '0'),
   }));
 
-  finalItems.forEach(b=>badges.push(b));
+  const now = new Date().toISOString();
+  finalItems.forEach(b=>badges.push({...b, created_at: now, updated_at: now}));
   persist();
   renderList();
   showToast(`✓ 已建立 ${finalItems.length} 筆資料（編號 #${finalItems[0].id}～#${finalItems[finalItems.length-1].id}）`);
 
   // 清空勾選
   document.querySelectorAll('.t-char-cb').forEach(cb=>cb.checked=false);
+  updateTextCharPreview();
   document.getElementById('t-preview').style.display='none';
   setTimeout(()=>switchTab('list'), 800);
 }
@@ -1861,6 +1884,7 @@ if(savedImgBase) window.IMG_BASE_URL = savedImgBase;
 
 persist();
 renderList();
+buildTextCharList('');
 (function initBandSelects(){
   const withOther = [...BAND_LIST.filter(b=>b!=='其他'), '其他'];
   [['d-band','不套用'],['t-band','請選擇'],['f-band','請選擇']].forEach(([id,ph])=>{
@@ -1919,6 +1943,123 @@ renderList();
     <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;"><div id="cl-status" style="font-size:0.78rem;color:#888;"></div><div style="display:flex;gap:0.6rem;flex-wrap:wrap;"><button onclick="closeChangelogModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button><button id="cl-save-btn" onclick="clSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button></div></div>
   </div>
 </div>
+
+<!-- 依日期範圍匯出圖檔 Modal -->
+<div id="export-date-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:min(520px,96vw);max-height:90vh;overflow-y:auto;padding:1.75rem;font-family:inherit;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:#1a1a2e;">📅 依日期範圍匯出圖檔清單</h2>
+    <div style="font-size:0.8rem;color:#888;margin-bottom:1rem;line-height:1.6;">
+      依照 <strong>created_at</strong>（新增時間）或 <strong>updated_at</strong>（更新時間）篩選，匯出符合條件的徽章圖檔路徑清單。
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1rem;">
+      <div class="field">
+        <label>開始日期</label>
+        <input type="date" id="exp-date-from" style="font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;outline:none;width:100%;box-sizing:border-box;"/>
+      </div>
+      <div class="field">
+        <label>結束日期</label>
+        <input type="date" id="exp-date-to" style="font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;outline:none;width:100%;box-sizing:border-box;"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
+        <input type="radio" name="exp-date-field" value="created_at" checked style="accent-color:#3d3d8f;"/> 依新增時間
+      </label>
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
+        <input type="radio" name="exp-date-field" value="updated_at" style="accent-color:#3d3d8f;"/> 依更新時間
+      </label>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="runExportByDate()">🔍 篩選並預覽</button>
+        <button class="btn btn-sm btn-secondary" onclick="setExpDateQuick(7)">最近 7 天</button>
+        <button class="btn btn-sm btn-secondary" onclick="setExpDateQuick(30)">最近 30 天</button>
+        <button class="btn btn-sm btn-secondary" onclick="setExpDateQuick(0)">今天</button>
+      </div>
+      <div id="exp-result-info" style="font-size:0.82rem;color:#555;min-height:1.2rem;"></div>
+    </div>
+    <div id="exp-result-wrap" style="display:none;">
+      <div style="font-size:0.78rem;font-weight:600;color:#555;margin-bottom:0.4rem;">符合條件的圖檔路徑（可複製）：</div>
+      <textarea id="exp-result-text" readonly rows="8" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:0.8rem;padding:0.6rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;background:#f8f7ff;resize:vertical;outline:none;color:#333;"></textarea>
+      <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-secondary" onclick="copyExpResult()">📋 複製全部</button>
+        <button class="btn btn-sm btn-success" onclick="downloadExpResult()">⬇ 下載為 .txt</button>
+        <button class="btn btn-sm btn-secondary" onclick="downloadExpJSON()">⬇ 下載為 .json</button>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem;display:flex;justify-content:flex-end;">
+      <button class="btn btn-secondary" onclick="document.getElementById('export-date-overlay').style.display='none'">關閉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let expResultItems = [];
+
+function openExportByDateModal(){
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('exp-date-to').value = today;
+  document.getElementById('exp-date-from').value = today;
+  document.getElementById('exp-result-wrap').style.display='none';
+  document.getElementById('exp-result-info').textContent='';
+  document.getElementById('export-date-overlay').style.display='flex';
+}
+
+function setExpDateQuick(days){
+  const to = new Date();
+  const from = new Date();
+  if(days > 0) from.setDate(from.getDate() - days + 1);
+  document.getElementById('exp-date-from').value = from.toISOString().slice(0,10);
+  document.getElementById('exp-date-to').value = to.toISOString().slice(0,10);
+}
+
+function runExportByDate(){
+  const from = document.getElementById('exp-date-from').value;
+  const to = document.getElementById('exp-date-to').value;
+  const field = document.querySelector('input[name="exp-date-field"]:checked').value;
+  const info = document.getElementById('exp-result-info');
+  if(!from || !to){ info.textContent='⚠ 請選擇日期範圍'; info.style.color='#e07b2a'; return; }
+  if(from > to){ info.textContent='⚠ 開始日期不能晚於結束日期'; info.style.color='#e07b2a'; return; }
+  const fromTs = new Date(from + 'T00:00:00+08:00').getTime();
+  const toTs = new Date(to + 'T23:59:59+08:00').getTime();
+  expResultItems = badges.filter(b=>{
+    const val = b[field];
+    if(!val) return false;
+    const ts = new Date(val).getTime();
+    return ts >= fromTs && ts <= toTs;
+  });
+  if(!expResultItems.length){
+    info.textContent=`找不到符合條件的資料（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）`;
+    info.style.color='#c0392b';
+    document.getElementById('exp-result-wrap').style.display='none';
+    return;
+  }
+  info.textContent=`✓ 找到 ${expResultItems.length} 筆（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）`;
+  info.style.color='#27ae60';
+  document.getElementById('exp-result-text').value = expResultItems.map(b=>`images/${b.id}.${b.ext||'jpg'}`).join('\n');
+  document.getElementById('exp-result-wrap').style.display='block';
+}
+
+function copyExpResult(){
+  const ta = document.getElementById('exp-result-text');
+  ta.select(); document.execCommand('copy');
+  showToast('✓ 已複製到剪貼簿');
+}
+
+function downloadExpResult(){
+  if(!expResultItems.length) return;
+  const blob = new Blob([expResultItems.map(b=>`images/${b.id}.${b.ext||'jpg'}`).join('\n')], {type:'text/plain'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='export_images.txt'; a.click();
+  showToast('✓ export_images.txt 已下載');
+}
+
+function downloadExpJSON(){
+  if(!expResultItems.length) return;
+  const blob = new Blob([JSON.stringify(expResultItems,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='export_badges.json'; a.click();
+  showToast('✓ export_badges.json 已下載');
+}
+</script>
 
 </body>
 </html>
