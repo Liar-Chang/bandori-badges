@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/13",
+    "content": {
+      "zh": "【新增/更新資料】\n・新增夢限大みゅーたいぷ 1st Album「プログレス サイン」團體徽章\n・新增Ave Mujica 3rd Single「'S/' The Way / Sophie」團體徽章\n\n【功能調整】\n・版本/工藝篩選改為彈出視窗選擇\n・活動與版本/工藝視窗補齊多語言顯示\n・下載圖版本/工藝文字支援換行，避免文字被裁切\n・篩選樂團時，跨樂團合照可被兩個樂團同時篩選到",
+      "ja": "【データ追加/更新】\n・夢限大みゅーたいぷ 1st Album「プログレス サイン」グループバッジを追加\n・Ave Mujica 3rd Single「'S/' The Way / Sophie」グループバッジを追加\n\n【機能調整】\n・バージョン/工芸の絞り込みをポップアップ形式に変更\n・イベント・バージョン/工芸ウィンドウの多言語表示を整備\n・ダウンロード画像のバージョン/工芸テキストが折り返し表示に対応\n・バンド絞り込み時、複数バンドの合同バッジが両バンドで表示されるように改善",
+      "en": "【New/Updated Data】\n・Added 夢限大みゅーたいぷ 1st Album「プログレス サイン」group badge\n・Added Ave Mujica 3rd Single「'S/' The Way / Sophie」group badge\n\n【Feature Updates】\n・Version/Craft filter now uses a popup modal\n・Event and Version/Craft modals now fully support multilingual display\n・Version/Craft text in downloaded images now wraps to prevent clipping\n・Badges featuring members from multiple bands now appear under each respective band filter",
+      "ko": "【데이터 추가/업데이트】\n・夢限大みゅーたいぷ 1st Album「プログレス サイン」단체 배지 추가\n・Ave Mujica 3rd Single「'S/' The Way / Sophie」단체 배지 추가\n\n【기능 조정】\n・버전/공예 필터가 팝업 방식으로 변경\n・이벤트 및 버전/공예 팝업의 다국어 표시 정비\n・다운로드 이미지의 버전/공예 텍스트가 줄바꿈을 지원하여 잘림 방지\n・밴드 필터 시 여러 밴드 합동 배지가 각 밴드에서 모두 표시되도록 개선"
+    }
+  },
+  {
     "date": "2026/4/11",
     "content": "新增以下徽章：\n1.MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」Crychic團體徽章\n2.Poppin'Party 21st Single「Drive Your Heart」團體徽章"
   },
