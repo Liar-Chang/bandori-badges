@@ -1999,6 +1999,13 @@ buildTextCharList('');
         <button class="btn btn-sm btn-secondary" onclick="copyExpResult()">📋 複製全部</button>
         <button class="btn btn-sm btn-success" onclick="downloadExpResult()">⬇ 下載為 .txt</button>
         <button class="btn btn-sm btn-secondary" onclick="downloadExpJSON()">⬇ 下載為 .json</button>
+        <button class="btn btn-sm btn-purple" id="exp-grid-btn" onclick="downloadExpGrid()">🖼 下載網格圖</button>
+      </div>
+      <div id="exp-grid-progress" style="display:none;margin-top:0.5rem;">
+        <div style="height:4px;background:#eee;border-radius:2px;overflow:hidden;">
+          <div id="exp-grid-bar" style="height:100%;background:linear-gradient(90deg,#ff6ea3,#9b59b6);width:0%;transition:width 0.2s;"></div>
+        </div>
+        <div id="exp-grid-status" style="font-size:0.75rem;color:#888;margin-top:0.3rem;">產生中...</div>
       </div>
     </div>
     <div style="margin-top:1.25rem;display:flex;justify-content:flex-end;">
@@ -2009,6 +2016,150 @@ buildTextCharList('');
 
 <script>
 let expResultItems = [];
+
+// ── 網格圖所需常數 ──
+const EXP_IMG_BASE = 'https://liar-chang.github.io/bandori-badges/images/';
+const EXP_BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#888"};
+const EXP_CHAR_COLORS={"高松燈":"#77BBDD","千早愛音":"#FF8899","要樂奈":"#77DD77","長崎爽世":"#FFDD88","椎名立希":"#7777AA","三角初華":"#BB9955","若葉睦":"#779977","八幡海鈴":"#335566","祐天寺若麥":"#AA4477","豐川祥子":"#7799CC","仲町阿拉蕾":"#FFEE55","宮永野乃花":"#FFBBCC","峰月律":"#4477CC","藤都子":"#9977CC","千石由乃":"#EE5577","汐見螢":"#99FF99","伊澤棗":"#FF4444","琴平凪":"#5555FF","濱崎茉幌":"#77FFFF","和泉朋花":"#EE99EE","須賀蕾叶":"#FF7700","馬橋心玖":"#22CCFF","矢倉蓬咲":"#448888","梅里千櫻梨":"#FF55AA","四宮寧月":"#9999FF","default":"#c0bef0"};
+const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
+function expBandColor(b){return EXP_BAND_COLORS[b]||'#888';}
+function expGetShortName(b){return b.short_event||(b.event&&b.event.length>10?b.event.slice(0,10)+'…':b.event)||'';}
+function expGetSizeName(size){return size;}
+
+async function downloadExpGrid(){
+  if(!expResultItems.length) return;
+  const btn = document.getElementById('exp-grid-btn');
+  const progWrap = document.getElementById('exp-grid-progress');
+  const bar = document.getElementById('exp-grid-bar');
+  const status = document.getElementById('exp-grid-status');
+  btn.disabled = true; progWrap.style.display = 'block';
+  bar.style.width = '5%'; status.textContent = '載入圖片中...';
+
+  const list = expResultItems;
+  const CELL=110, COLS=6, PAD=28, GAP=10;
+  const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=72;
+  const ITEM_H=CELL+LABEL_H+GAP;
+  const W=COLS*(CELL+GAP)+PAD*2;
+  const TYPE_ORDER=['角色本身','角色相關','角色聲優',''];
+  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
+  const SIZE_56_GROUP=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
+  const ROUND_SIZES=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形']);
+  function isRound(s){return ROUND_SIZES.has(s||'');}
+
+  function groupBadges(list){
+    const groups=[];
+    const types=[...new Set(list.map(b=>b.type||''))].sort((a,b)=>{const ai=TYPE_ORDER.indexOf(a||''),bi=TYPE_ORDER.indexOf(b||'');return(ai===-1?99:ai)-(bi===-1?99:bi);});
+    for(const type of types){
+      const byType=list.filter(b=>(b.type||'')===type);
+      const sizeSet=[...new Set(byType.map(b=>b.size||'其他'))];
+      const has56=sizeSet.some(s=>SIZE_56_GROUP.has(s));
+      const others=sizeSet.filter(s=>!SIZE_56_GROUP.has(s));
+      const sorted=[];
+      if(has56)sorted.push('__56group__');
+      others.sort((a,b)=>{const ai=SIZE_ORDER.indexOf(a),bi=SIZE_ORDER.indexOf(b);return(ai===-1?99:ai)-(bi===-1?99:bi);}).forEach(s=>sorted.push(s));
+      for(const size of sorted){
+        let items,sizeLabel;
+        if(size==='__56group__'){items=byType.filter(b=>SIZE_56_GROUP.has(b.size||''));sizeLabel='56-58mm圓形';}
+        else{items=byType.filter(b=>(b.size||'其他')===size);sizeLabel=size||'其他';}
+        if(items.length) groups.push({type,sizeLabel,items});
+      }
+    }
+    return groups;
+  }
+  function calcH(groups){
+    let h=HEADER_H+PAD; let prevT=null;
+    for(const g of groups){if(g.type!==prevT){h+=TYPE_H+6;prevT=g.type;}h+=SIZE_H+8;h+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;}
+    return h+PAD;
+  }
+
+  const groups=groupBadges(list);
+  const H=calcH(groups);
+
+  // 載入圖片
+  const imgMap={};
+  await Promise.all(list.map(b=>new Promise(res=>{
+    const img=new Image(); img.crossOrigin='anonymous';
+    img.onload=()=>{imgMap[b.id]=img;res();}; img.onerror=()=>res();
+    img.src=EXP_IMG_BASE+b.id+'.'+(b.ext||'jpg');
+  })));
+  bar.style.width='50%'; status.textContent='合成圖片中...';
+
+  const canvas=document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#faf9f5'; ctx.fillRect(0,0,W,H);
+
+  // Header
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#ff6eb4'); grad.addColorStop(1,'#c0005a');
+  ctx.fillStyle=grad; ctx.beginPath(); ctx.roundRect(PAD/2,PAD/2,W-PAD,HEADER_H-8,12); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 24px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+  ctx.fillText('BanG Dream! 徽章圖鑑',PAD*1.5,PAD/2+36);
+  ctx.font='13px sans-serif'; ctx.fillStyle='#ffffff99';
+  ctx.fillText(`共 ${list.length} 枚`,PAD*1.5,PAD/2+56);
+
+  let curY=HEADER_H+PAD, prevType=null;
+  const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+  const TYPE_LABELS={'角色本身':'角色本身','角色相關':'角色相關','角色聲優':'角色聲優','角色合影':'角色合影'};
+
+  for(const g of groups){
+    if(g.type!==prevType){
+      ctx.fillStyle='#1a1a2e'; ctx.beginPath(); ctx.roundRect(PAD,curY,W-PAD*2,TYPE_H,8); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='bold 16px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+      ctx.fillText('▌ '+(TYPE_LABELS[g.type]||g.type||'未分類'),PAD+12,curY+24);
+      curY+=TYPE_H+6; prevType=g.type;
+    }
+    ctx.fillStyle='#e8e5f5'; ctx.beginPath(); ctx.roundRect(PAD,curY,W-PAD*2,SIZE_H,6); ctx.fill();
+    ctx.fillStyle='#3d3d8f'; ctx.font='bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+    ctx.fillText(expGetSizeName(g.sizeLabel),PAD+10,curY+19);
+    curY+=SIZE_H+8;
+
+    g.items.forEach((b,i)=>{
+      const col=i%COLS, row=Math.floor(i/COLS);
+      const x=PAD+col*(CELL+GAP), y=curY+row*ITEM_H;
+      const c=expBandColor(b.band);
+      const ir=isRound(b.size||'');
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.roundRect(x,y,CELL,CELL,ir?CELL/2:8); ctx.fill();
+      ctx.strokeStyle=c+'44'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.roundRect(x,y,CELL,CELL,ir?CELL/2:8); ctx.stroke();
+      const img=imgMap[b.id];
+      if(img){
+        ctx.save();
+        if(ir){ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,CELL/2-3,0,Math.PI*2);ctx.clip();ctx.drawImage(img,x+3,y+3,CELL-6,CELL-6);}
+        else{const iw=img.naturalWidth,ih=img.naturalHeight,sc=Math.min((CELL-8)/iw,(CELL-8)/ih),dw=iw*sc,dh=ih*sc,dx=x+(CELL-dw)/2,dy=y+(CELL-dh)/2;ctx.beginPath();ctx.roundRect(x+3,y+3,CELL-6,CELL-6,6);ctx.clip();ctx.drawImage(img,dx,dy,dw,dh);}
+        ctx.restore();
+      } else {
+        const cc=EXP_CHAR_COLORS[b.character]||EXP_CHAR_COLORS.default;
+        ctx.fillStyle=cc+'33'; ctx.beginPath(); ctx.roundRect(x+3,y+3,CELL-6,CELL-6,ir?CELL/2:6); ctx.fill();
+        ctx.fillStyle=cc; ctx.font='22px sans-serif'; ctx.textAlign='center'; ctx.fillText('🎵',x+CELL/2,y+CELL/2+8);
+      }
+      const cc2=COUNTRY_COLORS[b.country];
+      if(cc2){const dr=7,dx2=x+CELL-dr-4,dy2=y+dr+4;ctx.beginPath();ctx.arc(dx2,dy2,dr,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(dx2,dy2,dr-1.5,0,Math.PI*2);ctx.fillStyle=cc2;ctx.fill();}
+      const sn=expGetShortName(b);
+      ctx.fillStyle='#333'; ctx.font='10px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
+      const words=sn.split(''); let line='',lines2=[];
+      for(const ch of words){if(ctx.measureText(line+ch).width>CELL-4){lines2.push(line);line=ch;}else line+=ch;}
+      if(line)lines2.push(line); lines2=lines2.slice(0,3);
+      lines2.forEach((l,li)=>ctx.fillText(l,x+CELL/2,y+CELL+14+(li*14)));
+      if(b.series){ctx.fillStyle='#888';ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';ctx.fillText(b.series.length>12?b.series.slice(0,11)+'…':b.series,x+CELL/2,y+CELL+14+(lines2.length*14)+2);}
+    });
+    curY+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;
+  }
+
+  // 浮水印
+  ctx.save(); ctx.font='bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='right'; ctx.textBaseline='bottom';
+  const tw=ctx.measureText('千早愛音的暴躁柯基製作').width+10;
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fillRect(W-16-tw,H-16-20,tw,20);
+  ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillText('千早愛音的暴躁柯基製作',W-16,H-16); ctx.restore();
+
+  bar.style.width='95%'; status.textContent='下載中...';
+  canvas.toBlob(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`bandori-badges-${Date.now()}.png`; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    bar.style.width='100%'; status.textContent='完成！';
+    setTimeout(()=>{btn.disabled=false;progWrap.style.display='none';bar.style.width='0%';},800);
+  },'image/png');
+}
 
 function openExportByDateModal(){
   const today = new Date().toISOString().slice(0,10);
