@@ -168,6 +168,7 @@ td.editable:hover .edit-hint{opacity:1;}
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
     <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
     <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
+    <button class="btn btn-secondary btn-sm" onclick="openSongModal()">🎵 推薦歌曲</button>
     <div class="header-dropdown" id="more-dropdown">
       <button class="btn btn-secondary btn-sm" onclick="toggleMoreMenu(event)">⚙ 更多 ▾</button>
       <div class="header-dropdown-menu" id="more-menu">
@@ -2284,6 +2285,125 @@ function downloadExpJSON(){
   const blob = new Blob([JSON.stringify(expResultItems,null,2)], {type:'application/json'});
   const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='export_badges.json'; a.click();
   showToast('✓ export_badges.json 已下載');
+}
+</script>
+
+<!-- 推薦歌曲 Modal -->
+<div id="song-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:min(480px,96vw);padding:1.75rem;font-family:inherit;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:#1a1a2e;">🎵 推薦歌曲設定</h2>
+    <div style="font-size:0.8rem;color:#888;margin-bottom:1rem;line-height:1.6;">
+      設定後台後，前台右下角會顯示推薦歌曲浮動播放器。
+    </div>
+    <div class="field" style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">歌名</label>
+      <input type="text" id="song-title" placeholder="如 飛ぶ時" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;outline:none;"/>
+    </div>
+    <div class="field" style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">歌手</label>
+      <input type="text" id="song-artist" placeholder="如 Vaundy" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;outline:none;"/>
+    </div>
+    <div class="field" style="margin-bottom:0.75rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">YouTube 連結或 ID</label>
+      <input type="text" id="song-yt" placeholder="如 https://youtu.be/LVCwdZoUFQ8 或 LVCwdZoUFQ8" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;outline:none;"/>
+    </div>
+    <div class="field" style="margin-bottom:1.25rem;">
+      <label style="font-size:0.82rem;font-weight:600;color:#555;">Spotify 連結（選填）</label>
+      <input type="text" id="song-spotify" placeholder="如 https://open.spotify.com/track/..." style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;outline:none;"/>
+    </div>
+    <div id="song-preview" style="display:none;margin-bottom:1rem;border:1.5px solid #e0e0e0;border-radius:10px;overflow:hidden;"></div>
+    <div style="display:flex;justify-content:flex-end;gap:0.6rem;flex-wrap:wrap;">
+      <button onclick="closeSongModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
+      <button onclick="previewSong()" style="padding:0.5rem 1.1rem;border:1.5px solid #5a4fcf;border-radius:8px;background:#fff;color:#5a4fcf;cursor:pointer;font-family:inherit;font-size:0.85rem;">👁 預覽</button>
+      <button onclick="saveSong()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function extractYtId(input){
+  input = input.trim();
+  // 直接是 ID（11碼）
+  if(/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  // youtu.be/xxx
+  const m1 = input.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if(m1) return m1[1];
+  // youtube.com/watch?v=xxx
+  const m2 = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if(m2) return m2[1];
+  return null;
+}
+
+function openSongModal(){
+  // 嘗試從 GitHub 載入現有設定
+  const token = localStorage.getItem('gh_token');
+  fetch(`https://api.github.com/repos/${GH_REPO}/contents/song.json?ref=${GH_BRANCH}&t=${Date.now()}`,{
+    headers: token ? {'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'} : {'Accept':'application/vnd.github.v3+json'}
+  }).then(r=>r.ok?r.json():null).then(fd=>{
+    if(fd){
+      try{
+        const data = JSON.parse(decodeURIComponent(escape(atob(fd.content.replace(/\n/g,'')))));
+        document.getElementById('song-title').value = data.title||'';
+        document.getElementById('song-artist').value = data.artist||'';
+        document.getElementById('song-yt').value = data.ytId||'';
+        document.getElementById('song-spotify').value = data.spotify||'';
+      }catch(e){}
+    }
+  }).catch(()=>{});
+  document.getElementById('song-overlay').style.display='flex';
+}
+
+function closeSongModal(){
+  document.getElementById('song-overlay').style.display='none';
+  document.getElementById('song-preview').style.display='none';
+}
+
+function previewSong(){
+  const ytRaw = document.getElementById('song-yt').value;
+  const ytId = extractYtId(ytRaw);
+  if(!ytId){ showToast('⚠ 無法解析 YouTube ID'); return; }
+  const prev = document.getElementById('song-preview');
+  prev.innerHTML = `<iframe width="100%" height="200" src="https://www.youtube.com/embed/${ytId}" frameborder="0" allowfullscreen style="display:block;"></iframe>`;
+  prev.style.display='block';
+}
+
+async function saveSong(){
+  const token = localStorage.getItem('gh_token');
+  if(!token){ alert('請先設定 GitHub Token'); return; }
+  const title = document.getElementById('song-title').value.trim();
+  const artist = document.getElementById('song-artist').value.trim();
+  const ytRaw = document.getElementById('song-yt').value;
+  const ytId = extractYtId(ytRaw);
+  const spotify = document.getElementById('song-spotify').value.trim();
+  if(!title||!artist||!ytId){ showToast('⚠ 歌名、歌手、YouTube 連結為必填'); return; }
+
+  const data = {title, artist, ytId, spotify};
+
+  // 取得現有檔案的 SHA
+  let sha = null;
+  try{
+    const getRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/song.json?ref=${GH_BRANCH}`,{
+      headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json'}
+    });
+    if(getRes.ok){ const fd=await getRes.json(); sha=fd.sha; }
+  }catch(e){}
+
+  const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const body = {message:'更新 song.json', content:base64, branch:GH_BRANCH};
+  if(sha) body.sha = sha;
+
+  const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/song.json`,{
+    method:'PUT',
+    headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if(putRes.ok){
+    showToast('✓ song.json 已同步到 GitHub！');
+    closeSongModal();
+  } else {
+    const err = await putRes.json();
+    showToast('✗ 失敗：'+(err.message||putRes.status));
+  }
 }
 </script>
 

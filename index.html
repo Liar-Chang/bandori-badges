@@ -341,6 +341,23 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 [data-theme="dark"] .changelog-fab-modal{background:#1e1e1e;}
 [data-theme="dark"] .changelog-fab-tab.active{background:#141414;}
 
+/* 推薦歌曲播放器 */
+.song-fab{position:fixed;bottom:5.5rem;right:1.5rem;z-index:398;display:flex;flex-direction:column;align-items:flex-end;gap:0;}
+.song-fab-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 16px #0002;display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;cursor:pointer;transition:all 0.2s;min-width:0;max-width:260px;}
+.song-fab-bar:hover{box-shadow:0 6px 24px #0003;}
+.song-fab-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;background:#f0f0f0;}
+.song-fab-info{flex:1;min-width:0;}
+.song-fab-title{font-size:0.78rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-fab-artist{font-size:0.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-fab-icons{display:flex;gap:0.3rem;flex-shrink:0;}
+.song-fab-icon{width:24px;height:24px;border-radius:50%;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--muted);transition:color 0.15s;}
+.song-fab-icon:hover{color:var(--text);}
+.song-fab-player{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px #0003;overflow:hidden;display:none;width:320px;}
+.song-fab-player.open{display:block;}
+.song-fab-player iframe{display:block;}
+[data-theme="dark"] .song-fab-bar{background:#1e1e1e;}
+[data-theme="dark"] .song-fab-player{background:#1e1e1e;}
+
 
 @media(max-width:800px){
   .sidebar{max-height:60vh;overflow-y:auto;}
@@ -604,6 +621,7 @@ async function init(){
   buildCharList();
   applyFilters();
   loadChangelog(); // 載入公告與更新日誌
+  loadSong();      // 載入推薦歌曲
 }
 
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
@@ -1590,6 +1608,71 @@ function switchFabTab(tab){
 
 let _changelogData = null;
 
+// ── 推薦歌曲 ──
+let _songPlayerOpen = false;
+
+async function loadSong(){
+  try{
+    const res = await fetch('song.json?t=' + Date.now());
+    if(!res.ok) return;
+    const data = await res.json();
+    if(!data.ytId) return;
+    // 填入資訊
+    document.getElementById('song-fab-title').textContent = data.title || '';
+    document.getElementById('song-fab-artist').textContent = data.artist || '';
+    document.getElementById('song-fab-thumb').src = `https://img.youtube.com/vi/${data.ytId}/mqdefault.jpg`;
+    // Spotify 連結
+    const spLink = document.getElementById('song-fab-spotify-link');
+    if(data.spotify){ spLink.href = data.spotify; spLink.style.display='flex'; }
+    else { spLink.style.display='none'; }
+    // 存 ytId 和 spotify 供展開用
+    document.getElementById('song-fab').dataset.ytId = data.ytId;
+    document.getElementById('song-fab').dataset.spotify = data.spotify || '';
+    document.getElementById('song-fab').style.display = 'flex';
+  } catch(e){
+    // song.json 不存在時靜默略過
+  }
+}
+
+function toggleSongPlayer(){
+  const player = document.getElementById('song-fab-player');
+  const fab = document.getElementById('song-fab');
+  const ytId = fab.dataset.ytId;
+  const spotify = fab.dataset.spotify;
+  _songPlayerOpen = !_songPlayerOpen;
+  if(_songPlayerOpen){
+    if(spotify){
+      // 從 Spotify 連結取出 track ID
+      const spMatch = spotify.match(/track\/([a-zA-Z0-9]+)/);
+      const spId = spMatch ? spMatch[1] : null;
+      if(spId){
+        player.innerHTML = `<iframe src="https://open.spotify.com/embed/track/${spId}" width="320" height="152" frameborder="0" allowtransparency="true" allow="encrypted-media" style="display:block;border-radius:10px;"></iframe>`;
+        player.classList.add('open');
+        return;
+      }
+    }
+    // 沒有 Spotify 就顯示 YouTube 縮圖跳轉
+    player.innerHTML = `
+      <a href="https://www.youtube.com/watch?v=${ytId}" target="_blank" rel="noopener"
+        style="display:block;position:relative;width:320px;cursor:pointer;">
+        <img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg"
+          style="width:100%;display:block;border-radius:10px 10px 0 0;"/>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0004;border-radius:10px 10px 0 0;">
+          <div style="width:52px;height:52px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0004;">
+            <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 20px;border-color:transparent transparent transparent #ff0000;margin-left:4px;"></div>
+          </div>
+        </div>
+        <div style="padding:0.5rem 0.75rem;font-size:0.75rem;color:var(--muted);background:var(--surface);border-radius:0 0 10px 10px;">
+          點擊前往 YouTube 收聽 ↗
+        </div>
+      </a>`;
+    player.classList.add('open');
+  } else {
+    player.innerHTML = '';
+    player.classList.remove('open');
+  }
+}
+
 async function loadChangelog(){
   try{
     const res = await fetch('changelog.json?t=' + Date.now());
@@ -2386,6 +2469,24 @@ async function doExportTable(list, title, btn, progWrap, prog){
 </div>
 
 <!-- 公告/日誌角落浮動按鈕 -->
+<!-- 推薦歌曲浮動播放器 -->
+<div class="song-fab" id="song-fab" style="display:none;">
+  <div class="song-fab-player" id="song-fab-player"></div>
+  <div class="song-fab-bar" onclick="toggleSongPlayer()">
+    <img class="song-fab-thumb" id="song-fab-thumb" src="" alt=""/>
+    <div class="song-fab-info">
+      <div class="song-fab-title" id="song-fab-title"></div>
+      <div class="song-fab-artist" id="song-fab-artist"></div>
+    </div>
+    <div class="song-fab-icons" onclick="event.stopPropagation()">
+      <a id="song-fab-spotify-link" href="#" target="_blank" rel="noopener" style="display:none;" class="song-fab-icon" title="在 Spotify 聆聽">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+      </a>
+      <button class="song-fab-icon" onclick="toggleSongPlayer()" title="展開/收起">🎵</button>
+    </div>
+  </div>
+</div>
+
 <div class="changelog-fab">
   <div class="changelog-fab-modal" id="changelog-fab-modal">
     <div class="changelog-fab-tabs">
