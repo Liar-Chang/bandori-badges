@@ -1974,7 +1974,7 @@ async function doExport(){
   const HEADER_H = 72;
   const TYPE_H = 36;   // 類型標題高度
   const SIZE_H = 28;   // 尺寸標題高度
-  const LABEL_H = 72;  // 活動簡稱+版本高度
+  const LABEL_H = 88;  // 活動簡稱+版本高度
   const ITEM_H = CELL + LABEL_H + GAP;
   const W = COLS * (CELL + GAP) + PAD * 2;
 
@@ -2198,16 +2198,20 @@ async function doExport(){
         ctx.fillText(l, x+CELL/2, y+CELL+14+(li*14));
       });
 
-      // 版本
+      // 版本（支援換行，最多2行，固定從活動簡稱後開始）
       if(b.series){
         ctx.fillStyle = '#888';
         ctx.font = '9px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
-        let seriesText = b.series;
-        while(seriesText.length > 0 && ctx.measureText(seriesText).width > CELL - 4){
-          seriesText = seriesText.slice(0, -1);
+        const seriesStartY = y+CELL+14+(lines.length*14)+4;
+        const sWords = b.series.split('');
+        let sLine = '', sLines = [];
+        for(const ch of sWords){
+          if(ctx.measureText(sLine+ch).width > CELL-4){ sLines.push(sLine); sLine=ch; }
+          else sLine+=ch;
         }
-        if(seriesText.length < b.series.length) seriesText = seriesText.slice(0,-1) + '…';
-        ctx.fillText(seriesText, x+CELL/2, y+CELL+14+(lines.length*14)+2);
+        if(sLine) sLines.push(sLine);
+        sLines = sLines.slice(0,2);
+        sLines.forEach((l,li)=>ctx.fillText(l, x+CELL/2, seriesStartY+(li*12)));
       }
     });
 

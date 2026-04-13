@@ -2041,7 +2041,7 @@ async function downloadExpGrid(){
 
   const list = expResultItems;
   const CELL=110, COLS=6, PAD=28, GAP=10;
-  const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=72;
+  const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=88;
   const ITEM_H=CELL+LABEL_H+GAP;
   const W=COLS*(CELL+GAP)+PAD*2;
   const TYPE_ORDER=['角色本身','角色相關','角色聲優',''];
@@ -2144,7 +2144,7 @@ async function downloadExpGrid(){
       for(const ch of words){if(ctx.measureText(line+ch).width>CELL-4){lines2.push(line);line=ch;}else line+=ch;}
       if(line)lines2.push(line); lines2=lines2.slice(0,3);
       lines2.forEach((l,li)=>ctx.fillText(l,x+CELL/2,y+CELL+14+(li*14)));
-      if(b.series){ctx.fillStyle='#888';ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';let st=b.series;while(st.length>0&&ctx.measureText(st).width>CELL-4)st=st.slice(0,-1);if(st.length<b.series.length)st=st.slice(0,-1)+'…';ctx.fillText(st,x+CELL/2,y+CELL+14+(lines2.length*14)+2);}
+      if(b.series){ctx.fillStyle='#888';ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';const ssY=y+CELL+14+(lines2.length*14)+4;const sw=b.series.split('');let sl='',sls=[];for(const ch of sw){if(ctx.measureText(sl+ch).width>CELL-4){sls.push(sl);sl=ch;}else sl+=ch;}if(sl)sls.push(sl);sls=sls.slice(0,2);sls.forEach((l,li)=>ctx.fillText(l,x+CELL/2,ssY+(li*12)));}
     });
     curY+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;
   }
