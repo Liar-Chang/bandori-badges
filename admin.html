@@ -175,6 +175,7 @@ td.editable:hover .edit-hint{opacity:1;}
         <button class="header-dropdown-item" onclick="editGitHub();closeMoreMenu()">⚙ GitHub 設定</button>
         <button class="header-dropdown-item" onclick="document.getElementById('json-import').click();closeMoreMenu()">📂 匯入 JSON</button>
         <button class="header-dropdown-item" onclick="openExportByDateModal();closeMoreMenu()">📅 依日期匯出圖檔</button>
+        <button class="header-dropdown-item" onclick="batchFillCreatedAt();closeMoreMenu()">🕐 批次補填新增時間</button>
         <button class="header-dropdown-item danger" onclick="clearAll();closeMoreMenu()">🗑 清除全部</button>
       </div>
     </div>
@@ -1883,6 +1884,22 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 
+function batchFillCreatedAt(){
+  const missing = badges.filter(b=>!b.created_at);
+  if(!missing.length){ showToast('所有資料都已有新增時間'); return; }
+  const dateStr = prompt(
+    `共有 ${missing.length} 筆資料沒有「新增時間」\n請輸入要補填的日期（格式：2026-04-13）：`,
+    new Date().toISOString().slice(0,10)
+  );
+  if(!dateStr) return;
+  // 驗證格式
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){ showToast('⚠ 日期格式錯誤，請用 YYYY-MM-DD'); return; }
+  const ts = new Date(dateStr + 'T12:00:00+08:00').toISOString();
+  missing.forEach(b=>{ b.created_at = ts; if(!b.updated_at) b.updated_at = ts; });
+  persist();
+  showToast(`✓ 已補填 ${missing.length} 筆的新增時間（${dateStr}）`);
+}
+
 function toggleMoreMenu(e){
   e.stopPropagation();
   document.getElementById('more-menu').classList.toggle('open');
@@ -1891,6 +1908,35 @@ function closeMoreMenu(){
   document.getElementById('more-menu').classList.remove('open');
 }
 document.addEventListener('click', ()=>closeMoreMenu());
+
+function batchFillCreatedAt(){
+  const missing = badges.filter(b=>!b.created_at);
+  if(!missing.length){ showToast('所有資料都已有新增時間'); return; }
+  const idRange = prompt(
+    `共有 ${missing.length} 筆資料沒有「新增時間」\n請輸入要補填的編號範圍（如 2133-2136），留空則補填全部：`
+  );
+  if(idRange === null) return; // 按取消
+  let targets;
+  if(idRange.trim() === ''){
+    targets = missing;
+  } else {
+    const match = idRange.trim().match(/^(\d+)-(\d+)$/);
+    if(!match){ showToast('⚠ 格式錯誤，請輸入如 2133-2136'); return; }
+    const from = parseInt(match[1]), to = parseInt(match[2]);
+    targets = missing.filter(b=>{ const n=parseInt(b.id); return n>=from && n<=to; });
+    if(!targets.length){ showToast(`找不到編號 ${from}~${to} 且沒有新增時間的資料`); return; }
+  }
+  const dateStr = prompt(
+    `將補填 ${targets.length} 筆資料的「新增時間」\n請輸入日期（格式：2026-04-13）：`,
+    new Date().toISOString().slice(0,10)
+  );
+  if(!dateStr) return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){ showToast('⚠ 日期格式錯誤，請用 YYYY-MM-DD'); return; }
+  const ts = new Date(dateStr + 'T12:00:00+08:00').toISOString();
+  targets.forEach(b=>{ b.created_at = ts; if(!b.updated_at) b.updated_at = ts; });
+  persist();
+  showToast(`✓ 已補填 ${targets.length} 筆的新增時間（${dateStr}）`);
+}
 
 // 載入儲存的圖片來源設定
 const savedImgBase = localStorage.getItem('img_base_url');
