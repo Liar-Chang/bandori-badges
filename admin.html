@@ -1993,6 +1993,10 @@ buildTextCharList('');
       <div id="exp-result-info" style="font-size:0.82rem;color:#555;min-height:1.2rem;"></div>
     </div>
     <div id="exp-result-wrap" style="display:none;">
+      <div style="margin-bottom:0.6rem;">
+        <label style="font-size:0.78rem;font-weight:600;color:#555;display:block;margin-bottom:0.3rem;">圖檔標題</label>
+        <input type="text" id="exp-grid-title" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:0.85rem;padding:0.45rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;outline:none;"/>
+      </div>
       <div style="font-size:0.78rem;font-weight:600;color:#555;margin-bottom:0.4rem;">符合條件的圖檔路徑（可複製）：</div>
       <textarea id="exp-result-text" readonly rows="8" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:0.8rem;padding:0.6rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;background:#f8f7ff;resize:vertical;outline:none;color:#333;"></textarea>
       <div style="display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;">
@@ -2094,7 +2098,7 @@ async function downloadExpGrid(){
   grad.addColorStop(0,'#ff6eb4'); grad.addColorStop(1,'#c0005a');
   ctx.fillStyle=grad; ctx.beginPath(); ctx.roundRect(PAD/2,PAD/2,W-PAD,HEADER_H-8,12); ctx.fill();
   ctx.fillStyle='#fff'; ctx.font='bold 24px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-  ctx.fillText('BanG Dream! 徽章圖鑑',PAD*1.5,PAD/2+36);
+  ctx.fillText(document.getElementById('exp-grid-title')?.value || 'BanG Dream! 徽章圖鑑',PAD*1.5,PAD/2+36);
   ctx.font='13px sans-serif'; ctx.fillStyle='#ffffff99';
   ctx.fillText(`共 ${list.length} 枚`,PAD*1.5,PAD/2+56);
 
@@ -2207,6 +2211,12 @@ function runExportByDate(){
   info.textContent=`✓ 找到 ${expResultItems.length} 筆（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）`;
   info.style.color='#27ae60';
   document.getElementById('exp-result-text').value = expResultItems.map(b=>`images/${b.id}.${b.ext||'jpg'}`).join('\n');
+  // 自動填入標題
+  const titleEl = document.getElementById('exp-grid-title');
+  if(titleEl && !titleEl.value){
+    const d = new Date();
+    titleEl.value = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} update`;
+  }
   document.getElementById('exp-result-wrap').style.display='block';
 }
 
