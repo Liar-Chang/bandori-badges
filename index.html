@@ -2202,7 +2202,11 @@ async function doExport(){
       if(b.series){
         ctx.fillStyle = '#888';
         ctx.font = '9px "Noto Sans TC",sans-serif'; ctx.textAlign='center';
-        const seriesText = b.series.length > 12 ? b.series.slice(0,11)+'…' : b.series;
+        let seriesText = b.series;
+        while(seriesText.length > 0 && ctx.measureText(seriesText).width > CELL - 4){
+          seriesText = seriesText.slice(0, -1);
+        }
+        if(seriesText.length < b.series.length) seriesText = seriesText.slice(0,-1) + '…';
         ctx.fillText(seriesText, x+CELL/2, y+CELL+14+(lines.length*14)+2);
       }
     });

@@ -2144,7 +2144,7 @@ async function downloadExpGrid(){
       for(const ch of words){if(ctx.measureText(line+ch).width>CELL-4){lines2.push(line);line=ch;}else line+=ch;}
       if(line)lines2.push(line); lines2=lines2.slice(0,3);
       lines2.forEach((l,li)=>ctx.fillText(l,x+CELL/2,y+CELL+14+(li*14)));
-      if(b.series){ctx.fillStyle='#888';ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';ctx.fillText(b.series.length>12?b.series.slice(0,11)+'…':b.series,x+CELL/2,y+CELL+14+(lines2.length*14)+2);}
+      if(b.series){ctx.fillStyle='#888';ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';let st=b.series;while(st.length>0&&ctx.measureText(st).width>CELL-4)st=st.slice(0,-1);if(st.length<b.series.length)st=st.slice(0,-1)+'…';ctx.fillText(st,x+CELL/2,y+CELL+14+(lines2.length*14)+2);}
     });
     curY+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;
   }
