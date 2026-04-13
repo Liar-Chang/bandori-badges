@@ -1261,7 +1261,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1281,7 +1281,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1301,7 +1301,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1321,7 +1321,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡',
   },
 }
 let currentLang = (()=>{
@@ -1421,6 +1421,7 @@ function applyLang(){
   const fal=document.getElementById('footer-author-label'); if(fal&&L.authorLabel) fal.textContent=L.authorLabel;
   const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
+  const sfl=document.getElementById('song-fab-label'); if(sfl&&L.featuredSong) sfl.textContent=L.featuredSong;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
   if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
@@ -1620,6 +1621,8 @@ async function loadSong(){
     // 填入資訊
     document.getElementById('song-fab-title').textContent = data.title || '';
     document.getElementById('song-fab-artist').textContent = data.artist || '';
+    const sfl = document.getElementById('song-fab-label');
+    if(sfl) sfl.textContent = (LANGS[currentLang]||LANGS['zh-TW']).featuredSong||'推薦歌曲';
     document.getElementById('song-fab-thumb').src = `https://img.youtube.com/vi/${data.ytId}/mqdefault.jpg`;
     // Spotify 連結
     const spLink = document.getElementById('song-fab-spotify-link');
@@ -2475,6 +2478,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   <div class="song-fab-bar" onclick="toggleSongPlayer()">
     <img class="song-fab-thumb" id="song-fab-thumb" src="" alt=""/>
     <div class="song-fab-info">
+      <div style="font-size:0.6rem;color:var(--muted);margin-bottom:1px;" id="song-fab-label"></div>
       <div class="song-fab-title" id="song-fab-title"></div>
       <div class="song-fab-artist" id="song-fab-artist"></div>
     </div>
