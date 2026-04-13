@@ -960,12 +960,17 @@ function clearDefaults(){
 
 function saveBatch(){
   let saved=0,updated=0;
+  const now = new Date().toISOString();
   batchItems.forEach(item=>{
     const {objectUrl,isDupe,...data}=item;
     const idx=badges.findIndex(b=>b.id===data.id);
-    if(idx>=0){badges[idx]=data;updated++;}
-    else{badges.push(data);saved++;}
-    // 保留 objectUrl 到快取，不 revoke
+    if(idx>=0){
+      badges[idx]={...data, created_at: badges[idx].created_at||now, updated_at: now};
+      updated++;
+    } else {
+      badges.push({...data, created_at: now, updated_at: now});
+      saved++;
+    }
     if(objectUrl) imageCache[data.id]=objectUrl;
   });
   batchItems=[];
@@ -1417,8 +1422,17 @@ function saveSingle(){
     country:document.getElementById('f-country').value,
     url:document.getElementById('f-url').value.trim(),
     note:document.getElementById('f-note').value.trim()};
-  if(editingIdx>=0){badges[editingIdx]=badge;showToast('已更新');}
-  else{if(badges.find(b=>b.id===id)){showToast('此編號已存在');return;}badges.push(badge);showToast('已新增');}
+  const now = new Date().toISOString();
+  if(editingIdx>=0){
+    badge.created_at = badges[editingIdx].created_at || now;
+    badge.updated_at = now;
+    badges[editingIdx]=badge;showToast('已更新');
+  } else {
+    if(badges.find(b=>b.id===id)){showToast('此編號已存在');return;}
+    badge.created_at = now;
+    badge.updated_at = now;
+    badges.push(badge);showToast('已新增');
+  }
   persist();renderList();closeModal();
 }
 
@@ -2022,14 +2036,19 @@ function runExportByDate(){
   if(from > to){ info.textContent='⚠ 開始日期不能晚於結束日期'; info.style.color='#e07b2a'; return; }
   const fromTs = new Date(from + 'T00:00:00+08:00').getTime();
   const toTs = new Date(to + 'T23:59:59+08:00').getTime();
-  expResultItems = badges.filter(b=>{
-    const val = b[field];
-    if(!val) return false;
-    const ts = new Date(val).getTime();
+  const withDate = badges.filter(b=>b[field]);
+  if(!withDate.length){
+    info.textContent=`⚠ 所有資料都沒有「${field}」欄位，無法篩選`;
+    info.style.color='#e07b2a';
+    document.getElementById('exp-result-wrap').style.display='none';
+    return;
+  }
+  expResultItems = withDate.filter(b=>{
+    const ts = new Date(b[field]).getTime();
     return ts >= fromTs && ts <= toTs;
   });
   if(!expResultItems.length){
-    info.textContent=`找不到符合條件的資料（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）`;
+    info.textContent=`找不到符合條件的資料（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）｜共 ${withDate.length} 筆有此欄位`;
     info.style.color='#c0392b';
     document.getElementById('exp-result-wrap').style.display='none';
     return;
