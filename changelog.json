@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/14",
+    "content": {
+      "zh": "【新增/更新資料】\n（無）\n\n【功能調整】\n・修正 76mm圓形 多語言翻譯缺漏\n・修正尺寸篩選排序（cm 優先於 mm，數字大優先於數字小）\n・新增推薦歌曲浮動播放器（右下角，支援 Spotify 嵌入及 YouTube 連結）",
+      "ja": "【データ追加/更新】\n（なし）\n\n【機能調整】\n・76mmサークルの多言語翻訳の누락を修正\n・サイズフィルターの並び順を修正（cm優先、数字大→小順）\n・おすすめ曲フローティングプレイヤーを追加（右下、Spotify埋め込み・YouTubeリンク対応）",
+      "en": "【New/Updated Data】\n(none)\n\n【Feature Updates】\n・Fixed missing multilingual translation for 76mm Circle\n・Fixed size filter sort order (cm before mm, larger numbers first)\n・Added Featured Song floating player (bottom-right, supports Spotify embed and YouTube link)",
+      "ko": "【데이터 추가/업데이트】\n（없음）\n\n【기능 조정】\n・76mm 원형 다국어 번역 누락 수정\n・사이즈 필터 정렬 순서 수정（cm 우선, 숫자 큰 순서）\n・추천 곡 플로팅 플레이어 추가（우측 하단, Spotify 임베드 및 YouTube 링크 지원）"
+    }
+  },
+  {
     "date": "2026/4/13",
     "content": {
       "zh": "【新增/更新資料】\n・新增夢限大みゅーたいぷ 1st Album「プログレス サイン」團體徽章\n・新增Ave Mujica 3rd Single「'S/' The Way / Sophie」團體徽章\n\n【功能調整】\n・版本/工藝篩選改為彈出視窗選擇\n・活動與版本/工藝視窗補齊多語言顯示\n・下載圖版本/工藝文字支援換行，避免文字被裁切\n・篩選樂團時，跨樂團合照可被兩個樂團同時篩選到",
