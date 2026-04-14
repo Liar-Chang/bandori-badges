@@ -414,6 +414,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <h3>搜尋</h3>
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
       <button class="btn-reset" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
+      <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
+        <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <span id="hide-no-image-label">隱藏無圖徽章</span>
+      </label>
     </div>
     <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
@@ -601,6 +605,7 @@ const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
 
 let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
+const _noImgIds = new Set(); // 記錄圖片載入失敗的 badge id
 
 async function init(){
   try{
@@ -901,6 +906,7 @@ function applyFilters(){
     if(selSizes.size&&!selSizes.has(b.size)) return false;
     if(selCountries.size&&!selCountries.has(b.country)) return false;
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
     return true;
   });
   res=res.slice().sort((a,b)=>{
@@ -1025,7 +1031,7 @@ function renderGrid(list){
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}')"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
       </div>
       <div class="badge-info">
@@ -1270,7 +1276,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1290,7 +1296,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1310,7 +1316,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1330,7 +1336,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력',
   },
 }
 let currentLang = (()=>{
@@ -1431,6 +1437,8 @@ function applyLang(){
   const fcl=document.getElementById('footer-contact-label'); if(fcl&&L.contactLabel) fcl.textContent=L.contactLabel;
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
   const sfl=document.getElementById('song-fab-label'); if(sfl&&L.featuredSong) sfl.textContent=L.featuredSong;
+  const hni=document.getElementById('hide-no-image-label'); if(hni&&L.hideNoImage) hni.textContent=L.hideNoImage;
+  const owi=document.getElementById('exp-only-img-label'); if(owi&&L.onlyWithImage) owi.textContent=L.onlyWithImage;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
   if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
@@ -2046,7 +2054,8 @@ async function doExport(){
   progWrap.style.display = 'block'; prog.style.width = '0%';
 
   const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
-  const list = currentFiltered;
+  const _expOnlyImg = document.getElementById('exp-only-with-image')?.checked;
+  const list = _expOnlyImg ? currentFiltered.filter(b=>!_noImgIds.has(b.id)) : currentFiltered;
 
   // Excel 輸出
   if(exportFmt === 'xlsx'){
@@ -2567,6 +2576,13 @@ async function doExportTable(list, title, btn, progWrap, prog){
       <h3 id="exp-h3-ttl" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;">標題文字</h3>
       <input type="text" id="export-title" placeholder="BanG Dream! 徽章圖鑑"
         style="width:100%;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;outline:none;"/>
+    </div>
+
+    <div class="sidebar-section" style="margin-bottom:1rem;">
+      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;color:var(--muted);">
+        <input type="checkbox" id="exp-only-with-image" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <span id="exp-only-img-label">只輸出有圖的徽章</span>
+      </label>
     </div>
 
     <div class="progress-bar-wrap" id="prog-wrap">
