@@ -1203,11 +1203,11 @@ const CHAR_NAME_MAP = {
   '二葉筑紫':  {'zh-CN':'二叶筑紫','ja':'二葉つくし','en':'Futaba Tsukushi','ko':'후타바츠쿠시'},
   '八潮瑠唯':  {'zh-CN':'八潮瑠唯','ja':'八潮瑠唯','en':'Yashio Rui','ko':'야시오루이'},
   // RAISE A SUILEN
-  '和奏瑞依(LAYER)': {'zh-CN':'和奏瑞依(LAYER)','ja':'レイヤ','en':'LAYER','ko':'레이어'},
-  '朝日六花(ROCK)':  {'zh-CN':'朝日六花(ROCK)','ja':'ロック','en':'LOCK','ko':'록'},
-  '佐藤益木(MASKING)':{'zh-CN':'佐藤益木(MASKING)','ja':'マスキング','en':'MASKING','ko':'마스킹'},
-  '鳰原令王那(PAREO)':{'zh-CN':'鳰原令王那(PAREO)','ja':'パレオ','en':'PAREO','ko':'파레오'},
-  '珠手知由(CHU2)':  {'zh-CN':'珠手知由(CHU2)','ja':'チュチュ','en':'CHU²','ko':'츄츄'},
+  '和奏瑞依(LAYER)': {'zh-TW':'LAYER','zh-CN':'和奏瑞依(LAYER)','ja':'レイヤ','en':'LAYER','ko':'레이어'},
+  '朝日六花(ROCK)':  {'zh-TW':'LOCK','zh-CN':'朝日六花(ROCK)','ja':'ロック','en':'LOCK','ko':'록'},
+  '佐藤益木(MASKING)':{'zh-TW':'MASKING','zh-CN':'佐藤益木(MASKING)','ja':'マスキング','en':'MASKING','ko':'마스킹'},
+  '鳰原令王那(PAREO)':{'zh-TW':'PAREO','zh-CN':'鳰原令王那(PAREO)','ja':'パレオ','en':'PAREO','ko':'파레오'},
+  '珠手知由(CHU2)':  {'zh-TW':'CHU²','zh-CN':'珠手知由(CHU2)','ja':'チュチュ','en':'CHU²','ko':'츄츄'},
   // MyGO!!!!!
   '高松燈':    {'zh-CN':'高松灯','ja':'高松燈','en':'Takamatsu Tomori','ko':'타카마츠토모리'},
   '千早愛音':  {'zh-CN':'千早爱音','ja':'千早愛音','en':'Chihaya Anon','ko':'치하야아논'},
@@ -1236,10 +1236,17 @@ const CHAR_NAME_MAP = {
 
 function getCharName(charTW, lang) {
   if(!charTW || !lang) return charTW;
+  // 處理複數角色（x 分隔）
+  if(charTW.includes('x')){
+    return charTW.split('x').map(c=>{
+      const map = CHAR_NAME_MAP[c.trim()];
+      if(!map) return c.trim();
+      return map[lang] || c.trim();
+    }).join('x');
+  }
   const map = CHAR_NAME_MAP[charTW];
   if(!map) return charTW;
-  // zh-TW 也查表（Ave Mujica 等有特殊顯示名）
-  return map[lang] || (lang === 'zh-TW' ? charTW : charTW);
+  return map[lang] || charTW;
 }
 
 const LANGS = {
@@ -1743,6 +1750,8 @@ function renderFabContent(){
   }
 
   // 更新 tab 顯示
+  document.getElementById('fab-tab-pin').classList.toggle('active', fabTab==='pin');
+  document.getElementById('fab-tab-log').classList.toggle('active', fabTab==='log');
   document.getElementById('fab-pin-content').style.display = fabTab==='pin' ? '' : 'none';
   document.getElementById('fab-log-content').style.display = fabTab==='log' ? '' : 'none';
 }
