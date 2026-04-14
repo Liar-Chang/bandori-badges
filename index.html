@@ -471,6 +471,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
           <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
         </div>
         <button class="btn-view" onclick="openExport()" style="border-color:#5a4fcf;color:#5a4fcf;font-weight:600;">⬇ 下載圖檔</button>
+        <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
       </div>
     </div>
     <div class="badge-grid" id="badge-grid"></div>
@@ -620,6 +621,7 @@ async function init(){
   buildSidebar();
   buildCharList();
   applyFilters();
+  applyUrlParamsOnce(); // 讀取 URL 參數套用篩選
   loadChangelog(); // 載入公告與更新日誌
   loadSong();      // 載入推薦歌曲
 }
@@ -2582,6 +2584,11 @@ async function doExportTable(list, title, btn, progWrap, prog){
   font-size:0.78rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
   <div style="margin-bottom:0.4rem;" id="footer-author-label">作者：千早愛音的暴躁柯基</div>
   <div style="margin-bottom:0.5rem;font-size:0.72rem;color:var(--muted);" id="footer-contact-label">聯絡方式</div>
+  <div style="margin-bottom:0.75rem;">
+    <button onclick="openShareModal(false)" style="font-family:inherit;font-size:0.75rem;padding:0.35rem 1rem;border-radius:20px;border:1.5px solid #27ae60;background:transparent;color:#27ae60;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
+      🔗 分享此網站
+    </button>
+  </div>
   <div style="display:flex;justify-content:center;align-items:center;gap:1.25rem;flex-wrap:wrap;">
     <a href="https://www.threads.com/@bangdreambadgeencyclopedia" target="_blank" rel="noopener"
       style="color:#aaa;text-decoration:none;display:flex;align-items:center;gap:0.3rem;">
@@ -2605,3 +2612,164 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </a>
   </div>
 </footer>
+<!-- 分享 Modal -->
+<div id="share-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:600;align-items:center;justify-content:center;" onclick="if(event.target===this)closeShareModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(420px,96vw);padding:1.75rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);" id="share-modal-title">🔗 分享</h2>
+      <button onclick="closeShareModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <!-- 連結 -->
+    <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;">
+      <input type="text" id="share-url-input" readonly
+        style="flex:1;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:monospace;font-size:0.78rem;outline:none;min-width:0;"/>
+      <button onclick="copyShareUrl()" id="share-copy-btn"
+        style="padding:0.5rem 0.9rem;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;white-space:nowrap;">
+        複製
+      </button>
+    </div>
+    <!-- QR Code -->
+    <div style="text-align:center;margin-bottom:1.25rem;">
+      <div id="share-qr" style="display:inline-block;padding:0.75rem;background:#fff;border-radius:10px;border:1px solid var(--border);"></div>
+      <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">掃描 QR Code 開啟</div>
+    </div>
+    <!-- 社群分享 -->
+    <div style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;">分享到</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;" id="share-buttons"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const SITE_URL = 'https://liar-chang.github.io/bandori-badges/';
+const SITE_TITLE = 'BanG Dream! 徽章圖鑑';
+
+// ── URL 參數序列化/反序列化 ──
+function filtersToParams(){
+  const p = new URLSearchParams();
+  if(selBands.size) p.set('band', [...selBands].join(','));
+  if(selChars.size) p.set('char', [...selChars].join(','));
+  if(selYears.size) p.set('year', [...selYears].join(','));
+  if(selTypes.size) p.set('type', [...selTypes].join(','));
+  if(selSizes.size) p.set('size', [...selSizes].join(','));
+  if(selEvents.size) p.set('event', [...selEvents].join(','));
+  if(selSeries.size) p.set('series', [...selSeries].join(','));
+  if(selCountries.size) p.set('country', [...selCountries].join(','));
+  const q = document.getElementById('search')?.value?.trim();
+  if(q) p.set('q', q);
+  return p;
+}
+
+function paramsToFilters(){
+  const p = new URLSearchParams(location.search);
+  if(p.has('band')) p.get('band').split(',').forEach(v=>selBands.add(v));
+  if(p.has('char')) p.get('char').split(',').forEach(v=>selChars.add(v));
+  if(p.has('year')) p.get('year').split(',').forEach(v=>selYears.add(v));
+  if(p.has('type')) p.get('type').split(',').forEach(v=>selTypes.add(v));
+  if(p.has('size')) p.get('size').split(',').forEach(v=>selSizes.add(v));
+  if(p.has('event')) p.get('event').split(',').forEach(v=>selEvents.add(v));
+  if(p.has('series')) p.get('series').split(',').forEach(v=>selSeries.add(v));
+  if(p.has('country')) p.get('country').split(',').forEach(v=>selCountries.add(v));
+  if(p.has('q')){
+    const sq = document.getElementById('search');
+    if(sq) sq.value = p.get('q');
+  }
+}
+
+// ── 分享 Modal ──
+let _shareQR = null;
+
+function openShareModal(withFilters=true){
+  const hasFilters = selBands.size||selChars.size||selYears.size||selTypes.size||
+    selSizes.size||selEvents.size||selSeries.size||selCountries.size||
+    document.getElementById('search')?.value?.trim();
+
+  let url = SITE_URL;
+  if(withFilters && hasFilters){
+    const params = filtersToParams();
+    url = SITE_URL + '?' + params.toString();
+  }
+
+  document.getElementById('share-url-input').value = url;
+  document.getElementById('share-modal-title').textContent = (withFilters && hasFilters) ? '🔗 分享篩選結果' : '🔗 分享此網站';
+
+  // QR Code
+  const qrEl = document.getElementById('share-qr');
+  qrEl.innerHTML = '';
+  _shareQR = new QRCode(qrEl, {
+    text: url,
+    width: 140,
+    height: 140,
+    colorDark: '#1a1a2e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  // 社群按鈕
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(SITE_TITLE);
+  const platforms = [
+    { name:'X (Twitter)', color:'#000', icon:'𝕏',
+      url:`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}` },
+    { name:'Threads', color:'#000', icon:'🧵',
+      url:`https://www.threads.net/intent/post?text=${encodedTitle}%20${encodedUrl}` },
+    { name:'LINE', color:'#06C755', icon:'💬',
+      url:`https://social-plugins.line.me/lineit/share?url=${encodedUrl}` },
+    { name:'Discord', color:'#5865F2', icon:'🎮',
+      url:`https://discord.com/channels/@me` },
+    { name:'Facebook', color:'#1877F2', icon:'f',
+      url:`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
+  ];
+
+  document.getElementById('share-buttons').innerHTML = platforms.map(p=>`
+    <a href="${p.name==='Discord'?'javascript:void(0)':p.url}"
+      ${p.name==='Discord'?`onclick="copyForDiscord('${url}')"`:
+        'target="_blank" rel="noopener"'}
+      style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.85rem;
+        border-radius:20px;border:1.5px solid ${p.color};color:${p.color};
+        text-decoration:none;font-size:0.78rem;font-weight:600;font-family:inherit;
+        background:transparent;cursor:pointer;transition:opacity 0.15s;"
+      onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
+      <span style="font-size:0.85rem;">${p.icon}</span>${p.name}
+    </a>`).join('');
+
+  document.getElementById('share-overlay').style.display = 'flex';
+}
+
+function closeShareModal(){
+  document.getElementById('share-overlay').style.display = 'none';
+}
+
+function copyShareUrl(){
+  const url = document.getElementById('share-url-input').value;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn = document.getElementById('share-copy-btn');
+    btn.textContent = '✓ 已複製';
+    btn.style.background = '#1a7a45';
+    setTimeout(()=>{ btn.textContent='複製'; btn.style.background='#27ae60'; }, 2000);
+  });
+}
+
+function copyForDiscord(url){
+  navigator.clipboard.writeText(url).then(()=>showToast('✓ 已複製，貼到 Discord 分享吧！'));
+}
+
+// ── 頁面載入時讀取 URL 參數 ──
+// 在資料載入完成後套用（掛到 all 資料就位後）
+const _origApplyFilters = typeof applyFilters === 'function' ? applyFilters : null;
+let _urlParamsApplied = false;
+function applyUrlParamsOnce(){
+  if(_urlParamsApplied) return;
+  if(!location.search) return;
+  _urlParamsApplied = true;
+  paramsToFilters();
+  buildSidebar();
+  buildCharList();
+  // 同步樂團 chip 高亮
+  document.querySelectorAll('.band-chip').forEach(chip=>{
+    const band = chip.dataset.band;
+    if(band && selBands.has(band)) chip.classList.add('active');
+  });
+  applyFilters();
+}
+</script>
