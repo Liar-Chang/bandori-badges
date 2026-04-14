@@ -2632,6 +2632,9 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div style="text-align:center;margin-bottom:1.25rem;">
       <div id="share-qr" style="display:inline-block;padding:0.75rem;background:#fff;border-radius:10px;border:1px solid var(--border);"></div>
       <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">掃描 QR Code 開啟</div>
+      <div style="margin-top:0.5rem;">
+        <button onclick="downloadQR()" style="font-family:inherit;font-size:0.72rem;padding:0.3rem 0.85rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;">⬇ 下載 QR Code</button>
+      </div>
     </div>
     <!-- 社群分享 -->
     <div style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;">分享到</div>
@@ -2722,15 +2725,15 @@ function openShareModal(withFilters=true){
   ];
 
   document.getElementById('share-buttons').innerHTML = platforms.map(p=>`
-    <a href="${p.name==='Discord'?'javascript:void(0)':p.url}"
-      ${p.name==='Discord'?`onclick="copyForDiscord('${url}')"`:
+    <a href="${p.name==='Discord'?'#':p.url}"
+      ${p.name==='Discord'?`data-discord-url="${url.replace(/"/g,'&quot;')}" onclick="event.preventDefault();copyForDiscord(this.dataset.discordUrl)"`:
         'target="_blank" rel="noopener"'}
       style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.85rem;
         border-radius:20px;border:1.5px solid ${p.color};color:${p.color};
         text-decoration:none;font-size:0.78rem;font-weight:600;font-family:inherit;
         background:transparent;cursor:pointer;transition:opacity 0.15s;"
       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
-      <span style="font-size:0.85rem;">${p.icon}</span>${p.name}
+      <span style="font-size:0.85rem;">${p.icon}</span>${p.name==='Discord'?'Discord（複製）':p.name}
     </a>`).join('');
 
   document.getElementById('share-overlay').style.display = 'flex';
@@ -2752,6 +2755,16 @@ function copyShareUrl(){
 
 function copyForDiscord(url){
   navigator.clipboard.writeText(url).then(()=>showToast('✓ 已複製，貼到 Discord 分享吧！'));
+}
+
+function downloadQR(){
+  const qrEl = document.getElementById('share-qr');
+  const img = qrEl.querySelector('img');
+  if(!img) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = 'bandori-badges-qrcode.png';
+  a.click();
 }
 
 // ── 頁面載入時讀取 URL 參數 ──
