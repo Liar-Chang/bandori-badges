@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/15",
+    "content": {
+      "zh": "【新增/更新資料】\n・新增BanG Dream! 缶バッジセット Birthday ver. vol.2 ドロリス徽章\n\n【功能調整】\n・新增分享功能（複製連結、QR Code、X/Threads/LINE/Discord/Facebook）\n・分享連結可保留當前篩選條件\n・新增「隱藏無圖徽章」篩選開關\n・下載圖檔新增「只輸出有圖的徽章」選項\n・複數角色名稱支援多語言切換\n・RAS成員名稱中文顯示改為藝名\n・切換語言時保留公告/更新日誌分頁狀態",
+      "ja": "【データ追加/更新】\n・BanG Dream! 缶バッジセット Birthday ver. vol.2 ドロリスバッジを追加\n\n【機能調整】\n・シェア機能を追加（リンクコピー、QRコード、X/Threads/LINE/Discord/Facebook）\n・シェアリンクに現在のフィルター条件を反映可能\n・「画像なしを非表示」フィルタースイッチを追加\n・ダウンロード画像に「画像ありのみ出力」オプションを追加\n・複数キャラクター名の多言語切替に対応\n・RASメンバー名の中文表示を芸名に変更\n・言語切替時に公告/更新ログのタブ状態を保持\n・フッターに著作権表記を追加",
+      "en": "【New/Updated Data】\n・Added BanG Dream! 缶バッジセット Birthday ver. vol.2 Doloris badge\n\n【Feature Updates】\n・Added share function (copy link, QR Code, X/Threads/LINE/Discord/Facebook)\n・Share link can include current filter conditions\n・Added \"Hide badges without images\" filter toggle\n・Added \"Only export badges with images\" option to download\n・Multi-character names now support multilingual display\n・RAS member names in Chinese now display as artist names\n・Tab state preserved when switching languages in announcements panel\n・Added copyright notice to footer",
+      "ko": "【데이터 추가/업데이트】\n・BanG Dream! 缶バッジセット Birthday ver. vol.2 ドロリス 배지 추가\n\n【기능 조정】\n・공유 기능 추가（링크 복사、QR코드、X/Threads/LINE/Discord/Facebook）\n・공유 링크에 현재 필터 조건 반영 가능\n・「이미지 없는 배지 숨기기」 필터 스위치 추가\n・다운로드 이미지에 「이미지 있는 배지만 출력」 옵션 추가\n・복수 캐릭터 이름 다국어 전환 지원\n・RAS 멤버 이름 중문 표시를 예명으로 변경\n・언어 전환 시 공지/업데이트 로그 탭 상태 유지\n・푸터에 저작권 표기 추가"
+    }
+  },
+  {
     "date": "2026/4/14",
     "content": {
       "zh": "【新增/更新資料】\n（無）\n\n【功能調整】\n・修正 76mm圓形 多語言翻譯缺漏\n・修正尺寸篩選排序（cm 優先於 mm，數字大優先於數字小）\n・新增推薦歌曲浮動播放器（右下角，支援 Spotify 嵌入及 YouTube 連結）",
