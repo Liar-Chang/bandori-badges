@@ -1276,7 +1276,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1296,7 +1296,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'© Bushiroad All Rights Reserved. 本サイトは非営利のファンデータベースです。画像の著作権は Bushiroad に帰属します。',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1316,7 +1316,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'© Bushiroad All Rights Reserved. This is a non-profit fan database. All images are property of Bushiroad.',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1336,7 +1336,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'© Bushiroad All Rights Reserved. 본 사이트는 비영리 팬 데이터베이스입니다. 이미지 저작권은 Bushiroad에 있습니다.',
   },
 }
 let currentLang = (()=>{
@@ -1439,6 +1439,7 @@ function applyLang(){
   const sfl=document.getElementById('song-fab-label'); if(sfl&&L.featuredSong) sfl.textContent=L.featuredSong;
   const hni=document.getElementById('hide-no-image-label'); if(hni&&L.hideNoImage) hni.textContent=L.hideNoImage;
   const owi=document.getElementById('exp-only-img-label'); if(owi&&L.onlyWithImage) owi.textContent=L.onlyWithImage;
+  const cpr=document.getElementById('footer-copyright'); if(cpr&&L.copyright) cpr.textContent=L.copyright;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
   if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
@@ -2599,7 +2600,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 <footer style="text-align:center;padding:1rem 1.5rem;font-family:'Noto Sans TC',sans-serif;
   font-size:0.78rem;color:#aaa;background:var(--bg);border-top:1px solid var(--border);">
   <div style="margin-bottom:0.4rem;" id="footer-author-label">作者：千早愛音的暴躁柯基</div>
-  <div style="margin-bottom:0.4rem;font-size:0.7rem;color:var(--muted);">© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。</div>
+  <div id="footer-copyright" style="margin-bottom:0.4rem;font-size:0.7rem;color:var(--muted);">© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。</div>
   <div style="margin-bottom:0.5rem;font-size:0.72rem;color:var(--muted);" id="footer-contact-label">聯絡方式</div>
   <div style="margin-bottom:0.75rem;">
     <button onclick="openShareModal(false)" style="font-family:inherit;font-size:0.75rem;padding:0.35rem 1rem;border-radius:20px;border:1.5px solid #27ae60;background:transparent;color:#27ae60;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
