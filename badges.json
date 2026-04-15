@@ -32042,5 +32042,39 @@
     "note": "58mm*58mm",
     "created_at": "2026-04-13T14:41:19.306Z",
     "updated_at": "2026-04-13T14:58:44.256Z"
+  },
+  {
+    "id": "2142",
+    "ext": "png",
+    "band": "Ave Mujica",
+    "character": "三角初華",
+    "series": "",
+    "year": "2026年4月16日",
+    "event": "Birthday ver. vol.2Doloris",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/doloris-birthday2026/products/2000287200986",
+    "note": "",
+    "short_event": "Birthday ver. vol.2",
+    "created_at": "2026-04-15T13:52:21.307Z",
+    "updated_at": "2026-04-15T13:52:21.307Z"
+  },
+  {
+    "id": "2139",
+    "ext": "png",
+    "band": "Ave Mujica",
+    "character": "三角初華",
+    "series": "",
+    "year": "2026年4月16日",
+    "event": "Birthday ver. vol.2Doloris",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/doloris-birthday2026/products/2000287200986",
+    "note": "",
+    "short_event": "Birthday ver. vol.2",
+    "created_at": "2026-04-15T13:52:21.307Z",
+    "updated_at": "2026-04-15T13:52:21.307Z"
   }
 ]
