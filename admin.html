@@ -807,7 +807,7 @@ const CHAR_MAP = {
   "Morfonica": ["Morfonica全團", "倉田真白", "桐谷透子", "廣町七深", "二葉筑紫", "八潮瑠唯"],
   "RAISE A SUILEN": ["RAISE A SUILEN全團", "和奏瑞依(LAYER)", "朝日六花(ROCK)", "佐藤益木(MASKING)", "鳰原令王那(PAREO)", "珠手知由(CHU2)"],
   "MyGO!!!!!": ["MyGO!!!!!全團", "高松燈", "千早愛音", "要樂奈", "長崎爽世", "椎名立希"],
-  "Ave Mujica": ["Ave Mujica全團", "三角初華", "若葉睦", "八幡海鈴", "祐天寺若麥", "豐川祥子"],
+  "Ave Mujica": ["Ave Mujica全團", "三角初華(Doloris)", "若葉睦(Mortis)", "八幡海鈴(Timoris)", "祐天寺若麥(Amoris)", "豐川祥子(Oblivionis)"],
   "夢限大MewType": ["夢限大MewType全團", "仲町阿拉蕾", "宮永野乃花", "峰月律", "藤都子", "千石由乃"],
   "millsage": ["millsage全團", "汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
   "一家Dumb Rock!": ["一家Dumb Rock!全團", "須賀蕾叶", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
@@ -1334,8 +1334,17 @@ function openModal(idx=-1){
   updateModalChars(b.band||'');
   const fcharSel=document.getElementById('f-character');
   const fcharTxt=document.getElementById('f-character-text');
-  if(fcharSel.style.display==='none'&&fcharTxt){ fcharTxt.value=b.character||''; }
-  else { fcharSel.value=b.character||''; if(b.character&&fcharSel.value!==b.character){ fcharSel.style.display='none'; if(fcharTxt){fcharTxt.style.display='';fcharTxt.value=b.character;} } }
+  // 舊角色名對照新角色名（避免編輯時退回文字輸入）
+  const CHAR_MIGRATION = {
+    '三角初華':'三角初華(Doloris)',
+    '若葉睦':'若葉睦(Mortis)',
+    '八幡海鈴':'八幡海鈴(Timoris)',
+    '祐天寺若麥':'祐天寺若麥(Amoris)',
+    '豐川祥子':'豐川祥子(Oblivionis)',
+  };
+  const charVal = CHAR_MIGRATION[b.character] || b.character || '';
+  if(fcharSel.style.display==='none'&&fcharTxt){ fcharTxt.value=charVal; }
+  else { fcharSel.value=charVal; if(charVal&&fcharSel.value!==charVal){ fcharSel.style.display='none'; if(fcharTxt){fcharTxt.style.display='';fcharTxt.value=charVal;} } }
   document.getElementById('f-series').value=b.series||'';
   document.getElementById('f-year').value=b.year||'';
   document.getElementById('f-event').value=b.event||'';
