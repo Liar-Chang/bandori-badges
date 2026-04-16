@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/16",
+    "content": {
+      "zh": "【新增/更新資料】\n（無）\n\n【功能調整】\n・篩選樂團時角色清單不再顯示其他團的單人成員",
+      "ja": "【新增/更新資料】\n（無）\n\n【功能調整】\n・篩選樂團時角色清單不再顯示其他團的單人成員",
+      "en": "【New/Updated Data】\n(none)\n\n【Feature Updates】\n・Fixed character list to no longer show solo members from other bands when filtering by band",
+      "ko": "【데이터 추가/업데이트】\n（없음）\n\n【기능 조정】\n・밴드 필터 시 다른 밴드의 단독 멤버가 캐릭터 목록에 표시되지 않도록 수정"
+    }
+  },
+  {
     "date": "2026/4/15",
     "content": {
       "zh": "【新增/更新資料】\n・新增BanG Dream! 缶バッジセット Birthday ver. vol.2 ドロリス徽章\n\n【功能調整】\n・新增分享功能（複製連結、QR Code、X/Threads/LINE/Discord/Facebook）\n・分享連結可保留當前篩選條件\n・新增「隱藏無圖徽章」篩選開關\n・下載圖檔新增「只輸出有圖的徽章」選項\n・複數角色名稱支援多語言切換\n・RAS成員名稱中文顯示改為藝名\n・切換語言時保留公告/更新日誌分頁狀態",
