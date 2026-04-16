@@ -765,9 +765,12 @@ function toggleBand(b){
 
 function buildCharList(){
   const sec=document.getElementById('char-section');
-  // 必須先選樂團才顯示角色
   if(selBands.size===0){ sec.style.display='none'; return; }
-  const source = all.filter(b=>selBands.has(b.band));
+  // 用跟 applyFilters 一樣的邏輯，包含跨團合照
+  const source = all.filter(b=>{
+    const bb = badgeBands(b);
+    return [...selBands].some(sel=>bb.has(sel));
+  });
   const CHAR_ORDER = [
     // 全團
     "Poppin'Party全團",'Afterglow全團','Pastel*Palettes全團','Roselia全團',
@@ -846,6 +849,34 @@ function resetFilters(){
   applyFilters();
 }
 
+// 角色→樂團對照（全域，供 buildCharList 和 applyFilters 共用）
+const CHAR_TO_BAND = {
+  "戶山香澄":"Poppin'Party","花園多惠":"Poppin'Party","牛込里美":"Poppin'Party","山吹紗綾":"Poppin'Party","市谷有咲":"Poppin'Party","Poppin'Party全團":"Poppin'Party",
+  "美竹蘭":"Afterglow","青葉摩卡":"Afterglow","上原緋瑪麗":"Afterglow","宇田川巴":"Afterglow","羽澤鶇":"Afterglow","Afterglow全團":"Afterglow",
+  "丸山彩":"Pastel*Palettes","冰川日菜":"Pastel*Palettes","白鷺千聖":"Pastel*Palettes","大和麻彌":"Pastel*Palettes","若宮伊芙":"Pastel*Palettes","Pastel*Palettes全團":"Pastel*Palettes",
+  "湊友希那":"Roselia","冰川紗夜":"Roselia","今井莉莎":"Roselia","宇田川亞子":"Roselia","白金燐子":"Roselia","Roselia全團":"Roselia",
+  "弦卷心":"Hello, Happy World!","瀨田薰":"Hello, Happy World!","北澤育美":"Hello, Happy World!","松原花音":"Hello, Happy World!","奧澤美咲":"Hello, Happy World!","Hello, Happy World!全團":"Hello, Happy World!",
+  "倉田真白":"Morfonica","桐谷透子":"Morfonica","廣町七深":"Morfonica","二葉筑紫":"Morfonica","八潮瑠唯":"Morfonica","Morfonica全團":"Morfonica",
+  "和奏瑞依(LAYER)":"RAISE A SUILEN","朝日六花(ROCK)":"RAISE A SUILEN","佐藤益木(MASKING)":"RAISE A SUILEN","鳰原令王那(PAREO)":"RAISE A SUILEN","珠手知由(CHU2)":"RAISE A SUILEN","RAISE A SUILEN全團":"RAISE A SUILEN",
+  "高松燈":"MyGO!!!!!","千早愛音":"MyGO!!!!!","要樂奈":"MyGO!!!!!","長崎爽世":"MyGO!!!!!","椎名立希":"MyGO!!!!!","MyGO!!!!!全團":"MyGO!!!!!",
+  "三角初華":"Ave Mujica","若葉睦":"Ave Mujica","八幡海鈴":"Ave Mujica","祐天寺若麥":"Ave Mujica","豐川祥子":"Ave Mujica","Ave Mujica全團":"Ave Mujica",
+  "三角初華(Doloris)":"Ave Mujica","若葉睦(Mortis)":"Ave Mujica","八幡海鈴(Timoris)":"Ave Mujica","豐川祥子(Oblivionis)":"Ave Mujica","祐天寺若麥(Amoris)":"Ave Mujica",
+  "仲町阿拉蕾":"夢限大MewType","宮永野乃花":"夢限大MewType","峰月律":"夢限大MewType","藤都子":"夢限大MewType","千石由乃":"夢限大MewType","夢限大MewType全團":"夢限大MewType",
+  "汐見螢":"millsage","琴平凪":"millsage","濱崎茉幌":"millsage","伊澤棗":"millsage","和泉朋花":"millsage","millsage全團":"millsage",
+  "須賀蕾叶":"一家Dumb Rock!","馬橋心玖":"一家Dumb Rock!","矢倉蓬咲":"一家Dumb Rock!","梅里千櫻梨":"一家Dumb Rock!","四宮寧月":"一家Dumb Rock!","一家Dumb Rock!全團":"一家Dumb Rock!",
+};
+function badgeBands(b){
+  const bands = new Set();
+  if(b.band) bands.add(b.band);
+  if(b.character){
+    b.character.split('x').forEach(c=>{
+      const ct = c.trim();
+      if(CHAR_TO_BAND[ct]) bands.add(CHAR_TO_BAND[ct]);
+    });
+  }
+  return bands;
+}
+
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
@@ -860,7 +891,7 @@ function applyFilters(){
     "和奏瑞依(LAYER)":"RAISE A SUILEN","朝日六花(ROCK)":"RAISE A SUILEN","佐藤益木(MASKING)":"RAISE A SUILEN","鳰原令王那(PAREO)":"RAISE A SUILEN","珠手知由(CHU2)":"RAISE A SUILEN","RAISE A SUILEN全團":"RAISE A SUILEN",
     "高松燈":"MyGO!!!!!","千早愛音":"MyGO!!!!!","要樂奈":"MyGO!!!!!","長崎爽世":"MyGO!!!!!","椎名立希":"MyGO!!!!!","MyGO!!!!!全團":"MyGO!!!!!",
     "三角初華":"Ave Mujica","若葉睦":"Ave Mujica","八幡海鈴":"Ave Mujica","祐天寺若麥":"Ave Mujica","豐川祥子":"Ave Mujica","Ave Mujica全團":"Ave Mujica",
-    "三角初華(Doloris)":"Ave Mujica","若葉睦(Mortis)":"Ave Mujica","八幡海鈴(Timoris)":"Ave Mujica","祐天寺若麥(Amoris)":"Ave Mujica","豐川祥子(Oblivionis)":"Ave Mujica",
+    "三角初華(Doloris)":"Ave Mujica","若葉睦(Mortis)":"Ave Mujica","八幡海鈴(Timoris)":"Ave Mujica","豐川祥子(Oblivionis)":"Ave Mujica","祐天寺若麥(Amoris)":"Ave Mujica",
     "仲町阿拉蕾":"夢限大MewType","宮永野乃花":"夢限大MewType","峰月律":"夢限大MewType","藤都子":"夢限大MewType","千石由乃":"夢限大MewType","夢限大MewType全團":"夢限大MewType",
     "汐見螢":"millsage","琴平凪":"millsage","濱崎茉幌":"millsage","伊澤棗":"millsage","和泉朋花":"millsage","millsage全團":"millsage",
     "須賀蕾叶":"一家Dumb Rock!","馬橋心玖":"一家Dumb Rock!","矢倉蓬咲":"一家Dumb Rock!","梅里千櫻梨":"一家Dumb Rock!","四宮寧月":"一家Dumb Rock!","一家Dumb Rock!全團":"一家Dumb Rock!",
