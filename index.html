@@ -791,13 +791,21 @@ function buildCharList(){
     '汐見螢','琴平凪','濱崎茉幌','伊澤棗','和泉朋花',
     '須賀蕾叶','馬橋心玖','矢倉蓬咲','梅里千櫻梨','四宮寧月',
   ];
-  // 展開角色：複數組合拆開，讓單一角色可被選取；全團和複數組合也保留
+  // 展開角色：複數組合保留，但拆出來的單人只加屬於所選樂團的
   const charSet = new Set();
   source.forEach(b=>{
     if(!b.character) return;
     charSet.add(b.character); // 保留原始值（全團、複數組合）
     if(b.character.includes('x')){
-      b.character.split('x').forEach(c=>{ if(c.trim()) charSet.add(c.trim()); });
+      b.character.split('x').forEach(c=>{
+        const ct = c.trim();
+        if(!ct) return;
+        // 只加屬於所選樂團的單人成員
+        const memberBand = CHAR_TO_BAND[ct];
+        if(memberBand && selBands.has(memberBand)){
+          charSet.add(ct);
+        }
+      });
     }
   });
   const chars = [
