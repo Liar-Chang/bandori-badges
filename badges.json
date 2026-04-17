@@ -23994,7 +23994,7 @@
     "ext": "jpg",
     "band": "夢限大MewType",
     "character": "峰月律",
-    "series": "",
+    "series": "ホログラム",
     "year": "2026年2月7日",
     "event": "生日紀念商品2026峰月律",
     "short_event": "生日紀念商品2026",
@@ -24002,7 +24002,9 @@
     "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/ritsu-birthday2026/products/2000277187983",
-    "note": ""
+    "note": "",
+    "created_at": "2026-04-17T14:23:19.021Z",
+    "updated_at": "2026-04-17T14:23:19.021Z"
   },
   {
     "id": "1606",
@@ -32522,5 +32524,22 @@
     "short_event": "夢限大TV動畫紀念",
     "created_at": "2026-04-16T16:17:50.969Z",
     "updated_at": "2026-04-16T16:17:50.969Z"
+  },
+  {
+    "id": "2149",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "宮永野乃花",
+    "series": "ホログラム",
+    "year": "2026年4月17日",
+    "event": "生日紀念商品2026宮永ののか",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/nonoka-birthday2026/products/2000287401833",
+    "note": "",
+    "short_event": "生日紀念商品2026",
+    "created_at": "2026-04-17T14:27:07.249Z",
+    "updated_at": "2026-04-17T14:27:07.249Z"
   }
 ]
