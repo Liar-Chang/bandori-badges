@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/17",
+    "content": {
+      "zh": "【新增/更新資料】\n新增：\n・MyGO!!!!! 8th Single「静降想」團體徽章\n・Roselia 18th Single「Steadfast Spirits」團體徽章\n・TVアニメ「バンドリ！ ゆめ∞みた」放送記念フェア徽章\n・BanG Dream!　宮永ののか バースデーグッズ2026徽章\n\n【功能調整】\n・Ave Mujica 篩選時角色清單包含跨團合照成員組合\n・版權聲明隨語言切換\n・頁尾順序調整（分享按鈕移至聯絡方式上方）",
+      "ja": "【データ追加/更新】\n追加：\n・MyGO!!!!! 8th Single「静降想」グループバッジ\n・Roselia 18th Single「Steadfast Spirits」グループバッジ\n・TVアニメ「バンドリ！ゆめ∞みた」放送記念フェアバッジ\n・BanG Dream! 宮永ののかバースデーグッズ2026バッジ\n【機能調整】\n・Ave Mujica絞り込み時、合同バッジのキャラクター組み合わせをリストに表示するよう改善\n・著作権表記の多言語切替に対応\n・フッターの順序調整（シェアボタンを連絡先の上に移動）",
+      "en": "【New/Updated Data】\nAdded:\n・MyGO!!!!! 8th Single「静降想」group badge\n・Roselia 18th Single「Steadfast Spirits」group badge\n・TV Anime「BanG Dream! Yume∞Mita」broadcast commemorative fair badge\n・BanG Dream! Miyanaga Nonoka Birthday Goods 2026 badge\n【Feature Updates】\n・Ave Mujica filter now includes cross-band character combinations in the character list\n・Copyright notice now changes with language selection\n・Footer order adjusted (share button moved above contact section)",
+      "ko": "【데이터 추가/업데이트】\n추가：\n・MyGO!!!!! 8th Single「静降想」단체 배지\n・Roselia 18th Single「Steadfast Spirits」단체 배지\n・TV애니메이션「BanG Dream! 꿈∞꿨어」방송 기념 페어 배지\n・BanG Dream! 미야나가 노노카 생일 굿즈 2026 배지\n【기능 조정】\n・Ave Mujica 필터 시 합동 배지의 캐릭터 조합을 목록에 표시하도록 개선\n・저작권 표기 다국어 전환 지원\n・푸터 순서 조정（공유 버튼을 연락처 위로 이동）"
+    }
+  },
+  {
     "date": "2026/4/16",
     "content": {
       "zh": "【新增/更新資料】\n（無）\n\n【功能調整】\n・篩選樂團時角色清單不再顯示其他團的單人成員",
