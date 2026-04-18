@@ -1084,10 +1084,16 @@ function applyFilters(){
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
-    if(collectedFilter === 'collected' && !isCollected(b.id)) return false;
-    if(collectedFilter === 'uncollected' && !isUncollected(b.id)) return false;
     return true;
   });
+  // 暫存「未套用蒐集篩選」的結果，供 sidebar 計數使用
+  _filteredExcludingCollected = res;
+  // 再套用蒐集篩選
+  if(collectedFilter === 'collected'){
+    res = res.filter(b=>isCollected(b.id));
+  } else if(collectedFilter === 'uncollected'){
+    res = res.filter(b=>isUncollected(b.id));
+  }
   res=res.slice().sort((a,b)=>{
     if(sort==='id-asc') return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
     if(sort==='id-desc') return (b.id||'').localeCompare(a.id||'',undefined,{numeric:true});
@@ -1181,10 +1187,12 @@ function applyFilters(){
         <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
         <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${(LANGS[currentLang]||LANGS['zh-TW']).filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
       </div>`;
+    if(currentUser) buildCollectionSidebar();
     return;
   }
   document.getElementById('result-count').textContent=`顯示 ${res.length} / ${all.length} 枚`;
   renderGrid(res);
+  if(currentUser) buildCollectionSidebar();
 }
 
 function renderGrid(list){
@@ -3469,6 +3477,15 @@ let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}}
 // 'collected' = 有蒐集記錄且數量 > 0
 // 'uncollected' = 沒蒐集記錄 OR 數量為 0
 let collectedFilter = 'all';
+// 暫存「未套用蒐集篩選」的篩選結果（含其他樂團/角色/活動等條件）
+// 由 applyFilters() 設定，供 buildCollectionSidebar() 計數使用
+let _filteredExcludingCollected = null;
+
+function getFilteredExcludingCollected(){
+  // 若還沒跑過 applyFilters，回退到全部
+  if(_filteredExcludingCollected !== null) return _filteredExcludingCollected;
+  return (typeof all !== 'undefined' && Array.isArray(all)) ? all : [];
+}
 
 function isCollected(badgeId){
   const c = myCollections[badgeId];
@@ -3506,17 +3523,26 @@ function buildCollectionSidebar(){
     return;
   }
   sec.style.display = '';
-  // 計算各類別數量
-  const allBadgeCount = (typeof badges !== 'undefined' && Array.isArray(badges)) ? badges.length : 0;
+
+  // 計算「在當前篩選條件下」三類別各有幾張
+  // 注意：要排除 collectedFilter 自身的影響，否則會自我循環
+  const filtered = (typeof getFilteredExcludingCollected === 'function')
+    ? getFilteredExcludingCollected()
+    : (typeof all !== 'undefined' && Array.isArray(all) ? all : []);
+
   let collectedCount = 0;
   let totalQty = 0;
-  Object.keys(myCollections).forEach(bid=>{
-    if(isCollected(bid)){
+  let uncollectedCount = 0;
+  filtered.forEach(b=>{
+    if(isCollected(b.id)){
       collectedCount++;
-      totalQty += Number(myCollections[bid].quantity || 1);
+      const c = myCollections[b.id];
+      totalQty += Number((c && c.quantity) || 1);
+    } else {
+      uncollectedCount++;
     }
   });
-  const uncollectedCount = allBadgeCount - collectedCount;
+  const allCount = filtered.length;
 
   // 三段切換按鈕
   const mkBtn = (val, label, count, color) => {
@@ -3530,7 +3556,7 @@ function buildCollectionSidebar(){
   };
 
   document.getElementById('collection-content').innerHTML =
-    mkBtn('all', '◯ <span id="col-label-all">全部</span>', allBadgeCount, '#9ca3af') +
+    mkBtn('all', '◯ <span id="col-label-all">全部</span>', allCount, '#9ca3af') +
     mkBtn('collected', '✓ <span id="col-label-text">已蒐集</span>', `${collectedCount} / ${totalQty}個`, '#22c55e') +
     mkBtn('uncollected', '✗ <span id="col-label-uncol">未蒐集</span>', uncollectedCount, '#f59e0b');
 }
@@ -3538,8 +3564,7 @@ function buildCollectionSidebar(){
 function setCollectedFilter(val){
   if(!['all','collected','uncollected'].includes(val)) return;
   collectedFilter = val;
-  buildCollectionSidebar();
-  applyFilters();
+  applyFilters(); // 會自動呼叫 buildCollectionSidebar 更新數字
 }
 
 // 保留向下相容：舊的 toggle 行為（已蒐集 ↔ 全部）
