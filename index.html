@@ -3594,8 +3594,8 @@ function buildSmartListsSidebar(){
     const isActive = selectedSmartList === l.id;
     const safeName = (l.name||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
     return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#0ea5e922':'transparent'};border:1.5px solid ${isActive?'#0ea5e9':'transparent'};margin-bottom:0.25rem;" onclick="filterBySmartList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedSmartList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedSmartList}')this.style.background='transparent'">
-      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
-      <span style="font-size:0.7rem;color:var(--muted);margin:0 0.4rem;white-space:nowrap;">${collected}/${total}</span>
+      <span style="font-size:0.78rem;color:${isActive?'#0ea5e9':'var(--text)'};font-weight:${isActive?'600':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
+      <span style="font-size:0.7rem;color:${isActive?'#0ea5e9':'var(--muted)'};font-weight:${isActive?'600':'400'};margin:0 0.4rem;white-space:nowrap;">${collected}/${total}</span>
       <button onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
       <button onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
     </div>`;
