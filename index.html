@@ -703,6 +703,13 @@ const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
 let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
 const _noImgIds = new Set(); // 記錄圖片載入失敗的 badge id
+// 當 onerror 持續觸發時，若「隱藏無圖徽章」為勾選，debounce 重新套用篩選
+let _noImgRefreshTimer = null;
+function _maybeRefreshHideNoImg(){
+  if(!document.getElementById('hide-no-image')?.checked) return;
+  clearTimeout(_noImgRefreshTimer);
+  _noImgRefreshTimer = setTimeout(()=>{ applyFilters(); }, 250);
+}
 
 async function init(){
   try{
@@ -1172,7 +1179,7 @@ function renderGrid(list){
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}')"/>
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}');_maybeRefreshHideNoImg()"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
         <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       </div>
