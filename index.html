@@ -3591,7 +3591,7 @@ function buildSmartListsSidebar(){
     }
     const total = matched.length;
     const collected = matched.filter(b=>isCollected(b.id)).length;
-    const isActive = selectedSmartList === l.id;
+    const isActive = selectedSmartList == l.id; // 鬆比較：DB 回傳數字、JS 屬性傳字串
     const safeName = (l.name||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
     return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#0ea5e922':'transparent'};border:1.5px solid ${isActive?'#0ea5e9':'transparent'};margin-bottom:0.25rem;" onclick="filterBySmartList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedSmartList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedSmartList}')this.style.background='transparent'">
       <span style="font-size:0.78rem;color:${isActive?'#0ea5e9':'var(--text)'};font-weight:${isActive?'600':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
