@@ -436,6 +436,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <h3 id="my-lists-title">⭐ 我的最愛</h3>
       <div id="my-lists-content"></div>
     </div>
+    <div class="sidebar-section" id="collection-section" style="display:none;">
+      <h3 id="collection-title">✓ 蒐集記錄</h3>
+      <div id="collection-content"></div>
+    </div>
     <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
       <div class="band-list" id="band-list"></div>
@@ -964,6 +968,7 @@ function applyFilters(){
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
+    if(showOnlyCollected && !isCollected(b.id)) return false;
     return true;
   });
   res=res.slice().sort((a,b)=>{
@@ -1085,6 +1090,7 @@ function renderGrid(list){
     return `<div class="badge-card" onclick="toggleCard(this,${idx})" style="position:relative;">
       <div class="badge-id-tag" style="position:absolute;top:5px;right:5px;z-index:2;background:rgba(0,0,0,0.5);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
+      <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
@@ -2703,6 +2709,17 @@ async function doExportTable(list, title, btn, progWrap, prog){
   </div>
 </div>
 
+<!-- 蒐集記錄 Modal -->
+<div id="col-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeCollectionModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(380px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);">✓ 蒐集記錄</h2>
+      <button onclick="closeCollectionModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <div id="col-modal-content"></div>
+  </div>
+</div>
+
 <div id="share-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:600;align-items:center;justify-content:center;" onclick="if(event.target===this)closeShareModal()">
   <div style="background:var(--surface);border-radius:16px;width:min(420px,96vw);padding:1.75rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
@@ -3142,12 +3159,160 @@ updateAuthUI = function(){
   _origUpdateAuthUI();
   if(currentUser){
     loadMyLists();
+    loadMyCollections();
   } else {
     myLists = [];
     myListItems = {};
+    myCollections = {};
     selectedList = null;
+    showOnlyCollected = false;
     buildMyListsSidebar();
+    buildCollectionSidebar();
     applyFilters();
   }
 };
+
+// ─────────────────────────────────────────
+//  蒐集記錄功能
+// ─────────────────────────────────────────
+let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}}
+let showOnlyCollected = false;
+
+function isCollected(badgeId){
+  return !!myCollections[badgeId];
+}
+
+async function loadMyCollections(){
+  if(!currentUser) return;
+  const { data, error } = await supabaseClient
+    .from('collections')
+    .select('*')
+    .eq('user_id', currentUser.id);
+  if(error){ console.error(error); return; }
+  myCollections = {};
+  (data||[]).forEach(c=>{
+    myCollections[c.badge_id] = c;
+  });
+  buildCollectionSidebar();
+  applyFilters();
+}
+
+function buildCollectionSidebar(){
+  const sec = document.getElementById('collection-section');
+  if(!sec) return;
+  if(!currentUser){
+    sec.style.display = 'none';
+    return;
+  }
+  sec.style.display = '';
+  const count = Object.keys(myCollections).length;
+  const totalQty = Object.values(myCollections).reduce((sum,c)=>sum+(c.quantity||1), 0);
+  document.getElementById('collection-content').innerHTML = `
+    <div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${showOnlyCollected?'#22c55e22':'transparent'};border:1.5px solid ${showOnlyCollected?'#22c55e':'transparent'};margin-bottom:0.25rem;" onclick="toggleCollectedFilter()" onmouseover="if(!${showOnlyCollected})this.style.background='#80808015'" onmouseout="if(!${showOnlyCollected})this.style.background='transparent'">
+      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">✓ <span id="col-label-text">已蒐集</span></span>
+      <span style="font-size:0.7rem;color:var(--muted);">${count} / ${totalQty}個</span>
+    </div>`;
+}
+
+function toggleCollectedFilter(){
+  showOnlyCollected = !showOnlyCollected;
+  buildCollectionSidebar();
+  applyFilters();
+}
+
+// ── 蒐集 Modal ──
+let _colBadgeId = null;
+
+function openCollectionModal(badgeId){
+  if(!currentUser){
+    showToast('請先登入');
+    return;
+  }
+  _colBadgeId = badgeId;
+  renderCollectionModal();
+  document.getElementById('col-overlay').style.display = 'flex';
+}
+
+function closeCollectionModal(){
+  document.getElementById('col-overlay').style.display = 'none';
+}
+
+function renderCollectionModal(){
+  const existing = myCollections[_colBadgeId];
+  const date = existing?.collected_date || '';
+  const qty = existing?.quantity || 1;
+  const note = existing?.note || '';
+  const content = document.getElementById('col-modal-content');
+  content.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0.85rem;">
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">入手日期（選填）</label>
+        <input type="date" id="col-date" value="${date}"
+          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">數量</label>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <button onclick="adjustQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
+          <input type="number" id="col-qty" value="${qty}" min="1" 
+            style="flex:1;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.95rem;outline:none;text-align:center;"/>
+          <button onclick="adjustQty(1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">+</button>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">備註（選填）</label>
+        <textarea id="col-note" placeholder="例如：在哪裡入手、購買價格..." rows="2"
+          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;resize:vertical;">${note}</textarea>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        ${existing ? `<button onclick="deleteCollection()" style="padding:0.55rem 0.85rem;border:1.5px solid #e05c5c;border-radius:8px;background:transparent;color:#e05c5c;cursor:pointer;font-family:inherit;font-size:0.83rem;">🗑 移除</button>` : ''}
+        <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+        <button onclick="saveCollection()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
+      </div>
+    </div>`;
+}
+
+function adjustQty(delta){
+  const input = document.getElementById('col-qty');
+  const cur = parseInt(input.value) || 1;
+  input.value = Math.max(1, cur + delta);
+}
+
+async function saveCollection(){
+  const date = document.getElementById('col-date').value || null;
+  const qty = Math.max(1, parseInt(document.getElementById('col-qty').value) || 1);
+  const note = document.getElementById('col-note').value.trim() || null;
+  const existing = myCollections[_colBadgeId];
+  if(existing){
+    // 更新
+    const { error } = await supabaseClient
+      .from('collections')
+      .update({ collected_date: date, quantity: qty, note })
+      .eq('id', existing.id);
+    if(error){ alert('儲存失敗：' + error.message); return; }
+  } else {
+    // 新增
+    const { error } = await supabaseClient
+      .from('collections')
+      .insert({ user_id: currentUser.id, badge_id: _colBadgeId, collected_date: date, quantity: qty, note });
+    if(error){ alert('儲存失敗：' + error.message); return; }
+  }
+  await loadMyCollections();
+  closeCollectionModal();
+  showToast(existing ? '已更新' : '已新增蒐集記錄');
+}
+
+async function deleteCollection(){
+  if(!confirm('確定要移除這筆蒐集記錄嗎？')) return;
+  const existing = myCollections[_colBadgeId];
+  if(!existing) return;
+  const { error } = await supabaseClient
+    .from('collections')
+    .delete()
+    .eq('id', existing.id);
+  if(error){ alert('移除失敗：' + error.message); return; }
+  await loadMyCollections();
+  closeCollectionModal();
+  showToast('已移除');
+}
 </script>
