@@ -432,6 +432,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
         <span id="hide-no-image-label">隱藏無圖徽章</span>
       </label>
     </div>
+    <div class="sidebar-section" id="my-lists-section" style="display:none;">
+      <h3 id="my-lists-title">⭐ 我的最愛</h3>
+      <div id="my-lists-content"></div>
+    </div>
     <div class="sidebar-section" id="band-section">
       <h3>樂團</h3>
       <div class="band-list" id="band-list"></div>
@@ -959,6 +963,7 @@ function applyFilters(){
     if(selCountries.size&&!selCountries.has(b.country)) return false;
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
+    if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
     return true;
   });
   res=res.slice().sort((a,b)=>{
@@ -1079,6 +1084,7 @@ function renderGrid(list){
       : shortEvent;
     return `<div class="badge-card" onclick="toggleCard(this,${idx})" style="position:relative;">
       <div class="badge-id-tag" style="position:absolute;top:5px;right:5px;z-index:2;background:rgba(0,0,0,0.5);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
+      <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
@@ -1328,7 +1334,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。', login:'登入', logout:'登出',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。', login:'登入', logout:'登出', myFavorites:'⭐ 我的最愛',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1348,7 +1354,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'© Bushiroad All Rights Reserved. 本サイトは非営利のファンデータベースです。画像の著作権は Bushiroad に帰属します。', login:'ログイン', logout:'ログアウト',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'© Bushiroad All Rights Reserved. 本サイトは非営利のファンデータベースです。画像の著作権は Bushiroad に帰属します。', login:'ログイン', logout:'ログアウト', myFavorites:'⭐ お気に入り',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1368,7 +1374,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'© Bushiroad All Rights Reserved. This is a non-profit fan database. All images are property of Bushiroad.', login:'Login', logout:'Logout',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'© Bushiroad All Rights Reserved. This is a non-profit fan database. All images are property of Bushiroad.', login:'Login', logout:'Logout', myFavorites:'⭐ My Favorites',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1388,7 +1394,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'© Bushiroad All Rights Reserved. 본 사이트는 비영리 팬 데이터베이스입니다. 이미지 저작권은 Bushiroad에 있습니다.', login:'로그인', logout:'로그아웃',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'© Bushiroad All Rights Reserved. 본 사이트는 비영리 팬 데이터베이스입니다. 이미지 저작권은 Bushiroad에 있습니다.', login:'로그인', logout:'로그아웃', myFavorites:'⭐ 즐겨찾기',
   },
 }
 let currentLang = (()=>{
@@ -1494,6 +1500,7 @@ function applyLang(){
   const cpr=document.getElementById('footer-copyright'); if(cpr&&L.copyright) cpr.textContent=L.copyright;
   const bll=document.getElementById('btn-login-label'); if(bll&&L.login) bll.textContent=L.login;
   const blo=document.getElementById('btn-logout'); if(blo&&L.logout) blo.textContent=L.logout;
+  const mlt=document.getElementById('my-lists-title'); if(mlt&&L.myFavorites) mlt.textContent=L.myFavorites;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
   if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
@@ -2685,6 +2692,17 @@ async function doExportTable(list, title, btn, progWrap, prog){
   </div>
 </footer>
 <!-- 分享 Modal -->
+<!-- 我的最愛 Modal -->
+<div id="fav-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeFavModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(380px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);">⭐ 收藏到清單</h2>
+      <button onclick="closeFavModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <div id="fav-modal-content"></div>
+  </div>
+</div>
+
 <div id="share-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:600;align-items:center;justify-content:center;" onclick="if(event.target===this)closeShareModal()">
   <div style="background:var(--surface);border-radius:16px;width:min(420px,96vw);padding:1.75rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
@@ -2919,4 +2937,217 @@ async function initAuth(){
 
 // 頁面載入後啟動
 initAuth();
+
+// ─────────────────────────────────────────
+//  我的最愛功能
+// ─────────────────────────────────────────
+let myLists = [];      // [{id, name}, ...]
+let myListItems = {};  // {badge_id: [list_id, list_id...]}
+let selectedList = null; // 當前篩選的清單 id
+
+function isInAnyList(badgeId){
+  return myListItems[badgeId] && myListItems[badgeId].length > 0;
+}
+
+async function loadMyLists(){
+  if(!currentUser) return;
+  // 載入清單
+  const { data: lists, error: e1 } = await supabaseClient
+    .from('lists')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at');
+  if(e1){ console.error(e1); return; }
+  myLists = lists || [];
+  // 載入清單內的徽章
+  const listIds = myLists.map(l=>l.id);
+  if(listIds.length){
+    const { data: items, error: e2 } = await supabaseClient
+      .from('list_items')
+      .select('*')
+      .in('list_id', listIds);
+    if(e2){ console.error(e2); return; }
+    myListItems = {};
+    (items||[]).forEach(it=>{
+      if(!myListItems[it.badge_id]) myListItems[it.badge_id] = [];
+      myListItems[it.badge_id].push(it.list_id);
+    });
+  } else {
+    myListItems = {};
+  }
+  buildMyListsSidebar();
+  applyFilters(); // 重畫卡片更新星星
+}
+
+function buildMyListsSidebar(){
+  const sec = document.getElementById('my-lists-section');
+  if(!sec) return;
+  if(!currentUser){
+    sec.style.display = 'none';
+    return;
+  }
+  sec.style.display = '';
+  if(!myLists.length){
+    document.getElementById('my-lists-content').innerHTML = '<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;">尚無清單，按徽章上的 ☆ 開始收藏</div>';
+    return;
+  }
+  document.getElementById('my-lists-content').innerHTML = myLists.map(l=>{
+    const count = Object.values(myListItems).filter(ids=>ids.includes(l.id)).length;
+    const isActive = selectedList === l.id;
+    return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#5a4fcf22':'transparent'};border:1.5px solid ${isActive?'#5a4fcf':'transparent'};margin-bottom:0.25rem;" onclick="filterByList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedList}')this.style.background='transparent'">
+      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">⭐ ${l.name}</span>
+      <span style="font-size:0.7rem;color:var(--muted);margin:0 0.4rem;">${count}</span>
+      <button onclick="event.stopPropagation();renameList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
+      <button onclick="event.stopPropagation();deleteList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
+    </div>`;
+  }).join('') + (selectedList ? `<button onclick="clearListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">取消篩選</button>` : '');
+}
+
+function filterByList(listId){
+  selectedList = selectedList === listId ? null : listId;
+  buildMyListsSidebar();
+  applyFilters();
+}
+function clearListFilter(){
+  selectedList = null;
+  buildMyListsSidebar();
+  applyFilters();
+}
+
+async function renameList(listId, oldName){
+  const newName = prompt('新清單名稱：', oldName);
+  if(!newName || newName.trim() === '' || newName === oldName) return;
+  const { error } = await supabaseClient
+    .from('lists')
+    .update({ name: newName.trim() })
+    .eq('id', listId);
+  if(error){ alert('改名失敗：' + error.message); return; }
+  await loadMyLists();
+  showToast('清單已改名');
+}
+
+async function deleteList(listId, name){
+  if(!confirm(`確定要刪除清單「${name}」嗎？\n清單內的徽章也會一併移除。`)) return;
+  // 先刪 list_items
+  await supabaseClient.from('list_items').delete().eq('list_id', listId);
+  // 再刪 list
+  const { error } = await supabaseClient.from('lists').delete().eq('id', listId);
+  if(error){ alert('刪除失敗：' + error.message); return; }
+  if(selectedList === listId) selectedList = null;
+  await loadMyLists();
+  showToast('清單已刪除');
+}
+
+// ── 收藏 Modal ──
+let _favBadgeId = null;
+
+function openFavModal(badgeId){
+  if(!currentUser){
+    showToast('請先登入');
+    return;
+  }
+  _favBadgeId = badgeId;
+  renderFavModal();
+  document.getElementById('fav-overlay').style.display = 'flex';
+}
+
+function closeFavModal(){
+  document.getElementById('fav-overlay').style.display = 'none';
+}
+
+function renderFavModal(){
+  const inLists = myListItems[_favBadgeId] || [];
+  const content = document.getElementById('fav-modal-content');
+  if(!myLists.length){
+    content.innerHTML = `
+      <div style="text-align:center;padding:1rem 0;">
+        <div style="font-size:0.85rem;color:var(--text);margin-bottom:0.85rem;">還沒有清單，建立第一個吧！</div>
+        <input type="text" id="fav-new-list-name" placeholder="如 我的最愛、想要的徽章" 
+          style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;margin-bottom:0.75rem;"/>
+        <button onclick="createListAndAdd()" style="width:100%;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">建立清單並收藏</button>
+      </div>`;
+    setTimeout(()=>document.getElementById('fav-new-list-name')?.focus(), 50);
+    return;
+  }
+  content.innerHTML = `
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">選擇清單：</div>
+    <div style="max-height:240px;overflow-y:auto;margin-bottom:0.85rem;">
+      ${myLists.map(l=>`
+        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);" 
+          onmouseover="this.style.background='#80808015'" onmouseout="this.style.background='transparent'">
+          <input type="checkbox" class="fav-list-cb" value="${l.id}" ${inLists.includes(l.id)?'checked':''} 
+            style="accent-color:#5a4fcf;cursor:pointer;width:16px;height:16px;"/>
+          <span>${l.name}</span>
+        </label>
+      `).join('')}
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:0.85rem;margin-bottom:0.5rem;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;">或新增清單：</div>
+      <div style="display:flex;gap:0.4rem;">
+        <input type="text" id="fav-new-list-name" placeholder="新清單名稱" 
+          style="flex:1;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.82rem;outline:none;"/>
+        <button onclick="createListAndAdd()" style="padding:0.45rem 0.85rem;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;">+ 新增</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.5rem;margin-top:0.85rem;">
+      <button onclick="closeFavModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+      <button onclick="saveFavSelections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
+    </div>`;
+}
+
+async function createListAndAdd(){
+  const name = document.getElementById('fav-new-list-name').value.trim();
+  if(!name) return;
+  const { data, error } = await supabaseClient
+    .from('lists')
+    .insert({ user_id: currentUser.id, name })
+    .select()
+    .single();
+  if(error){ alert('建立清單失敗：' + error.message); return; }
+  // 加入這個徽章
+  await supabaseClient
+    .from('list_items')
+    .insert({ list_id: data.id, badge_id: _favBadgeId });
+  await loadMyLists();
+  closeFavModal();
+  showToast('已加入「' + name + '」');
+}
+
+async function saveFavSelections(){
+  const checked = [...document.querySelectorAll('.fav-list-cb:checked')].map(cb=>cb.value);
+  const inLists = myListItems[_favBadgeId] || [];
+  // 要新增的
+  const toAdd = checked.filter(id=>!inLists.includes(id));
+  // 要移除的
+  const toRemove = inLists.filter(id=>!checked.includes(id));
+  // 執行
+  if(toAdd.length){
+    const inserts = toAdd.map(list_id=>({ list_id, badge_id: _favBadgeId }));
+    await supabaseClient.from('list_items').insert(inserts);
+  }
+  if(toRemove.length){
+    await supabaseClient.from('list_items')
+      .delete()
+      .in('list_id', toRemove)
+      .eq('badge_id', _favBadgeId);
+  }
+  await loadMyLists();
+  closeFavModal();
+  showToast('已更新');
+}
+
+// 登入後載入清單
+const _origUpdateAuthUI = updateAuthUI;
+updateAuthUI = function(){
+  _origUpdateAuthUI();
+  if(currentUser){
+    loadMyLists();
+  } else {
+    myLists = [];
+    myListItems = {};
+    selectedList = null;
+    buildMyListsSidebar();
+    applyFilters();
+  }
+};
 </script>
