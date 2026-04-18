@@ -99,6 +99,7 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&family=Kaisei+Decol:wght@700&family=Jua&display=swap" rel="stylesheet"/>
 
 
@@ -391,6 +392,18 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
     <button id="lang-en" onclick="setLang('en')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">EN</button>
     <button id="lang-ko" onclick="setLang('ko')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">한국어</button>
     <button id="theme-toggle" onclick="toggleTheme()" title="切換夜間模式" style="background:transparent;border:none;color:#fff;font-size:1.1rem;cursor:pointer;opacity:0.8;padding:0.1rem 0.2rem;">🌙</button>
+    <!-- 登入區塊 -->
+    <div id="auth-area" style="display:flex;align-items:center;gap:0.4rem;margin-left:0.3rem;">
+      <button id="btn-login" onclick="signInGoogle()" style="font-size:0.7rem;padding:0.25rem 0.7rem;border-radius:5px;background:#fff;border:none;color:#333;cursor:pointer;font-family:inherit;font-weight:600;display:none;align-items:center;gap:0.3rem;">
+        <svg width="12" height="12" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+        <span id="btn-login-label">登入</span>
+      </button>
+      <div id="user-info" style="display:none;align-items:center;gap:0.4rem;">
+        <img id="user-avatar" src="" alt="" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fff;"/>
+        <span id="user-name" style="font-size:0.7rem;color:#fff;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="signOut()" id="btn-logout" style="font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">登出</button>
+      </div>
+    </div>
   </div>
     <div class="site-logo">
       <span style="font-family:'Boogaloo',sans-serif;">BanG Dream!</span>
@@ -1315,7 +1328,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。', login:'登入', logout:'登出',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1335,7 +1348,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'© Bushiroad All Rights Reserved. 本サイトは非営利のファンデータベースです。画像の著作権は Bushiroad に帰属します。',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'© Bushiroad All Rights Reserved. 本サイトは非営利のファンデータベースです。画像の著作権は Bushiroad に帰属します。', login:'ログイン', logout:'ログアウト',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1355,7 +1368,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'© Bushiroad All Rights Reserved. This is a non-profit fan database. All images are property of Bushiroad.',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'© Bushiroad All Rights Reserved. This is a non-profit fan database. All images are property of Bushiroad.', login:'Login', logout:'Logout',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1375,7 +1388,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'© Bushiroad All Rights Reserved. 본 사이트는 비영리 팬 데이터베이스입니다. 이미지 저작권은 Bushiroad에 있습니다.',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'© Bushiroad All Rights Reserved. 본 사이트는 비영리 팬 데이터베이스입니다. 이미지 저작권은 Bushiroad에 있습니다.', login:'로그인', logout:'로그아웃',
   },
 }
 let currentLang = (()=>{
@@ -1479,6 +1492,8 @@ function applyLang(){
   const hni=document.getElementById('hide-no-image-label'); if(hni&&L.hideNoImage) hni.textContent=L.hideNoImage;
   const owi=document.getElementById('exp-only-img-label'); if(owi&&L.onlyWithImage) owi.textContent=L.onlyWithImage;
   const cpr=document.getElementById('footer-copyright'); if(cpr&&L.copyright) cpr.textContent=L.copyright;
+  const bll=document.getElementById('btn-login-label'); if(bll&&L.login) bll.textContent=L.login;
+  const blo=document.getElementById('btn-logout'); if(blo&&L.logout) blo.textContent=L.logout;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
   if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
@@ -2842,4 +2857,66 @@ function applyUrlParamsOnce(){
   });
   applyFilters();
 }
+
+// ─────────────────────────────────────────
+//  Supabase 登入功能
+// ─────────────────────────────────────────
+const SUPABASE_URL = 'https://drbytaxderxgeedlaceh.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_C6YvHm7fipQa8-xcbDxqag_NZAWGQSc';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+
+async function signInGoogle(){
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + window.location.pathname,
+    }
+  });
+  if(error){
+    showToast('登入失敗：' + error.message);
+    console.error(error);
+  }
+}
+
+async function signOut(){
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  updateAuthUI();
+  showToast('已登出');
+}
+
+function updateAuthUI(){
+  const btnLogin = document.getElementById('btn-login');
+  const userInfo = document.getElementById('user-info');
+  if(currentUser){
+    btnLogin.style.display = 'none';
+    userInfo.style.display = 'flex';
+    const meta = currentUser.user_metadata || {};
+    const name = meta.full_name || meta.name || currentUser.email || '用戶';
+    const avatar = meta.avatar_url || meta.picture || '';
+    document.getElementById('user-name').textContent = name;
+    if(avatar) document.getElementById('user-avatar').src = avatar;
+    else document.getElementById('user-avatar').style.display = 'none';
+  } else {
+    btnLogin.style.display = 'inline-flex';
+    userInfo.style.display = 'none';
+  }
+}
+
+async function initAuth(){
+  // 先檢查目前的 session
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(session) currentUser = session.user;
+  updateAuthUI();
+  // 監聽登入狀態變化
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    currentUser = session ? session.user : null;
+    updateAuthUI();
+    if(event === 'SIGNED_IN') showToast('登入成功！');
+  });
+}
+
+// 頁面載入後啟動
+initAuth();
 </script>
