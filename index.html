@@ -592,7 +592,7 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
-          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th>
+          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th><th id="th-actions" style="width:130px;">操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -616,6 +616,14 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
         <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
+      <div id="d-user-actions" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);gap:0.5rem;flex-wrap:wrap;">
+        <button id="d-fav-btn" onclick="_detailFav()" style="flex:1;min-width:120px;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.35rem;">
+          <span id="d-fav-icon">☆</span><span id="d-fav-label">加入清單</span>
+        </button>
+        <button id="d-col-btn" onclick="_detailCol()" style="flex:1;min-width:120px;padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.35rem;">
+          <span id="d-col-icon">+</span><span id="d-col-label">蒐集記錄</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1225,6 +1233,7 @@ function toggleCard(card, idx){
 function openDetail(idx){
   const b=all[idx];
   const c=bandColor(b.band);
+  _detailBadgeId = b.id;
   const dImg = document.getElementById('d-img');
   dImg.src=IMG_BASE_URL+b.id+'.'+(b.ext||'jpg');
   dImg.onerror=function(){this.style.display='none';};
@@ -1246,7 +1255,62 @@ function openDetail(idx){
   }
   const dn=document.getElementById('d-note');
   if(b.note){dn.textContent=b.note;dn.style.display='block';}else dn.style.display='none';
+  // 登入後才顯示 user actions
+  const actions = document.getElementById('d-user-actions');
+  if(actions){
+    if(currentUser){
+      actions.style.display = 'flex';
+      // 最愛
+      const favIcon = document.getElementById('d-fav-icon');
+      const favLabel = document.getElementById('d-fav-label');
+      const favBtn = document.getElementById('d-fav-btn');
+      if(isInAnyList(b.id)){
+        favIcon.textContent = '★';
+        favLabel.textContent = '管理清單';
+        favBtn.style.background = '#ffd70022';
+        favBtn.style.borderColor = '#ffd700';
+        favBtn.style.color = '#b78900';
+      } else {
+        favIcon.textContent = '☆';
+        favLabel.textContent = '加入清單';
+        favBtn.style.background = 'transparent';
+        favBtn.style.borderColor = 'var(--border)';
+        favBtn.style.color = 'var(--text)';
+      }
+      // 蒐集
+      const colIcon = document.getElementById('d-col-icon');
+      const colLabel = document.getElementById('d-col-label');
+      const colBtn = document.getElementById('d-col-btn');
+      if(isCollected(b.id)){
+        colIcon.textContent = '✓';
+        colLabel.textContent = '編輯／移除';
+        colBtn.style.background = '#22c55e22';
+        colBtn.style.borderColor = '#22c55e';
+        colBtn.style.color = '#15803d';
+      } else {
+        colIcon.textContent = '+';
+        colLabel.textContent = '蒐集記錄';
+        colBtn.style.background = 'transparent';
+        colBtn.style.borderColor = 'var(--border)';
+        colBtn.style.color = 'var(--text)';
+      }
+    } else {
+      actions.style.display = 'none';
+    }
+  }
   document.getElementById('detail-overlay').classList.add('active');
+}
+
+let _detailBadgeId = null;
+function _detailFav(){
+  if(!_detailBadgeId) return;
+  closeDetail();
+  openFavModal(_detailBadgeId);
+}
+function _detailCol(){
+  if(!_detailBadgeId) return;
+  closeDetail();
+  openCollectionModal(_detailBadgeId);
 }
 
 function maybeClose(e){if(e.target===document.getElementById('detail-overlay'))closeDetail();}
@@ -2034,7 +2098,7 @@ function setView(v){
 
 function renderTable(list){
   const tbody = document.getElementById('badge-tbody');
-  if(!list.length){ tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">${(LANGS[currentLang]||LANGS['zh-TW']).noData||'無符合資料'}</td></tr>`; return; }
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">${(LANGS[currentLang]||LANGS['zh-TW']).noData||'無符合資料'}</td></tr>`; return; }
   tbody.innerHTML = list.map((b,i)=>{
     const c = bandColor(b.band);
     const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
@@ -2042,15 +2106,35 @@ function renderTable(list){
     const eventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:underline;">${b.event||'—'}</a>`
       : (b.event||'—');
-    return `<tr onclick="openDetail(${idx})">
+    // 登入狀態下的操作 icon
+    const actionsHtml = currentUser ? `
+      <div style="display:flex;gap:0.35rem;align-items:center;" onclick="event.stopPropagation()">
+        ${_batchMode ? `<input type="checkbox" class="tbl-batch-cb" ${_batchSelected.has(b.id)?'checked':''} onchange="toggleBadgeSelection('${b.id}')" style="width:18px;height:18px;accent-color:#5a4fcf;cursor:pointer;"/>` : ''}
+        <button onclick="openFavModal('${b.id}')" title="加入清單"
+          style="background:${isInAnyList(b.id)?'#ffd70033':'transparent'};border:1.5px solid ${isInAnyList(b.id)?'#ffd700':'var(--border)'};border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.95rem;color:${isInAnyList(b.id)?'#b78900':'var(--muted)'};display:flex;align-items:center;justify-content:center;padding:0;">${isInAnyList(b.id)?'★':'☆'}</button>
+        <button onclick="openCollectionModal('${b.id}')" title="蒐集記錄"
+          style="background:${isCollected(b.id)?'#22c55e':'transparent'};border:1.5px solid ${isCollected(b.id)?'#22c55e':'var(--border)'};border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.85rem;font-weight:700;color:${isCollected(b.id)?'#fff':'var(--muted)'};display:flex;align-items:center;justify-content:center;padding:0;">${isCollected(b.id)?'✓':'+'}</button>
+      </div>` : '';
+    return `<tr data-badge-id="${b.id}" onclick="handleTableRowClick(event,'${b.id}',${idx})">
       <td><img class="tbl-thumb" src="${src}" onerror="this.style.visibility='hidden'" alt=""/></td>
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>
       <td>${b.year||'—'}</td>
       <td>${b.series||'—'}</td>
+      <td>${actionsHtml}</td>
     </tr>`;
   }).join('');
+}
+
+// 表格 row 點擊分流：批次模式 → toggle 選取；否則 → 打開 detail
+function handleTableRowClick(ev, badgeId, idx){
+  if(_batchMode){
+    ev.stopPropagation();
+    toggleBadgeSelection(badgeId);
+    return;
+  }
+  openDetail(idx);
 }
 
 /* Override applyFilters to also store filtered list and update table */
