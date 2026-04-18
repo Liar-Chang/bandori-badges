@@ -396,6 +396,9 @@ body.batch-mode .col-btn{pointer-events:none;opacity:0.4;}
 .badge-card.batch-selected .badge-batch-cb{background:#5a4fcf;border-color:#5a4fcf;}
 body.batch-mode .badge-card{cursor:pointer;}
 
+/* 批次模式下隱藏推薦歌曲浮動播放器，避免重疊 action bar */
+body.batch-mode .song-fab{display:none !important;}
+
 /* 批次模式下，禁止卡片 expand 的視覺暗示 */
 body.batch-mode .badge-card.expanded{grid-column:auto;}
 body.batch-mode .badge-card-expand{display:none !important;}
@@ -490,13 +493,23 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
 <div class="layout" id="layout">
   <aside class="sidebar" id="sidebar">
     <!-- 手機版語言/夜間模式控制列 -->
-    <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+    <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);flex-wrap:wrap;">
       <button onclick="toggleBatchMode()" id="btn-batch-toggle-mobile" class="btn-batch-toggle" title="批次選取" style="display:none;font-size:0.72rem;padding:0.25rem 0.55rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">☑ 批次</button>
       <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
       <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
       <button onclick="setLang('en')" id="mlang-en" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">EN</button>
       <button onclick="setLang('ko')" id="mlang-ko" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">한국어</button>
       <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
+      <!-- 手機版登入/登出 -->
+      <button id="btn-login-mobile" onclick="signInGoogle()" style="font-size:0.72rem;padding:0.25rem 0.7rem;border-radius:5px;background:#5a4fcf;border:none;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;display:none;align-items:center;gap:0.3rem;">
+        <svg width="11" height="11" viewBox="0 0 48 48"><path fill="#fff" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/></svg>
+        登入
+      </button>
+      <div id="user-info-mobile" style="display:none;align-items:center;gap:0.4rem;">
+        <img id="user-avatar-mobile" src="" alt="" style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);"/>
+        <span id="user-name-mobile" style="font-size:0.7rem;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="signOut()" id="btn-logout-mobile" style="font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:inherit;">登出</button>
+      </div>
     </div>
 
     <div class="sidebar-section" id="search-section">
@@ -3044,22 +3057,39 @@ function updateAuthUI(){
   const userInfo = document.getElementById('user-info');
   const btnBatch = document.getElementById('btn-batch-toggle');
   const btnBatchMobile = document.getElementById('btn-batch-toggle-mobile');
+  // 手機版的登入相關元件
+  const btnLoginMobile = document.getElementById('btn-login-mobile');
+  const userInfoMobile = document.getElementById('user-info-mobile');
+
   if(currentUser){
     btnLogin.style.display = 'none';
     userInfo.style.display = 'flex';
     if(btnBatch) btnBatch.style.display = 'inline-flex';
     if(btnBatchMobile) btnBatchMobile.style.display = 'inline-flex';
+    if(btnLoginMobile) btnLoginMobile.style.display = 'none';
+    if(userInfoMobile) userInfoMobile.style.display = 'flex';
+
     const meta = currentUser.user_metadata || {};
     const name = meta.full_name || meta.name || currentUser.email || '用戶';
     const avatar = meta.avatar_url || meta.picture || '';
     document.getElementById('user-name').textContent = name;
     if(avatar) document.getElementById('user-avatar').src = avatar;
     else document.getElementById('user-avatar').style.display = 'none';
+    // 同步手機版
+    const nameMobile = document.getElementById('user-name-mobile');
+    const avatarMobile = document.getElementById('user-avatar-mobile');
+    if(nameMobile) nameMobile.textContent = name;
+    if(avatarMobile){
+      if(avatar) avatarMobile.src = avatar;
+      else avatarMobile.style.display = 'none';
+    }
   } else {
     btnLogin.style.display = 'inline-flex';
     userInfo.style.display = 'none';
     if(btnBatch) btnBatch.style.display = 'none';
     if(btnBatchMobile) btnBatchMobile.style.display = 'none';
+    if(btnLoginMobile) btnLoginMobile.style.display = 'inline-flex';
+    if(userInfoMobile) userInfoMobile.style.display = 'none';
   }
 }
 
