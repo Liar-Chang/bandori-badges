@@ -2884,6 +2884,32 @@ async function doExportTable(list, title, btn, progWrap, prog){
 <!-- ── 批次選取 UI ── -->
 <div id="_toast"></div>
 
+<!-- WebView 內嵌瀏覽器警告視窗 -->
+<div id="webview-overlay" style="display:none;position:fixed;inset:0;background:#000a;z-index:800;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:var(--surface);border-radius:16px;width:min(420px,96vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+      <span style="font-size:1.3rem;">⚠️</span>
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);margin:0;" id="wv-title">建議使用系統瀏覽器開啟</h2>
+    </div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:1.1rem;" id="wv-desc">
+      目前您是從 app 內建的瀏覽器開啟本網站，Google 基於安全政策會封鎖在此環境下的登入功能。<br><br>
+      建議改用 <b>Safari</b>、<b>Chrome</b> 等系統瀏覽器開啟，即可正常使用登入／我的最愛／蒐集記錄等功能。
+    </div>
+    <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.55rem 0.75rem;font-family:monospace;font-size:0.75rem;color:var(--text);word-break:break-all;margin-bottom:0.85rem;" id="wv-url"></div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      <button onclick="_webviewCopyUrl()" id="wv-btn-copy" style="padding:0.6rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">
+        📋 <span id="wv-btn-copy-label">複製網址</span>
+      </button>
+      <button onclick="_webviewOpenExternal()" id="wv-btn-open" style="padding:0.6rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">
+        🌐 <span id="wv-btn-open-label">嘗試用外部瀏覽器開啟</span>
+      </button>
+      <button onclick="_webviewDismiss()" style="padding:0.5rem;border:none;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.78rem;" id="wv-btn-dismiss">
+        我知道了，先繼續瀏覽
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="batch-action-bar" id="batch-bar">
   <span class="count">已選 <b id="batch-count">0</b> 張</span>
   <button class="btn-select-all" id="btn-batch-select-all" onclick="batchToggleSelectAll()">全選目前顯示</button>
@@ -3117,6 +3143,12 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 let currentUser = null;
 
 async function signInGoogle(){
+  // 如果在 WebView 內，攔截登入、改為顯示警告視窗（避開 Google 403）
+  if(typeof _isInAppBrowser === 'function' && _isInAppBrowser()){
+    try { sessionStorage.removeItem('_webview_dismissed'); } catch(e) {}
+    if(typeof _webviewShow === 'function') _webviewShow();
+    return;
+  }
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -3573,6 +3605,114 @@ if(typeof window.showToast !== 'function'){
     window._toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
   };
 }
+
+// ─────────────────────────────────────────
+//  WebView (in-app browser) 偵測與提示
+// ─────────────────────────────────────────
+// 偵測常見 app 的內嵌瀏覽器 userAgent 特徵
+function _isInAppBrowser(){
+  const ua = (navigator.userAgent || '').toLowerCase();
+  // 已知會有 Google OAuth disallowed_useragent 問題的 app
+  const patterns = [
+    'instagram',        // Instagram / Threads（Threads 共用 IG 的 WebView）
+    'fbav', 'fban',     // Facebook app
+    'fb_iab',           // Facebook in-app browser
+    'messenger',        // Facebook Messenger
+    'line/',            // LINE
+    'micromessenger',   // WeChat
+    'weibo',            // Weibo
+    'qq/',              // QQ
+    'tiktok',           // TikTok
+    'twitter',          // X/Twitter（通常也會擋）
+    'threads',          // Threads 的另一種 UA
+    'kakaotalk',        // KakaoTalk
+  ];
+  return patterns.some(p => ua.includes(p));
+}
+
+function _webviewShow(){
+  const overlay = document.getElementById('webview-overlay');
+  if(!overlay) return;
+  document.getElementById('wv-url').textContent = window.location.href;
+  overlay.style.display = 'flex';
+}
+
+function _webviewDismiss(){
+  const overlay = document.getElementById('webview-overlay');
+  if(!overlay) return;
+  overlay.style.display = 'none';
+  // 記錄本次 session 已經提示過，不要重複彈
+  try { sessionStorage.setItem('_webview_dismissed', '1'); } catch(e) {}
+}
+
+function _webviewCopyUrl(){
+  const url = window.location.href;
+  const btn = document.getElementById('wv-btn-copy-label');
+  const orig = btn ? btn.textContent : '';
+  const finish = (ok)=>{
+    if(!btn) return;
+    btn.textContent = ok ? '✓ 已複製，請貼到 Safari/Chrome' : '複製失敗，請手動選取';
+    setTimeout(()=>{ if(btn) btn.textContent = orig; }, 2800);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>finish(true)).catch(()=>finish(false));
+  } else {
+    // fallback: 建立 textarea 選取複製
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      finish(true);
+    } catch(e){ finish(false); }
+  }
+}
+
+function _webviewOpenExternal(){
+  // 沒有通用的「強制外部瀏覽器」API，只能盡力嘗試
+  const url = window.location.href;
+  const ua = (navigator.userAgent || '').toLowerCase();
+
+  // Android：intent:// URL 在部分 app 裡會觸發選擇外部瀏覽器
+  if(/android/i.test(navigator.userAgent)){
+    const intentUrl = 'intent://' + url.replace(/^https?:\/\//, '') +
+      '#Intent;scheme=https;end';
+    window.location.href = intentUrl;
+    return;
+  }
+
+  // iOS：沒有可靠方法，只能顯示複製提示
+  // 嘗試 googlechromes:// 直接開 Chrome（若使用者有裝）
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)){
+    const chromeUrl = url.replace(/^https?:/, 'googlechromes:');
+    // 嘗試開 Chrome，沒有的話留在原處
+    const a = document.createElement('a');
+    a.href = chromeUrl;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // 提示使用者
+    setTimeout(()=>{
+      const btn = document.getElementById('wv-btn-open-label');
+      if(btn) btn.textContent = '若無法開啟，請用上方「複製網址」';
+    }, 800);
+    return;
+  }
+
+  // 其他環境：直接 window.open
+  window.open(url, '_blank', 'noopener');
+}
+
+// 頁面載入後自動檢查 WebView 環境
+(function _webviewInit(){
+  if(!_isInAppBrowser()) return;
+  // 本 session 已經主動關閉過，不要再彈
+  try { if(sessionStorage.getItem('_webview_dismissed') === '1') return; } catch(e) {}
+  // 延遲一點再彈，等頁面穩定
+  setTimeout(_webviewShow, 800);
+})();
 
 // ─────────────────────────────────────────
 //  批次選取功能（Phase 4）
