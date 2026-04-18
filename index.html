@@ -1084,7 +1084,8 @@ function applyFilters(){
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
-    if(showOnlyCollected && !isCollected(b.id)) return false;
+    if(collectedFilter === 'collected' && !isCollected(b.id)) return false;
+    if(collectedFilter === 'uncollected' && !isUncollected(b.id)) return false;
     return true;
   });
   res=res.slice().sort((a,b)=>{
@@ -1169,7 +1170,7 @@ function applyFilters(){
   const hasFilter = selBands.size||selYears.size||selSeries.size||selEvents.size||
     selTypes.size||selChars.size||selSizes.size||selCountries.size||
     document.getElementById('search').value.trim()||
-    selectedList||showOnlyCollected;
+    selectedList||(collectedFilter !== 'all');
   if(!hasFilter){
     const L=LANGS[currentLang];
     document.getElementById('result-count').textContent=L.noFilter;
@@ -3451,7 +3452,7 @@ updateAuthUI = function(){
     myListItems = {};
     myCollections = {};
     selectedList = null;
-    showOnlyCollected = false;
+    collectedFilter = 'all';
     // 登出時一併退出批次模式
     if(typeof exitBatchMode === 'function') exitBatchMode();
     buildMyListsSidebar();
@@ -3464,10 +3465,22 @@ updateAuthUI = function(){
 //  蒐集記錄功能
 // ─────────────────────────────────────────
 let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}}
-let showOnlyCollected = false;
+// 三態篩選：'all' | 'collected' | 'uncollected'
+// 'collected' = 有蒐集記錄且數量 > 0
+// 'uncollected' = 沒蒐集記錄 OR 數量為 0
+let collectedFilter = 'all';
 
 function isCollected(badgeId){
-  return !!myCollections[badgeId];
+  const c = myCollections[badgeId];
+  if(!c) return false;
+  // 數量為 0 視為未蒐集（手動標記「曾經有但目前不在手上」）
+  const qty = (c.quantity == null) ? 1 : Number(c.quantity);
+  return qty > 0;
+}
+
+function isUncollected(badgeId){
+  // 沒記錄 OR 數量為 0
+  return !isCollected(badgeId);
 }
 
 async function loadMyCollections(){
@@ -3493,19 +3506,45 @@ function buildCollectionSidebar(){
     return;
   }
   sec.style.display = '';
-  const count = Object.keys(myCollections).length;
-  const totalQty = Object.values(myCollections).reduce((sum,c)=>sum+(c.quantity||1), 0);
-  document.getElementById('collection-content').innerHTML = `
-    <div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${showOnlyCollected?'#22c55e22':'transparent'};border:1.5px solid ${showOnlyCollected?'#22c55e':'transparent'};margin-bottom:0.25rem;" onclick="toggleCollectedFilter()" onmouseover="if(!${showOnlyCollected})this.style.background='#80808015'" onmouseout="if(!${showOnlyCollected})this.style.background='transparent'">
-      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">✓ <span id="col-label-text">已蒐集</span></span>
-      <span style="font-size:0.7rem;color:var(--muted);">${count} / ${totalQty}個</span>
+  // 計算各類別數量
+  const allBadgeCount = (typeof badges !== 'undefined' && Array.isArray(badges)) ? badges.length : 0;
+  let collectedCount = 0;
+  let totalQty = 0;
+  Object.keys(myCollections).forEach(bid=>{
+    if(isCollected(bid)){
+      collectedCount++;
+      totalQty += Number(myCollections[bid].quantity || 1);
+    }
+  });
+  const uncollectedCount = allBadgeCount - collectedCount;
+
+  // 三段切換按鈕
+  const mkBtn = (val, label, count, color) => {
+    const active = collectedFilter === val;
+    const bg = active ? `${color}22` : 'transparent';
+    const border = active ? color : 'transparent';
+    return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${bg};border:1.5px solid ${border};margin-bottom:0.25rem;" onclick="setCollectedFilter('${val}')" onmouseover="if(!${active})this.style.background='#80808015'" onmouseout="if(!${active})this.style.background='transparent'">
+      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${label}</span>
+      <span style="font-size:0.7rem;color:var(--muted);">${count}</span>
     </div>`;
+  };
+
+  document.getElementById('collection-content').innerHTML =
+    mkBtn('all', '◯ <span id="col-label-all">全部</span>', allBadgeCount, '#9ca3af') +
+    mkBtn('collected', '✓ <span id="col-label-text">已蒐集</span>', `${collectedCount} / ${totalQty}個`, '#22c55e') +
+    mkBtn('uncollected', '✗ <span id="col-label-uncol">未蒐集</span>', uncollectedCount, '#f59e0b');
 }
 
-function toggleCollectedFilter(){
-  showOnlyCollected = !showOnlyCollected;
+function setCollectedFilter(val){
+  if(!['all','collected','uncollected'].includes(val)) return;
+  collectedFilter = val;
   buildCollectionSidebar();
   applyFilters();
+}
+
+// 保留向下相容：舊的 toggle 行為（已蒐集 ↔ 全部）
+function toggleCollectedFilter(){
+  setCollectedFilter(collectedFilter === 'collected' ? 'all' : 'collected');
 }
 
 // ── 蒐集 Modal ──
