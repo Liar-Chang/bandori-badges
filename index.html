@@ -3580,10 +3580,15 @@ function buildSmartListsSidebar(){
     return;
   }
   // 計算每個智慧清單的「總數 / 已蒐集數」
+  // 同步「隱藏無圖徽章」狀態，確保跟蒐集記錄三段、result-count 數字一致
+  const hideNoImg = document.getElementById('hide-no-image')?.checked;
   const filteredAll = (typeof all !== 'undefined' && Array.isArray(all)) ? all : [];
   document.getElementById('smart-lists-content').innerHTML = mySmartLists.map(l=>{
     const cond = l.filter_conditions || {};
-    const matched = filteredAll.filter(b=>matchesSmartListCondition(b, cond));
+    let matched = filteredAll.filter(b=>matchesSmartListCondition(b, cond));
+    if(hideNoImg && typeof _noImgIds !== 'undefined'){
+      matched = matched.filter(b=>!_noImgIds.has(b.id));
+    }
     const total = matched.length;
     const collected = matched.filter(b=>isCollected(b.id)).length;
     const isActive = selectedSmartList === l.id;
