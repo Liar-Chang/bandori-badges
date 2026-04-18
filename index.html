@@ -473,10 +473,10 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
         <svg width="12" height="12" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
         <span id="btn-login-label">登入</span>
       </button>
+      <button onclick="toggleBatchMode()" id="btn-batch-toggle" class="btn-batch-toggle" title="批次選取" style="display:none;font-size:0.65rem;padding:0.2rem 0.55rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;align-items:center;">☑ 批次</button>
       <div id="user-info" style="display:none;align-items:center;gap:0.4rem;">
         <img id="user-avatar" src="" alt="" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fff;"/>
         <span id="user-name" style="font-size:0.7rem;color:#fff;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button onclick="toggleBatchMode()" id="btn-batch-toggle" class="btn-batch-toggle" title="批次選取" style="font-size:0.65rem;padding:0.2rem 0.55rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">☑ 批次</button>
         <button onclick="signOut()" id="btn-logout" style="font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">登出</button>
       </div>
     </div>
@@ -3036,10 +3036,12 @@ async function signOut(){
 function updateAuthUI(){
   const btnLogin = document.getElementById('btn-login');
   const userInfo = document.getElementById('user-info');
+  const btnBatch = document.getElementById('btn-batch-toggle');
   const btnBatchMobile = document.getElementById('btn-batch-toggle-mobile');
   if(currentUser){
     btnLogin.style.display = 'none';
     userInfo.style.display = 'flex';
+    if(btnBatch) btnBatch.style.display = 'inline-flex';
     if(btnBatchMobile) btnBatchMobile.style.display = 'inline-flex';
     const meta = currentUser.user_metadata || {};
     const name = meta.full_name || meta.name || currentUser.email || '用戶';
@@ -3050,6 +3052,7 @@ function updateAuthUI(){
   } else {
     btnLogin.style.display = 'inline-flex';
     userInfo.style.display = 'none';
+    if(btnBatch) btnBatch.style.display = 'none';
     if(btnBatchMobile) btnBatchMobile.style.display = 'none';
   }
 }
@@ -3063,8 +3066,12 @@ async function initAuth(){
   supabaseClient.auth.onAuthStateChange((event, session) => {
     currentUser = session ? session.user : null;
     updateAuthUI();
+    // 保險：延遲再跑一次，避開任何 DOM 時序問題
+    setTimeout(updateAuthUI, 100);
     if(event === 'SIGNED_IN') showToast('登入成功！');
   });
+  // 保險：initAuth 完成後也延遲再跑一次
+  setTimeout(updateAuthUI, 300);
 }
 
 // 頁面載入後啟動
