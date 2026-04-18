@@ -399,6 +399,18 @@ body.batch-mode .badge-card{cursor:pointer;}
 /* 批次模式下隱藏推薦歌曲浮動播放器，避免重疊 action bar */
 body.batch-mode .song-fab{display:none !important;}
 
+/* 任何 modal/overlay 開啟時也隱藏推薦歌曲，避免擋到取消/下載/儲存按鈕 */
+body.modal-open .song-fab{display:none !important;}
+/* 進階：支援 :has() 的瀏覽器自動偵測（不用靠 JS）*/
+body:has(#export-overlay.active) .song-fab,
+body:has(#fav-overlay[style*="flex"]) .song-fab,
+body:has(#col-overlay[style*="flex"]) .song-fab,
+body:has(#batch-list-overlay[style*="flex"]) .song-fab,
+body:has(#batch-col-overlay[style*="flex"]) .song-fab,
+body:has(#share-overlay[style*="flex"]) .song-fab,
+body:has(#webview-overlay[style*="flex"]) .song-fab,
+body:has(.detail-overlay.active) .song-fab{display:none !important;}
+
 /* 批次模式下，禁止卡片 expand 的視覺暗示 */
 body.batch-mode .badge-card.expanded{grid-column:auto;}
 body.batch-mode .badge-card-expand{display:none !important;}
@@ -3712,6 +3724,42 @@ function _webviewOpenExternal(){
   try { if(sessionStorage.getItem('_webview_dismissed') === '1') return; } catch(e) {}
   // 延遲一點再彈，等頁面穩定
   setTimeout(_webviewShow, 800);
+})();
+
+// ─────────────────────────────────────────
+//  Modal 開啟時自動隱藏 song-fab（JS fallback for browsers without :has() ）
+// ─────────────────────────────────────────
+(function _modalSongFabSync(){
+  const ids = ['export-overlay','fav-overlay','col-overlay',
+    'batch-list-overlay','batch-col-overlay','share-overlay',
+    'webview-overlay','detail-overlay'];
+  function check(){
+    const anyOpen = ids.some(id=>{
+      const el = document.getElementById(id);
+      if(!el) return false;
+      // detail-overlay 用 .active class，其他用 inline display:flex
+      if(id === 'detail-overlay') return el.classList.contains('active');
+      if(id === 'export-overlay') return el.classList.contains('active');
+      const d = (el.style.display || '').toLowerCase();
+      return d === 'flex' || d === 'block';
+    });
+    document.body.classList.toggle('modal-open', anyOpen);
+  }
+  // MutationObserver 監聽每個 overlay 的 attribute 變化
+  function observeAll(){
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      const mo = new MutationObserver(check);
+      mo.observe(el, { attributes:true, attributeFilter:['style','class'] });
+    });
+    check(); // 初始一次
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', observeAll);
+  } else {
+    observeAll();
+  }
 })();
 
 // ─────────────────────────────────────────
