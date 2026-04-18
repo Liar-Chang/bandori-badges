@@ -537,6 +537,10 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
       <h3 id="my-lists-title">⭐ 我的最愛</h3>
       <div id="my-lists-content"></div>
     </div>
+    <div class="sidebar-section" id="smart-lists-section" style="display:none;">
+      <h3 id="smart-lists-title">🔍 智慧清單</h3>
+      <div id="smart-lists-content"></div>
+    </div>
     <div class="sidebar-section" id="collection-section" style="display:none;">
       <h3 id="collection-title">✓ 蒐集記錄</h3>
       <div id="collection-content"></div>
@@ -585,7 +589,10 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
   <div class="main-wrap">
   <main class="main">
     <div class="result-bar">
-      <div class="result-count" id="result-count"></div>
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+        <div class="result-count" id="result-count"></div>
+        <button id="save-smart-list-btn" onclick="saveCurrentFiltersAsSmartList()" style="display:none;font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;background:#0ea5e911;border:1.5px solid #0ea5e9;color:#0ea5e9;cursor:pointer;white-space:nowrap;" title="把目前的篩選條件存為智慧清單">💾 儲存為智慧清單</button>
+      </div>
       <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
         <select class="sort-select" id="sort" onchange="applyFilters()">
   <option value="year-desc">發售日期（新→舊）</option>
@@ -1188,11 +1195,23 @@ function applyFilters(){
         <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${(LANGS[currentLang]||LANGS['zh-TW']).filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
       </div>`;
     if(currentUser) buildCollectionSidebar();
+    if(currentUser) buildSmartListsSidebar();
     return;
   }
   document.getElementById('result-count').textContent=`顯示 ${res.length} / ${all.length} 枚`;
   renderGrid(res);
   if(currentUser) buildCollectionSidebar();
+  if(currentUser) buildSmartListsSidebar();
+  // 智慧清單同步檢查：若使用者改了條件，取消當前 active 狀態
+  if(selectedSmartList){
+    const sl = mySmartLists.find(l=>l.id == selectedSmartList);
+    if(sl && !isCurrentFiltersSameAs(sl.filter_conditions)){
+      selectedSmartList = null;
+      buildSmartListsSidebar();
+    }
+  }
+  // 更新「💾 儲存為智慧清單」按鈕狀態
+  if(typeof updateSaveSmartListButton === 'function') updateSaveSmartListButton();
 }
 
 function renderGrid(list){
@@ -3317,6 +3336,11 @@ function buildMyListsSidebar(){
 
 function filterByList(listId){
   selectedList = selectedList === listId ? null : listId;
+  // 智慧清單與手動清單互斥
+  if(selectedList && selectedSmartList){
+    selectedSmartList = null;
+    if(typeof buildSmartListsSidebar === 'function') buildSmartListsSidebar();
+  }
   buildMyListsSidebar();
   applyFilters();
 }
@@ -3455,23 +3479,294 @@ updateAuthUI = function(){
   if(currentUser){
     loadMyLists();
     loadMyCollections();
+    loadMySmartLists();
   } else {
     myLists = [];
     myListItems = {};
     myCollections = {};
+    mySmartLists = [];
     selectedList = null;
+    selectedSmartList = null;
     collectedFilter = 'all';
     // 登出時一併退出批次模式
     if(typeof exitBatchMode === 'function') exitBatchMode();
     buildMyListsSidebar();
+    buildSmartListsSidebar();
     buildCollectionSidebar();
     applyFilters();
   }
 };
 
 // ─────────────────────────────────────────
-//  蒐集記錄功能
+//  智慧清單功能
 // ─────────────────────────────────────────
+let mySmartLists = [];        // [{id, name, filter_conditions}, ...]
+let selectedSmartList = null; // 當前套用的智慧清單 id
+const SMART_LIST_MAX = 20;    // 一個使用者最多 20 個
+
+// 把當前所有篩選條件序列化成 JSON
+function serializeCurrentFilters(){
+  return {
+    bands: [...selBands],
+    chars: [...selChars],
+    years: [...selYears],
+    series: [...selSeries],
+    events: [...selEvents],
+    types: [...selTypes],
+    sizes: [...selSizes],
+    countries: [...selCountries],
+    search: (document.getElementById('search')?.value || '').trim()
+  };
+}
+
+// 套用 JSON 條件到當前篩選器
+function applySmartListFilters(cond){
+  if(!cond) return;
+  selBands.clear(); (cond.bands||[]).forEach(v=>selBands.add(v));
+  selChars.clear(); (cond.chars||[]).forEach(v=>selChars.add(v));
+  selYears.clear(); (cond.years||[]).forEach(v=>selYears.add(v));
+  selSeries.clear(); (cond.series||[]).forEach(v=>selSeries.add(v));
+  selEvents.clear(); (cond.events||[]).forEach(v=>selEvents.add(v));
+  selTypes.clear(); (cond.types||[]).forEach(v=>selTypes.add(v));
+  selSizes.clear(); (cond.sizes||[]).forEach(v=>selSizes.add(v));
+  selCountries.clear(); (cond.countries||[]).forEach(v=>selCountries.add(v));
+  const sb = document.getElementById('search');
+  if(sb) sb.value = cond.search || '';
+  // 重畫所有 sidebar 的高亮狀態
+  if(typeof buildSidebar === 'function') buildSidebar();
+  if(typeof buildCharList === 'function') buildCharList();
+}
+
+// 比較當前篩選條件是否跟某個智慧清單相同
+function isCurrentFiltersSameAs(cond){
+  if(!cond) return false;
+  const cur = serializeCurrentFilters();
+  const eq = (a, b) => {
+    const sa = [...(a||[])].sort().join('|');
+    const sb = [...(b||[])].sort().join('|');
+    return sa === sb;
+  };
+  return eq(cur.bands, cond.bands) && eq(cur.chars, cond.chars) &&
+         eq(cur.years, cond.years) && eq(cur.series, cond.series) &&
+         eq(cur.events, cond.events) && eq(cur.types, cond.types) &&
+         eq(cur.sizes, cond.sizes) && eq(cur.countries, cond.countries) &&
+         (cur.search || '') === (cond.search || '');
+}
+
+async function loadMySmartLists(){
+  if(!currentUser) return;
+  const { data, error } = await supabaseClient
+    .from('smart_lists')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at');
+  if(error){ console.error('loadMySmartLists', error); return; }
+  mySmartLists = data || [];
+  buildSmartListsSidebar();
+  applyFilters();
+}
+
+function buildSmartListsSidebar(){
+  const sec = document.getElementById('smart-lists-section');
+  if(!sec) return;
+  if(!currentUser){
+    sec.style.display = 'none';
+    return;
+  }
+  sec.style.display = '';
+  if(!mySmartLists.length){
+    document.getElementById('smart-lists-content').innerHTML =
+      '<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;line-height:1.5;">尚無智慧清單。<br>選好篩選條件後可儲存。</div>';
+    return;
+  }
+  // 計算每個智慧清單的「總數 / 已蒐集數」
+  const filteredAll = (typeof all !== 'undefined' && Array.isArray(all)) ? all : [];
+  document.getElementById('smart-lists-content').innerHTML = mySmartLists.map(l=>{
+    const cond = l.filter_conditions || {};
+    const matched = filteredAll.filter(b=>matchesSmartListCondition(b, cond));
+    const total = matched.length;
+    const collected = matched.filter(b=>isCollected(b.id)).length;
+    const isActive = selectedSmartList === l.id;
+    const safeName = (l.name||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#0ea5e922':'transparent'};border:1.5px solid ${isActive?'#0ea5e9':'transparent'};margin-bottom:0.25rem;" onclick="filterBySmartList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedSmartList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedSmartList}')this.style.background='transparent'">
+      <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
+      <span style="font-size:0.7rem;color:var(--muted);margin:0 0.4rem;white-space:nowrap;">${collected}/${total}</span>
+      <button onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
+      <button onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
+    </div>`;
+  }).join('') + (selectedSmartList ? `<button onclick="clearSmartListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">取消套用</button>` : '');
+}
+
+// 判斷某張徽章是否符合一個智慧清單的條件
+// 注意：CHAR_TO_BAND 只在 applyFilters 內定義，所以這邊用簡化邏輯（不處理跨樂團合照）
+function matchesSmartListCondition(b, cond){
+  if(!cond) return true;
+  if((cond.bands||[]).length){
+    // 簡化：只比對 b.band，不處理跨樂團合照（applyFilters 才有完整邏輯）
+    if(!cond.bands.includes(b.band)){
+      // 也比對角色帶出的樂團（簡化版）
+      let bandMatch = false;
+      if(b.character){
+        for(const ch of b.character.split('x')){
+          if(cond.bands.some(bn=>{
+            // 全團徽章
+            if(b.character === bn+'全團') return true;
+            return false;
+          })){ bandMatch = true; break; }
+        }
+      }
+      if(!bandMatch) return false;
+    }
+  }
+  if((cond.chars||[]).length){
+    const charMatch = cond.chars.some(sel=>{
+      if(!sel || !b.character) return false;
+      if(b.character === sel) return true;
+      if(!sel.includes('x') && !sel.includes('全團')){
+        return b.character.split('x').includes(sel);
+      }
+      return false;
+    });
+    if(!charMatch) return false;
+  }
+  if((cond.years||[]).length){
+    const y = (b.year||'').match(/\d{4}/)?.[0] || '';
+    if(!cond.years.includes(y)) return false;
+  }
+  if((cond.series||[]).length && !cond.series.includes(b.series)) return false;
+  if((cond.events||[]).length && !cond.events.includes(b.event)) return false;
+  if((cond.types||[]).length && !cond.types.includes(b.type)) return false;
+  if((cond.sizes||[]).length && !cond.sizes.includes(b.size)) return false;
+  if((cond.countries||[]).length && !cond.countries.includes(b.country)) return false;
+  if(cond.search){
+    const q = cond.search.toLowerCase();
+    if(![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+function filterBySmartList(listId){
+  const sl = mySmartLists.find(l=>l.id == listId);
+  if(!sl) return;
+  // 切換：若已套用就取消
+  if(selectedSmartList == listId){
+    clearSmartListFilter();
+    return;
+  }
+  // 套用此清單的條件
+  selectedSmartList = listId;
+  // 同時清空手動清單篩選（兩者互斥）
+  selectedList = null;
+  applySmartListFilters(sl.filter_conditions);
+  buildSmartListsSidebar();
+  if(typeof buildMyListsSidebar === 'function') buildMyListsSidebar();
+  applyFilters();
+}
+
+function clearSmartListFilter(){
+  selectedSmartList = null;
+  // 清空所有篩選條件
+  selBands.clear(); selChars.clear(); selYears.clear(); selSeries.clear();
+  selEvents.clear(); selTypes.clear(); selSizes.clear(); selCountries.clear();
+  const sb = document.getElementById('search');
+  if(sb) sb.value = '';
+  if(typeof buildSidebar === 'function') buildSidebar();
+  if(typeof buildCharList === 'function') buildCharList();
+  buildSmartListsSidebar();
+  applyFilters();
+}
+
+async function saveCurrentFiltersAsSmartList(){
+  if(!currentUser){
+    alert('請先登入');
+    return;
+  }
+  if(mySmartLists.length >= SMART_LIST_MAX){
+    alert(`智慧清單最多 ${SMART_LIST_MAX} 個，請先刪除不用的`);
+    return;
+  }
+  const cond = serializeCurrentFilters();
+  const hasAny = cond.bands.length || cond.chars.length || cond.years.length ||
+                 cond.series.length || cond.events.length || cond.types.length ||
+                 cond.sizes.length || cond.countries.length || cond.search;
+  if(!hasAny){
+    alert('請先選擇至少一個篩選條件');
+    return;
+  }
+  let name = prompt('智慧清單名稱（最多 50 字）：');
+  if(!name) return;
+  name = name.trim().slice(0, 50);
+  if(!name) return;
+  // 檢查同名
+  const existing = mySmartLists.find(l=>l.name === name);
+  if(existing){
+    const choice = confirm(`已有同名清單「${name}」，覆蓋嗎？\n\n按「確定」覆蓋，按「取消」放棄`);
+    if(!choice) return;
+    const { error } = await supabaseClient
+      .from('smart_lists')
+      .update({ filter_conditions: cond })
+      .eq('id', existing.id);
+    if(error){ console.error(error); alert('儲存失敗：' + error.message); return; }
+    showToast('已更新智慧清單');
+  } else {
+    const { error } = await supabaseClient
+      .from('smart_lists')
+      .insert({ user_id: currentUser.id, name, filter_conditions: cond });
+    if(error){ console.error(error); alert('儲存失敗：' + error.message); return; }
+    showToast('已儲存為智慧清單');
+  }
+  await loadMySmartLists();
+}
+
+async function renameSmartList(listId, oldName){
+  const newName = prompt('新清單名稱：', oldName);
+  if(!newName || newName.trim() === '') return;
+  const trimmed = newName.trim().slice(0, 50);
+  const { error } = await supabaseClient
+    .from('smart_lists')
+    .update({ name: trimmed })
+    .eq('id', listId);
+  if(error){ console.error(error); alert('改名失敗'); return; }
+  showToast('已更新');
+  await loadMySmartLists();
+}
+
+async function deleteSmartList(listId, name){
+  if(!confirm(`確定刪除智慧清單「${name}」？`)) return;
+  const { error } = await supabaseClient
+    .from('smart_lists')
+    .delete()
+    .eq('id', listId);
+  if(error){ console.error(error); alert('刪除失敗'); return; }
+  if(selectedSmartList == listId) selectedSmartList = null;
+  showToast('已刪除');
+  await loadMySmartLists();
+}
+
+// 控制「💾 儲存為智慧清單」按鈕顯示時機
+// 顯示條件：登入 + 有篩選條件 + 結果數 ≥ 5 + 當前條件不等於任何已存清單
+function updateSaveSmartListButton(){
+  const btn = document.getElementById('save-smart-list-btn');
+  if(!btn) return;
+  if(!currentUser){ btn.style.display = 'none'; return; }
+  const cond = serializeCurrentFilters();
+  const hasAny = cond.bands.length || cond.chars.length || cond.years.length ||
+                 cond.series.length || cond.events.length || cond.types.length ||
+                 cond.sizes.length || cond.countries.length || cond.search;
+  if(!hasAny){ btn.style.display = 'none'; return; }
+  // 結果數至少 5 張才提示（避免太瑣碎的條件）
+  const resultCount = (typeof _filteredExcludingCollected !== 'undefined' && _filteredExcludingCollected) 
+    ? _filteredExcludingCollected.length : 0;
+  if(resultCount < 5){ btn.style.display = 'none'; return; }
+  // 當前條件已經是某個智慧清單 → 不顯示（避免重複儲存）
+  const matched = mySmartLists.some(l=>isCurrentFiltersSameAs(l.filter_conditions));
+  if(matched){ btn.style.display = 'none'; return; }
+  // 已達上限 → 不顯示
+  if(mySmartLists.length >= SMART_LIST_MAX){ btn.style.display = 'none'; return; }
+  btn.style.display = '';
+}
+
+
 let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}}
 // 三態篩選：'all' | 'collected' | 'uncollected'
 // 'collected' = 有蒐集記錄且數量 > 0
