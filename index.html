@@ -1052,7 +1052,8 @@ function applyFilters(){
   // 若無任何篩選條件，顯示提示不顯示資料
   const hasFilter = selBands.size||selYears.size||selSeries.size||selEvents.size||
     selTypes.size||selChars.size||selSizes.size||selCountries.size||
-    document.getElementById('search').value.trim();
+    document.getElementById('search').value.trim()||
+    selectedList||showOnlyCollected;
   if(!hasFilter){
     const L=LANGS[currentLang];
     document.getElementById('result-count').textContent=L.noFilter;
