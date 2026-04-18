@@ -168,11 +168,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 }
 
 .header-inner{position:relative;z-index:1;}
-.site-logo{font-size:clamp(1.6rem,4.5vw,3.2rem);font-weight:400;letter-spacing:0.02em;
+.site-logo{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:400;letter-spacing:0.02em;
   background:linear-gradient(90deg,#fff 0%,#ffe0ee 50%,#fff 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(2px 2px 0px #c0005a);line-height:1.2;
-  padding:0 1rem;}
+  filter:drop-shadow(2px 2px 0px #c0005a);line-height:1.2;}
 
 
 
@@ -369,7 +368,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   .site-header{padding:1.25rem 1rem 1rem;}
   .resize-handle{display:none;}
 }
-@media(max-width:1000px){
+@media(max-width:800px){
   #header-controls{display:none !important;}
   #mobile-controls{display:flex !important;}
 }
@@ -461,7 +460,7 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
 
 <header class="site-header">
   <div class="header-inner">
-  <div id="header-controls" style="position:absolute;bottom:0.5rem;right:0.75rem;display:flex;align-items:center;gap:0.35rem;z-index:10;">
+  <div id="header-controls" style="display:flex;justify-content:flex-end;align-items:center;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.75rem;position:relative;z-index:10;">
     <button id="lang-zh" onclick="setLang('zh-TW')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">繁中</button>
     <button id="lang-ja" onclick="setLang('ja')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">日本語</button>
     <button id="lang-en" onclick="setLang('en')" style="font-size:0.68rem;padding:0.2rem 0.45rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">EN</button>
