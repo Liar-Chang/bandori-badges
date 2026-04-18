@@ -380,6 +380,81 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   .site-logo{font-size:clamp(1.4rem,8vw,2.5rem);}
 }
 
+/* ── 批次選取模式 ── */
+.badge-batch-cb{
+  position:absolute;top:5px;right:5px;z-index:4;
+  width:28px;height:28px;border-radius:6px;
+  background:rgba(0,0,0,0.55);border:2px solid #fff;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1rem;color:#fff;font-weight:700;
+  transition:all 0.12s;user-select:none;
+}
+body.batch-mode .badge-batch-cb{display:flex;}
+body.batch-mode .badge-id-tag{top:38px;}
+body.batch-mode .fav-btn,
+body.batch-mode .col-btn{pointer-events:none;opacity:0.4;}
+.badge-card.batch-selected{outline:3px solid #5a4fcf;outline-offset:-3px;}
+.badge-card.batch-selected .badge-batch-cb{background:#5a4fcf;border-color:#5a4fcf;}
+body.batch-mode .badge-card{cursor:pointer;}
+
+/* 批次模式下，禁止卡片 expand 的視覺暗示 */
+body.batch-mode .badge-card.expanded{grid-column:auto;}
+body.batch-mode .badge-card-expand{display:none !important;}
+
+/* 底部 action bar */
+.batch-action-bar{
+  position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);
+  background:var(--surface,#fff);border:1.5px solid var(--border,#e4e4e4);
+  border-radius:14px;padding:0.6rem 0.85rem;
+  box-shadow:0 10px 40px rgba(0,0,0,0.25);
+  display:none;align-items:center;gap:0.5rem;
+  z-index:700;max-width:calc(100vw - 2rem);flex-wrap:wrap;justify-content:center;
+  font-family:inherit;
+}
+body.batch-mode .batch-action-bar{display:flex;}
+.batch-action-bar .count{
+  font-size:0.82rem;font-weight:700;color:var(--text,#222);
+  padding:0 0.4rem;white-space:nowrap;
+}
+.batch-action-bar .count b{color:#5a4fcf;font-size:1rem;margin:0 0.15rem;}
+.batch-action-bar button{
+  font-family:inherit;font-size:0.78rem;font-weight:600;
+  padding:0.45rem 0.85rem;border-radius:8px;border:none;cursor:pointer;
+  transition:opacity 0.12s;white-space:nowrap;
+}
+.batch-action-bar button:disabled{opacity:0.4;cursor:not-allowed;}
+.batch-action-bar .btn-list{background:#5a4fcf;color:#fff;}
+.batch-action-bar .btn-col{background:#22c55e;color:#fff;}
+.batch-action-bar .btn-select-all{background:transparent;color:var(--muted,#888);border:1.5px solid var(--border,#e4e4e4);}
+.batch-action-bar .btn-cancel{background:transparent;color:var(--muted,#888);border:1.5px solid var(--border,#e4e4e4);}
+.batch-action-bar .btn-list:hover,.batch-action-bar .btn-col:hover{opacity:0.85;}
+
+@media(max-width:600px){
+  .batch-action-bar{padding:0.5rem 0.65rem;gap:0.35rem;}
+  .batch-action-bar button{font-size:0.72rem;padding:0.4rem 0.65rem;}
+  .batch-action-bar .count{font-size:0.75rem;}
+}
+
+/* 批次模式切換按鈕 */
+.btn-batch-toggle{
+  font-family:inherit;font-size:0.72rem;padding:0.35rem 0.7rem;
+  border-radius:6px;border:1.5px solid var(--border,#e4e4e4);
+  background:transparent;color:var(--muted,#888);cursor:pointer;
+  transition:all 0.12s;
+}
+.btn-batch-toggle:hover{border-color:#5a4fcf;color:#5a4fcf;}
+body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a4fcf;}
+
+/* Toast */
+#_toast{
+  position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,0.88);color:#fff;padding:0.55rem 1rem;
+  border-radius:8px;font-size:0.8rem;font-family:inherit;
+  z-index:9999;opacity:0;transition:opacity 0.2s;pointer-events:none;
+  max-width:90vw;text-align:center;
+}
+#_toast.show{opacity:1;}
+
 </style>
 </head>
 <body>
@@ -401,6 +476,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
       <div id="user-info" style="display:none;align-items:center;gap:0.4rem;">
         <img id="user-avatar" src="" alt="" style="width:24px;height:24px;border-radius:50%;border:1.5px solid #fff;"/>
         <span id="user-name" style="font-size:0.7rem;color:#fff;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        <button onclick="toggleBatchMode()" id="btn-batch-toggle" class="btn-batch-toggle" title="批次選取" style="font-size:0.65rem;padding:0.2rem 0.55rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">☑ 批次</button>
         <button onclick="signOut()" id="btn-logout" style="font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:5px;background:#ffffff22;border:1px solid #ffffff44;color:#fff;cursor:pointer;font-family:inherit;">登出</button>
       </div>
     </div>
@@ -416,6 +492,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   <aside class="sidebar" id="sidebar">
     <!-- 手機版語言/夜間模式控制列 -->
     <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);">
+      <button onclick="toggleBatchMode()" id="btn-batch-toggle-mobile" class="btn-batch-toggle" title="批次選取" style="display:none;font-size:0.72rem;padding:0.25rem 0.55rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">☑ 批次</button>
       <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
       <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
       <button onclick="setLang('en')" id="mlang-en" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">EN</button>
@@ -1088,7 +1165,8 @@ function renderGrid(list){
     const shortEventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${shortEvent}</a>`
       : shortEvent;
-    return `<div class="badge-card" onclick="toggleCard(this,${idx})" style="position:relative;">
+    return `<div class="badge-card" data-badge-id="${b.id}" onclick="handleCardClick(event,this,${idx})" style="position:relative;">
+      <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
       <div class="badge-id-tag" style="position:absolute;top:5px;right:5px;z-index:2;background:rgba(0,0,0,0.5);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
@@ -2700,6 +2778,39 @@ async function doExportTable(list, title, btn, progWrap, prog){
 </footer>
 <!-- 分享 Modal -->
 <!-- 我的最愛 Modal -->
+<!-- ── 批次選取 UI ── -->
+<div id="_toast"></div>
+
+<div class="batch-action-bar" id="batch-bar">
+  <span class="count">已選 <b id="batch-count">0</b> 張</span>
+  <button class="btn-select-all" id="btn-batch-select-all" onclick="batchToggleSelectAll()">全選目前顯示</button>
+  <button class="btn-list" onclick="openBatchListModal()">加入清單</button>
+  <button class="btn-col" onclick="openBatchCollectionModal()">加入蒐集記錄</button>
+  <button class="btn-cancel" onclick="exitBatchMode()">取消</button>
+</div>
+
+<!-- 批次加入清單 Modal -->
+<div id="batch-list-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBatchListModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(400px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);">⭐ 批次加入清單</h2>
+      <button onclick="closeBatchListModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <div id="batch-list-content"></div>
+  </div>
+</div>
+
+<!-- 批次加入蒐集記錄 Modal -->
+<div id="batch-col-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBatchCollectionModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(420px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:var(--text);" id="batch-col-title">✓ 批次加入蒐集記錄</h2>
+      <button onclick="closeBatchCollectionModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <div id="batch-col-content"></div>
+  </div>
+</div>
+
 <div id="fav-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeFavModal()">
   <div style="background:var(--surface);border-radius:16px;width:min(380px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
@@ -2925,9 +3036,11 @@ async function signOut(){
 function updateAuthUI(){
   const btnLogin = document.getElementById('btn-login');
   const userInfo = document.getElementById('user-info');
+  const btnBatchMobile = document.getElementById('btn-batch-toggle-mobile');
   if(currentUser){
     btnLogin.style.display = 'none';
     userInfo.style.display = 'flex';
+    if(btnBatchMobile) btnBatchMobile.style.display = 'inline-flex';
     const meta = currentUser.user_metadata || {};
     const name = meta.full_name || meta.name || currentUser.email || '用戶';
     const avatar = meta.avatar_url || meta.picture || '';
@@ -2937,6 +3050,7 @@ function updateAuthUI(){
   } else {
     btnLogin.style.display = 'inline-flex';
     userInfo.style.display = 'none';
+    if(btnBatchMobile) btnBatchMobile.style.display = 'none';
   }
 }
 
@@ -3167,6 +3281,8 @@ updateAuthUI = function(){
     myCollections = {};
     selectedList = null;
     showOnlyCollected = false;
+    // 登出時一併退出批次模式
+    if(typeof exitBatchMode === 'function') exitBatchMode();
     buildMyListsSidebar();
     buildCollectionSidebar();
     applyFilters();
@@ -3315,5 +3431,484 @@ async function deleteCollection(){
   await loadMyCollections();
   closeCollectionModal();
   showToast('已移除');
+}
+
+// ─────────────────────────────────────────
+//  Toast（全域 fallback，避免 ReferenceError）
+// ─────────────────────────────────────────
+if(typeof window.showToast !== 'function'){
+  window.showToast = function(msg){
+    const el = document.getElementById('_toast');
+    if(!el){ console.log('[toast]', msg); return; }
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+  };
+}
+
+// ─────────────────────────────────────────
+//  批次選取功能（Phase 4）
+// ─────────────────────────────────────────
+let _batchMode = false;
+let _batchSelected = new Set();   // badge_id 集合
+
+function handleCardClick(ev, card, idx){
+  // 批次模式：整張卡片點擊 = toggle 選取
+  if(_batchMode){
+    ev.stopPropagation();
+    const id = card.dataset.badgeId;
+    if(id) toggleBadgeSelection(id);
+    return;
+  }
+  // 非批次模式：維持原本的展開行為
+  toggleCard(card, idx);
+}
+
+function enterBatchMode(){
+  if(!currentUser){ showToast('請先登入才能使用批次選取'); return; }
+  _batchMode = true;
+  _batchSelected.clear();
+  document.body.classList.add('batch-mode');
+  updateBatchBar();
+  showToast('已進入批次選取模式');
+}
+
+function exitBatchMode(){
+  _batchMode = false;
+  _batchSelected.clear();
+  document.body.classList.remove('batch-mode');
+  // 清掉視覺選取狀態
+  document.querySelectorAll('.badge-card.batch-selected').forEach(c=>c.classList.remove('batch-selected'));
+  document.querySelectorAll('.badge-batch-cb').forEach(cb=>cb.textContent='');
+  updateBatchBar();
+}
+
+function toggleBatchMode(){
+  if(_batchMode) exitBatchMode(); else enterBatchMode();
+}
+
+function toggleBadgeSelection(badgeId){
+  if(!_batchMode) return;
+  if(_batchSelected.has(badgeId)){
+    _batchSelected.delete(badgeId);
+  } else {
+    _batchSelected.add(badgeId);
+  }
+  // 只更新這張卡片的視覺狀態，不重繪（避免閃爍）
+  const card = document.querySelector(`.badge-card[data-badge-id="${badgeId}"]`);
+  if(card){
+    const selected = _batchSelected.has(badgeId);
+    card.classList.toggle('batch-selected', selected);
+    const cb = card.querySelector('.badge-batch-cb');
+    if(cb) cb.textContent = selected ? '✓' : '';
+  }
+  updateBatchBar();
+}
+
+function batchToggleSelectAll(){
+  // 找出目前畫面上顯示的所有卡片
+  const visibleCards = document.querySelectorAll('#badge-grid .badge-card, .badges .badge-card, .badge-card');
+  const visibleIds = [...visibleCards].map(c=>c.dataset.badgeId).filter(Boolean);
+  if(!visibleIds.length) return;
+  // 若目前已顯示的都已選 → 全部取消；否則全部加入
+  const allSelected = visibleIds.every(id=>_batchSelected.has(id));
+  if(allSelected){
+    visibleIds.forEach(id=>_batchSelected.delete(id));
+  } else {
+    visibleIds.forEach(id=>_batchSelected.add(id));
+  }
+  // 更新視覺
+  visibleCards.forEach(card=>{
+    const id = card.dataset.badgeId;
+    if(!id) return;
+    const sel = _batchSelected.has(id);
+    card.classList.toggle('batch-selected', sel);
+    const cb = card.querySelector('.badge-batch-cb');
+    if(cb) cb.textContent = sel ? '✓' : '';
+  });
+  updateBatchBar();
+}
+
+function updateBatchBar(){
+  const el = document.getElementById('batch-count');
+  if(el) el.textContent = _batchSelected.size;
+  // 沒選任何張時，兩顆主要動作 disable
+  const disabled = _batchSelected.size === 0;
+  document.querySelectorAll('.batch-action-bar .btn-list, .batch-action-bar .btn-col').forEach(btn=>{
+    btn.disabled = disabled;
+  });
+}
+
+// ── 批次加入清單 ──
+function openBatchListModal(){
+  if(!currentUser){ showToast('請先登入'); return; }
+  if(_batchSelected.size === 0){ showToast('請先勾選徽章'); return; }
+  renderBatchListModal();
+  document.getElementById('batch-list-overlay').style.display = 'flex';
+}
+function closeBatchListModal(){
+  document.getElementById('batch-list-overlay').style.display = 'none';
+}
+
+function renderBatchListModal(){
+  const content = document.getElementById('batch-list-content');
+  const n = _batchSelected.size;
+  if(!myLists.length){
+    content.innerHTML = `
+      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.85rem;">
+        將把 <b style="color:#5a4fcf;">${n}</b> 張徽章加入新清單：
+      </div>
+      <input type="text" id="batch-new-list-name" placeholder="如 我的最愛、想要的徽章"
+        style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;margin-bottom:0.85rem;"/>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="closeBatchListModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+        <button onclick="batchCreateListAndAdd()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">建立並加入</button>
+      </div>`;
+    setTimeout(()=>document.getElementById('batch-new-list-name')?.focus(), 50);
+    return;
+  }
+  content.innerHTML = `
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.6rem;">
+      將把 <b style="color:#5a4fcf;">${n}</b> 張徽章加入以下清單（可複選）：
+    </div>
+    <div style="max-height:240px;overflow-y:auto;margin-bottom:0.85rem;">
+      ${myLists.map(l=>`
+        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);"
+          onmouseover="this.style.background='#80808015'" onmouseout="this.style.background='transparent'">
+          <input type="checkbox" class="batch-list-cb" value="${l.id}"
+            style="accent-color:#5a4fcf;cursor:pointer;width:16px;height:16px;"/>
+          <span>${l.name}</span>
+        </label>
+      `).join('')}
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:0.85rem;margin-bottom:0.85rem;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;">或新增清單：</div>
+      <div style="display:flex;gap:0.4rem;">
+        <input type="text" id="batch-new-list-name" placeholder="新清單名稱"
+          style="flex:1;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.82rem;outline:none;"/>
+        <button onclick="batchCreateListAndAdd()" style="padding:0.45rem 0.85rem;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;">+ 新增</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+      <button onclick="closeBatchListModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+      <button onclick="batchSaveToLists()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">加入選定清單</button>
+    </div>`;
+}
+
+async function batchCreateListAndAdd(){
+  const input = document.getElementById('batch-new-list-name');
+  const name = input?.value.trim();
+  if(!name){ showToast('請輸入清單名稱'); return; }
+  const badgeIds = [..._batchSelected];
+  // 建立清單
+  const { data, error } = await supabaseClient
+    .from('lists')
+    .insert({ user_id: currentUser.id, name })
+    .select()
+    .single();
+  if(error){ alert('建立清單失敗：' + error.message); return; }
+  // 批次 insert list_items（避開 DB 內可能的 unique 衝突：沒有就直接 insert）
+  const inserts = badgeIds.map(bid=>({ list_id: data.id, badge_id: bid }));
+  const { error: e2 } = await supabaseClient.from('list_items').insert(inserts);
+  if(e2){ alert('加入失敗：' + e2.message); return; }
+  await loadMyLists();
+  closeBatchListModal();
+  exitBatchMode();
+  showToast(`已將 ${badgeIds.length} 張加入「${name}」`);
+}
+
+async function batchSaveToLists(){
+  const checkedListIds = [...document.querySelectorAll('.batch-list-cb:checked')].map(cb=>cb.value);
+  const newListName = document.getElementById('batch-new-list-name')?.value.trim();
+  if(!checkedListIds.length && !newListName){
+    showToast('請選擇或建立清單');
+    return;
+  }
+  const badgeIds = [..._batchSelected];
+  let targetListIds = [...checkedListIds];
+
+  // 若同時有輸入新清單名，也一併建立
+  if(newListName){
+    const { data, error } = await supabaseClient
+      .from('lists')
+      .insert({ user_id: currentUser.id, name: newListName })
+      .select()
+      .single();
+    if(error){ alert('建立清單失敗：' + error.message); return; }
+    targetListIds.push(data.id);
+  }
+
+  // 對每個 list，只 insert 尚未存在的 badge_id
+  let totalAdded = 0;
+  for(const listId of targetListIds){
+    // 查該 list 已有哪些 badge
+    const { data: existing } = await supabaseClient
+      .from('list_items')
+      .select('badge_id')
+      .eq('list_id', listId)
+      .in('badge_id', badgeIds);
+    const existingSet = new Set((existing||[]).map(r=>r.badge_id));
+    const toInsert = badgeIds.filter(bid=>!existingSet.has(bid));
+    if(toInsert.length){
+      const inserts = toInsert.map(bid=>({ list_id: listId, badge_id: bid }));
+      const { error } = await supabaseClient.from('list_items').insert(inserts);
+      if(error){ alert('加入失敗：' + error.message); return; }
+      totalAdded += toInsert.length;
+    }
+  }
+
+  await loadMyLists();
+  closeBatchListModal();
+  exitBatchMode();
+  const listCount = targetListIds.length;
+  showToast(`已處理 ${badgeIds.length} 張徽章 × ${listCount} 個清單（新增 ${totalAdded} 筆）`);
+}
+
+// ── 批次加入蒐集記錄 ──
+let _batchColStep = 1;         // 1=選模式, 2=填表
+let _batchColMode = 'same';    // 'same' | 'each'
+let _batchColPerBadge = {};    // {badge_id: {date, qty, note}}（模式 each 用）
+let _batchColIndex = 0;        // each 模式的目前索引
+
+function openBatchCollectionModal(){
+  if(!currentUser){ showToast('請先登入'); return; }
+  if(_batchSelected.size === 0){ showToast('請先勾選徽章'); return; }
+  _batchColStep = 1;
+  _batchColMode = 'same';
+  _batchColPerBadge = {};
+  _batchColIndex = 0;
+  renderBatchCollectionModal();
+  document.getElementById('batch-col-overlay').style.display = 'flex';
+}
+
+function closeBatchCollectionModal(){
+  document.getElementById('batch-col-overlay').style.display = 'none';
+}
+
+function renderBatchCollectionModal(){
+  const content = document.getElementById('batch-col-content');
+  const title = document.getElementById('batch-col-title');
+  const n = _batchSelected.size;
+  const today = new Date().toISOString().slice(0,10);
+
+  if(_batchColStep === 1){
+    title.textContent = '✓ 批次加入蒐集記錄';
+    content.innerHTML = `
+      <div style="font-size:0.82rem;color:var(--text);margin-bottom:1rem;">
+        已選 <b style="color:#22c55e;">${n}</b> 張徽章，請選擇填寫方式：
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1.1rem;">
+        <label style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.7rem 0.85rem;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;" onmouseover="this.style.borderColor='#22c55e'" onmouseout="this.style.borderColor='var(--border)'">
+          <input type="radio" name="batch-col-mode" value="same" checked style="accent-color:#22c55e;margin-top:0.15rem;"/>
+          <span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text);display:block;">使用相同值</span>
+            <span style="font-size:0.72rem;color:var(--muted);">所有徽章都用同一組日期／數量／備註，一次填好</span>
+          </span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.7rem 0.85rem;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;" onmouseover="this.style.borderColor='#22c55e'" onmouseout="this.style.borderColor='var(--border)'">
+          <input type="radio" name="batch-col-mode" value="each" style="accent-color:#22c55e;margin-top:0.15rem;"/>
+          <span>
+            <span style="font-size:0.85rem;font-weight:600;color:var(--text);display:block;">一張一張填</span>
+            <span style="font-size:0.72rem;color:var(--muted);">逐張填寫，適合每張入手日期／備註都不同</span>
+          </span>
+        </label>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="closeBatchCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+        <button onclick="batchColNextStep()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">下一步</button>
+      </div>`;
+    return;
+  }
+
+  // step 2
+  if(_batchColMode === 'same'){
+    title.textContent = `✓ 填寫共同內容（${n} 張）`;
+    content.innerHTML = `
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.85rem;">以下資料會套用到全部 ${n} 張徽章。</div>
+      <div style="display:flex;flex-direction:column;gap:0.85rem;">
+        <div>
+          <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">入手日期（選填）</label>
+          <input type="date" id="batch-col-date" value="${today}"
+            style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">每張數量</label>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <button onclick="_batchAdjustSameQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
+            <input type="number" id="batch-col-qty" value="1" min="1"
+              style="flex:1;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.95rem;outline:none;text-align:center;"/>
+            <button onclick="_batchAdjustSameQty(1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">+</button>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">備註（選填）</label>
+          <textarea id="batch-col-note" placeholder="例如：在哪裡入手、購買價格..." rows="2"
+            style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+        <button onclick="_batchColStep=1;renderBatchCollectionModal();" style="padding:0.55rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">← 返回</button>
+        <button onclick="closeBatchCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+        <button onclick="batchSaveCollectionsSame()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存全部</button>
+      </div>`;
+    return;
+  }
+
+  // each mode: 逐張填 wizard
+  const badgeIds = [..._batchSelected];
+  const idx = _batchColIndex;
+  const total = badgeIds.length;
+  const curId = badgeIds[idx];
+  const badgeObj = (all || []).find(b=>b.id === curId) || {};
+  const existing = _batchColPerBadge[curId] || {};
+  const date = existing.date ?? today;
+  const qty = existing.qty ?? 1;
+  const note = existing.note ?? '';
+  const imgSrc = IMG_BASE_URL + curId + '.' + (badgeObj.ext || 'jpg');
+
+  title.textContent = `✓ 逐張填寫（${idx+1} / ${total}）`;
+  content.innerHTML = `
+    <div style="display:flex;gap:0.75rem;align-items:center;padding:0.6rem;background:var(--bg);border-radius:10px;margin-bottom:0.85rem;">
+      <img src="${imgSrc}" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:${isBadgeRound(badgeObj.size)?'50%':'8px'};flex-shrink:0;" onerror="this.style.visibility='hidden'"/>
+      <div style="min-width:0;flex:1;">
+        <div style="font-size:0.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${badgeObj.character || '—'}</div>
+        <div style="font-size:0.68rem;color:var(--muted);font-family:monospace;">#${curId}</div>
+        ${badgeObj.event?`<div style="font-size:0.68rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${badgeObj.event}</div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.7rem;">
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.25rem;">入手日期（選填）</label>
+        <input type="date" id="batch-col-date-each" value="${date||''}"
+          style="width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.25rem;">數量</label>
+        <input type="number" id="batch-col-qty-each" value="${qty}" min="1"
+          style="width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.9rem;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.25rem;">備註（選填）</label>
+        <textarea id="batch-col-note-each" rows="2"
+          style="width:100%;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.8rem;outline:none;resize:vertical;">${note}</textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.4rem;margin-top:1rem;flex-wrap:wrap;">
+      <button onclick="batchColEachPrev()" ${idx===0?'disabled':''} style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:${idx===0?'not-allowed':'pointer'};opacity:${idx===0?0.4:1};font-family:inherit;font-size:0.8rem;">← 上一張</button>
+      ${idx < total - 1
+        ? `<button onclick="batchColEachNext()" style="flex:1;padding:0.5rem 0.75rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;">下一張 →</button>`
+        : `<button onclick="batchColEachFinish()" style="flex:1;padding:0.5rem 0.75rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;">完成並儲存</button>`}
+      <button onclick="closeBatchCollectionModal()" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.8rem;">取消</button>
+    </div>`;
+}
+
+function _batchAdjustSameQty(delta){
+  const input = document.getElementById('batch-col-qty');
+  if(!input) return;
+  const cur = parseInt(input.value) || 1;
+  input.value = Math.max(1, cur + delta);
+}
+
+function batchColNextStep(){
+  const mode = document.querySelector('input[name="batch-col-mode"]:checked')?.value || 'same';
+  _batchColMode = mode;
+  _batchColStep = 2;
+  _batchColIndex = 0;
+  renderBatchCollectionModal();
+}
+
+function _persistEachStep(){
+  // 把目前欄位值存到 _batchColPerBadge
+  const badgeIds = [..._batchSelected];
+  const curId = badgeIds[_batchColIndex];
+  if(!curId) return;
+  const date = document.getElementById('batch-col-date-each')?.value || null;
+  const qty = Math.max(1, parseInt(document.getElementById('batch-col-qty-each')?.value) || 1);
+  const note = (document.getElementById('batch-col-note-each')?.value || '').trim() || null;
+  _batchColPerBadge[curId] = { date, qty, note };
+}
+
+function batchColEachPrev(){
+  _persistEachStep();
+  if(_batchColIndex > 0){
+    _batchColIndex--;
+    renderBatchCollectionModal();
+  }
+}
+function batchColEachNext(){
+  _persistEachStep();
+  const total = _batchSelected.size;
+  if(_batchColIndex < total - 1){
+    _batchColIndex++;
+    renderBatchCollectionModal();
+  }
+}
+
+async function batchColEachFinish(){
+  _persistEachStep();
+  const badgeIds = [..._batchSelected];
+  // 組 payloads：每張都可能是新增或更新
+  const toInsert = [];
+  const toUpdate = [];
+  for(const bid of badgeIds){
+    const data = _batchColPerBadge[bid] || { date: null, qty: 1, note: null };
+    const existing = myCollections[bid];
+    if(existing){
+      toUpdate.push({ id: existing.id, collected_date: data.date, quantity: data.qty, note: data.note });
+    } else {
+      toInsert.push({ user_id: currentUser.id, badge_id: bid, collected_date: data.date, quantity: data.qty, note: data.note });
+    }
+  }
+  // 執行
+  if(toInsert.length){
+    const { error } = await supabaseClient.from('collections').insert(toInsert);
+    if(error){ alert('新增失敗：' + error.message); return; }
+  }
+  for(const u of toUpdate){
+    const { error } = await supabaseClient
+      .from('collections')
+      .update({ collected_date: u.collected_date, quantity: u.quantity, note: u.note })
+      .eq('id', u.id);
+    if(error){ alert('更新失敗：' + error.message); return; }
+  }
+  await loadMyCollections();
+  closeBatchCollectionModal();
+  exitBatchMode();
+  showToast(`已儲存 ${badgeIds.length} 筆蒐集記錄（新增 ${toInsert.length}、更新 ${toUpdate.length}）`);
+}
+
+async function batchSaveCollectionsSame(){
+  const date = document.getElementById('batch-col-date').value || null;
+  const qty = Math.max(1, parseInt(document.getElementById('batch-col-qty').value) || 1);
+  const note = document.getElementById('batch-col-note').value.trim() || null;
+  const badgeIds = [..._batchSelected];
+
+  const toInsert = [];
+  const toUpdate = [];
+  for(const bid of badgeIds){
+    const existing = myCollections[bid];
+    if(existing){
+      toUpdate.push(existing.id);
+    } else {
+      toInsert.push({ user_id: currentUser.id, badge_id: bid, collected_date: date, quantity: qty, note });
+    }
+  }
+  if(toInsert.length){
+    const { error } = await supabaseClient.from('collections').insert(toInsert);
+    if(error){ alert('新增失敗：' + error.message); return; }
+  }
+  if(toUpdate.length){
+    // 同一組值可以一次 update 多個 id（用 .in）
+    const { error } = await supabaseClient
+      .from('collections')
+      .update({ collected_date: date, quantity: qty, note })
+      .in('id', toUpdate);
+    if(error){ alert('更新失敗：' + error.message); return; }
+  }
+  await loadMyCollections();
+  closeBatchCollectionModal();
+  exitBatchMode();
+  showToast(`已儲存 ${badgeIds.length} 筆（新增 ${toInsert.length}、更新 ${toUpdate.length}）`);
 }
 </script>
