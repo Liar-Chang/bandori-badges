@@ -390,7 +390,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
   transition:all 0.12s;user-select:none;
 }
 body.batch-mode .badge-batch-cb{display:flex;}
-body.batch-mode .badge-id-tag{top:38px;}
 body.batch-mode .fav-btn,
 body.batch-mode .col-btn{pointer-events:none;opacity:0.4;}
 .badge-card.batch-selected{outline:3px solid #5a4fcf;outline-offset:-3px;}
@@ -1167,7 +1166,6 @@ function renderGrid(list){
       : shortEvent;
     return `<div class="badge-card" data-badge-id="${b.id}" onclick="handleCardClick(event,this,${idx})" style="position:relative;">
       <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
-      <div class="badge-id-tag" style="position:absolute;top:5px;right:5px;z-index:2;background:rgba(0,0,0,0.5);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
       <div class="badge-img-wrap">
@@ -1176,6 +1174,7 @@ function renderGrid(list){
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}')"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
+        <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
       </div>
       <div class="badge-info">
         <div class="badge-char">${getCharName(b.character,currentLang)||'—'}</div>
