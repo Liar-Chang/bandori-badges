@@ -3945,84 +3945,27 @@ function closeCollectionModal(){
 }
 
 function renderCollectionModal(){
-  // 自動偵測：有子表記錄就用新版（詳細模式）；沒有就用舊版
-  if(hasCollectionRecords(_colBadgeId)){
-    renderCollectionModalNew();
-  } else {
-    renderCollectionModalLegacy();
-  }
-}
-
-// 舊版蒐集 modal（保留原行為，加上「升級」連結）
-function renderCollectionModalLegacy(){
-  const existing = myCollections[_colBadgeId];
-  const date = existing?.collected_date || '';
-  const qty = existing?.quantity || 1;
-  const note = existing?.note || '';
-  const content = document.getElementById('col-modal-content');
-  content.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:0.85rem;">
-      <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">入手日期（選填）</label>
-        <input type="date" id="col-date" value="${date}"
-          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
-      </div>
-      <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">數量</label>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <button onclick="adjustQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
-          <input type="number" id="col-qty" value="${qty}" min="1"
-            style="flex:1;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.95rem;outline:none;text-align:center;"/>
-          <button onclick="adjustQty(1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">+</button>
-        </div>
-      </div>
-      <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">備註（選填）</label>
-        <textarea id="col-note" placeholder="例如：在哪裡入手、購買價格..." rows="2"
-          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;resize:vertical;">${note}</textarea>
-      </div>
-      <div style="display:flex;gap:0.5rem;">
-        ${existing ? `<button onclick="deleteCollection()" style="padding:0.55rem 0.85rem;border:1.5px solid #e05c5c;border-radius:8px;background:transparent;color:#e05c5c;cursor:pointer;font-family:inherit;font-size:0.83rem;">🗑 移除</button>` : ''}
-        <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
-        <button onclick="saveCollection()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
-      </div>
-      <div style="margin-top:0.5rem;padding:0.6rem 0.8rem;background:#0ea5e911;border:1px dashed #0ea5e9;border-radius:8px;font-size:0.72rem;color:#0369a1;line-height:1.5;">
-        💡 想記錄多次購買的歷史（例如不同日期入手）？
-        <a href="#" onclick="event.preventDefault();upgradeToDetailedMode()" style="color:#0ea5e9;text-decoration:underline;font-weight:600;">升級為詳細記錄模式</a>
-      </div>
-    </div>`;
-}
-
-// 升級到詳細模式：把現有的主表記錄當作第一筆子表記錄帶入
-async function upgradeToDetailedMode(){
-  const existing = myCollections[_colBadgeId];
-  // 若主表已有資料，先建一筆子表記錄保留歷史
-  if(existing){
-    const { error } = await supabaseClient
-      .from('collection_records')
-      .insert({
-        user_id: currentUser.id,
-        badge_id: _colBadgeId,
-        purchased_date: existing.collected_date || null,
-        quantity: existing.quantity || 1,
-        source: null,
-        note: existing.note || null
-      });
-    if(error){ alert('升級失敗：' + error.message); return; }
-    await loadMyCollectionRecords();
-  }
-  // 重畫成新版 modal
+  // 永遠使用新版（詳細模式）
+  // 對於沒有任何記錄的徽章，會顯示空狀態 + 「+ 新增記錄」起手
   renderCollectionModalNew();
-  showToast('已升級為詳細記錄模式');
+}
+
+// 舊版 modal（保留作為 legacy reference，但已不再使用）
+function renderCollectionModalLegacy(){
+  // 此函式已棄用 — 自 2026-04-19 之後永遠使用新版 modal
+  renderCollectionModalNew();
+}
+
+// 升級函式（保留以避免舊 onclick reference 報錯，但已不再被呼叫）
+async function upgradeToDetailedMode(){
+  // 此函式已棄用 — 所有記錄都已自動升級
+  renderCollectionModalNew();
 }
 
 // 新版蒐集 modal（詳細模式）：購買歷史列表 + 新增 / 編輯 / 刪除
 function renderCollectionModalNew(){
   const records = myCollectionRecords[_colBadgeId] || [];
   const totalQty = records.reduce((s, r) => s + Number(r.quantity || 0), 0);
-  const legacyMain = myCollections[_colBadgeId];
-  // 若主表還有資料但已經有子表，提示「舊版記錄」（不算進總數）
-  const showLegacyHint = legacyMain && records.length > 0;
 
   const content = document.getElementById('col-modal-content');
   content.innerHTML = `
@@ -4039,15 +3982,8 @@ function renderCollectionModalNew(){
         </div>
         <div id="col-records-list" style="display:flex;flex-direction:column;gap:0.5rem;max-height:50vh;overflow-y:auto;">
           ${records.length === 0
-            ? `<div style="padding:1rem;text-align:center;color:var(--muted);font-size:0.78rem;">尚無詳細記錄，點上方「+ 新增記錄」開始</div>`
+            ? `<div style="padding:1.2rem;text-align:center;color:var(--muted);font-size:0.78rem;background:#f5f5f5;border-radius:8px;line-height:1.6;">尚無購買記錄<br>點上方「+ 新增記錄」開始</div>`
             : records.map(r => renderRecordRow(r)).join('')}
-          ${showLegacyHint ? `
-            <div style="padding:0.6rem 0.85rem;background:#9ca3af15;border-left:3px solid #9ca3af;border-radius:6px;font-size:0.72rem;color:var(--muted);line-height:1.5;">
-              📦 <b>舊版記錄</b>（不計入總數）<br>
-              入手日：${legacyMain.collected_date || '未填'} ・ 數量：${legacyMain.quantity || 1}
-              ${legacyMain.note ? `<br>備註：${escapeHtml(legacyMain.note)}` : ''}
-            </div>
-          ` : ''}
         </div>
       </div>
 
@@ -4228,14 +4164,29 @@ async function saveCollection(){
 }
 
 async function deleteCollection(){
-  if(!confirm('確定要移除這筆蒐集記錄嗎？')) return;
+  if(!confirm('確定要移除此徽章的所有蒐集記錄嗎？')) return;
   const existing = myCollections[_colBadgeId];
-  if(!existing) return;
-  const { error } = await supabaseClient
-    .from('collections')
-    .delete()
-    .eq('id', existing.id);
-  if(error){ alert('移除失敗：' + error.message); return; }
+  const records = myCollectionRecords[_colBadgeId] || [];
+
+  // 刪子表所有記錄
+  if(records.length > 0){
+    const recordIds = records.map(r => r.id);
+    const { error } = await supabaseClient
+      .from('collection_records')
+      .delete()
+      .in('id', recordIds);
+    if(error){ alert('刪除失敗：' + error.message); return; }
+  }
+
+  // 刪主表（fallback 舊資料）
+  if(existing){
+    const { error } = await supabaseClient
+      .from('collections')
+      .delete()
+      .eq('id', existing.id);
+    if(error){ alert('刪除失敗：' + error.message); return; }
+  }
+
   await loadMyCollections();
   closeCollectionModal();
   showToast('已移除');
@@ -4800,34 +4751,26 @@ function batchColEachNext(){
 async function batchColEachFinish(){
   _persistEachStep();
   const badgeIds = [..._batchSelected];
-  // 組 payloads：每張都可能是新增或更新
-  const toInsert = [];
-  const toUpdate = [];
-  for(const bid of badgeIds){
+  // 為每張徽章各新增一筆子表購買記錄（不再寫主表）
+  const toInsert = badgeIds.map(bid => {
     const data = _batchColPerBadge[bid] || { date: null, qty: 1, note: null };
-    const existing = myCollections[bid];
-    if(existing){
-      toUpdate.push({ id: existing.id, collected_date: data.date, quantity: data.qty, note: data.note });
-    } else {
-      toInsert.push({ user_id: currentUser.id, badge_id: bid, collected_date: data.date, quantity: data.qty, note: data.note });
-    }
-  }
-  // 執行
-  if(toInsert.length){
-    const { error } = await supabaseClient.from('collections').insert(toInsert);
-    if(error){ alert('新增失敗：' + error.message); return; }
-  }
-  for(const u of toUpdate){
-    const { error } = await supabaseClient
-      .from('collections')
-      .update({ collected_date: u.collected_date, quantity: u.quantity, note: u.note })
-      .eq('id', u.id);
-    if(error){ alert('更新失敗：' + error.message); return; }
-  }
+    return {
+      user_id: currentUser.id,
+      badge_id: bid,
+      purchased_date: data.date,
+      quantity: data.qty,
+      source: null,
+      note: data.note
+    };
+  });
+
+  const { error } = await supabaseClient.from('collection_records').insert(toInsert);
+  if(error){ alert('儲存失敗：' + error.message); return; }
+
   await loadMyCollections();
   closeBatchCollectionModal();
   exitBatchMode();
-  showToast(`已儲存 ${badgeIds.length} 筆蒐集記錄（新增 ${toInsert.length}、更新 ${toUpdate.length}）`);
+  showToast(`已新增 ${badgeIds.length} 筆購買記錄`);
 }
 
 async function batchSaveCollectionsSame(){
@@ -4836,32 +4779,23 @@ async function batchSaveCollectionsSame(){
   const note = document.getElementById('batch-col-note').value.trim() || null;
   const badgeIds = [..._batchSelected];
 
-  const toInsert = [];
-  const toUpdate = [];
-  for(const bid of badgeIds){
-    const existing = myCollections[bid];
-    if(existing){
-      toUpdate.push(existing.id);
-    } else {
-      toInsert.push({ user_id: currentUser.id, badge_id: bid, collected_date: date, quantity: qty, note });
-    }
-  }
-  if(toInsert.length){
-    const { error } = await supabaseClient.from('collections').insert(toInsert);
-    if(error){ alert('新增失敗：' + error.message); return; }
-  }
-  if(toUpdate.length){
-    // 同一組值可以一次 update 多個 id（用 .in）
-    const { error } = await supabaseClient
-      .from('collections')
-      .update({ collected_date: date, quantity: qty, note })
-      .in('id', toUpdate);
-    if(error){ alert('更新失敗：' + error.message); return; }
-  }
+  // 為每張徽章各新增一筆子表購買記錄（不再寫主表）
+  const toInsert = badgeIds.map(bid => ({
+    user_id: currentUser.id,
+    badge_id: bid,
+    purchased_date: date,
+    quantity: qty,
+    source: null,
+    note
+  }));
+
+  const { error } = await supabaseClient.from('collection_records').insert(toInsert);
+  if(error){ alert('儲存失敗：' + error.message); return; }
+
   await loadMyCollections();
   closeBatchCollectionModal();
   exitBatchMode();
-  showToast(`已儲存 ${badgeIds.length} 筆（新增 ${toInsert.length}、更新 ${toUpdate.length}）`);
+  showToast(`已新增 ${badgeIds.length} 筆購買記錄`);
 }
 
 // ── 批次刪除蒐集記錄 ──
@@ -4878,9 +4812,10 @@ function closeBatchDeleteCollectionModal(){
 function renderBatchDeleteCollectionModal(){
   const content = document.getElementById('batch-col-del-content');
   const ids = [..._batchSelected];
-  // 算選中的徽章中有幾張有蒐集記錄、幾張沒有
-  const withRecord = ids.filter(id => myCollections[id]);
-  const withoutRecord = ids.filter(id => !myCollections[id]);
+  // 算選中的徽章中有幾張有蒐集記錄（主表 OR 子表）、幾張沒有
+  const hasAnyRecord = id => myCollections[id] || hasCollectionRecords(id);
+  const withRecord = ids.filter(hasAnyRecord);
+  const withoutRecord = ids.filter(id => !hasAnyRecord(id));
 
   if(withRecord.length === 0){
     content.innerHTML = `
@@ -4892,8 +4827,8 @@ function renderBatchDeleteCollectionModal(){
     return;
   }
 
-  // 計算這些記錄的總數量
-  const totalQty = withRecord.reduce((sum, id) => sum + Number(myCollections[id].quantity || 1), 0);
+  // 計算這些記錄的總數量（用統一的 getBadgeQuantity）
+  const totalQty = withRecord.reduce((sum, id) => sum + getBadgeQuantity(id), 0);
 
   content.innerHTML = `
     <div style="padding:0.85rem 1rem;background:#fee2e2;border-left:3px solid #ef4444;border-radius:6px;margin-bottom:1rem;">
@@ -4915,32 +4850,55 @@ function renderBatchDeleteCollectionModal(){
 
 async function batchDeleteCollections(){
   const ids = [..._batchSelected];
-  // 取出有蒐集記錄的 collection id
-  const collectionIds = ids
+
+  // 收集要刪的子表記錄 id（每張徽章可能有多筆）
+  const recordIds = [];
+  ids.forEach(bid => {
+    const records = myCollectionRecords[bid] || [];
+    records.forEach(r => recordIds.push(r.id));
+  });
+
+  // 收集要刪的主表記錄 id（fallback 舊資料）
+  const mainIds = ids
     .map(bid => myCollections[bid]?.id)
     .filter(Boolean);
 
-  if(collectionIds.length === 0){
+  if(recordIds.length === 0 && mainIds.length === 0){
     showToast('沒有可刪除的記錄');
     closeBatchDeleteCollectionModal();
     return;
   }
 
-  const { error } = await supabaseClient
-    .from('collections')
-    .delete()
-    .in('id', collectionIds);
+  // 先刪子表
+  if(recordIds.length > 0){
+    const { error } = await supabaseClient
+      .from('collection_records')
+      .delete()
+      .in('id', recordIds);
+    if(error){
+      console.error('batchDeleteCollections - records', error);
+      alert('刪除子表失敗：' + error.message);
+      return;
+    }
+  }
 
-  if(error){
-    console.error('batchDeleteCollections', error);
-    alert('刪除失敗：' + error.message);
-    return;
+  // 再刪主表（清掉所有相關記錄，回到完全未蒐集狀態）
+  if(mainIds.length > 0){
+    const { error } = await supabaseClient
+      .from('collections')
+      .delete()
+      .in('id', mainIds);
+    if(error){
+      console.error('batchDeleteCollections - main', error);
+      alert('刪除主表失敗：' + error.message);
+      return;
+    }
   }
 
   await loadMyCollections();
   closeBatchDeleteCollectionModal();
   exitBatchMode();
-  showToast(`已刪除 ${collectionIds.length} 筆蒐集記錄`);
+  showToast(`已刪除 ${ids.length} 張徽章的蒐集記錄`);
 }
 
 </script>
