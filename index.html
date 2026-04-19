@@ -627,7 +627,11 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
-          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th><th id="th-actions" style="width:130px;">操作</th>
+          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th>
+          <th class="th-col-only" id="th-col-qty" style="display:none;">蒐集數量</th>
+          <th class="th-col-only" id="th-col-date" style="display:none;">最近購買</th>
+          <th class="th-col-only" id="th-col-source" style="display:none;">購買來源</th>
+          <th id="th-actions" style="width:130px;">操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -1579,6 +1583,8 @@ const LANGS = {
     batchSelected:'已選 {n} 張', batchCancel:'取消', batchAddToList:'加入清單', batchAddCollect:'加入蒐集記錄', batchDelCollect:'刪除蒐集', batchSelectAll:'全選目前顯示', batchEnter:'☑ 批次',
     // 收藏到清單 modal
     favTitle:'⭐ 收藏到清單', favEmpty:'還沒有清單，建立第一個吧！', favPlaceholderFirst:'如 我的最愛、想要的徽章', favCreateAndAdd:'建立清單並收藏', favSelectList:'選擇清單：', favOrCreate:'或新增清單：', favPlaceholderNew:'新清單名稱', favCreateBtn:'+ 新增', favCancel:'取消', favSave:'儲存',
+    // 表格模式蒐集欄位
+    tblColQty:'蒐集數量', tblColDate:'最近購買', tblColSource:'購買來源',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 蒐集記錄',
   },
@@ -1617,6 +1623,8 @@ const LANGS = {
     batchSelected:'{n} 件選択', batchCancel:'キャンセル', batchAddToList:'リストに追加', batchAddCollect:'収集記録に追加', batchDelCollect:'収集削除', batchSelectAll:'表示中をすべて選択', batchEnter:'☑ 一括',
     // 收藏到清單 modal
     favTitle:'⭐ リストに追加', favEmpty:'リストがまだありません、最初の一つを作りましょう！', favPlaceholderFirst:'例：お気に入り、欲しいバッジ', favCreateAndAdd:'リストを作成して追加', favSelectList:'リストを選択：', favOrCreate:'または新規リスト：', favPlaceholderNew:'新しいリスト名', favCreateBtn:'+ 追加', favCancel:'キャンセル', favSave:'保存',
+    // 表格模式蒐集欄位
+    tblColQty:'収集数', tblColDate:'最終購入', tblColSource:'購入元',
     // 蒐集記錄區塊
     colSectionTitle:'✓ コレクション記録',
   },
@@ -1655,6 +1663,8 @@ const LANGS = {
     batchSelected:'{n} selected', batchCancel:'Cancel', batchAddToList:'Add to List', batchAddCollect:'Add to Collection', batchDelCollect:'Delete Collection', batchSelectAll:'Select All Visible', batchEnter:'☑ Batch',
     // 收藏到清單 modal
     favTitle:'⭐ Add to List', favEmpty:'No lists yet, create your first one!', favPlaceholderFirst:'e.g., Favorites, Wishlist', favCreateAndAdd:'Create List & Add', favSelectList:'Select list(s):', favOrCreate:'Or create new list:', favPlaceholderNew:'New list name', favCreateBtn:'+ Add', favCancel:'Cancel', favSave:'Save',
+    // 表格模式蒐集欄位
+    tblColQty:'Qty', tblColDate:'Last Purchase', tblColSource:'Source',
     // 蒐集記錄區塊
     colSectionTitle:'✓ Collection',
   },
@@ -1693,6 +1703,8 @@ const LANGS = {
     batchSelected:'{n}개 선택', batchCancel:'취소', batchAddToList:'리스트에 추가', batchAddCollect:'수집 기록에 추가', batchDelCollect:'수집 삭제', batchSelectAll:'표시 중 모두 선택', batchEnter:'☑ 일괄',
     // 收藏到清單 modal
     favTitle:'⭐ 리스트에 추가', favEmpty:'리스트가 없습니다. 첫 번째 리스트를 만들어보세요!', favPlaceholderFirst:'예: 즐겨찾기, 원하는 배지', favCreateAndAdd:'리스트 생성 및 추가', favSelectList:'리스트 선택:', favOrCreate:'또는 새 리스트:', favPlaceholderNew:'새 리스트 이름', favCreateBtn:'+ 추가', favCancel:'취소', favSave:'저장',
+    // 表格模式蒐集欄位
+    tblColQty:'수집 수', tblColDate:'최근 구매', tblColSource:'구매처',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 수집 기록',
   },
@@ -1834,6 +1846,10 @@ function applyLang(){
   if(bbt) bbt.textContent = L_b.batchEnter;
   const bbtm = document.getElementById('btn-batch-toggle-mobile');
   if(bbtm) bbtm.textContent = L_b.batchEnter;
+  // 若當前是表格模式，重新渲染以更新表頭翻譯
+  if(typeof currentView !== 'undefined' && currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+    renderTable(currentFiltered);
+  }
 }
 applyLang();
 
@@ -2241,7 +2257,19 @@ function setView(v){
 
 function renderTable(list){
   const tbody = document.getElementById('badge-tbody');
-  if(!list.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">${(LANGS[currentLang]||LANGS['zh-TW']).noData||'無符合資料'}</td></tr>`; return; }
+  // 控制蒐集欄位的 thead 顯示
+  const showColCols = !!currentUser;
+  document.querySelectorAll('.th-col-only').forEach(th => {
+    th.style.display = showColCols ? '' : 'none';
+  });
+  // 同步表頭 i18n
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  const tcq = document.getElementById('th-col-qty'); if(tcq) tcq.textContent = L.tblColQty || '蒐集數量';
+  const tcd = document.getElementById('th-col-date'); if(tcd) tcd.textContent = L.tblColDate || '最近購買';
+  const tcs = document.getElementById('th-col-source'); if(tcs) tcs.textContent = L.tblColSource || '購買來源';
+
+  const colspan = showColCols ? 10 : 7;
+  if(!list.length){ tbody.innerHTML=`<tr><td colspan="${colspan}" style="text-align:center;padding:2rem;color:var(--muted)">${L.noData||'無符合資料'}</td></tr>`; return; }
   tbody.innerHTML = list.map((b,i)=>{
     const c = bandColor(b.band);
     const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
@@ -2258,6 +2286,34 @@ function renderTable(list){
         <button onclick="openCollectionModal('${b.id}')" title="蒐集記錄"
           style="background:${isCollected(b.id)?'#22c55e':'transparent'};border:1.5px solid ${isCollected(b.id)?'#22c55e':'var(--border)'};border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.85rem;font-weight:700;color:${isCollected(b.id)?'#fff':'var(--muted)'};display:flex;align-items:center;justify-content:center;padding:0;">${isCollected(b.id)?'✓':'+'}</button>
       </div>` : '';
+    // 蒐集相關欄位（僅登入時）
+    let colCols = '';
+    if(showColCols){
+      const records = myCollectionRecords[b.id] || [];
+      const totalQty = getBadgeQuantity(b.id);
+      // 最近購買日：取子表中最大的 purchased_date；若無子表則 fallback 主表
+      let latestDate = '—';
+      let sourceText = '—';
+      if(records.length > 0){
+        const sorted = [...records].sort((a, c) => (c.purchased_date||'').localeCompare(a.purchased_date||''));
+        latestDate = sorted[0].purchased_date || '—';
+        // 來源：多筆時顯示「N 筆」+ 最近一筆來源（若有）
+        const latest = sorted[0];
+        if(records.length > 1){
+          sourceText = latest.source ? `${latest.source} (+${records.length-1})` : `${records.length} 筆`;
+        } else {
+          sourceText = latest.source || '—';
+        }
+      } else if(myCollections[b.id]){
+        // fallback 主表
+        latestDate = myCollections[b.id].collected_date || '—';
+      }
+      const qtyDisplay = totalQty > 0 ? `<span style="color:#22c55e;font-weight:600;">${totalQty}</span>` : '<span style="color:var(--muted);">—</span>';
+      colCols = `
+        <td style="text-align:center;">${qtyDisplay}</td>
+        <td style="font-size:0.8rem;">${latestDate}</td>
+        <td style="font-size:0.8rem;color:var(--muted);">${escapeHtml(sourceText)}</td>`;
+    }
     return `<tr data-badge-id="${b.id}" onclick="handleTableRowClick(event,'${b.id}',${idx})">
       <td><img class="tbl-thumb" src="${src}" onerror="this.style.visibility='hidden'" alt=""/></td>
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span></td>
@@ -2265,6 +2321,7 @@ function renderTable(list){
       <td>${eventHtml}</td>
       <td>${b.year||'—'}</td>
       <td>${b.series||'—'}</td>
+      ${colCols}
       <td>${actionsHtml}</td>
     </tr>`;
   }).join('');
@@ -3614,6 +3671,10 @@ updateAuthUI = function(){
     buildSmartListsSidebar();
     buildCollectionSidebar();
     applyFilters();
+  }
+  // 不論登入或登出，若在表格模式則 re-render（讓欄位顯/隱即時更新）
+  if(typeof currentView !== 'undefined' && currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+    renderTable(currentFiltered);
   }
 };
 
