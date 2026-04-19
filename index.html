@@ -1252,10 +1252,8 @@ function renderGrid(list){
     const shortEventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${shortEvent}</a>`
       : shortEvent;
-    // 蒐集狀態 class（只有登入時才標示，避免未登入訪客看到滿屏灰）
-    const colState = currentUser
-      ? (isCollected(b.id) ? ' is-collected' : ' is-uncollected')
-      : '';
+    // 蒐集狀態 class：只標示「已蒐集」加綠框；未蒐集保持原樣（避免全部變灰）
+    const colState = (currentUser && isCollected(b.id)) ? ' is-collected' : '';
     return `<div class="badge-card${colState}" data-badge-id="${b.id}" onclick="handleCardClick(event,this,${idx})" style="position:relative;">
       <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
