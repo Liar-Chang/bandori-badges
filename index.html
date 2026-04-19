@@ -1846,10 +1846,12 @@ function applyLang(){
   if(bbt) bbt.textContent = L_b.batchEnter;
   const bbtm = document.getElementById('btn-batch-toggle-mobile');
   if(bbtm) bbtm.textContent = L_b.batchEnter;
-  // 若當前是表格模式，重新渲染以更新表頭翻譯
-  if(typeof currentView !== 'undefined' && currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
-    renderTable(currentFiltered);
-  }
+  // 若當前是表格模式，重新渲染以更新表頭翻譯（用 try-catch 保護 TDZ）
+  try {
+    if(currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+      renderTable(currentFiltered);
+    }
+  } catch(e) { /* applyLang 首次呼叫時 currentView 可能還沒宣告，忽略 */ }
 }
 applyLang();
 
@@ -3673,9 +3675,11 @@ updateAuthUI = function(){
     applyFilters();
   }
   // 不論登入或登出，若在表格模式則 re-render（讓欄位顯/隱即時更新）
-  if(typeof currentView !== 'undefined' && currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
-    renderTable(currentFiltered);
-  }
+  try {
+    if(currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+      renderTable(currentFiltered);
+    }
+  } catch(e) { /* currentView 尚未初始化時忽略 */ }
 };
 
 // ─────────────────────────────────────────
