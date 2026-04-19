@@ -3502,6 +3502,7 @@ updateAuthUI = function(){
     myLists = [];
     myListItems = {};
     myCollections = {};
+    myCollectionRecords = {};
     mySmartLists = [];
     selectedList = null;
     selectedSmartList = null;
@@ -3790,10 +3791,11 @@ function updateSaveSmartListButton(){
 }
 
 
-let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}}
+let myCollections = {}; // {badge_id: {id, collected_date, quantity, note}} - 主表（舊版）
+let myCollectionRecords = {}; // {badge_id: [{id, purchased_date, quantity, source, note}, ...]} - 子表（新版）
 // 三態篩選：'all' | 'collected' | 'uncollected'
-// 'collected' = 有蒐集記錄且數量 > 0
-// 'uncollected' = 沒蒐集記錄 OR 數量為 0
+// 'collected' = 有蒐集記錄（主表 OR 子表）且總數量 > 0
+// 'uncollected' = 沒任何記錄 OR 總數量為 0
 let collectedFilter = 'all';
 // 暫存「未套用蒐集篩選」的篩選結果（含其他樂團/角色/活動等條件）
 // 由 applyFilters() 設定，供 buildCollectionSidebar() 計數使用
@@ -3805,12 +3807,31 @@ function getFilteredExcludingCollected(){
   return (typeof all !== 'undefined' && Array.isArray(all)) ? all : [];
 }
 
-function isCollected(badgeId){
+// B 模式：有子表記錄就以子表為準，否則 fallback 主表 quantity
+function getBadgeQuantity(badgeId){
+  const records = myCollectionRecords[badgeId];
+  if(records && records.length > 0){
+    // 有子表 → 子表加總
+    return records.reduce((sum, r) => sum + Number(r.quantity || 0), 0);
+  }
+  // fallback 主表
   const c = myCollections[badgeId];
-  if(!c) return false;
-  // 數量為 0 視為未蒐集（手動標記「曾經有但目前不在手上」）
-  const qty = (c.quantity == null) ? 1 : Number(c.quantity);
-  return qty > 0;
+  if(!c) return 0;
+  return (c.quantity == null) ? 1 : Number(c.quantity);
+}
+
+// 是否有任何子表記錄
+function hasCollectionRecords(badgeId){
+  const r = myCollectionRecords[badgeId];
+  return r && r.length > 0;
+}
+
+function isCollected(badgeId){
+  // 有任何主表記錄 OR 子表記錄，且總數量 > 0
+  const c = myCollections[badgeId];
+  const hasRecord = c || hasCollectionRecords(badgeId);
+  if(!hasRecord) return false;
+  return getBadgeQuantity(badgeId) > 0;
 }
 
 function isUncollected(badgeId){
@@ -3829,8 +3850,25 @@ async function loadMyCollections(){
   (data||[]).forEach(c=>{
     myCollections[c.badge_id] = c;
   });
+  // 同時載入子表
+  await loadMyCollectionRecords();
   buildCollectionSidebar();
   applyFilters();
+}
+
+async function loadMyCollectionRecords(){
+  if(!currentUser){ myCollectionRecords = {}; return; }
+  const { data, error } = await supabaseClient
+    .from('collection_records')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('purchased_date', { ascending: false });
+  if(error){ console.error('loadMyCollectionRecords', error); return; }
+  myCollectionRecords = {};
+  (data||[]).forEach(r=>{
+    if(!myCollectionRecords[r.badge_id]) myCollectionRecords[r.badge_id] = [];
+    myCollectionRecords[r.badge_id].push(r);
+  });
 }
 
 function buildCollectionSidebar(){
@@ -3854,8 +3892,7 @@ function buildCollectionSidebar(){
   filtered.forEach(b=>{
     if(isCollected(b.id)){
       collectedCount++;
-      const c = myCollections[b.id];
-      totalQty += Number((c && c.quantity) || 1);
+      totalQty += getBadgeQuantity(b.id);
     } else {
       uncollectedCount++;
     }
@@ -3908,6 +3945,16 @@ function closeCollectionModal(){
 }
 
 function renderCollectionModal(){
+  // 自動偵測：有子表記錄就用新版（詳細模式）；沒有就用舊版
+  if(hasCollectionRecords(_colBadgeId)){
+    renderCollectionModalNew();
+  } else {
+    renderCollectionModalLegacy();
+  }
+}
+
+// 舊版蒐集 modal（保留原行為，加上「升級」連結）
+function renderCollectionModalLegacy(){
   const existing = myCollections[_colBadgeId];
   const date = existing?.collected_date || '';
   const qty = existing?.quantity || 1;
@@ -3924,7 +3971,7 @@ function renderCollectionModal(){
         <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">數量</label>
         <div style="display:flex;align-items:center;gap:0.5rem;">
           <button onclick="adjustQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
-          <input type="number" id="col-qty" value="${qty}" min="1" 
+          <input type="number" id="col-qty" value="${qty}" min="1"
             style="flex:1;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.95rem;outline:none;text-align:center;"/>
           <button onclick="adjustQty(1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">+</button>
         </div>
@@ -3939,7 +3986,215 @@ function renderCollectionModal(){
         <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
         <button onclick="saveCollection()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
       </div>
+      <div style="margin-top:0.5rem;padding:0.6rem 0.8rem;background:#0ea5e911;border:1px dashed #0ea5e9;border-radius:8px;font-size:0.72rem;color:#0369a1;line-height:1.5;">
+        💡 想記錄多次購買的歷史（例如不同日期入手）？
+        <a href="#" onclick="event.preventDefault();upgradeToDetailedMode()" style="color:#0ea5e9;text-decoration:underline;font-weight:600;">升級為詳細記錄模式</a>
+      </div>
     </div>`;
+}
+
+// 升級到詳細模式：把現有的主表記錄當作第一筆子表記錄帶入
+async function upgradeToDetailedMode(){
+  const existing = myCollections[_colBadgeId];
+  // 若主表已有資料，先建一筆子表記錄保留歷史
+  if(existing){
+    const { error } = await supabaseClient
+      .from('collection_records')
+      .insert({
+        user_id: currentUser.id,
+        badge_id: _colBadgeId,
+        purchased_date: existing.collected_date || null,
+        quantity: existing.quantity || 1,
+        source: null,
+        note: existing.note || null
+      });
+    if(error){ alert('升級失敗：' + error.message); return; }
+    await loadMyCollectionRecords();
+  }
+  // 重畫成新版 modal
+  renderCollectionModalNew();
+  showToast('已升級為詳細記錄模式');
+}
+
+// 新版蒐集 modal（詳細模式）：購買歷史列表 + 新增 / 編輯 / 刪除
+function renderCollectionModalNew(){
+  const records = myCollectionRecords[_colBadgeId] || [];
+  const totalQty = records.reduce((s, r) => s + Number(r.quantity || 0), 0);
+  const legacyMain = myCollections[_colBadgeId];
+  // 若主表還有資料但已經有子表，提示「舊版記錄」（不算進總數）
+  const showLegacyHint = legacyMain && records.length > 0;
+
+  const content = document.getElementById('col-modal-content');
+  content.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0.85rem;">
+      <div style="padding:0.6rem 0.85rem;background:#22c55e15;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:0.78rem;color:var(--text);">總數量</span>
+        <span style="font-size:1.1rem;font-weight:700;color:#22c55e;">${totalQty} 個</span>
+      </div>
+
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <span style="font-size:0.78rem;font-weight:600;color:var(--text);">📜 購買歷史（${records.length} 筆）</span>
+          <button onclick="addNewCollectionRecord()" style="padding:0.35rem 0.7rem;border:1.5px solid #22c55e;background:#22c55e;color:#fff;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.72rem;font-weight:600;">+ 新增記錄</button>
+        </div>
+        <div id="col-records-list" style="display:flex;flex-direction:column;gap:0.5rem;max-height:50vh;overflow-y:auto;">
+          ${records.length === 0
+            ? `<div style="padding:1rem;text-align:center;color:var(--muted);font-size:0.78rem;">尚無詳細記錄，點上方「+ 新增記錄」開始</div>`
+            : records.map(r => renderRecordRow(r)).join('')}
+          ${showLegacyHint ? `
+            <div style="padding:0.6rem 0.85rem;background:#9ca3af15;border-left:3px solid #9ca3af;border-radius:6px;font-size:0.72rem;color:var(--muted);line-height:1.5;">
+              📦 <b>舊版記錄</b>（不計入總數）<br>
+              入手日：${legacyMain.collected_date || '未填'} ・ 數量：${legacyMain.quantity || 1}
+              ${legacyMain.note ? `<br>備註：${escapeHtml(legacyMain.note)}` : ''}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">關閉</button>
+      </div>
+    </div>`;
+}
+
+function escapeHtml(s){
+  if(s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderRecordRow(r){
+  const date = r.purchased_date || '未填日期';
+  const qty = r.quantity || 0;
+  const source = r.source ? `<span style="color:var(--muted);"> ・ ${escapeHtml(r.source)}</span>` : '';
+  const note = r.note ? `<div style="font-size:0.7rem;color:var(--muted);margin-top:0.25rem;">${escapeHtml(r.note)}</div>` : '';
+  return `
+    <div style="padding:0.55rem 0.75rem;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.78rem;color:var(--text);">
+          <b>${date}</b> ・ qty=${qty}${source}
+        </div>
+        ${note}
+      </div>
+      <div style="display:flex;gap:0.25rem;flex-shrink:0;">
+        <button onclick="editCollectionRecord(${r.id})" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0.25rem;" title="編輯">✏</button>
+        <button onclick="deleteCollectionRecord(${r.id})" style="background:none;border:none;cursor:pointer;font-size:0.85rem;padding:0.25rem;" title="刪除">🗑</button>
+      </div>
+    </div>`;
+}
+
+// 新增 / 編輯 一筆子表記錄（共用同一個編輯介面）
+let _editingRecordId = null; // null = 新增模式
+
+function addNewCollectionRecord(){
+  _editingRecordId = null;
+  showRecordEditForm({});
+}
+
+function editCollectionRecord(recordId){
+  const records = myCollectionRecords[_colBadgeId] || [];
+  const r = records.find(x => x.id == recordId);
+  if(!r) return;
+  _editingRecordId = recordId;
+  showRecordEditForm(r);
+}
+
+function showRecordEditForm(r){
+  const content = document.getElementById('col-modal-content');
+  const today = new Date().toISOString().slice(0, 10);
+  const date = r.purchased_date || today;
+  const qty = r.quantity || 1;
+  const source = r.source || '';
+  const note = r.note || '';
+  const isNew = _editingRecordId === null;
+  content.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:0.85rem;">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--text);">
+        ${isNew ? '+ 新增購買記錄' : '✏ 編輯購買記錄'}
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">購買日期</label>
+        <input type="date" id="rec-date" value="${date}"
+          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">數量</label>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <button onclick="adjustRecQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
+          <input type="number" id="rec-qty" value="${qty}" min="1"
+            style="flex:1;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.95rem;outline:none;text-align:center;"/>
+          <button onclick="adjustRecQty(1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">+</button>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">購買地點 / 來源（選填）</label>
+        <input type="text" id="rec-source" value="${escapeHtml(source)}" placeholder="例如：偶染、友人讓、轉讓帳號..."
+          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">備註（選填）</label>
+        <textarea id="rec-note" placeholder="例如：購買價格..." rows="2"
+          style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;resize:vertical;">${escapeHtml(note)}</textarea>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="renderCollectionModalNew()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
+        <button onclick="saveCollectionRecord()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
+      </div>
+    </div>`;
+}
+
+function adjustRecQty(delta){
+  const input = document.getElementById('rec-qty');
+  const cur = parseInt(input.value) || 1;
+  input.value = Math.max(1, cur + delta);
+}
+
+async function saveCollectionRecord(){
+  const date = document.getElementById('rec-date').value || null;
+  const qty = Math.max(1, parseInt(document.getElementById('rec-qty').value) || 1);
+  const source = document.getElementById('rec-source').value.trim() || null;
+  const note = document.getElementById('rec-note').value.trim() || null;
+  if(_editingRecordId === null){
+    // 新增
+    const { error } = await supabaseClient
+      .from('collection_records')
+      .insert({
+        user_id: currentUser.id,
+        badge_id: _colBadgeId,
+        purchased_date: date,
+        quantity: qty,
+        source,
+        note
+      });
+    if(error){ alert('新增失敗：' + error.message); return; }
+    showToast('已新增購買記錄');
+  } else {
+    // 編輯
+    const { error } = await supabaseClient
+      .from('collection_records')
+      .update({ purchased_date: date, quantity: qty, source, note })
+      .eq('id', _editingRecordId);
+    if(error){ alert('儲存失敗：' + error.message); return; }
+    showToast('已更新');
+  }
+  await loadMyCollections();
+  renderCollectionModalNew();
+}
+
+async function deleteCollectionRecord(recordId){
+  if(!confirm('確定要刪除這筆購買記錄嗎？')) return;
+  const { error } = await supabaseClient
+    .from('collection_records')
+    .delete()
+    .eq('id', recordId);
+  if(error){ alert('刪除失敗：' + error.message); return; }
+  await loadMyCollections();
+  // 重畫 modal — 如果刪到沒記錄了，會自動切回舊版 modal
+  if(hasCollectionRecords(_colBadgeId)){
+    renderCollectionModalNew();
+  } else {
+    renderCollectionModalLegacy();
+  }
+  showToast('已刪除');
 }
 
 function adjustQty(delta){
