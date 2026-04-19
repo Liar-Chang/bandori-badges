@@ -446,9 +446,13 @@ body.batch-mode .batch-action-bar{display:flex;}
 .batch-action-bar .btn-list:hover,.batch-action-bar .btn-col:hover,.batch-action-bar .btn-col-del:hover{opacity:0.85;}
 
 @media(max-width:600px){
-  .batch-action-bar{padding:0.5rem 0.65rem;gap:0.35rem;}
-  .batch-action-bar button{font-size:0.72rem;padding:0.4rem 0.65rem;}
-  .batch-action-bar .count{font-size:0.75rem;}
+  .batch-action-bar{padding:0.5rem 0.65rem;gap:0.3rem;max-width:calc(100vw - 1rem);}
+  .batch-action-bar button{font-size:0.7rem;padding:0.38rem 0.55rem;}
+  .batch-action-bar .count{font-size:0.72rem;padding:0 0.25rem;}
+  .batch-action-bar .count b{font-size:0.9rem;}
+  /* 手機版：縮短「全選目前顯示」為「全選」 */
+  .batch-action-bar #btn-batch-select-all{font-size:0;padding:0.38rem 0.5rem;}
+  .batch-action-bar #btn-batch-select-all::before{content:"全選";font-size:0.7rem;}
 }
 
 /* 批次模式切換按鈕 */
