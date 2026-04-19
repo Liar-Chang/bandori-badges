@@ -1,0 +1,64 @@
+LICENSE
+=======
+
+This project is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+To view a copy of this license, visit:
+  https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+
+SCOPE OF THIS LICENSE
+---------------------
+
+This license applies ONLY to:
+  - The website source code (HTML, CSS, JavaScript)
+  - Data structure / schema design (e.g., badges.json schema)
+  - The compilation/curation of badge metadata (release dates, sizes, types,
+    cataloging organization)
+  - Original UI design, original translations, original announcements
+
+This license DOES NOT apply to, and explicitly EXCLUDES:
+  - All BanG Dream! badge images
+  - Character names, band names, event names, song names
+  - Any other intellectual property of Bushiroad / 株式会社ブシロード
+
+
+THIRD-PARTY COPYRIGHT NOTICE
+----------------------------
+
+All BanG Dream! related visual assets, character names, band names, event names,
+and other branded content displayed on this website are the property of:
+
+    © Bushiroad / 株式会社ブシロード
+    https://bushiroad.com/
+
+This is an unofficial fan-made archive maintained by independent fans for
+non-commercial purposes. The maintainer claims no ownership over Bushiroad's
+intellectual property and does not represent or speak for Bushiroad in any way.
+
+If you are a representative of Bushiroad and wish for any content to be removed,
+please contact: liarfortwfgo@gmail.com — we will respond promptly.
+
+
+SUMMARY (HUMAN-READABLE)
+------------------------
+
+You are free to:
+  - Share — copy and redistribute the source code in any medium or format
+  - Adapt — remix, transform, and build upon the source code
+
+Under the following terms:
+  - Attribution (BY) — You must give appropriate credit, provide a link to the
+    license, and indicate if changes were made.
+  - NonCommercial (NC) — You may not use the material for commercial purposes.
+  - ShareAlike (SA) — If you remix, transform, or build upon the material, you
+    must distribute your contributions under the same license.
+
+For full legal text, see:
+  https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+
+Maintained by: 千早愛音的暴躁柯基 (Anon's Corgi)
+Contact: liarfortwfgo@gmail.com
+Site: https://liar-chang.github.io/bandori-badges/
