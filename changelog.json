@@ -1,7 +1,12 @@
 [
   {
-    "date": "2026/4/19",
-    "content": "【新增/更新資料】\n今日無更新徽章，圖文不符放上小羊照片聊表心意🐑\n【功能調整】\n・新增「批次選取」功能（需登入使用）：\n　- 可一次勾選多張徽章加入清單（支援複選清單、同時新建）\n　- 可一次登記多張的蒐集記錄（選「相同值」一次填、或「一張一張填」）\n　- 桌面版在右上「☑ 批次」入口，手機版在側欄上方\n・修正「隱藏無圖徽章」與切換樂團的衝突，現在會正確保留\n・登入後介面不再需要重新整理才顯示\n・卡片編號位置調整到圖片左下角（避免與新增的勾選框重疊）\n・視窗中等寬度時語言按鈕與標題重疊問題修正"
+    "date": "2026/4/18",
+    "content": {
+      "zh": "【新增/更新資料】\n（無）\n【功能調整】\n・新增「批次選取」功能（需登入使用）：\n　- 可一次勾選多張徽章加入清單（支援複選清單、同時新建）\n　- 可一次登記多張的蒐集記錄（選「相同值」一次填、或「一張一張填」）\n　- 桌面版在右上「☑ 批次」入口，手機版在側欄上方\n・修正「隱藏無圖徽章」與切換樂團的衝突，現在會正確保留\n・登入後介面不再需要重新整理才顯示\n・卡片編號位置調整到圖片左下角（避免與新增的勾選框重疊）\n・視窗中等寬度時語言按鈕與標題重疊問題修正",
+      "ja": "【新規/更新データ】\n（なし）【機能調整】\n・「一括選択」機能を追加（ログイン必須）：\n　- 複数のバッジを一度にリストに追加可能（複数リスト選択・同時新規作成対応）\n　- 複数のバッジのコレクション記録を一度に登録可能（「同じ値で一括入力」または「一枚ずつ入力」を選択）\n　- PC版は右上の「☑ 一括」、スマホ版はサイドバー上部から起動\n・「画像なしバッジを非表示」とバンド切替の競合を修正、設定が正しく保持されるように\n・ログイン後、画面更新不要でUIが反映されるように\n・バッジ番号の位置を画像左下に変更（新規追加されたチェックボックスとの重なりを回避）\n・ウィンドウ幅が中程度の時、言語ボタンとタイトルが重なる問題を修正",
+      "en": "【New/Updated Data】\n(None)\n【Feature Updates】\n・Added \"Batch Selection\" feature (login required):\n　- Add multiple badges to lists at once (supports multi-list selection and simultaneous list creation)\n　- Register collection records for multiple badges at once (choose \"Same Values\" for bulk entry, or \"One by One\" to fill individually)\n　- Desktop entry at top-right \"☑ Batch\", mobile entry at top of sidebar\n・Fixed conflict between \"Hide badges without images\" and band switching — setting is now properly preserved\n・UI now updates immediately after login (no refresh needed)\n・Badge ID number relocated to bottom-left of image (to avoid overlap with the new checkbox)\n・Fixed overlap issue between language buttons and title at medium window widths",
+      "ko": "韓文版\n【신규/업데이트 데이터】\n(없음)\n【기능 조정】\n・「일괄 선택」 기능 추가 (로그인 필요):\n　- 여러 배지를 한 번에 리스트에 추가 가능 (여러 리스트 선택 및 동시 신규 생성 지원)\n　- 여러 배지의 수집 기록을 한 번에 등록 가능 (「동일한 값으로 일괄」 또는 「하나씩 입력」 선택)\n　- PC 버전은 우측 상단 「☑ 일괄」, 모바일 버전은 사이드바 상단에서 진입\n・「이미지 없는 배지 숨기기」와 밴드 전환 충돌 수정, 이제 올바르게 유지됩니다\n・로그인 후 새로고침 없이 UI가 즉시 반영되도록 수정\n・배지 번호 위치를 이미지 좌측 하단으로 변경 (새로 추가된 체크박스와의 겹침 방지)\n・창 너비가 중간일 때 언어 버튼과 제목이 겹치는 문제 수정"
+    }
   },
   {
     "date": "2026/4/17",
