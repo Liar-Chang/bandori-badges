@@ -1576,7 +1576,9 @@ const LANGS = {
     // 蒐集記錄三段
     colSegAll:'全部', colSegCollected:'已蒐集', colSegUncollected:'未蒐集',
     // 批次操作
-    batchSelected:'已選 {n} 張', batchCancel:'取消', batchAddToList:'加入清單', batchAddCollect:'加入蒐集記錄', batchDelCollect:'刪除蒐集', batchSelectAll:'全選目前顯示',
+    batchSelected:'已選 {n} 張', batchCancel:'取消', batchAddToList:'加入清單', batchAddCollect:'加入蒐集記錄', batchDelCollect:'刪除蒐集', batchSelectAll:'全選目前顯示', batchEnter:'☑ 批次',
+    // 收藏到清單 modal
+    favTitle:'⭐ 收藏到清單', favEmpty:'還沒有清單，建立第一個吧！', favPlaceholderFirst:'如 我的最愛、想要的徽章', favCreateAndAdd:'建立清單並收藏', favSelectList:'選擇清單：', favOrCreate:'或新增清單：', favPlaceholderNew:'新清單名稱', favCreateBtn:'+ 新增', favCancel:'取消', favSave:'儲存',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 蒐集記錄',
   },
@@ -1612,7 +1614,9 @@ const LANGS = {
     // 蒐集記錄三段
     colSegAll:'すべて', colSegCollected:'収集済み', colSegUncollected:'未収集',
     // 批次操作
-    batchSelected:'{n} 件選択', batchCancel:'キャンセル', batchAddToList:'リストに追加', batchAddCollect:'収集記録に追加', batchDelCollect:'収集削除', batchSelectAll:'表示中をすべて選択',
+    batchSelected:'{n} 件選択', batchCancel:'キャンセル', batchAddToList:'リストに追加', batchAddCollect:'収集記録に追加', batchDelCollect:'収集削除', batchSelectAll:'表示中をすべて選択', batchEnter:'☑ 一括',
+    // 收藏到清單 modal
+    favTitle:'⭐ リストに追加', favEmpty:'リストがまだありません、最初の一つを作りましょう！', favPlaceholderFirst:'例：お気に入り、欲しいバッジ', favCreateAndAdd:'リストを作成して追加', favSelectList:'リストを選択：', favOrCreate:'または新規リスト：', favPlaceholderNew:'新しいリスト名', favCreateBtn:'+ 追加', favCancel:'キャンセル', favSave:'保存',
     // 蒐集記錄區塊
     colSectionTitle:'✓ コレクション記録',
   },
@@ -1648,7 +1652,9 @@ const LANGS = {
     // 蒐集記錄三段
     colSegAll:'All', colSegCollected:'Collected', colSegUncollected:'Not Collected',
     // 批次操作
-    batchSelected:'{n} selected', batchCancel:'Cancel', batchAddToList:'Add to List', batchAddCollect:'Add to Collection', batchDelCollect:'Delete Collection', batchSelectAll:'Select All Visible',
+    batchSelected:'{n} selected', batchCancel:'Cancel', batchAddToList:'Add to List', batchAddCollect:'Add to Collection', batchDelCollect:'Delete Collection', batchSelectAll:'Select All Visible', batchEnter:'☑ Batch',
+    // 收藏到清單 modal
+    favTitle:'⭐ Add to List', favEmpty:'No lists yet, create your first one!', favPlaceholderFirst:'e.g., Favorites, Wishlist', favCreateAndAdd:'Create List & Add', favSelectList:'Select list(s):', favOrCreate:'Or create new list:', favPlaceholderNew:'New list name', favCreateBtn:'+ Add', favCancel:'Cancel', favSave:'Save',
     // 蒐集記錄區塊
     colSectionTitle:'✓ Collection',
   },
@@ -1684,7 +1690,9 @@ const LANGS = {
     // 蒐集記錄三段
     colSegAll:'전체', colSegCollected:'수집됨', colSegUncollected:'미수집',
     // 批次操作
-    batchSelected:'{n}개 선택', batchCancel:'취소', batchAddToList:'리스트에 추가', batchAddCollect:'수집 기록에 추가', batchDelCollect:'수집 삭제', batchSelectAll:'표시 중 모두 선택',
+    batchSelected:'{n}개 선택', batchCancel:'취소', batchAddToList:'리스트에 추가', batchAddCollect:'수집 기록에 추가', batchDelCollect:'수집 삭제', batchSelectAll:'표시 중 모두 선택', batchEnter:'☑ 일괄',
+    // 收藏到清單 modal
+    favTitle:'⭐ 리스트에 추가', favEmpty:'리스트가 없습니다. 첫 번째 리스트를 만들어보세요!', favPlaceholderFirst:'예: 즐겨찾기, 원하는 배지', favCreateAndAdd:'리스트 생성 및 추가', favSelectList:'리스트 선택:', favOrCreate:'또는 새 리스트:', favPlaceholderNew:'새 리스트 이름', favCreateBtn:'+ 추가', favCancel:'취소', favSave:'저장',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 수집 기록',
   },
@@ -1820,6 +1828,12 @@ function applyLang(){
   if(typeof buildSmartListsSidebar === 'function') buildSmartListsSidebar();
   if(typeof updateSaveSmartListButton === 'function') updateSaveSmartListButton();
   if(typeof updateBatchBar === 'function') updateBatchBar();
+  // 批次按鈕入口（桌面 + 手機）
+  const L_b = LANGS[currentLang] || LANGS['zh-TW'];
+  const bbt = document.getElementById('btn-batch-toggle');
+  if(bbt) bbt.textContent = L_b.batchEnter;
+  const bbtm = document.getElementById('btn-batch-toggle-mobile');
+  if(bbtm) bbtm.textContent = L_b.batchEnter;
 }
 applyLang();
 
@@ -3495,40 +3509,44 @@ function closeFavModal(){
 function renderFavModal(){
   const inLists = myListItems[_favBadgeId] || [];
   const content = document.getElementById('fav-modal-content');
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  // 同步 modal 標題
+  const titleEl = document.querySelector('#fav-overlay h2');
+  if(titleEl) titleEl.textContent = L.favTitle;
   if(!myLists.length){
     content.innerHTML = `
       <div style="text-align:center;padding:1rem 0;">
-        <div style="font-size:0.85rem;color:var(--text);margin-bottom:0.85rem;">還沒有清單，建立第一個吧！</div>
-        <input type="text" id="fav-new-list-name" placeholder="如 我的最愛、想要的徽章" 
+        <div style="font-size:0.85rem;color:var(--text);margin-bottom:0.85rem;">${L.favEmpty}</div>
+        <input type="text" id="fav-new-list-name" placeholder="${L.favPlaceholderFirst}"
           style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;margin-bottom:0.75rem;"/>
-        <button onclick="createListAndAdd()" style="width:100%;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">建立清單並收藏</button>
+        <button onclick="createListAndAdd()" style="width:100%;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">${L.favCreateAndAdd}</button>
       </div>`;
     setTimeout(()=>document.getElementById('fav-new-list-name')?.focus(), 50);
     return;
   }
   content.innerHTML = `
-    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">選擇清單：</div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">${L.favSelectList}</div>
     <div style="max-height:240px;overflow-y:auto;margin-bottom:0.85rem;">
       ${myLists.map(l=>`
-        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);" 
+        <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);"
           onmouseover="this.style.background='#80808015'" onmouseout="this.style.background='transparent'">
-          <input type="checkbox" class="fav-list-cb" value="${l.id}" ${inLists.includes(l.id)?'checked':''} 
+          <input type="checkbox" class="fav-list-cb" value="${l.id}" ${inLists.includes(l.id)?'checked':''}
             style="accent-color:#5a4fcf;cursor:pointer;width:16px;height:16px;"/>
           <span>${l.name}</span>
         </label>
       `).join('')}
     </div>
     <div style="border-top:1px solid var(--border);padding-top:0.85rem;margin-bottom:0.5rem;">
-      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;">或新增清單：</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.4rem;">${L.favOrCreate}</div>
       <div style="display:flex;gap:0.4rem;">
-        <input type="text" id="fav-new-list-name" placeholder="新清單名稱" 
+        <input type="text" id="fav-new-list-name" placeholder="${L.favPlaceholderNew}"
           style="flex:1;padding:0.45rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.82rem;outline:none;"/>
-        <button onclick="createListAndAdd()" style="padding:0.45rem 0.85rem;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;">+ 新增</button>
+        <button onclick="createListAndAdd()" style="padding:0.45rem 0.85rem;border:none;border-radius:8px;background:#27ae60;color:#fff;cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:600;">${L.favCreateBtn}</button>
       </div>
     </div>
     <div style="display:flex;gap:0.5rem;margin-top:0.85rem;">
-      <button onclick="closeFavModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
-      <button onclick="saveFavSelections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
+      <button onclick="closeFavModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">${L.favCancel}</button>
+      <button onclick="saveFavSelections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">${L.favSave}</button>
     </div>`;
 }
 
