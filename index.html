@@ -407,6 +407,7 @@ body:has(#fav-overlay[style*="flex"]) .song-fab,
 body:has(#col-overlay[style*="flex"]) .song-fab,
 body:has(#batch-list-overlay[style*="flex"]) .song-fab,
 body:has(#batch-col-overlay[style*="flex"]) .song-fab,
+body:has(#batch-col-del-overlay[style*="flex"]) .song-fab,
 body:has(#share-overlay[style*="flex"]) .song-fab,
 body:has(#webview-overlay[style*="flex"]) .song-fab,
 body:has(.detail-overlay.active) .song-fab{display:none !important;}
@@ -439,9 +440,10 @@ body.batch-mode .batch-action-bar{display:flex;}
 .batch-action-bar button:disabled{opacity:0.4;cursor:not-allowed;}
 .batch-action-bar .btn-list{background:#5a4fcf;color:#fff;}
 .batch-action-bar .btn-col{background:#22c55e;color:#fff;}
+.batch-action-bar .btn-col-del{background:#ef4444;color:#fff;}
 .batch-action-bar .btn-select-all{background:transparent;color:var(--muted,#888);border:1.5px solid var(--border,#e4e4e4);}
 .batch-action-bar .btn-cancel{background:transparent;color:var(--muted,#888);border:1.5px solid var(--border,#e4e4e4);}
-.batch-action-bar .btn-list:hover,.batch-action-bar .btn-col:hover{opacity:0.85;}
+.batch-action-bar .btn-list:hover,.batch-action-bar .btn-col:hover,.batch-action-bar .btn-col-del:hover{opacity:0.85;}
 
 @media(max-width:600px){
   .batch-action-bar{padding:0.5rem 0.65rem;gap:0.35rem;}
@@ -2955,6 +2957,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   <button class="btn-select-all" id="btn-batch-select-all" onclick="batchToggleSelectAll()">全選目前顯示</button>
   <button class="btn-list" onclick="openBatchListModal()">加入清單</button>
   <button class="btn-col" onclick="openBatchCollectionModal()">加入蒐集記錄</button>
+  <button class="btn-col-del" onclick="openBatchDeleteCollectionModal()">刪除蒐集</button>
   <button class="btn-cancel" onclick="exitBatchMode()">取消</button>
 </div>
 
@@ -2977,6 +2980,17 @@ async function doExportTable(list, title, btn, progWrap, prog){
       <button onclick="closeBatchCollectionModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
     </div>
     <div id="batch-col-content"></div>
+  </div>
+</div>
+
+<!-- 批次刪除蒐集記錄 Modal -->
+<div id="batch-col-del-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:650;align-items:center;justify-content:center;" onclick="if(event.target===this)closeBatchDeleteCollectionModal()">
+  <div style="background:var(--surface);border-radius:16px;width:min(420px,94vw);padding:1.5rem;font-family:inherit;box-shadow:0 8px 40px #0004;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+      <h2 style="font-size:1rem;font-weight:700;color:#ef4444;">🗑 批次刪除蒐集記錄</h2>
+      <button onclick="closeBatchDeleteCollectionModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);">✕</button>
+    </div>
+    <div id="batch-col-del-content"></div>
   </div>
 </div>
 
@@ -4095,7 +4109,7 @@ function _webviewOpenExternal(){
 // ─────────────────────────────────────────
 (function _modalSongFabSync(){
   const ids = ['export-overlay','fav-overlay','col-overlay',
-    'batch-list-overlay','batch-col-overlay','share-overlay',
+    'batch-list-overlay','batch-col-overlay','batch-col-del-overlay','share-overlay',
     'webview-overlay','detail-overlay'];
   function check(){
     const anyOpen = ids.some(id=>{
@@ -4214,7 +4228,7 @@ function updateBatchBar(){
   if(el) el.textContent = _batchSelected.size;
   // 沒選任何張時，兩顆主要動作 disable
   const disabled = _batchSelected.size === 0;
-  document.querySelectorAll('.batch-action-bar .btn-list, .batch-action-bar .btn-col').forEach(btn=>{
+  document.querySelectorAll('.batch-action-bar .btn-list, .batch-action-bar .btn-col, .batch-action-bar .btn-col-del').forEach(btn=>{
     btn.disabled = disabled;
   });
 }
@@ -4590,4 +4604,84 @@ async function batchSaveCollectionsSame(){
   exitBatchMode();
   showToast(`已儲存 ${badgeIds.length} 筆（新增 ${toInsert.length}、更新 ${toUpdate.length}）`);
 }
+
+// ── 批次刪除蒐集記錄 ──
+function openBatchDeleteCollectionModal(){
+  if(!currentUser){ showToast('請先登入'); return; }
+  if(_batchSelected.size === 0){ showToast('請先勾選徽章'); return; }
+  renderBatchDeleteCollectionModal();
+  document.getElementById('batch-col-del-overlay').style.display = 'flex';
+}
+function closeBatchDeleteCollectionModal(){
+  document.getElementById('batch-col-del-overlay').style.display = 'none';
+}
+
+function renderBatchDeleteCollectionModal(){
+  const content = document.getElementById('batch-col-del-content');
+  const ids = [..._batchSelected];
+  // 算選中的徽章中有幾張有蒐集記錄、幾張沒有
+  const withRecord = ids.filter(id => myCollections[id]);
+  const withoutRecord = ids.filter(id => !myCollections[id]);
+
+  if(withRecord.length === 0){
+    content.innerHTML = `
+      <div style="padding:1rem;background:#fef3c7;border-radius:8px;color:#92400e;font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">
+        ⚠️ 您勾選的 ${ids.length} 張徽章都沒有蒐集記錄，沒有可刪除的內容。
+      </div>
+      <button onclick="closeBatchDeleteCollectionModal()" style="width:100%;padding:0.6rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">關閉</button>
+    `;
+    return;
+  }
+
+  // 計算這些記錄的總數量
+  const totalQty = withRecord.reduce((sum, id) => sum + Number(myCollections[id].quantity || 1), 0);
+
+  content.innerHTML = `
+    <div style="padding:0.85rem 1rem;background:#fee2e2;border-left:3px solid #ef4444;border-radius:6px;margin-bottom:1rem;">
+      <div style="font-size:0.85rem;color:#991b1b;font-weight:600;margin-bottom:0.4rem;">⚠️ 此操作無法復原</div>
+      <div style="font-size:0.78rem;color:#7f1d1d;line-height:1.5;">
+        即將刪除 <b>${withRecord.length}</b> 筆蒐集記錄（共 ${totalQty} 個）。<br>
+        ${withoutRecord.length > 0 ? `（另有 ${withoutRecord.length} 張勾選的徽章本來就沒記錄，會自動跳過）` : ''}
+      </div>
+    </div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
+      💡 提示：刪除後這些徽章會回到「未蒐集」狀態。蒐集日期、數量、備註都會被清除。
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+      <button onclick="closeBatchDeleteCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
+      <button onclick="batchDeleteCollections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#ef4444;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">確認刪除</button>
+    </div>
+  `;
+}
+
+async function batchDeleteCollections(){
+  const ids = [..._batchSelected];
+  // 取出有蒐集記錄的 collection id
+  const collectionIds = ids
+    .map(bid => myCollections[bid]?.id)
+    .filter(Boolean);
+
+  if(collectionIds.length === 0){
+    showToast('沒有可刪除的記錄');
+    closeBatchDeleteCollectionModal();
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from('collections')
+    .delete()
+    .in('id', collectionIds);
+
+  if(error){
+    console.error('batchDeleteCollections', error);
+    alert('刪除失敗：' + error.message);
+    return;
+  }
+
+  await loadMyCollections();
+  closeBatchDeleteCollectionModal();
+  exitBatchMode();
+  showToast(`已刪除 ${collectionIds.length} 筆蒐集記錄`);
+}
+
 </script>
