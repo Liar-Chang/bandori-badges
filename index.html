@@ -446,13 +446,16 @@ body.batch-mode .batch-action-bar{display:flex;}
 .batch-action-bar .btn-list:hover,.batch-action-bar .btn-col:hover,.batch-action-bar .btn-col-del:hover{opacity:0.85;}
 
 @media(max-width:600px){
-  .batch-action-bar{padding:0.5rem 0.65rem;gap:0.3rem;max-width:calc(100vw - 1rem);}
-  .batch-action-bar button{font-size:0.7rem;padding:0.38rem 0.55rem;}
-  .batch-action-bar .count{font-size:0.72rem;padding:0 0.25rem;}
-  .batch-action-bar .count b{font-size:0.9rem;}
-  /* 手機版：縮短「全選目前顯示」為「全選」 */
-  .batch-action-bar #btn-batch-select-all{font-size:0;padding:0.38rem 0.5rem;}
-  .batch-action-bar #btn-batch-select-all::before{content:"全選";font-size:0.7rem;}
+  .batch-action-bar{padding:0.5rem 0.5rem;gap:0.25rem;max-width:calc(100vw - 0.5rem);}
+  .batch-action-bar button{font-size:0.68rem;padding:0.35rem 0.45rem;}
+  .batch-action-bar .count{font-size:0.7rem;padding:0 0.2rem;}
+  .batch-action-bar .count b{font-size:0.88rem;}
+  /* 手機版：把「全選目前顯示」縮成 ☑ 圖示 */
+  .batch-action-bar #btn-batch-select-all{font-size:0;padding:0.38rem 0.55rem;}
+  .batch-action-bar #btn-batch-select-all::before{content:"☑";font-size:1rem;}
+  /* 手機版：行為按鈕用更簡短的標籤（用 data-label-mobile 屬性切換） */
+  .batch-action-bar button[data-label-mobile]{font-size:0;padding:0.38rem 0.55rem;}
+  .batch-action-bar button[data-label-mobile]::before{content:attr(data-label-mobile);font-size:0.68rem;font-weight:600;}
 }
 
 /* 批次模式切換按鈕 */
@@ -1549,6 +1552,22 @@ const LANGS = {
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
     reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'本站圖像、角色名稱、樂團名稱與相關資料之著作權歸 © Bushiroad 所有。本站為非營利同人愛好者整理收藏，與官方無關。網站程式碼與資料整理採 CC BY-NC-SA 4.0 授權。', login:'登入', logout:'登出', myFavorites:'⭐ 我的最愛',
+    // 蒐集記錄 modal（新版）
+    colTitle:'✓ 蒐集記錄', colTotal:'總數量', colUnit:'個', colHistory:'📜 購買歷史', colHistoryUnit:'筆', colAddNew:'+ 新增記錄', colEmpty:'尚無購買記錄', colEmptyHint:'點上方「+ 新增記錄」開始', colClose:'關閉',
+    // 新增/編輯記錄表單
+    recAddTitle:'+ 新增購買記錄', recEditTitle:'✏ 編輯購買記錄', recDate:'購買日期', recQty:'數量', recSource:'購買地點 / 來源（選填）', recSourcePlaceholder:'例如：偶染、友人讓、轉讓帳號...', recNote:'備註（選填）', recNotePlaceholder:'例如：購買價格...', recCancel:'取消', recSave:'儲存',
+    // Toast 訊息
+    toastAdded:'已新增購買記錄', toastUpdated:'已更新', toastDeleted:'已刪除', toastBatchAdded:'已新增 {n} 筆購買記錄', toastBatchDeleted:'已刪除 {n} 張徽章的蒐集記錄', toastConfirmDelete:'確定要刪除這筆購買記錄嗎？', toastConfirmRemove:'確定要移除此徽章的所有蒐集記錄嗎？',
+    // 批次刪除 modal
+    batchDelTitle:'🗑 批次刪除蒐集記錄', batchDelWarning:'⚠️ 此操作無法復原', batchDelMain:'即將刪除 {n} 筆蒐集記錄（共 {q} 個）。', batchDelSkip:'（另有 {n} 張勾選的徽章本來就沒記錄，會自動跳過）', batchDelHint:'💡 提示：刪除後這些徽章會回到「未蒐集」狀態。蒐集日期、數量、備註都會被清除。', batchDelEmpty:'⚠️ 您勾選的 {n} 張徽章都沒有蒐集記錄，沒有可刪除的內容。', batchDelCancel:'取消', batchDelConfirm:'確認刪除', batchDelNothingToast:'沒有可刪除的記錄', batchDelClose:'關閉',
+    // 智慧清單
+    smartListTitle:'🔍 智慧清單', smartListEmpty:'尚無智慧清單。', smartListEmptyHint:'選好篩選條件後可儲存。', smartListClear:'取消套用', smartListSaveBtn:'💾 儲存為智慧清單', smartListPromptName:'智慧清單名稱（最多 50 字）：', smartListAlertLogin:'請先登入', smartListAlertMax:'智慧清單最多 {n} 個，請先刪除不用的', smartListAlertNoCondition:'請先選擇至少一個篩選條件', smartListAlertOverwrite:'已有同名清單「{name}」，覆蓋嗎？\n\n按「確定」覆蓋，按「取消」放棄', smartListToastSaved:'已儲存為智慧清單', smartListToastUpdated:'已更新智慧清單', smartListPromptRename:'新清單名稱：', smartListAlertRenameFail:'改名失敗', smartListAlertSaveFail:'儲存失敗：', smartListAlertDeleteFail:'刪除失敗', smartListConfirmDelete:'確定刪除智慧清單「{name}」？',
+    // 蒐集記錄三段
+    colSegAll:'全部', colSegCollected:'已蒐集', colSegUncollected:'未蒐集',
+    // 批次操作
+    batchSelected:'已選 {n} 張', batchCancel:'取消', batchAddToList:'加入清單', batchAddCollect:'加入蒐集記錄', batchDelCollect:'刪除蒐集', batchSelectAll:'全選目前顯示',
+    // 蒐集記錄區塊
+    colSectionTitle:'✓ 蒐集記錄',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1569,6 +1588,22 @@ const LANGS = {
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
     reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'本サイトの画像、キャラクター名、バンド名等の著作権は © Bushiroad に帰属します。本サイトは非営利のファン作成アーカイブであり、公式とは関係ありません。ウェブサイトのコードとデータ整理は CC BY-NC-SA 4.0 ライセンスに基づきます。', login:'ログイン', logout:'ログアウト', myFavorites:'⭐ お気に入り',
+    // 蒐集記錄 modal（新版）
+    colTitle:'✓ コレクション記録', colTotal:'合計', colUnit:'個', colHistory:'📜 購入履歴', colHistoryUnit:'件', colAddNew:'+ 記録を追加', colEmpty:'購入履歴がありません', colEmptyHint:'上の「+ 記録を追加」をタップして開始', colClose:'閉じる',
+    // 新增/編輯記錄表單
+    recAddTitle:'+ 購入記録の追加', recEditTitle:'✏ 購入記録の編集', recDate:'購入日', recQty:'数量', recSource:'購入場所 / 入手元（任意）', recSourcePlaceholder:'例：偶染、友人から譲渡、譲渡アカウント...', recNote:'メモ（任意）', recNotePlaceholder:'例：購入価格...', recCancel:'キャンセル', recSave:'保存',
+    // Toast 訊息
+    toastAdded:'購入記録を追加しました', toastUpdated:'更新しました', toastDeleted:'削除しました', toastBatchAdded:'{n} 件の購入記録を追加しました', toastBatchDeleted:'{n} 個のバッジのコレクション記録を削除しました', toastConfirmDelete:'この購入記録を削除しますか？', toastConfirmRemove:'このバッジのすべてのコレクション記録を削除しますか？',
+    // 批次刪除 modal
+    batchDelTitle:'🗑 一括削除', batchDelWarning:'⚠️ この操作は元に戻せません', batchDelMain:'{n} 件のコレクション記録（合計 {q} 個）を削除します。', batchDelSkip:'（選択した {n} 個のバッジは記録がないため自動でスキップされます）', batchDelHint:'💡 ヒント：削除後、これらのバッジは「未収集」状態に戻ります。日付、数量、メモはすべて削除されます。', batchDelEmpty:'⚠️ 選択した {n} 個のバッジには記録がなく、削除する内容がありません。', batchDelCancel:'キャンセル', batchDelConfirm:'削除を確認', batchDelNothingToast:'削除する記録がありません', batchDelClose:'閉じる',
+    // 智慧清單
+    smartListTitle:'🔍 スマートリスト', smartListEmpty:'スマートリストがまだありません。', smartListEmptyHint:'フィルターを選んで保存できます。', smartListClear:'適用解除', smartListSaveBtn:'💾 スマートリストとして保存', smartListPromptName:'スマートリスト名（50文字以内）：', smartListAlertLogin:'ログインしてください', smartListAlertMax:'スマートリストは最大 {n} 個までです。不要なものを削除してください', smartListAlertNoCondition:'少なくとも一つのフィルターを選んでください', smartListAlertOverwrite:'同名のリスト「{name}」が存在します。上書きしますか？\n\n「OK」で上書き、「キャンセル」で中止', smartListToastSaved:'スマートリストとして保存しました', smartListToastUpdated:'スマートリストを更新しました', smartListPromptRename:'新しいリスト名：', smartListAlertRenameFail:'名前変更に失敗', smartListAlertSaveFail:'保存に失敗：', smartListAlertDeleteFail:'削除に失敗', smartListConfirmDelete:'スマートリスト「{name}」を削除しますか？',
+    // 蒐集記錄三段
+    colSegAll:'すべて', colSegCollected:'収集済み', colSegUncollected:'未収集',
+    // 批次操作
+    batchSelected:'{n} 件選択', batchCancel:'キャンセル', batchAddToList:'リストに追加', batchAddCollect:'収集記録に追加', batchDelCollect:'収集削除', batchSelectAll:'表示中をすべて選択',
+    // 蒐集記錄區塊
+    colSectionTitle:'✓ コレクション記録',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1589,6 +1624,22 @@ const LANGS = {
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
     reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'All BanG Dream! related images, character names, band names and related content are © Bushiroad. This is an unofficial non-profit fan-made archive, not affiliated with the official. Website code and data compilation are licensed under CC BY-NC-SA 4.0.', login:'Login', logout:'Logout', myFavorites:'⭐ My Favorites',
+    // 蒐集記錄 modal（新版）
+    colTitle:'✓ Collection Record', colTotal:'Total', colUnit:'', colHistory:'📜 Purchase History', colHistoryUnit:'records', colAddNew:'+ Add Record', colEmpty:'No purchase records yet', colEmptyHint:'Tap "+ Add Record" above to start', colClose:'Close',
+    // 新增/編輯記錄表單
+    recAddTitle:'+ Add Purchase Record', recEditTitle:'✏ Edit Purchase Record', recDate:'Purchase Date', recQty:'Quantity', recSource:'Source / Where bought (optional)', recSourcePlaceholder:'e.g., random pull, friend trade, proxy account...', recNote:'Note (optional)', recNotePlaceholder:'e.g., purchase price...', recCancel:'Cancel', recSave:'Save',
+    // Toast 訊息
+    toastAdded:'Purchase record added', toastUpdated:'Updated', toastDeleted:'Deleted', toastBatchAdded:'Added {n} purchase records', toastBatchDeleted:'Deleted collection records for {n} badges', toastConfirmDelete:'Delete this purchase record?', toastConfirmRemove:'Delete all collection records for this badge?',
+    // 批次刪除 modal
+    batchDelTitle:'🗑 Batch Delete Collection Records', batchDelWarning:'⚠️ This action cannot be undone', batchDelMain:'About to delete {n} collection records ({q} items total).', batchDelSkip:'(Another {n} selected badges have no records and will be skipped)', batchDelHint:'💡 Tip: After deletion, these badges will return to "Not Collected" status. Date, quantity, and notes will all be cleared.', batchDelEmpty:'⚠️ The {n} badges you selected have no collection records — nothing to delete.', batchDelCancel:'Cancel', batchDelConfirm:'Confirm Delete', batchDelNothingToast:'No records to delete', batchDelClose:'Close',
+    // 智慧清單
+    smartListTitle:'🔍 Smart Lists', smartListEmpty:'No smart lists yet.', smartListEmptyHint:'Save one after applying filters.', smartListClear:'Unapply', smartListSaveBtn:'💾 Save as Smart List', smartListPromptName:'Smart list name (max 50 chars):', smartListAlertLogin:'Please login first', smartListAlertMax:'Maximum {n} smart lists. Please delete unused ones first', smartListAlertNoCondition:'Please select at least one filter condition', smartListAlertOverwrite:'A list named "{name}" already exists. Overwrite?\n\nClick OK to overwrite, Cancel to abort', smartListToastSaved:'Saved as smart list', smartListToastUpdated:'Smart list updated', smartListPromptRename:'New list name:', smartListAlertRenameFail:'Rename failed', smartListAlertSaveFail:'Save failed: ', smartListAlertDeleteFail:'Delete failed', smartListConfirmDelete:'Delete smart list "{name}"?',
+    // 蒐集記錄三段
+    colSegAll:'All', colSegCollected:'Collected', colSegUncollected:'Not Collected',
+    // 批次操作
+    batchSelected:'{n} selected', batchCancel:'Cancel', batchAddToList:'Add to List', batchAddCollect:'Add to Collection', batchDelCollect:'Delete Collection', batchSelectAll:'Select All Visible',
+    // 蒐集記錄區塊
+    colSectionTitle:'✓ Collection',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1609,6 +1660,22 @@ const LANGS = {
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
     reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'본 사이트의 이미지, 캐릭터명, 밴드명 등의 저작권은 © Bushiroad에 귀속됩니다. 본 사이트는 비영리 팬 제작 아카이브이며 공식과는 관련이 없습니다. 웹사이트 코드 및 데이터 정리는 CC BY-NC-SA 4.0 라이선스를 따릅니다.', login:'로그인', logout:'로그아웃', myFavorites:'⭐ 즐겨찾기',
+    // 蒐集記錄 modal（新版）
+    colTitle:'✓ 수집 기록', colTotal:'총 수량', colUnit:'개', colHistory:'📜 구매 내역', colHistoryUnit:'건', colAddNew:'+ 기록 추가', colEmpty:'구매 기록이 없습니다', colEmptyHint:'위의 「+ 기록 추가」를 눌러 시작', colClose:'닫기',
+    // 新增/編輯記錄表單
+    recAddTitle:'+ 구매 기록 추가', recEditTitle:'✏ 구매 기록 편집', recDate:'구매 날짜', recQty:'수량', recSource:'구매 장소 / 출처 (선택)', recSourcePlaceholder:'예: 우연히 뽑음, 친구 양도, 양도 계정...', recNote:'메모 (선택)', recNotePlaceholder:'예: 구매 가격...', recCancel:'취소', recSave:'저장',
+    // Toast 訊息
+    toastAdded:'구매 기록이 추가되었습니다', toastUpdated:'업데이트됨', toastDeleted:'삭제됨', toastBatchAdded:'{n}건의 구매 기록이 추가되었습니다', toastBatchDeleted:'{n}개 배지의 수집 기록이 삭제되었습니다', toastConfirmDelete:'이 구매 기록을 삭제하시겠습니까?', toastConfirmRemove:'이 배지의 모든 수집 기록을 삭제하시겠습니까?',
+    // 批次刪除 modal
+    batchDelTitle:'🗑 일괄 삭제', batchDelWarning:'⚠️ 이 작업은 되돌릴 수 없습니다', batchDelMain:'{n}건의 수집 기록(총 {q}개)을 삭제합니다.', batchDelSkip:'(선택한 {n}개 배지는 기록이 없어 자동으로 건너뜁니다)', batchDelHint:'💡 안내: 삭제 후 이 배지들은 「미수집」 상태로 돌아갑니다. 날짜, 수량, 메모는 모두 삭제됩니다.', batchDelEmpty:'⚠️ 선택한 {n}개 배지에는 기록이 없어 삭제할 내용이 없습니다.', batchDelCancel:'취소', batchDelConfirm:'삭제 확인', batchDelNothingToast:'삭제할 기록이 없습니다', batchDelClose:'닫기',
+    // 智慧清單
+    smartListTitle:'🔍 스마트 리스트', smartListEmpty:'스마트 리스트가 없습니다.', smartListEmptyHint:'필터 선택 후 저장할 수 있습니다.', smartListClear:'적용 해제', smartListSaveBtn:'💾 스마트 리스트로 저장', smartListPromptName:'스마트 리스트 이름 (최대 50자):', smartListAlertLogin:'로그인이 필요합니다', smartListAlertMax:'스마트 리스트는 최대 {n}개입니다. 사용하지 않는 것을 먼저 삭제해주세요', smartListAlertNoCondition:'최소 하나의 필터 조건을 선택해주세요', smartListAlertOverwrite:'동일한 이름의 리스트 「{name}」이(가) 있습니다. 덮어쓰시겠습니까?\n\n「확인」으로 덮어쓰기, 「취소」로 중단', smartListToastSaved:'스마트 리스트로 저장됨', smartListToastUpdated:'스마트 리스트 업데이트됨', smartListPromptRename:'새 리스트 이름:', smartListAlertRenameFail:'이름 변경 실패', smartListAlertSaveFail:'저장 실패: ', smartListAlertDeleteFail:'삭제 실패', smartListConfirmDelete:'스마트 리스트 「{name}」을(를) 삭제하시겠습니까?',
+    // 蒐集記錄三段
+    colSegAll:'전체', colSegCollected:'수집됨', colSegUncollected:'미수집',
+    // 批次操作
+    batchSelected:'{n}개 선택', batchCancel:'취소', batchAddToList:'리스트에 추가', batchAddCollect:'수집 기록에 추가', batchDelCollect:'수집 삭제', batchSelectAll:'표시 중 모두 선택',
+    // 蒐集記錄區塊
+    colSectionTitle:'✓ 수집 기록',
   },
 }
 let currentLang = (()=>{
@@ -1737,6 +1804,11 @@ function applyLang(){
   updateSeriesBtnLabel();
   // 活動按鈕預設文字（未選時）
   updateEventBtnLabel();
+  // 切換語言時，重建新版功能的所有 sidebar / 按鈕
+  if(typeof buildCollectionSidebar === 'function') buildCollectionSidebar();
+  if(typeof buildSmartListsSidebar === 'function') buildSmartListsSidebar();
+  if(typeof updateSaveSmartListButton === 'function') updateSaveSmartListButton();
+  if(typeof updateBatchBar === 'function') updateBatchBar();
 }
 applyLang();
 
@@ -2957,12 +3029,12 @@ async function doExportTable(list, title, btn, progWrap, prog){
 </div>
 
 <div class="batch-action-bar" id="batch-bar">
-  <span class="count">已選 <b id="batch-count">0</b> 張</span>
+  <span class="count" id="batch-count-text">已選 <b id="batch-count">0</b> 張</span>
   <button class="btn-select-all" id="btn-batch-select-all" onclick="batchToggleSelectAll()">全選目前顯示</button>
-  <button class="btn-list" onclick="openBatchListModal()">加入清單</button>
-  <button class="btn-col" onclick="openBatchCollectionModal()">加入蒐集記錄</button>
-  <button class="btn-col-del" onclick="openBatchDeleteCollectionModal()">刪除蒐集</button>
-  <button class="btn-cancel" onclick="exitBatchMode()">取消</button>
+  <button class="btn-list" id="btn-batch-list" data-label-mobile="⭐＋" onclick="openBatchListModal()">加入清單</button>
+  <button class="btn-col" id="btn-batch-col" data-label-mobile="✓＋" onclick="openBatchCollectionModal()">加入蒐集記錄</button>
+  <button class="btn-col-del" id="btn-batch-col-del" data-label-mobile="🗑" onclick="openBatchDeleteCollectionModal()">刪除蒐集</button>
+  <button class="btn-cancel" id="btn-batch-cancel" onclick="exitBatchMode()">取消</button>
 </div>
 
 <!-- 批次加入清單 Modal -->
@@ -3593,9 +3665,13 @@ function buildSmartListsSidebar(){
     return;
   }
   sec.style.display = '';
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  // 同步更新區塊標題
+  const titleEl = document.getElementById('smart-lists-title');
+  if(titleEl) titleEl.textContent = L.smartListTitle;
   if(!mySmartLists.length){
     document.getElementById('smart-lists-content').innerHTML =
-      '<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;line-height:1.5;">尚無智慧清單。<br>選好篩選條件後可儲存。</div>';
+      `<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;line-height:1.5;">${L.smartListEmpty}<br>${L.smartListEmptyHint}</div>`;
     return;
   }
   // 計算每個智慧清單的「總數 / 已蒐集數」
@@ -3615,10 +3691,10 @@ function buildSmartListsSidebar(){
     return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#0ea5e922':'transparent'};border:1.5px solid ${isActive?'#0ea5e9':'transparent'};margin-bottom:0.25rem;" onclick="filterBySmartList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedSmartList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedSmartList}')this.style.background='transparent'">
       <span style="font-size:0.78rem;color:${isActive?'#0ea5e9':'var(--text)'};font-weight:${isActive?'600':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
       <span style="font-size:0.7rem;color:${isActive?'#0ea5e9':'var(--muted)'};font-weight:${isActive?'600':'400'};margin:0 0.4rem;white-space:nowrap;">${collected}/${total}</span>
-      <button onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
-      <button onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
+      <button onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="✏">✏</button>
+      <button onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="🗑">🗑</button>
     </div>`;
-  }).join('') + (selectedSmartList ? `<button onclick="clearSmartListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">取消套用</button>` : '');
+  }).join('') + (selectedSmartList ? `<button onclick="clearSmartListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">${L.smartListClear}</button>` : '');
 }
 
 // 判斷某張徽章是否符合一個智慧清單的條件
@@ -3701,12 +3777,13 @@ function clearSmartListFilter(){
 }
 
 async function saveCurrentFiltersAsSmartList(){
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
   if(!currentUser){
-    alert('請先登入');
+    alert(L.smartListAlertLogin);
     return;
   }
   if(mySmartLists.length >= SMART_LIST_MAX){
-    alert(`智慧清單最多 ${SMART_LIST_MAX} 個，請先刪除不用的`);
+    alert(L.smartListAlertMax.replace('{n}', SMART_LIST_MAX));
     return;
   }
   const cond = serializeCurrentFilters();
@@ -3714,56 +3791,58 @@ async function saveCurrentFiltersAsSmartList(){
                  cond.series.length || cond.events.length || cond.types.length ||
                  cond.sizes.length || cond.countries.length || cond.search;
   if(!hasAny){
-    alert('請先選擇至少一個篩選條件');
+    alert(L.smartListAlertNoCondition);
     return;
   }
-  let name = prompt('智慧清單名稱（最多 50 字）：');
+  let name = prompt(L.smartListPromptName);
   if(!name) return;
   name = name.trim().slice(0, 50);
   if(!name) return;
   // 檢查同名
   const existing = mySmartLists.find(l=>l.name === name);
   if(existing){
-    const choice = confirm(`已有同名清單「${name}」，覆蓋嗎？\n\n按「確定」覆蓋，按「取消」放棄`);
+    const choice = confirm(L.smartListAlertOverwrite.replace('{name}', name));
     if(!choice) return;
     const { error } = await supabaseClient
       .from('smart_lists')
       .update({ filter_conditions: cond })
       .eq('id', existing.id);
-    if(error){ console.error(error); alert('儲存失敗：' + error.message); return; }
-    showToast('已更新智慧清單');
+    if(error){ console.error(error); alert(L.smartListAlertSaveFail + error.message); return; }
+    showToast(L.smartListToastUpdated);
   } else {
     const { error } = await supabaseClient
       .from('smart_lists')
       .insert({ user_id: currentUser.id, name, filter_conditions: cond });
-    if(error){ console.error(error); alert('儲存失敗：' + error.message); return; }
-    showToast('已儲存為智慧清單');
+    if(error){ console.error(error); alert(L.smartListAlertSaveFail + error.message); return; }
+    showToast(L.smartListToastSaved);
   }
   await loadMySmartLists();
 }
 
 async function renameSmartList(listId, oldName){
-  const newName = prompt('新清單名稱：', oldName);
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  const newName = prompt(L.smartListPromptRename, oldName);
   if(!newName || newName.trim() === '') return;
   const trimmed = newName.trim().slice(0, 50);
   const { error } = await supabaseClient
     .from('smart_lists')
     .update({ name: trimmed })
     .eq('id', listId);
-  if(error){ console.error(error); alert('改名失敗'); return; }
-  showToast('已更新');
+  if(error){ console.error(error); alert(L.smartListAlertRenameFail); return; }
+  showToast(L.toastUpdated);
   await loadMySmartLists();
 }
 
 async function deleteSmartList(listId, name){
-  if(!confirm(`確定刪除智慧清單「${name}」？`)) return;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  if(!confirm(L.smartListConfirmDelete.replace('{name}', name))) return;
   const { error } = await supabaseClient
     .from('smart_lists')
     .delete()
     .eq('id', listId);
-  if(error){ console.error(error); alert('刪除失敗'); return; }
+  if(error){ console.error(error); alert(L.smartListAlertDeleteFail); return; }
   if(selectedSmartList == listId) selectedSmartList = null;
-  showToast('已刪除');
+  showToast(L.toastDeleted);
   await loadMySmartLists();
 }
 
@@ -3787,6 +3866,9 @@ function updateSaveSmartListButton(){
   if(matched){ btn.style.display = 'none'; return; }
   // 已達上限 → 不顯示
   if(mySmartLists.length >= SMART_LIST_MAX){ btn.style.display = 'none'; return; }
+  // 同步按鈕文字
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  btn.textContent = L.smartListSaveBtn;
   btn.style.display = '';
 }
 
@@ -3879,6 +3961,10 @@ function buildCollectionSidebar(){
     return;
   }
   sec.style.display = '';
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  // 同步區塊標題
+  const titleEl = document.getElementById('collection-title');
+  if(titleEl) titleEl.textContent = L.colSectionTitle;
 
   // 計算「在當前篩選條件下」三類別各有幾張
   // 注意：要排除 collectedFilter 自身的影響，否則會自我循環
@@ -3911,9 +3997,9 @@ function buildCollectionSidebar(){
   };
 
   document.getElementById('collection-content').innerHTML =
-    mkBtn('all', '◯ <span id="col-label-all">全部</span>', allCount, '#9ca3af') +
-    mkBtn('collected', '✓ <span id="col-label-text">已蒐集</span>', `${collectedCount} / ${totalQty}個`, '#22c55e') +
-    mkBtn('uncollected', '✗ <span id="col-label-uncol">未蒐集</span>', uncollectedCount, '#f59e0b');
+    mkBtn('all', `◯ <span id="col-label-all">${L.colSegAll}</span>`, allCount, '#9ca3af') +
+    mkBtn('collected', `✓ <span id="col-label-text">${L.colSegCollected}</span>`, `${collectedCount} / ${totalQty}${L.colUnit}`, '#22c55e') +
+    mkBtn('uncollected', `✗ <span id="col-label-uncol">${L.colSegUncollected}</span>`, uncollectedCount, '#f59e0b');
 }
 
 function setCollectedFilter(val){
@@ -3966,31 +4052,36 @@ async function upgradeToDetailedMode(){
 function renderCollectionModalNew(){
   const records = myCollectionRecords[_colBadgeId] || [];
   const totalQty = records.reduce((s, r) => s + Number(r.quantity || 0), 0);
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
 
   const content = document.getElementById('col-modal-content');
   content.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:0.85rem;">
       <div style="padding:0.6rem 0.85rem;background:#22c55e15;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:0.78rem;color:var(--text);">總數量</span>
-        <span style="font-size:1.1rem;font-weight:700;color:#22c55e;">${totalQty} 個</span>
+        <span style="font-size:0.78rem;color:var(--text);">${L.colTotal}</span>
+        <span style="font-size:1.1rem;font-weight:700;color:#22c55e;">${totalQty} ${L.colUnit}</span>
       </div>
 
       <div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-          <span style="font-size:0.78rem;font-weight:600;color:var(--text);">📜 購買歷史（${records.length} 筆）</span>
-          <button onclick="addNewCollectionRecord()" style="padding:0.35rem 0.7rem;border:1.5px solid #22c55e;background:#22c55e;color:#fff;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.72rem;font-weight:600;">+ 新增記錄</button>
+          <span style="font-size:0.78rem;font-weight:600;color:var(--text);">${L.colHistory}（${records.length} ${L.colHistoryUnit}）</span>
+          <button onclick="addNewCollectionRecord()" style="padding:0.35rem 0.7rem;border:1.5px solid #22c55e;background:#22c55e;color:#fff;border-radius:6px;cursor:pointer;font-family:inherit;font-size:0.72rem;font-weight:600;">${L.colAddNew}</button>
         </div>
         <div id="col-records-list" style="display:flex;flex-direction:column;gap:0.5rem;max-height:50vh;overflow-y:auto;">
           ${records.length === 0
-            ? `<div style="padding:1.2rem;text-align:center;color:var(--muted);font-size:0.78rem;background:#f5f5f5;border-radius:8px;line-height:1.6;">尚無購買記錄<br>點上方「+ 新增記錄」開始</div>`
+            ? `<div style="padding:1.2rem;text-align:center;color:var(--muted);font-size:0.78rem;background:#f5f5f5;border-radius:8px;line-height:1.6;">${L.colEmpty}<br>${L.colEmptyHint}</div>`
             : records.map(r => renderRecordRow(r)).join('')}
         </div>
       </div>
 
       <div style="display:flex;gap:0.5rem;">
-        <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">關閉</button>
+        <button onclick="closeCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">${L.colClose}</button>
       </div>
     </div>`;
+
+  // 同步更新 modal 標題
+  const titleEl = document.querySelector('#col-overlay h2');
+  if(titleEl) titleEl.textContent = L.colTitle;
 }
 
 function escapeHtml(s){
@@ -4007,7 +4098,7 @@ function renderRecordRow(r){
     <div style="padding:0.55rem 0.75rem;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:0.5rem;">
       <div style="flex:1;min-width:0;">
         <div style="font-size:0.78rem;color:var(--text);">
-          <b>${date}</b> ・ qty=${qty}${source}
+          <b>${date}</b> ・ × ${qty}${source}
         </div>
         ${note}
       </div>
@@ -4042,18 +4133,19 @@ function showRecordEditForm(r){
   const source = r.source || '';
   const note = r.note || '';
   const isNew = _editingRecordId === null;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
   content.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:0.85rem;">
       <div style="font-size:0.85rem;font-weight:600;color:var(--text);">
-        ${isNew ? '+ 新增購買記錄' : '✏ 編輯購買記錄'}
+        ${isNew ? L.recAddTitle : L.recEditTitle}
       </div>
       <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">購買日期</label>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">${L.recDate}</label>
         <input type="date" id="rec-date" value="${date}"
           style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">數量</label>
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">${L.recQty}</label>
         <div style="display:flex;align-items:center;gap:0.5rem;">
           <button onclick="adjustRecQty(-1)" style="width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;font-size:1.1rem;font-family:inherit;">−</button>
           <input type="number" id="rec-qty" value="${qty}" min="1"
@@ -4062,18 +4154,18 @@ function showRecordEditForm(r){
         </div>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">購買地點 / 來源（選填）</label>
-        <input type="text" id="rec-source" value="${escapeHtml(source)}" placeholder="例如：偶染、友人讓、轉讓帳號..."
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">${L.recSource}</label>
+        <input type="text" id="rec-source" value="${escapeHtml(source)}" placeholder="${L.recSourcePlaceholder}"
           style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;"/>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">備註（選填）</label>
-        <textarea id="rec-note" placeholder="例如：購買價格..." rows="2"
+        <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">${L.recNote}</label>
+        <textarea id="rec-note" placeholder="${L.recNotePlaceholder}" rows="2"
           style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.83rem;outline:none;resize:vertical;">${escapeHtml(note)}</textarea>
       </div>
       <div style="display:flex;gap:0.5rem;">
-        <button onclick="renderCollectionModalNew()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
-        <button onclick="saveCollectionRecord()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">儲存</button>
+        <button onclick="renderCollectionModalNew()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">${L.recCancel}</button>
+        <button onclick="saveCollectionRecord()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">${L.recSave}</button>
       </div>
     </div>`;
 }
@@ -4089,6 +4181,7 @@ async function saveCollectionRecord(){
   const qty = Math.max(1, parseInt(document.getElementById('rec-qty').value) || 1);
   const source = document.getElementById('rec-source').value.trim() || null;
   const note = document.getElementById('rec-note').value.trim() || null;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
   if(_editingRecordId === null){
     // 新增
     const { error } = await supabaseClient
@@ -4101,70 +4194,41 @@ async function saveCollectionRecord(){
         source,
         note
       });
-    if(error){ alert('新增失敗：' + error.message); return; }
-    showToast('已新增購買記錄');
+    if(error){ alert(L.smartListAlertSaveFail + error.message); return; }
+    showToast(L.toastAdded);
   } else {
     // 編輯
     const { error } = await supabaseClient
       .from('collection_records')
       .update({ purchased_date: date, quantity: qty, source, note })
       .eq('id', _editingRecordId);
-    if(error){ alert('儲存失敗：' + error.message); return; }
-    showToast('已更新');
+    if(error){ alert(L.smartListAlertSaveFail + error.message); return; }
+    showToast(L.toastUpdated);
   }
   await loadMyCollections();
   renderCollectionModalNew();
 }
 
 async function deleteCollectionRecord(recordId){
-  if(!confirm('確定要刪除這筆購買記錄嗎？')) return;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  if(!confirm(L.toastConfirmDelete)) return;
   const { error } = await supabaseClient
     .from('collection_records')
     .delete()
     .eq('id', recordId);
-  if(error){ alert('刪除失敗：' + error.message); return; }
+  if(error){ alert(L.smartListAlertDeleteFail + ': ' + error.message); return; }
   await loadMyCollections();
-  // 重畫 modal — 如果刪到沒記錄了，會自動切回舊版 modal
-  if(hasCollectionRecords(_colBadgeId)){
-    renderCollectionModalNew();
-  } else {
-    renderCollectionModalLegacy();
-  }
-  showToast('已刪除');
+  // 永遠用新版 modal
+  renderCollectionModalNew();
+  showToast(L.toastDeleted);
 }
 
-function adjustQty(delta){
-  const input = document.getElementById('col-qty');
-  const cur = parseInt(input.value) || 1;
-  input.value = Math.max(1, cur + delta);
-}
-
-async function saveCollection(){
-  const date = document.getElementById('col-date').value || null;
-  const qty = Math.max(1, parseInt(document.getElementById('col-qty').value) || 1);
-  const note = document.getElementById('col-note').value.trim() || null;
-  const existing = myCollections[_colBadgeId];
-  if(existing){
-    // 更新
-    const { error } = await supabaseClient
-      .from('collections')
-      .update({ collected_date: date, quantity: qty, note })
-      .eq('id', existing.id);
-    if(error){ alert('儲存失敗：' + error.message); return; }
-  } else {
-    // 新增
-    const { error } = await supabaseClient
-      .from('collections')
-      .insert({ user_id: currentUser.id, badge_id: _colBadgeId, collected_date: date, quantity: qty, note });
-    if(error){ alert('儲存失敗：' + error.message); return; }
-  }
-  await loadMyCollections();
-  closeCollectionModal();
-  showToast(existing ? '已更新' : '已新增蒐集記錄');
-}
+// adjustQty / saveCollection 為舊版 modal 函式，自 2026-04-19 起新版永不開啟舊 modal，已移除
+// 若需歷史參考可從 git history 查找
 
 async function deleteCollection(){
-  if(!confirm('確定要移除此徽章的所有蒐集記錄嗎？')) return;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  if(!confirm(L.toastConfirmRemove)) return;
   const existing = myCollections[_colBadgeId];
   const records = myCollectionRecords[_colBadgeId] || [];
 
@@ -4175,7 +4239,7 @@ async function deleteCollection(){
       .from('collection_records')
       .delete()
       .in('id', recordIds);
-    if(error){ alert('刪除失敗：' + error.message); return; }
+    if(error){ alert(L.smartListAlertDeleteFail + ': ' + error.message); return; }
   }
 
   // 刪主表（fallback 舊資料）
@@ -4184,12 +4248,12 @@ async function deleteCollection(){
       .from('collections')
       .delete()
       .eq('id', existing.id);
-    if(error){ alert('刪除失敗：' + error.message); return; }
+    if(error){ alert(L.smartListAlertDeleteFail + ': ' + error.message); return; }
   }
 
   await loadMyCollections();
   closeCollectionModal();
-  showToast('已移除');
+  showToast(L.toastDeleted);
 }
 
 // ─────────────────────────────────────────
@@ -4434,10 +4498,22 @@ function batchToggleSelectAll(){
 }
 
 function updateBatchBar(){
-  const el = document.getElementById('batch-count');
-  if(el) el.textContent = _batchSelected.size;
-  // 沒選任何張時，兩顆主要動作 disable
-  const disabled = _batchSelected.size === 0;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  const n = _batchSelected.size;
+  // 「已選 X 張」根據語言顯示
+  const txtEl = document.getElementById('batch-count-text');
+  if(txtEl){
+    txtEl.innerHTML = L.batchSelected.replace('{n}', `<b id="batch-count">${n}</b>`);
+  }
+  // 同步桌面版按鈕文字（手機版用 data-label-mobile 維持圖示，會被 CSS 蓋過）
+  const setText = (id, txt) => { const el = document.getElementById(id); if(el && txt) el.textContent = txt; };
+  setText('btn-batch-select-all', L.batchSelectAll);
+  setText('btn-batch-list', L.batchAddToList);
+  setText('btn-batch-col', L.batchAddCollect);
+  setText('btn-batch-col-del', L.batchDelCollect);
+  setText('btn-batch-cancel', L.batchCancel);
+  // 沒選任何張時，主要動作 disable
+  const disabled = n === 0;
   document.querySelectorAll('.batch-action-bar .btn-list, .batch-action-bar .btn-col, .batch-action-bar .btn-col-del').forEach(btn=>{
     btn.disabled = disabled;
   });
@@ -4765,12 +4841,12 @@ async function batchColEachFinish(){
   });
 
   const { error } = await supabaseClient.from('collection_records').insert(toInsert);
-  if(error){ alert('儲存失敗：' + error.message); return; }
+  if(error){ alert((LANGS[currentLang]||LANGS['zh-TW']).smartListAlertSaveFail + error.message); return; }
 
   await loadMyCollections();
   closeBatchCollectionModal();
   exitBatchMode();
-  showToast(`已新增 ${badgeIds.length} 筆購買記錄`);
+  showToast((LANGS[currentLang]||LANGS['zh-TW']).toastBatchAdded.replace('{n}', badgeIds.length));
 }
 
 async function batchSaveCollectionsSame(){
@@ -4790,12 +4866,12 @@ async function batchSaveCollectionsSame(){
   }));
 
   const { error } = await supabaseClient.from('collection_records').insert(toInsert);
-  if(error){ alert('儲存失敗：' + error.message); return; }
+  if(error){ alert((LANGS[currentLang]||LANGS['zh-TW']).smartListAlertSaveFail + error.message); return; }
 
   await loadMyCollections();
   closeBatchCollectionModal();
   exitBatchMode();
-  showToast(`已新增 ${badgeIds.length} 筆購買記錄`);
+  showToast((LANGS[currentLang]||LANGS['zh-TW']).toastBatchAdded.replace('{n}', badgeIds.length));
 }
 
 // ── 批次刪除蒐集記錄 ──
@@ -4812,6 +4888,10 @@ function closeBatchDeleteCollectionModal(){
 function renderBatchDeleteCollectionModal(){
   const content = document.getElementById('batch-col-del-content');
   const ids = [..._batchSelected];
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  // 同步 modal 標題
+  const titleEl = document.querySelector('#batch-col-del-overlay h2');
+  if(titleEl) titleEl.textContent = L.batchDelTitle;
   // 算選中的徽章中有幾張有蒐集記錄（主表 OR 子表）、幾張沒有
   const hasAnyRecord = id => myCollections[id] || hasCollectionRecords(id);
   const withRecord = ids.filter(hasAnyRecord);
@@ -4820,9 +4900,9 @@ function renderBatchDeleteCollectionModal(){
   if(withRecord.length === 0){
     content.innerHTML = `
       <div style="padding:1rem;background:#fef3c7;border-radius:8px;color:#92400e;font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">
-        ⚠️ 您勾選的 ${ids.length} 張徽章都沒有蒐集記錄，沒有可刪除的內容。
+        ${L.batchDelEmpty.replace('{n}', ids.length)}
       </div>
-      <button onclick="closeBatchDeleteCollectionModal()" style="width:100%;padding:0.6rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">關閉</button>
+      <button onclick="closeBatchDeleteCollectionModal()" style="width:100%;padding:0.6rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">${L.batchDelClose}</button>
     `;
     return;
   }
@@ -4832,24 +4912,25 @@ function renderBatchDeleteCollectionModal(){
 
   content.innerHTML = `
     <div style="padding:0.85rem 1rem;background:#fee2e2;border-left:3px solid #ef4444;border-radius:6px;margin-bottom:1rem;">
-      <div style="font-size:0.85rem;color:#991b1b;font-weight:600;margin-bottom:0.4rem;">⚠️ 此操作無法復原</div>
+      <div style="font-size:0.85rem;color:#991b1b;font-weight:600;margin-bottom:0.4rem;">${L.batchDelWarning}</div>
       <div style="font-size:0.78rem;color:#7f1d1d;line-height:1.5;">
-        即將刪除 <b>${withRecord.length}</b> 筆蒐集記錄（共 ${totalQty} 個）。<br>
-        ${withoutRecord.length > 0 ? `（另有 ${withoutRecord.length} 張勾選的徽章本來就沒記錄，會自動跳過）` : ''}
+        ${L.batchDelMain.replace('{n}', `<b>${withRecord.length}</b>`).replace('{q}', totalQty)}<br>
+        ${withoutRecord.length > 0 ? L.batchDelSkip.replace('{n}', withoutRecord.length) : ''}
       </div>
     </div>
     <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
-      💡 提示：刪除後這些徽章會回到「未蒐集」狀態。蒐集日期、數量、備註都會被清除。
+      ${L.batchDelHint}
     </div>
     <div style="display:flex;gap:0.5rem;">
-      <button onclick="closeBatchDeleteCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
-      <button onclick="batchDeleteCollections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#ef4444;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">確認刪除</button>
+      <button onclick="closeBatchDeleteCollectionModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);background:transparent;color:var(--text);border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.85rem;">${L.batchDelCancel}</button>
+      <button onclick="batchDeleteCollections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#ef4444;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">${L.batchDelConfirm}</button>
     </div>
   `;
 }
 
 async function batchDeleteCollections(){
   const ids = [..._batchSelected];
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
 
   // 收集要刪的子表記錄 id（每張徽章可能有多筆）
   const recordIds = [];
@@ -4864,7 +4945,7 @@ async function batchDeleteCollections(){
     .filter(Boolean);
 
   if(recordIds.length === 0 && mainIds.length === 0){
-    showToast('沒有可刪除的記錄');
+    showToast(L.batchDelNothingToast);
     closeBatchDeleteCollectionModal();
     return;
   }
@@ -4877,7 +4958,7 @@ async function batchDeleteCollections(){
       .in('id', recordIds);
     if(error){
       console.error('batchDeleteCollections - records', error);
-      alert('刪除子表失敗：' + error.message);
+      alert(L.smartListAlertDeleteFail + ': ' + error.message);
       return;
     }
   }
@@ -4890,7 +4971,7 @@ async function batchDeleteCollections(){
       .in('id', mainIds);
     if(error){
       console.error('batchDeleteCollections - main', error);
-      alert('刪除主表失敗：' + error.message);
+      alert(L.smartListAlertDeleteFail + ': ' + error.message);
       return;
     }
   }
@@ -4898,7 +4979,7 @@ async function batchDeleteCollections(){
   await loadMyCollections();
   closeBatchDeleteCollectionModal();
   exitBatchMode();
-  showToast(`已刪除 ${ids.length} 張徽章的蒐集記錄`);
+  showToast(L.toastBatchDeleted.replace('{n}', ids.length));
 }
 
 </script>
