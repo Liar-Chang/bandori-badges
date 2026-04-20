@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/20",
+    "content": {
+      "zh": "【新增/更新資料】\n今日新增 21 張徽章\n・Morfonica 2nd Album「Polyphony」（11 張）\n・Poppin'Party 3rd Album「POPIGENIC」（10 張）\n【功能調整】\n・修正刪除購買記錄後，徽章仍卡在「已蒐集」狀態的問題\n・刪光所有購買記錄時，蒐集 modal 會自動關閉\n・分享模組全面 4 語言化（分享按鈕、QR Code 提示、Discord 複製等）",
+      "ja": "【追加/更新データ】\n本日バッジ 21 枚追加\n・Morfonica 2nd Album「Polyphony」(11 枚)\n・Poppin'Party 3rd Album「POPIGENIC」(10 枚)\n【機能調整】\n・購入記録を削除しても「コレクション済み」状態が解除されない不具合を修正\n・購入記録をすべて削除した時、コレクションモーダルが自動で閉じるように改善\n・シェアモジュール全体を 4 言語対応(シェアボタン、QR コード案内、Discord コピー等)",
+      "en": "【New / Updated Data】\n21 new badges added today\n・Morfonica 2nd Album \"Polyphony\" (11 badges)\n・Poppin'Party 3rd Album \"POPIGENIC\" (10 badges)\n【Feature Updates】\n・Fixed an issue where badges remained marked as \"Collected\" after deleting all purchase records\n・Collection modal now auto-closes when the last purchase record is deleted\n・Share module fully translated into 4 languages (share buttons, QR code hints, Discord copy, etc.)",
+      "ko": "【추가/업데이트 데이터】\n오늘 배지 21개 추가\n・Morfonica 2nd Album「Polyphony」(11개)\n・Poppin'Party 3rd Album「POPIGENIC」(10개)\n【기능 조정】\n・구매 기록을 삭제해도 배지가「수집됨」상태에 남아있던 문제 수정\n・모든 구매 기록을 삭제하면 수집 모달이 자동으로 닫히도록 개선\n・공유 모듈 전체 4개 언어 지원(공유 버튼, QR 코드 안내, Discord 복사 등)"
+    }
+  },
+  {
     "date": "2026/4/19",
     "content": {
       "zh": "【新增/更新資料】\n今日新增 23 張徽章\n・Morfonica 8th Single「Feathered Dreams」（4 張）\n・Pastel＊Palettes ミニAlbum「きみと Stage by Stage」（4 張）\n・RAISE A SUILEN 14th Single「'FIGHT' ADDICT」（4 張）\n・ハロー、ハッピーワールド！ ミニAlbum「いっつあ！すまいるわーるど！！」（4 張）\n・バンドリ！ ガールズバンドパーティ！ カバーコレクションVol.10（4 張）\n・夢限大みゅーたいぷ 3rd Single「真夜中遊園地」（3 張）\n\n【功能調整】\n・全新「蒐集記錄」功能升級：\n　- 一張徽章可記錄多次購買歷史（不再互相覆蓋）\n　- 每筆記錄可填購買日期、數量、購買來源、備註\n　- 自動加總總數量\n・新增「智慧清單」：將常用篩選條件存為虛擬清單（每人最多 20 個）\n・蒐集記錄三段切換：全部 / 已蒐集 / 未蒐集\n・新增「批次刪除蒐集記錄」功能\n・卡片視覺強化：已蒐集徽章顯示綠色邊框\n・表格模式新增蒐集相關欄位：蒐集數量、最近購買、購買來源\n・所有新功能完整支援 4 語言（繁中／日文／英文／韓文）\n・補上 LICENSE 與著作權聲明",
