@@ -4365,6 +4365,7 @@ async function deleteCollectionRecord(recordId){
 
   // 檢查此徽章子表是否已無剩餘記錄；若無，連主表 fallback 也清掉，
   // 避免 isCollected() fallback 主表誤判成「已蒐集」導致綠框/綠勾殘留
+  let becameUncollected = false;
   if(badgeId){
     const { data: remaining, error: checkErr } = await supabaseClient
       .from('collection_records')
@@ -4377,12 +4378,18 @@ async function deleteCollectionRecord(recordId){
       if(existing){
         await supabaseClient.from('collections').delete().eq('id', existing.id);
       }
+      becameUncollected = true;
     }
   }
 
   await loadMyCollections();
-  // 永遠用新版 modal
-  renderCollectionModalNew();
+  if(becameUncollected){
+    // 徽章已回到「未蒐集」狀態,modal 顯示 0 個 0 筆沒意義,直接關掉
+    closeCollectionModal();
+  } else {
+    // 永遠用新版 modal
+    renderCollectionModalNew();
+  }
   showToast(L.toastDeleted);
 }
 
