@@ -1585,6 +1585,8 @@ const LANGS = {
     tblColQty:'蒐集數量', tblColDate:'最近購買', tblColSource:'購買來源',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 蒐集記錄',
+    // 分享模組
+    shareBtn:'🔗 分享', shareSiteBtn:'🔗 分享此網站', shareTitle:'🔗 分享', shareTitleFiltered:'🔗 分享篩選結果', shareTitleSite:'🔗 分享此網站', shareCopy:'複製', shareCopied:'✓ 已複製', shareQRHint:'掃描 QR Code 開啟', shareDownloadQR:'⬇ 下載 QR Code', shareTo:'分享到', shareDiscordLabel:'Discord（複製）', shareDiscordToast:'✓ 已複製，貼到 Discord 分享吧！',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -1625,6 +1627,8 @@ const LANGS = {
     tblColQty:'収集数', tblColDate:'最終購入', tblColSource:'購入元',
     // 蒐集記錄區塊
     colSectionTitle:'✓ コレクション記録',
+    // 分享模組
+    shareBtn:'🔗 シェア', shareSiteBtn:'🔗 このサイトをシェア', shareTitle:'🔗 シェア', shareTitleFiltered:'🔗 絞り込み結果をシェア', shareTitleSite:'🔗 このサイトをシェア', shareCopy:'コピー', shareCopied:'✓ コピーしました', shareQRHint:'QR コードをスキャンして開く', shareDownloadQR:'⬇ QR コードをダウンロード', shareTo:'シェア先', shareDiscordLabel:'Discord（コピー）', shareDiscordToast:'✓ コピーしました。Discord に貼り付けてシェアしよう！',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -1665,6 +1669,8 @@ const LANGS = {
     tblColQty:'Qty', tblColDate:'Last Purchase', tblColSource:'Source',
     // 蒐集記錄區塊
     colSectionTitle:'✓ Collection',
+    // 分享模組
+    shareBtn:'🔗 Share', shareSiteBtn:'🔗 Share This Site', shareTitle:'🔗 Share', shareTitleFiltered:'🔗 Share Filtered Results', shareTitleSite:'🔗 Share This Site', shareCopy:'Copy', shareCopied:'✓ Copied', shareQRHint:'Scan QR code to open', shareDownloadQR:'⬇ Download QR Code', shareTo:'Share to', shareDiscordLabel:'Discord (Copy)', shareDiscordToast:'✓ Copied! Paste in Discord to share.',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -1705,6 +1711,8 @@ const LANGS = {
     tblColQty:'수집 수', tblColDate:'최근 구매', tblColSource:'구매처',
     // 蒐集記錄區塊
     colSectionTitle:'✓ 수집 기록',
+    // 分享模組
+    shareBtn:'🔗 공유', shareSiteBtn:'🔗 이 사이트 공유', shareTitle:'🔗 공유', shareTitleFiltered:'🔗 필터 결과 공유', shareTitleSite:'🔗 이 사이트 공유', shareCopy:'복사', shareCopied:'✓ 복사됨', shareQRHint:'QR 코드를 스캔하여 열기', shareDownloadQR:'⬇ QR 코드 다운로드', shareTo:'공유하기', shareDiscordLabel:'Discord (복사)', shareDiscordToast:'✓ 복사되었습니다. Discord에 붙여넣어 공유하세요!',
   },
 }
 let currentLang = (()=>{
@@ -1844,6 +1852,38 @@ function applyLang(){
   if(bbt) bbt.textContent = L_b.batchEnter;
   const bbtm = document.getElementById('btn-batch-toggle-mobile');
   if(bbtm) bbtm.textContent = L_b.batchEnter;
+  // 分享模組（header/footer 按鈕 + modal 內部元素）
+  const btnShare = document.getElementById('btn-share');
+  if(btnShare) btnShare.textContent = L.shareBtn;
+  const btnShareSite = document.getElementById('btn-share-site');
+  if(btnShareSite) btnShareSite.textContent = L.shareSiteBtn;
+  const shareCopyBtn = document.getElementById('share-copy-btn');
+  // 只在非「已複製」狀態才重設,避免打斷 2 秒倒數
+  if(shareCopyBtn && shareCopyBtn.style.background !== 'rgb(26, 122, 69)') shareCopyBtn.textContent = L.shareCopy;
+  const shareQRHint = document.getElementById('share-qr-hint');
+  if(shareQRHint) shareQRHint.textContent = L.shareQRHint;
+  const shareDLQR = document.getElementById('share-download-qr-btn');
+  if(shareDLQR) shareDLQR.textContent = L.shareDownloadQR;
+  const shareToLabel = document.getElementById('share-to-label');
+  if(shareToLabel) shareToLabel.textContent = L.shareTo;
+  // modal 若已開啟,動態標題也要同步
+  const shareModalTitle = document.getElementById('share-modal-title');
+  const shareOverlay = document.getElementById('share-overlay');
+  if(shareModalTitle && shareOverlay && shareOverlay.style.display === 'flex'){
+    const hasFilters = (typeof selBands!=='undefined' && selBands.size) ||
+      (typeof selChars!=='undefined' && selChars.size) ||
+      (typeof selYears!=='undefined' && selYears.size) ||
+      (typeof selTypes!=='undefined' && selTypes.size) ||
+      (typeof selSizes!=='undefined' && selSizes.size) ||
+      (typeof selEvents!=='undefined' && selEvents.size) ||
+      (typeof selSeries!=='undefined' && selSeries.size) ||
+      (typeof selCountries!=='undefined' && selCountries.size) ||
+      document.getElementById('search')?.value?.trim();
+    // 以當前 URL 是否帶 query 判斷標題
+    const urlInput = document.getElementById('share-url-input');
+    const hasQuery = urlInput && urlInput.value.includes('?');
+    shareModalTitle.textContent = hasQuery ? L.shareTitleFiltered : L.shareTitleSite;
+  }
   // 若當前是表格模式，重新渲染以更新表頭翻譯（用 try-catch 保護 TDZ）
   try {
     if(currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
@@ -3051,7 +3091,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   <div style="margin-bottom:0.4rem;" id="footer-author-label">作者：千早愛音的暴躁柯基</div>
   <div id="footer-copyright" style="margin-bottom:0.4rem;font-size:0.7rem;color:var(--muted);">© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。</div>
   <div style="margin-bottom:0.75rem;">
-    <button onclick="openShareModal(false)" style="font-family:inherit;font-size:0.75rem;padding:0.35rem 1rem;border-radius:20px;border:1.5px solid #27ae60;background:transparent;color:#27ae60;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
+    <button id="btn-share-site" onclick="openShareModal(false)" style="font-family:inherit;font-size:0.75rem;padding:0.35rem 1rem;border-radius:20px;border:1.5px solid #27ae60;background:transparent;color:#27ae60;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
       🔗 分享此網站
     </button>
   </div>
@@ -3191,13 +3231,13 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <!-- QR Code -->
     <div style="text-align:center;margin-bottom:1.25rem;">
       <div id="share-qr" style="display:inline-block;padding:0.75rem;background:#fff;border-radius:10px;border:1px solid var(--border);"></div>
-      <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">掃描 QR Code 開啟</div>
+      <div id="share-qr-hint" style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">掃描 QR Code 開啟</div>
       <div style="margin-top:0.5rem;">
-        <button onclick="downloadQR()" style="font-family:inherit;font-size:0.72rem;padding:0.3rem 0.85rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;">⬇ 下載 QR Code</button>
+        <button id="share-download-qr-btn" onclick="downloadQR()" style="font-family:inherit;font-size:0.72rem;padding:0.3rem 0.85rem;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;">⬇ 下載 QR Code</button>
       </div>
     </div>
     <!-- 社群分享 -->
-    <div style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;">分享到</div>
+    <div id="share-to-label" style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;">分享到</div>
     <div style="display:flex;flex-wrap:wrap;gap:0.5rem;" id="share-buttons"></div>
   </div>
 </div>
@@ -3254,7 +3294,8 @@ function openShareModal(withFilters=true){
   }
 
   document.getElementById('share-url-input').value = url;
-  document.getElementById('share-modal-title').textContent = (withFilters && hasFilters) ? '🔗 分享篩選結果' : '🔗 分享此網站';
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  document.getElementById('share-modal-title').textContent = (withFilters && hasFilters) ? L.shareTitleFiltered : L.shareTitleSite;
 
   // QR Code
   const qrEl = document.getElementById('share-qr');
@@ -3293,7 +3334,7 @@ function openShareModal(withFilters=true){
         text-decoration:none;font-size:0.78rem;font-weight:600;font-family:inherit;
         background:transparent;cursor:pointer;transition:opacity 0.15s;"
       onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">
-      <span style="font-size:0.85rem;">${p.icon}</span>${p.name==='Discord'?'Discord（複製）':p.name}
+      <span style="font-size:0.85rem;">${p.icon}</span>${p.name==='Discord' ? L.shareDiscordLabel : p.name}
     </a>`).join('');
 
   document.getElementById('share-overlay').style.display = 'flex';
@@ -3305,16 +3346,18 @@ function closeShareModal(){
 
 function copyShareUrl(){
   const url = document.getElementById('share-url-input').value;
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
   navigator.clipboard.writeText(url).then(()=>{
     const btn = document.getElementById('share-copy-btn');
-    btn.textContent = '✓ 已複製';
+    btn.textContent = L.shareCopied;
     btn.style.background = '#1a7a45';
-    setTimeout(()=>{ btn.textContent='複製'; btn.style.background='#27ae60'; }, 2000);
+    setTimeout(()=>{ btn.textContent = L.shareCopy; btn.style.background='#27ae60'; }, 2000);
   });
 }
 
 function copyForDiscord(url){
-  navigator.clipboard.writeText(url).then(()=>showToast('✓ 已複製，貼到 Discord 分享吧！'));
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
+  navigator.clipboard.writeText(url).then(()=>showToast(L.shareDiscordToast));
 }
 
 function downloadQR(){
@@ -4304,11 +4347,39 @@ async function saveCollectionRecord(){
 async function deleteCollectionRecord(recordId){
   const L = LANGS[currentLang] || LANGS['zh-TW'];
   if(!confirm(L.toastConfirmDelete)) return;
+
+  // 先從記憶體反查該記錄屬於哪張徽章（刪除後就查不到了）
+  let badgeId = null;
+  for(const bid in myCollectionRecords){
+    if((myCollectionRecords[bid]||[]).some(r => r.id === recordId)){
+      badgeId = bid;
+      break;
+    }
+  }
+
   const { error } = await supabaseClient
     .from('collection_records')
     .delete()
     .eq('id', recordId);
   if(error){ alert(L.smartListAlertDeleteFail + ': ' + error.message); return; }
+
+  // 檢查此徽章子表是否已無剩餘記錄；若無，連主表 fallback 也清掉，
+  // 避免 isCollected() fallback 主表誤判成「已蒐集」導致綠框/綠勾殘留
+  if(badgeId){
+    const { data: remaining, error: checkErr } = await supabaseClient
+      .from('collection_records')
+      .select('id')
+      .eq('user_id', currentUser.id)
+      .eq('badge_id', badgeId)
+      .limit(1);
+    if(!checkErr && (!remaining || remaining.length === 0)){
+      const existing = myCollections[badgeId];
+      if(existing){
+        await supabaseClient.from('collections').delete().eq('id', existing.id);
+      }
+    }
+  }
+
   await loadMyCollections();
   // 永遠用新版 modal
   renderCollectionModalNew();
