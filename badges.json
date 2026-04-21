@@ -31359,7 +31359,7 @@
     "id": "2096",
     "ext": "png",
     "band": "MyGO!!!!!",
-    "character": "MyGO!!!!!全團",
+    "character": "千早愛音",
     "series": "通常盤－赤い熊さん",
     "year": "2026年7月15日",
     "event": "MyGO!!!!! 3rd Album「致並跡」",
@@ -31368,9 +31368,7 @@
     "size": "方形",
     "country": "日本",
     "url": "https://bang-dream.com/discographies/4165/",
-    "note": "",
-    "created_at": "2026-04-21T12:50:02.683Z",
-    "updated_at": "2026-04-21T12:50:02.683Z"
+    "note": ""
   },
   {
     "id": "2097",
@@ -33297,5 +33295,22 @@
     "short_event": "3rd Album「POPIGENIC」",
     "created_at": "2026-04-20T15:51:48.016Z",
     "updated_at": "2026-04-20T15:51:48.016Z"
+  },
+  {
+    "id": "2215",
+    "ext": "png",
+    "band": "Ave Mujica",
+    "character": "Ave Mujica全團",
+    "series": "Blu-ray 付生産限定盤",
+    "year": "2025年1月15日",
+    "event": "Ave Mujica 2nd Single「KiLLKiSS」",
+    "type": "角色合影",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/3885/",
+    "note": "",
+    "short_event": "2nd Single「KiLLKiSS」",
+    "created_at": "2026-04-21T13:32:41.180Z",
+    "updated_at": "2026-04-21T13:32:41.180Z"
   }
 ]
