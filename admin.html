@@ -2029,13 +2029,16 @@ buildTextCharList('');
         <input type="date" id="exp-date-to" style="font-family:inherit;font-size:0.85rem;padding:0.48rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;outline:none;width:100%;box-sizing:border-box;"/>
       </div>
     </div>
-    <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+    <div style="display:flex;gap:1rem;margin-bottom:0.4rem;flex-wrap:wrap;">
       <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
-        <input type="radio" name="exp-date-field" value="created_at" checked style="accent-color:#3d3d8f;"/> 依新增時間
+        <input type="checkbox" class="exp-date-field-cb" value="created_at" checked style="accent-color:#3d3d8f;"/> 新增時間
       </label>
       <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
-        <input type="radio" name="exp-date-field" value="updated_at" style="accent-color:#3d3d8f;"/> 依更新時間
+        <input type="checkbox" class="exp-date-field-cb" value="updated_at" checked style="accent-color:#3d3d8f;"/> 更新時間
       </label>
+    </div>
+    <div style="font-size:0.72rem;color:#999;margin-bottom:1rem;line-height:1.5;">
+      兩者皆勾時，每筆會標 <span style="color:#27ae60;font-weight:600;">[新]</span>（新增）或 <span style="color:#0ea5e9;font-weight:600;">[改]</span>（僅更新）；新增當天有更新仍算 [新]。
     </div>
     <div style="margin-bottom:1rem;">
       <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
@@ -2246,30 +2249,51 @@ function setExpDateQuick(days){
 function runExportByDate(){
   const from = document.getElementById('exp-date-from').value;
   const to = document.getElementById('exp-date-to').value;
-  const field = document.querySelector('input[name="exp-date-field"]:checked').value;
+  const checkedFields = Array.from(document.querySelectorAll('.exp-date-field-cb:checked')).map(cb=>cb.value);
   const info = document.getElementById('exp-result-info');
+  if(!checkedFields.length){ info.textContent='⚠ 請至少勾選一種時間欄位'; info.style.color='#e07b2a'; document.getElementById('exp-result-wrap').style.display='none'; return; }
   if(!from || !to){ info.textContent='⚠ 請選擇日期範圍'; info.style.color='#e07b2a'; return; }
   if(from > to){ info.textContent='⚠ 開始日期不能晚於結束日期'; info.style.color='#e07b2a'; return; }
   const fromTs = new Date(from + 'T00:00:00+08:00').getTime();
   const toTs = new Date(to + 'T23:59:59+08:00').getTime();
-  const withDate = badges.filter(b=>b[field]);
-  if(!withDate.length){
-    info.textContent=`⚠ 所有資料都沒有「${field}」欄位，無法篩選`;
-    info.style.color='#e07b2a';
-    document.getElementById('exp-result-wrap').style.display='none';
-    return;
-  }
-  expResultItems = withDate.filter(b=>{
-    const ts = new Date(b[field]).getTime();
-    return ts >= fromTs && ts <= toTs;
+
+  // 幫每筆算出 _changeType：'new' (在 created_at 範圍) / 'updated' (僅在 updated_at 範圍)
+  // 兩個都勾時會一起挑出來；只勾一個時行為等同以前
+  const useCreated = checkedFields.includes('created_at');
+  const useUpdated = checkedFields.includes('updated_at');
+  const inRange = ts => ts >= fromTs && ts <= toTs;
+
+  const picked = [];
+  badges.forEach(b=>{
+    const cTs = b.created_at ? new Date(b.created_at).getTime() : null;
+    const uTs = b.updated_at ? new Date(b.updated_at).getTime() : null;
+    const cHit = useCreated && cTs && inRange(cTs);
+    const uHit = useUpdated && uTs && inRange(uTs);
+    if(!cHit && !uHit) return;
+    // created_at 優先（新增當天改也算新）
+    const changeType = cHit ? 'new' : 'updated';
+    picked.push({...b, _changeType: changeType});
   });
+
+  expResultItems = picked;
+
+  const modeLabel = (useCreated && useUpdated) ? '新增/更新' : (useCreated ? '新增' : '更新');
+
   if(!expResultItems.length){
-    info.textContent=`找不到符合條件的資料（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）｜共 ${withDate.length} 筆有此欄位`;
+    info.textContent=`找不到符合條件的資料（${modeLabel}時間：${from} ～ ${to}）`;
     info.style.color='#c0392b';
     document.getElementById('exp-result-wrap').style.display='none';
     return;
   }
-  info.textContent=`✓ 找到 ${expResultItems.length} 筆（${field==='created_at'?'新增':'更新'}時間：${from} ～ ${to}）`;
+
+  // 兩欄都勾時，額外顯示 [新]/[改] 各多少筆
+  let breakdown = '';
+  if(useCreated && useUpdated){
+    const nNew = expResultItems.filter(x=>x._changeType==='new').length;
+    const nUpd = expResultItems.filter(x=>x._changeType==='updated').length;
+    breakdown = ` ｜[新] ${nNew} / [改] ${nUpd}`;
+  }
+  info.textContent=`✓ 找到 ${expResultItems.length} 筆（${modeLabel}時間：${from} ～ ${to}）${breakdown}`;
   info.style.color='#27ae60';
   // 渲染勾選清單（預設全選）
   renderExpCheckList();
@@ -2284,18 +2308,31 @@ function runExportByDate(){
 
 function renderExpCheckList(){
   const list = document.getElementById('exp-check-list');
-  list.innerHTML = expResultItems.map((b,i)=>`
+  // 兩個欄位都勾時才顯示 [新]/[改] tag
+  const bothChecked = document.querySelectorAll('.exp-date-field-cb:checked').length === 2;
+  list.innerHTML = expResultItems.map((b,i)=>{
+    let tagHtml = '';
+    if(bothChecked){
+      if(b._changeType === 'new'){
+        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#27ae60;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">新</span>`;
+      } else {
+        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#0ea5e9;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">改</span>`;
+      }
+    }
+    return `
     <label style="display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0.3rem;border-radius:5px;cursor:pointer;font-size:0.8rem;border-bottom:1px solid #eee;">
       <input type="checkbox" class="exp-item-cb" value="${i}" checked onchange="updateExpCheckedCount()" style="accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;"/>
       <img src="${(window.IMG_BASE_URL||'https://liar-chang.github.io/bandori-badges/images/')}${b.id}.${b.ext||'jpg'}"
         style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#f0f0f0;"
         onerror="this.style.opacity='0.3'"/>
+      ${tagHtml}
       <span style="flex:1;min-width:0;">
         <span style="font-weight:600;color:#333;">#${b.id}</span>
         <span style="color:#888;margin-left:0.4rem;">${b.character||'—'}</span>
         <span style="color:#aaa;margin-left:0.4rem;font-size:0.72rem;">${b.short_event||b.event||'—'}</span>
       </span>
-    </label>`).join('');
+    </label>`;
+  }).join('');
   updateExpCheckedCount();
 }
 
@@ -2343,45 +2380,78 @@ function downloadExpJSON(){
 }
 
 // 公告稿格式：依活動分組，區分團體 / 個人徽章
+// 兩個時間欄位都勾時，會分「新增」「更新」兩大區塊
 function copyAnnouncementText(){
   const items = getExpSelectedItems();
   if(!items.length){ showToast('請至少勾選一筆'); return; }
 
-  // 按活動分組
-  const byEvent = {};
-  items.forEach(b => {
-    const ev = b.event || '（未指定活動）';
-    if(!byEvent[ev]) byEvent[ev] = { group: [], individual: [] };
-    // 判斷團體 vs 個人：character 含「全團/全员/全員/全体/集合/フル」→ 團體；否則個人
-    const char = b.character || '';
-    const isGroup = /全團|全员|全員|全体|集合|フル/i.test(char);
-    if(isGroup){
-      byEvent[ev].group.push(b);
-    } else {
-      byEvent[ev].individual.push(b);
-    }
-  });
+  const bothChecked = document.querySelectorAll('.exp-date-field-cb:checked').length === 2;
+  const onlyUpdated = !bothChecked && document.querySelector('.exp-date-field-cb:checked')?.value === 'updated_at';
 
-  // 組裝文字
+  // 把 items 按 _changeType 分組（若沒有就全當 new，以相容單選）
+  const newItems = items.filter(b => b._changeType === 'new' || !b._changeType);
+  const updItems = items.filter(b => b._changeType === 'updated');
+
+  // 把一組 items 按活動分組後組成文字段落
+  function buildSection(sectionItems){
+    const byEvent = {};
+    sectionItems.forEach(b => {
+      const ev = b.event || '(未指定活動)';
+      if(!byEvent[ev]) byEvent[ev] = { group: [], individual: [] };
+      const char = b.character || '';
+      const isGroup = /全團|全员|全員|全体|集合|フル/i.test(char);
+      if(isGroup) byEvent[ev].group.push(b);
+      else byEvent[ev].individual.push(b);
+    });
+    const out = [];
+    Object.keys(byEvent).sort().forEach(ev => {
+      out.push(`━━━━━━━━━━━━━━━━━━`);
+      out.push(`【${ev}】`);
+      const { group, individual } = byEvent[ev];
+      if(group.length){
+        out.push(`◆ 團體徽章（${group.length}）`);
+        group.forEach(b => out.push(`  #${b.id} ${b.character || '—'}${b.series ? ` ・ ${b.series}` : ''}`));
+      }
+      if(individual.length){
+        out.push(`◆ 個人徽章（${individual.length}）`);
+        individual.forEach(b => out.push(`  #${b.id} ${b.character || '—'}${b.series ? ` ・ ${b.series}` : ''}`));
+      }
+      out.push('');
+    });
+    return out;
+  }
+
   const lines = [];
   const dateStr = new Date().toISOString().slice(0, 10);
-  lines.push(`【新增徽章清單】${dateStr}`);
-  lines.push(`共 ${items.length} 張`);
-  lines.push('');
-  Object.keys(byEvent).sort().forEach(ev => {
-    lines.push(`━━━━━━━━━━━━━━━━━━`);
-    lines.push(`【${ev}】`);
-    const { group, individual } = byEvent[ev];
-    if(group.length){
-      lines.push(`◆ 團體徽章（${group.length}）`);
-      group.forEach(b => lines.push(`  #${b.id} ${b.character || '—'}${b.series ? ` ・ ${b.series}` : ''}`));
-    }
-    if(individual.length){
-      lines.push(`◆ 個人徽章（${individual.length}）`);
-      individual.forEach(b => lines.push(`  #${b.id} ${b.character || '—'}${b.series ? ` ・ ${b.series}` : ''}`));
-    }
+
+  if(bothChecked){
+    // 兩欄都勾：分「新增」「更新」兩區塊
+    lines.push(`【新增/更新徽章清單】${dateStr}`);
+    lines.push(`共 ${items.length} 張（新增 ${newItems.length} / 更新 ${updItems.length}）`);
     lines.push('');
-  });
+    if(newItems.length){
+      lines.push(`═══ 【新增】${newItems.length} 張 ═══`);
+      lines.push('');
+      lines.push(...buildSection(newItems));
+    }
+    if(updItems.length){
+      lines.push(`═══ 【更新】${updItems.length} 張 ═══`);
+      lines.push('');
+      lines.push(...buildSection(updItems));
+    }
+  } else if(onlyUpdated){
+    // 只勾更新
+    lines.push(`【更新徽章清單】${dateStr}`);
+    lines.push(`共 ${items.length} 張`);
+    lines.push('');
+    lines.push(...buildSection(items));
+  } else {
+    // 只勾新增（或舊行為）
+    lines.push(`【新增徽章清單】${dateStr}`);
+    lines.push(`共 ${items.length} 張`);
+    lines.push('');
+    lines.push(...buildSection(items));
+  }
 
   const text = lines.join('\n');
   navigator.clipboard.writeText(text).then(() => {
