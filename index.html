@@ -112,7 +112,13 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 [data-theme="dark"]{
   --bg:#141414;--surface:#1e1e1e;--border:#2e2e2e;--text:#f0f0f0;--muted:#888;
 }
-[data-theme="dark"] body{background:var(--bg);color:var(--text);}
+[data-theme="dark"] body{
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url('images/bg.png');
+  color:var(--text);
+}
 [data-theme="dark"] .sidebar{background:#1a1a1a;border-color:#2e2e2e;}
 [data-theme="dark"] .badge-card{background:#1e1e1e;border-color:#2e2e2e;}
 [data-theme="dark"] .badge-card:hover{border-color:#7c6fcd;box-shadow:0 4px 20px #5a4fcf30;}
@@ -151,9 +157,27 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 [data-theme="dark"] #col-8.on,[data-theme="dark"] #col-10.on{background:#3d3d8f;color:#fff;}
 [data-theme="dark"] .btn-view{background:#1e1e1e;color:#888;border-color:#3a3a3a;}
 [data-theme="dark"] .btn-view.active{background:#3d3d8f;color:#fff;}
-[data-theme="dark"] .main-wrap{background:var(--bg);}
+[data-theme="dark"] .main-wrap{background:transparent;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{
+  font-family:'Noto Sans TC',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  /* 桌面版背景圖：跟著頁面一起滾動（錢包效果） */
+  background-image:url('images/bg.png');
+  background-repeat:no-repeat;
+  background-position:top center;
+  background-size:cover;            /* 寬度鋪滿整個視窗 */
+  background-attachment:scroll;     /* 捲動時背景一起走 */
+}
+/* 手機版不載背景圖（省流量、避免排版問題） */
+@media (max-width: 768px){
+  body{
+    background-image:none;
+    background:var(--bg);
+  }
+}
 
 .site-header{
   background:linear-gradient(135deg,#ff6eb4 0%,#ff2d78 40%,#c0005a 100%);
@@ -175,7 +199,24 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 
 
 
-.layout{display:flex;min-height:calc(100vh - 160px);}
+.layout{
+  display:flex;
+  min-height:calc(100vh - 160px);
+  background:rgba(255,255,255,0.60);    /* 整個內容區半透明白底，背景圖從後面透出 */
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+[data-theme="dark"] .layout{
+  background:rgba(20,20,28,0.60);        /* 深色模式也只 60% 透，跟淺色一樣讓底圖透出 */
+}
+/* 手機版沒背景圖，layout 不需要半透明 */
+@media (max-width: 768px){
+  .layout{
+    background:var(--bg);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+}
 @media(max-width:800px){.layout{flex-direction:column;}}
 
 .sidebar{background:#fff;border-right:1px solid var(--border);padding:1.5rem 1.25rem;
