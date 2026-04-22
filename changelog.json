@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/21",
+    "content": {
+      "zh": "【新增/更新資料】\n今日新增 27 張徽章\n・MyGO!!!!! 3rd Album「致並跡」（26張）\n・Ave Mujica 2nd Single「KiLLKiSS」（1 張）\n【功能調整】\n（無）",
+      "ja": "【新規・更新データ】\n本日27個のバッジを追加\n・MyGO!!!!! 3rd Album「致並跡」(26個)\n・Ave Mujica 2nd Single「KiLLKiSS」(1個)\n【機能調整】\n（なし）",
+      "en": "【New / Updated Data】\nAdded 27 badges today\n・MyGO!!!!! 3rd Album \"致並跡\" (26 badges)\n・Ave Mujica 2nd Single \"KiLLKiSS\" (1 badge)\n【Feature Updates】\n(None)",
+      "ko": "【신규/업데이트 데이터】\n오늘 27개의 뱃지 추가\n・MyGO!!!!! 3rd Album「致並跡」(26개)\n・Ave Mujica 2nd Single「KiLLKiSS」(1개)\n【기능 조정】\n(없음)"
+    }
+  },
+  {
     "date": "2026/4/20",
     "content": {
       "zh": "【新增/更新資料】\n今日新增 21 張徽章\n・Morfonica 2nd Album「Polyphony」（11 張）\n・Poppin'Party 3rd Album「POPIGENIC」（10 張）\n\n【功能調整】\n・修正刪除購買記錄後，徽章仍卡在「已蒐集」狀態的問題\n・刪光所有購買記錄時，蒐集 modal 會自動關閉\n・分享模組全面 4 語言化（分享按鈕、QR Code 提示、Discord 複製等）",
