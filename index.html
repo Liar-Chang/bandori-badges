@@ -98,6 +98,7 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 <meta name="twitter:description" content="MyGO!!!!!、Ave Mujica、夢限大MewType 徽章收藏圖鑑"/>
 <meta name="twitter:image" content="https://liar-chang.github.io/bandori-badges/images/og-cover.jpg"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#FF8899"/>
 <title>BanG Dream! 徽章圖鑑</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico"/>
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
@@ -181,11 +182,15 @@ body{
   background-size:cover;            /* 寬度鋪滿整個視窗 */
   background-attachment:scroll;     /* 捲動時背景一起走 */
 }
-/* 手機版不載背景圖（省流量、避免排版問題） */
+/* 手機版用直式構圖的專用背景圖（檔案小、不會被裁壞） */
 @media (max-width: 768px){
   body{
-    background-image:none;
-    background:var(--bg);
+    background-image:url('images/bg-mobile.jpg');
+  }
+  [data-theme="dark"] body{
+    background-image:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+      url('images/bg-mobile.jpg');
   }
 }
 
@@ -218,14 +223,6 @@ body{
 }
 [data-theme="dark"] .layout{
   background:rgba(20,20,28,0.60);        /* 深色模式也只 60% 透，跟淺色一樣讓底圖透出 */
-}
-/* 手機版沒背景圖，layout 不需要半透明 */
-@media (max-width: 768px){
-  .layout{
-    background:var(--bg);
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-  }
 }
 @media(max-width:800px){.layout{flex-direction:column;}}
 
