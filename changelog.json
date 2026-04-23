@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/22",
+    "content": {
+      "zh": "【新增/更新資料】\n（無）\n【功能調整】\n・新增網站背景插畫（愛音 × 爽世）\n・深色模式下的背景自動暗化處理",
+      "ja": "【新規・更新データ】\n（なし）\n【機能調整】\n・サイト背景イラストを追加（愛音 × 爽世）\n・ダークモードでは背景を自動的に暗く調整",
+      "en": "【New / Updated Data】\n(None)\n【Feature Updates】\n・Added site background illustration (Anon × Sayo)\n・Background is automatically dimmed in dark mode",
+      "ko": "【신규/업데이트 데이터】\n(없음)\n【기능 조정】\n・사이트 배경 일러스트 추가 (아논 × 사요)\n・다크 모드에서 배경을 자동으로 어둡게 조정"
+    }
+  },
+  {
     "date": "2026/4/21",
     "content": {
       "zh": "【新增/更新資料】\n今日新增 27 張徽章\n・MyGO!!!!! 3rd Album「致並跡」（26張）\n・Ave Mujica 2nd Single「KiLLKiSS」（1 張）\n【功能調整】\n（無）",
