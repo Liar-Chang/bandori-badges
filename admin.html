@@ -442,6 +442,7 @@ td.editable:hover .edit-hint{opacity:1;}
         <option value="no_url">缺少相關連結（且無備註）</option>
         <option value="no_short">缺少活動簡稱</option>
         <option value="no_url_and_short">同時缺少兩者</option>
+        <option value="no_image">缺少圖檔</option>
       </select>
     </div>
 
@@ -640,6 +641,35 @@ let imageCache={}; // id -> objectUrl (記憶體快取，關頁消失)
 function imgUrl(b){
   if(imageCache[b.id]) return imageCache[b.id];
   return IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+}
+
+// === 缺少圖檔檢查 ===
+// imageExistCache: id -> true/false（本 session 記憶體快取）
+let imageExistCache = {};
+let imageCheckToken = 0; // 每次檢查 +1，舊的 token 會被作廢
+// 檢查單張徽章圖檔是否存在（HEAD 請求）
+function checkBadgeImage(b){
+  // 如果 imageCache 有（本次 session 剛上傳過尚未推 github），視為有圖
+  if(imageCache[b.id]) return Promise.resolve(true);
+  if(imageExistCache[b.id] !== undefined) return Promise.resolve(imageExistCache[b.id]);
+  const url = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+  return fetch(url, {method:'HEAD', cache:'no-store'})
+    .then(r => { const ok = r.ok; imageExistCache[b.id] = ok; return ok; })
+    .catch(() => { imageExistCache[b.id] = false; return false; });
+}
+// 批次檢查，回傳「缺圖」的 id Set
+async function findBadgesWithoutImage(list, token){
+  const missing = new Set();
+  // 分批併發，避免一次發太多請求
+  const BATCH = 20;
+  for(let i=0; i<list.length; i+=BATCH){
+    if(token !== imageCheckToken) return null; // 被取消
+    const chunk = list.slice(i, i+BATCH);
+    const results = await Promise.all(chunk.map(b => checkBadgeImage(b).then(ok => ({b, ok}))));
+    results.forEach(({b, ok}) => { if(!ok) missing.add(b.id); });
+  }
+  if(token !== imageCheckToken) return null;
+  return missing;
 }
 
 function persist(){
@@ -1018,8 +1048,28 @@ function renderList(){
     if(fm==='no_url') missingOk=!b.url&&!b.note;
     else if(fm==='no_short') missingOk=!b.short_event;
     else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
+    // no_image 是異步檢查，這裡先全部放行，下方再過濾
     return mq&&bandOk&&missingOk;
   });
+  // 「缺少圖檔」需要異步檢查，改走另一條路徑
+  if(fm==='no_image'){
+    const token = ++imageCheckToken;
+    // 顯示檢查中
+    tbody.innerHTML = `<tr><td colspan="99" style="padding:2rem;text-align:center;color:#888;font-size:0.9rem;">🔍 正在檢查 ${filtered.length} 張徽章的圖檔...</td></tr>`;
+    empty.style.display = 'none';
+    findBadgesWithoutImage(filtered, token).then(missing => {
+      if(missing === null) return; // 被取消（使用者切換了篩選）
+      const missingList = filtered.filter(b => missing.has(b.id));
+      renderListPhase2(missingList);
+    });
+    return;
+  }
+  renderListPhase2(filtered);
+}
+
+function renderListPhase2(filtered){
+  const tbody=document.getElementById('badge-tbody');
+  const empty=document.getElementById('list-empty');
   // 依編號排序
   let sorted = filtered.slice();
   if(listSortField === 'id-asc'){
