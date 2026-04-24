@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/24",
+    "content": {
+      "zh": "【新增/更新資料】\n・RAISE A SUILEN「トレーディングしかくい缶バッジ vol.1」（新增 10 張）\n・MyGO!!!!!「迷子集会 出張版 第三弾 - 日常の築葉書 -」（新增 10 張）\n・Poppin'Party × Roselia「DREAMS GO ON」合同ライブ（新增 10 張）\n\n【功能調整】\n（無）",
+      "ja": "【追加/更新データ】\n・RAISE A SUILEN「トレーディングしかくい缶バッジ vol.1」（10枚追加）\n・MyGO!!!!!「迷子集会 出張版 第三弾 - 日常の築葉書 -」（10枚追加）\n・Poppin'Party × Roselia「DREAMS GO ON」合同ライブ（10枚追加）\n\n【機能調整】\n（なし）",
+      "en": "【New / Updated Data】\n・RAISE A SUILEN \"Trading Square Can Badge vol.1\" (10 new)\n・MyGO!!!!! \"Maigo Shuukai Trip Edition Vol.3 - Nichijou no Chikuhagaki -\" (10 new)\n・Poppin'Party × Roselia \"DREAMS GO ON\" Joint Live (10 new)\n\n【Feature Updates】\n(None)",
+      "ko": "【추가/업데이트 데이터】\n・RAISE A SUILEN「트레이딩 사각 캔뱃지 vol.1」(10장 추가)\n・MyGO!!!!!「미아집회 출장판 제3탄 - 일상의 엽서 -」(10장 추가)\n・Poppin'Party × Roselia「DREAMS GO ON」합동 라이브 (10장 추가)\n\n【기능 조정】\n(없음)"
+    }
+  },
+  {
     "date": "2026/4/23",
     "content": {
       "zh": "【新增/更新資料】\n・MyGO!!!!! 雨にそよいで晴れを請う 3 ゲーマーズ限定版B（更新 5 張）\n\n【功能調整】\n・購買來源欄位範例改為更口語的取得方式（官網、代購、二手、贈送、交換）\n・新增網站分享縮圖（Discord/LINE/Threads 等平台分享連結時會顯示愛音 Live House 圖）\n・新增網站圖示（瀏覽器分頁、書籤、加入主畫面時顯示粉色愛音頭像）\n・手機版瀏覽器網址列改為愛音代表色 #FF8899\n・新增手機版專用背景圖（愛音 × 爽世直式構圖）",
