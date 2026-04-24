@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/4/23",
+    "content": {
+      "zh": "【新增/更新資料】\n・MyGO!!!!! 雨にそよいで晴れを請う 3 ゲーマーズ限定版B（更新 5 張）\n\n【功能調整】\n・購買來源欄位範例改為更口語的取得方式（官網、代購、二手、贈送、交換）\n・新增網站分享縮圖（Discord/LINE/Threads 等平台分享連結時會顯示愛音 Live House 圖）\n・新增網站圖示（瀏覽器分頁、書籤、加入主畫面時顯示粉色愛音頭像）\n・手機版瀏覽器網址列改為愛音代表色 #FF8899\n・新增手機版專用背景圖（愛音 × 爽世直式構圖）",
+      "ja": "【追加/更新データ】\n・MyGO!!!!!「雨にそよいで晴れを請う 3」ゲーマーズ限定版B（更新 5 枚）\n\n【機能調整】\n・購入元の入力例をより自然な表現に変更（公式通販、代理購入、中古、譲ってもらう、交換）\n・サイトシェア用サムネイル画像を追加(Discord/LINE/Threads等でリンクをシェアした際、愛音のライブハウス画像が表示されます)\n・サイトアイコンを追加(ブラウザタブ、ブックマーク、ホーム画面追加時にピンク色の愛音ヘッドが表示されます)\n・モバイル版のアドレスバーを愛音のテーマカラー #FF8899 に変更\n・モバイル版専用の背景画像を追加(愛音 × そよ縦構図)",
+      "en": "【New / Updated Data】\n・MyGO!!!!! \"Ame ni Soyoide Hare wo Kou 3\" Gamers Limited Ver. B (5 updated)\n\n【Feature Updates】\n・Updated purchase source examples to more natural phrasing (Official store, Proxy purchase, Second-hand, Gift, Trade)\n・Added social share thumbnail (Anon at the live house image will appear when sharing the site link on Discord/LINE/Threads, etc.)\n・Added site icon (Pink Anon avatar shown in browser tabs, bookmarks, and home screen)\n・Mobile browser address bar now uses Anon's theme color #FF8899\n・Added mobile-specific background image (Anon × Soyo vertical composition)",
+      "ko": "【추가/업데이트 데이터】\n・MyGO!!!!! 「雨にそよいで晴れを請う 3」 게이머즈 한정판 B (업데이트 5장)\n\n【기능 조정】\n・구매처 입력 예시를 더 자연스러운 표현으로 변경 (공식몰, 대리구매, 중고, 선물, 교환)\n・사이트 공유용 썸네일 이미지 추가 (Discord/LINE/Threads 등에서 링크 공유 시 아논의 라이브 하우스 이미지가 표시됩니다)\n・사이트 아이콘 추가 (브라우저 탭, 북마크, 홈 화면 추가 시 핑크색 아논 아바타 표시)\n・모바일 주소창 색상을 아논의 테마색 #FF8899로 변경\n・모바일 전용 배경 이미지 추가 (아논 × 소요 세로 구도)"
+    }
+  },
+  {
     "date": "2026/4/22",
     "content": {
       "zh": "【新增/更新資料】\n（無）\n【功能調整】\n・新增網站背景插畫（愛音 × 爽世）\n・深色模式下的背景自動暗化處理",
