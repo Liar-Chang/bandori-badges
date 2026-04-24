@@ -175,7 +175,6 @@ td.editable:hover .edit-hint{opacity:1;}
         <button class="header-dropdown-item" onclick="editGitHub();closeMoreMenu()">⚙ GitHub 設定</button>
         <button class="header-dropdown-item" onclick="document.getElementById('json-import').click();closeMoreMenu()">📂 匯入 JSON</button>
         <button class="header-dropdown-item" onclick="openExportByDateModal();closeMoreMenu()">📅 依日期匯出圖檔</button>
-        <button class="header-dropdown-item" onclick="openMarkImageUpdateModal();closeMoreMenu()">📷 標記補圖時間</button>
         <button class="header-dropdown-item" onclick="batchFillCreatedAt();closeMoreMenu()">🕐 批次補填新增時間</button>
         <button class="header-dropdown-item danger" onclick="clearAll();closeMoreMenu()">🗑 清除全部</button>
       </div>
@@ -1490,16 +1489,16 @@ const GH_BRANCH = 'main';
 async function loadFromGitHub(silent=false){
   const token = localStorage.getItem('gh_token');
   try{
-    const url = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}&t=${Date.now()}`;
-    const headers = { 'Accept': 'application/vnd.github.v3+json' };
-    if(token) headers['Authorization'] = `token ${token}`;
+    // 改用 raw URL 繞過 GitHub API 的 1 MB 限制（原本用 api.github.com 超過 1MB 會回傳 content:""）
+    // 加 ?t=Date.now() 防 CDN 快取
+    const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
+    const headers = {};
+    if(token) headers['Authorization'] = `token ${token}`;  // private repo 才需要，public 可省略
 
-    const res = await fetch(url, { headers });
+    const res = await fetch(rawUrl, { headers, cache: 'no-store' });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    const data = await res.json();
-    const json = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-    const parsed = JSON.parse(json);
+    const parsed = await res.json();
     if(!Array.isArray(parsed)) throw new Error('格式錯誤');
 
     badges = parsed;
@@ -1840,48 +1839,71 @@ async function syncToGitHub(){
   const origText = btn.textContent;
   btn.textContent = '同步中...'; btn.disabled = true;
 
+  // 使用 Git Data API 推送（繞過 Contents API 的 1 MB 限制）
+  // 流程：取得 branch ref → 取得 commit → 建 blob → 建 tree → 建 commit → 更新 ref
+  const apiBase = `https://api.github.com/repos/${GH_REPO}`;
+  const ghHeaders = {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
+  };
+
+  async function ghFetch(url, opts={}){
+    const res = await fetch(url, { headers: ghHeaders, ...opts });
+    if(!res.ok){
+      const err = await res.json().catch(()=>({message:`HTTP ${res.status}`}));
+      throw new Error(err.message || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
   try{
-    // 1. 取得目前檔案的 SHA（更新時需要）
-    const getRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, {
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-
-    let sha = null;
-    if(getRes.ok){
-      const fileData = await getRes.json();
-      sha = fileData.sha;
-    }
-
-    // 2. 將 badges 資料轉成 base64
+    // 準備 JSON 內容
     const json = JSON.stringify(badges, null, 2);
-    const base64 = btoa(unescape(encodeURIComponent(json)));
 
-    // 3. 推送到 GitHub
-    const body = {
-      message: `更新 badges.json（${new Date().toLocaleString('zh-TW')}）`,
-      content: base64,
-      branch: GH_BRANCH,
-    };
-    if(sha) body.sha = sha;
+    // 1. 取得目前 branch 指向的 commit sha
+    const refData = await ghFetch(`${apiBase}/git/refs/heads/${GH_BRANCH}`);
+    const latestCommitSha = refData.object.sha;
 
-    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
+    // 2. 取得該 commit 的 tree sha
+    const commitData = await ghFetch(`${apiBase}/git/commits/${latestCommitSha}`);
+    const baseTreeSha = commitData.tree.sha;
+
+    // 3. 建立 blob（沒有 1 MB 限制，可直接送 utf-8 明文）
+    const blobData = await ghFetch(`${apiBase}/git/blobs`, {
+      method: 'POST',
+      body: JSON.stringify({ content: json, encoding: 'utf-8' }),
+    });
+    const blobSha = blobData.sha;
+
+    // 4. 建立新 tree（只改 badges.json 這一個檔案）
+    const treeData = await ghFetch(`${apiBase}/git/trees`, {
+      method: 'POST',
+      body: JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: [{ path: GH_FILE, mode: '100644', type: 'blob', sha: blobSha }],
+      }),
     });
 
-    if(putRes.ok){
-      showToast(`✓ 已同步到 GitHub！共 ${badges.length} 筆`);
-    } else {
-      const err = await putRes.json();
-      showToast(`✗ 同步失敗：${err.message||putRes.status}`);
-    }
+    // 5. 建立新 commit
+    const newCommitData = await ghFetch(`${apiBase}/git/commits`, {
+      method: 'POST',
+      body: JSON.stringify({
+        message: `更新 badges.json（${new Date().toLocaleString('zh-TW')}）`,
+        tree: treeData.sha,
+        parents: [latestCommitSha],
+      }),
+    });
+
+    // 6. 更新 branch ref 指向新 commit
+    await ghFetch(`${apiBase}/git/refs/heads/${GH_BRANCH}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sha: newCommitData.sha }),
+    });
+
+    showToast(`✓ 已同步到 GitHub！共 ${badges.length} 筆`);
   } catch(e){
-    showToast(`✗ 錯誤：${e.message}`);
+    showToast(`✗ 同步失敗：${e.message}`);
   }
 
   btn.textContent = origText; btn.disabled = false;
@@ -2463,136 +2485,7 @@ function copyAnnouncementText(){
     popup.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:1rem;">${text.replace(/</g,'&lt;')}</pre>`);
   });
 }
-
-// ───── 標記補圖時間 ─────
-let markImgFiltered = []; // 目前篩選結果（顯示在清單裡的）
-let markImgChecked = new Set(); // 已勾選的 id
-
-function openMarkImageUpdateModal(){
-  markImgChecked.clear();
-  document.getElementById('mark-img-search').value = '';
-  const sel = document.getElementById('mark-img-band');
-  sel.innerHTML = '<option value="">所有樂團</option>' + BAND_LIST.map(b=>`<option value="${b}">${b}</option>`).join('');
-  sel.value = '';
-  document.getElementById('mark-img-only-recent').checked = false;
-  renderMarkImgList();
-  document.getElementById('mark-img-overlay').style.display = 'flex';
-}
-
-function closeMarkImageUpdateModal(){
-  document.getElementById('mark-img-overlay').style.display = 'none';
-}
-
-function renderMarkImgList(){
-  const q = document.getElementById('mark-img-search').value.toLowerCase().trim();
-  const fb = document.getElementById('mark-img-band').value;
-  const onlyRecent = document.getElementById('mark-img-only-recent').checked;
-  const now = Date.now();
-  const SEVEN_DAYS = 7*24*60*60*1000;
-
-  markImgFiltered = badges.filter(b=>{
-    const mq = !q || [b.id,b.character,b.event,b.short_event,b.band].some(v=>(v||'').toLowerCase().includes(q));
-    const mb = !fb || b.band === fb;
-    let mr = true;
-    if(onlyRecent){
-      // 「7 天內 created_at 且 updated_at 等於 created_at」（建檔後沒被改過）
-      const c = b.created_at ? new Date(b.created_at).getTime() : 0;
-      const u = b.updated_at ? new Date(b.updated_at).getTime() : 0;
-      mr = c && (now - c < SEVEN_DAYS) && Math.abs(u - c) < 1000;
-    }
-    return mq && mb && mr;
-  }).sort((a,b)=>(b.id||'').localeCompare(a.id||'',undefined,{numeric:true}));
-
-  const listEl = document.getElementById('mark-img-list');
-  if(!markImgFiltered.length){
-    listEl.innerHTML = '<div style="padding:1rem;text-align:center;color:#999;font-size:0.85rem;">沒有符合條件的徽章</div>';
-    updateMarkImgCount();
-    return;
-  }
-  listEl.innerHTML = markImgFiltered.map(b=>{
-    const checked = markImgChecked.has(b.id) ? 'checked' : '';
-    const updated = b.updated_at ? b.updated_at.slice(0,10) : '—';
-    const c = BAND_COLORS[b.band] || '#aaa';
-    const evtTxt = (b.short_event||b.event||'').replace(/</g,'&lt;');
-    const charTxt = (b.character||'').replace(/</g,'&lt;');
-    return `<label style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.5rem;border-bottom:1px solid #eee;cursor:pointer;font-size:0.8rem;">
-      <input type="checkbox" data-id="${b.id}" ${checked} onchange="toggleMarkImgCheck(this)" style="accent-color:#5a4fcf;"/>
-      <span style="font-weight:600;color:#333;min-width:60px;">${b.id}</span>
-      <span style="color:${c};font-weight:600;min-width:120px;">${b.band||''}</span>
-      <span style="color:#666;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${charTxt} · ${evtTxt}</span>
-      <span style="color:#999;font-size:0.72rem;white-space:nowrap;">更新:${updated}</span>
-    </label>`;
-  }).join('');
-  updateMarkImgCount();
-}
-
-function toggleMarkImgCheck(cb){
-  const id = cb.dataset.id;
-  if(cb.checked) markImgChecked.add(id);
-  else markImgChecked.delete(id);
-  updateMarkImgCount();
-}
-
-function markImgSelectAll(check){
-  markImgFiltered.forEach(b=>{
-    if(check) markImgChecked.add(b.id);
-    else markImgChecked.delete(b.id);
-  });
-  renderMarkImgList();
-}
-
-function updateMarkImgCount(){
-  document.getElementById('mark-img-count').textContent =
-    `符合 ${markImgFiltered.length} 筆，已勾選 ${markImgChecked.size} 筆`;
-}
-
-function confirmMarkImgUpdate(){
-  if(!markImgChecked.size){ showToast('請先勾選要標記的徽章'); return; }
-  if(!confirm(`確定要把 ${markImgChecked.size} 筆徽章的「更新時間」設為現在嗎？`)) return;
-  const now = new Date().toISOString();
-  let cnt = 0;
-  badges.forEach(b=>{
-    if(markImgChecked.has(b.id)){
-      b.updated_at = now;
-      cnt++;
-    }
-  });
-  persist();
-  renderList();
-  showToast(`✓ 已標記 ${cnt} 筆徽章為剛剛更新`);
-  closeMarkImageUpdateModal();
-}
 </script>
-
-<!-- 標記補圖時間 Modal -->
-<div id="mark-img-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:16px;width:min(640px,96vw);max-height:90vh;overflow-y:auto;padding:1.75rem;font-family:inherit;">
-    <h2 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:#1a1a2e;">📷 標記補圖時間</h2>
-    <div style="font-size:0.78rem;color:#888;margin-bottom:1rem;line-height:1.6;">
-      把選中徽章的 <strong>updated_at</strong>（更新時間）設為現在，<br/>之後在「依日期匯出圖檔」就會被視為今日有更新（標 <span style="color:#0ea5e9;font-weight:600;">[改]</span>）。
-    </div>
-    <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center;">
-      <input type="text" id="mark-img-search" placeholder="搜尋編號、角色、活動..." oninput="renderMarkImgList()" style="flex:1;min-width:140px;font-family:inherit;font-size:0.83rem;padding:0.45rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;outline:none;"/>
-      <select id="mark-img-band" onchange="renderMarkImgList()" style="font-family:inherit;font-size:0.83rem;padding:0.45rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;"></select>
-    </div>
-    <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;cursor:pointer;margin-bottom:0.6rem;color:#666;">
-      <input type="checkbox" id="mark-img-only-recent" onchange="renderMarkImgList()" style="accent-color:#5a4fcf;"/>
-      只顯示「7 天內新建、還沒被編輯過」的徽章（典型補圖對象）
-    </label>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;flex-wrap:wrap;gap:0.4rem;">
-      <span id="mark-img-count" style="font-size:0.78rem;color:#5a4fcf;font-weight:600;"></span>
-      <div style="display:flex;gap:0.4rem;">
-        <button class="btn btn-sm btn-secondary" onclick="markImgSelectAll(true)">全選目前</button>
-        <button class="btn btn-sm btn-secondary" onclick="markImgSelectAll(false)">全不選</button>
-      </div>
-    </div>
-    <div id="mark-img-list" style="border:1.5px solid #ddd;border-radius:8px;max-height:380px;overflow-y:auto;background:#fafaff;"></div>
-    <div style="margin-top:1.25rem;display:flex;justify-content:flex-end;gap:0.5rem;">
-      <button class="btn btn-secondary" onclick="closeMarkImageUpdateModal()">取消</button>
-      <button class="btn btn-primary" onclick="confirmMarkImgUpdate()">✓ 確認標記</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
