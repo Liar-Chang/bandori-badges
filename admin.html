@@ -1487,15 +1487,12 @@ const GH_FILE = 'badges.json';
 const GH_BRANCH = 'main';
 
 async function loadFromGitHub(silent=false){
-  const token = localStorage.getItem('gh_token');
   try{
     // 改用 raw URL 繞過 GitHub API 的 1 MB 限制（原本用 api.github.com 超過 1MB 會回傳 content:""）
     // 加 ?t=Date.now() 防 CDN 快取
+    // 注意：raw URL 不能帶 Authorization header，會觸發 CORS preflight 失敗（public repo 也不需要）
     const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
-    const headers = {};
-    if(token) headers['Authorization'] = `token ${token}`;  // private repo 才需要，public 可省略
-
-    const res = await fetch(rawUrl, { headers, cache: 'no-store' });
+    const res = await fetch(rawUrl, { cache: 'no-store' });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const parsed = await res.json();
