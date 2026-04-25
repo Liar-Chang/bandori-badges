@@ -2086,6 +2086,16 @@ buildTextCharList('');
         <button class="btn btn-sm btn-secondary" onclick="copyExpResult()">📋 複製路徑</button>
         <button class="btn btn-sm btn-success" onclick="downloadExpResult()">⬇ 下載為 .txt</button>
         <button class="btn btn-sm btn-secondary" onclick="downloadExpJSON()">⬇ 下載為 .json</button>
+        <span style="display:inline-flex;align-items:center;gap:0.3rem;font-size:0.78rem;color:#666;">
+          每排
+          <select id="exp-grid-cols" style="font-family:inherit;font-size:0.78rem;padding:0.25rem 0.5rem;border:1.5px solid #ddd;border-radius:5px;background:#fff;cursor:pointer;">
+            <option value="4">4</option>
+            <option value="6" selected>6</option>
+            <option value="8">8</option>
+            <option value="10">10</option>
+          </select>
+          個
+        </span>
         <button class="btn btn-sm btn-purple" id="exp-grid-btn" onclick="downloadExpGrid()">🖼 下載網格圖</button>
         <button class="btn btn-sm" style="background:#0ea5e9;color:#fff;" onclick="copyAnnouncementText()">📢 複製公告稿格式</button>
       </div>
@@ -2124,7 +2134,13 @@ async function downloadExpGrid(){
   const status = document.getElementById('exp-grid-status');
   btn.disabled = true; progWrap.style.display = 'block';
   bar.style.width = '5%'; status.textContent = '載入圖片中...';
-  const CELL=110, COLS=6, PAD=28, GAP=10;
+  // 從下拉選單讀取每排數量（預設 6）
+  const colsEl = document.getElementById('exp-grid-cols');
+  const COLS = colsEl ? parseInt(colsEl.value)||6 : 6;
+  // cell 大小依每排數量微調，避免每排 10 個時整張圖過寬
+  // 6 個 → 110px，每多 2 個縮 8px（8 個 → 102, 10 個 → 94）
+  const CELL = Math.max(90, 110 - Math.max(0, COLS-6) * 4);
+  const PAD=28, GAP=10;
   const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=88;
   const ITEM_H=CELL+LABEL_H+GAP;
   const W=COLS*(CELL+GAP)+PAD*2;
