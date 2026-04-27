@@ -99,6 +99,15 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 <meta name="twitter:image" content="https://liar-chang.github.io/bandori-badges/images/og-cover.jpg"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="theme-color" content="#FF8899"/>
+<!-- 多語言 SEO:告訴搜尋引擎本站支援的語言 -->
+<link rel="alternate" hreflang="zh-TW" href="https://liar-chang.github.io/bandori-badges/"/>
+<link rel="alternate" hreflang="ja" href="https://liar-chang.github.io/bandori-badges/"/>
+<link rel="alternate" hreflang="en" href="https://liar-chang.github.io/bandori-badges/"/>
+<link rel="alternate" hreflang="ko" href="https://liar-chang.github.io/bandori-badges/"/>
+<link rel="alternate" hreflang="x-default" href="https://liar-chang.github.io/bandori-badges/"/>
+<!-- meta description:多語言關鍵字混合,讓不同語言搜尋者都能匹配到 -->
+<meta name="description" content="BanG Dream! 徽章圖鑑 / バンドリ 缶バッジ図鑑 / BanG Dream! Badge Encyclopedia / 뱅드림 캔뱃지 도감 — MyGO!!!!! Ave Mujica 夢限大MewType Roselia Poppin'Party Afterglow Pastel*Palettes Hello Happy World 徽章收藏圖鑑"/>
+<meta name="keywords" content="BanG Dream, バンドリ, 뱅드림, 缶バッジ, 徽章, 圖鑑, badge, 図鑑, 도감, MyGO, Ave Mujica, 夢限大MewType, Roselia, Poppin'Party"/>
 <title>BanG Dream! 徽章圖鑑</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico"/>
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
@@ -1610,7 +1619,7 @@ const LANGS = {
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
     expTable:'☰ 清單表格', expTableDesc:'含文字資訊的表格形式',
     expCancel:'取消', expDownload:'⬇ 下載',
-    announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', noData:'無符合資料',
+    announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', tabPin:'📌 公告', tabLog:'📕 更新日誌', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
     reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'本站圖像、角色名稱、樂團名稱與相關資料之著作權歸 © Bushiroad 所有。本站為非營利同人愛好者整理收藏，與官方無關。網站程式碼與資料整理採 CC BY-NC-SA 4.0 授權。', login:'登入', logout:'登出', myFavorites:'⭐ 我的最愛',
     // 蒐集記錄 modal（新版）
@@ -1652,7 +1661,7 @@ const LANGS = {
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
     expTable:'☰ リスト表', expTableDesc:'テキスト情報を含む表形式',
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
-    announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', noData:'該当データなし',
+    announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', tabPin:'📌 お知らせ', tabLog:'📕 更新履歴', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
     reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'本サイトの画像、キャラクター名、バンド名等の著作権は © Bushiroad に帰属します。本サイトは非営利のファン作成アーカイブであり、公式とは関係ありません。ウェブサイトのコードとデータ整理は CC BY-NC-SA 4.0 ライセンスに基づきます。', login:'ログイン', logout:'ログアウト', myFavorites:'⭐ お気に入り',
     // 蒐集記錄 modal（新版）
@@ -1694,7 +1703,7 @@ const LANGS = {
     expGrid:'⊞ Image Grid', expGridDesc:'Display multiple badges per row',
     expTable:'☰ List Table', expTableDesc:'Table with text information',
     expCancel:'Cancel', expDownload:'⬇ Download',
-    announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', noData:'No matching data',
+    announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', tabPin:'📌 Notice', tabLog:'📕 Changelog', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
     reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'All BanG Dream! related images, character names, band names and related content are © Bushiroad. This is an unofficial non-profit fan-made archive, not affiliated with the official. Website code and data compilation are licensed under CC BY-NC-SA 4.0.', login:'Login', logout:'Logout', myFavorites:'⭐ My Favorites',
     // 蒐集記錄 modal（新版）
@@ -1736,7 +1745,7 @@ const LANGS = {
     expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 뱃지 표시',
     expTable:'☰ 목록 표', expTableDesc:'텍스트 정보가 포함된 표',
     expCancel:'취소', expDownload:'⬇ 다운로드',
-    announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', noData:'해당 데이터 없음',
+    announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', tabPin:'📌 공지사항', tabLog:'📕 업데이트 로그', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
     reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'본 사이트의 이미지, 캐릭터명, 밴드명 등의 저작권은 © Bushiroad에 귀속됩니다. 본 사이트는 비영리 팬 제작 아카이브이며 공식과는 관련이 없습니다. 웹사이트 코드 및 데이터 정리는 CC BY-NC-SA 4.0 라이선스를 따릅니다.', login:'로그인', logout:'로그아웃', myFavorites:'⭐ 즐겨찾기',
     // 蒐集記錄 modal（新版）
@@ -1846,6 +1855,9 @@ function applyLang(){
   // 更新日誌標題
   const at=document.getElementById('announce-title'); if(at&&L.announceTitle) at.textContent=L.announceTitle;
   const pt=document.getElementById('pin-title'); if(pt&&L.pinBoxTitle) pt.textContent=L.pinBoxTitle;
+  // 公告/更新日誌 tab 按鈕
+  const tp=document.getElementById('fab-tab-pin'); if(tp&&L.tabPin) tp.textContent=L.tabPin;
+  const tl=document.getElementById('fab-tab-log'); if(tl&&L.tabLog) tl.textContent=L.tabLog;
   // filter sub text
   const fst=document.getElementById('filter-sub-text'); if(fst&&L.filterSub) fst.textContent=L.filterSub;
   // footer 語言切換
