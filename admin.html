@@ -168,6 +168,7 @@ td.editable:hover .edit-hint{opacity:1;}
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
     <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
     <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
+    <button class="btn btn-secondary btn-sm" onclick="openSongModal()">🎵 推薦歌曲</button>
     <div class="header-dropdown" id="more-dropdown">
       <button class="btn btn-secondary btn-sm" onclick="toggleMoreMenu(event)">⚙ 更多 ▾</button>
       <div class="header-dropdown-menu" id="more-menu">
@@ -281,6 +282,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>橢圓形</option>
             <option>方形</option>
             <option>心形</option>
+            <option>撥片</option>
             <option>名牌</option>
             <option>磁鐵</option>
             <option>約80mm布偶胸章</option>
@@ -371,7 +373,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>76mm圓形</option><option>75mm圓形</option>
             <option>65mm圓形</option><option>60mm圓形</option><option>55mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
-            <option>橢圓形</option><option>方形</option><option>心形</option>
+            <option>橢圓形</option><option>方形</option><option>心形</option><option>撥片</option>
             <option>名牌</option><option>磁鐵</option><option>約80mm布偶胸章</option><option>未確定</option>
           </select>
         </div>
@@ -590,6 +592,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="橢圓形">橢圓形</option>
           <option value="方形">方形</option>
           <option value="心形">心形</option>
+          <option value="撥片">撥片</option>
           <option value="名牌">名牌</option>
           <option value="磁鐵">磁鐵</option>
           <option value="約80mm布偶胸章">約80mm布偶胸章</option>
@@ -760,6 +763,7 @@ function renderBatchGrid(){
             <option${item.size==='橢圓形'?' selected':''}>橢圓形</option>
             <option${item.size==='方形'?' selected':''}>方形</option>
             <option${item.size==='心形'?' selected':''}>心形</option>
+            <option${item.size==='撥片'?' selected':''}>撥片</option>
             <option${item.size==='名牌'?' selected':''}>名牌</option>
             <option${item.size==='磁鐵'?' selected':''}>磁鐵</option>
             <option${item.size==='約80mm布偶胸章'?' selected':''}>約80mm布偶胸章</option>
@@ -1073,7 +1077,7 @@ function renderList(){
       <td onclick="event.stopPropagation()">
         <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
           onchange="commitSizeEdit(this,${ri})">
-          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
+          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       ${editableCell('year',b.year)}
@@ -1252,7 +1256,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","名牌","磁鐵","約80mm布偶胸章","未確定"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","磁鐵","約80mm布偶胸章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
@@ -2112,6 +2116,65 @@ buildTextCharList('');
   </div>
 </div>
 
+<!-- 推薦歌曲管理 Modal -->
+<div id="song-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1500;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:12px;width:min(640px,96vw);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <h2 style="margin:0;font-size:1rem;font-weight:700;">🎵 推薦歌曲管理</h2>
+        <button onclick="songLoadFromGH()" style="font-family:inherit;font-size:0.78rem;padding:0.35rem 0.85rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;cursor:pointer;">☁ 從 GitHub 載入</button>
+      </div>
+    </div>
+
+    <div style="padding:0.5rem 1.5rem 1rem;overflow-y:auto;">
+      <div style="font-size:0.78rem;color:#666;margin-bottom:1rem;line-height:1.6;background:#f5f5fa;padding:0.7rem 0.85rem;border-radius:6px;border-left:3px solid #c084fc;">
+        💡 留空所有欄位並同步,可以「<b>清除推薦歌曲</b>」(前台不會顯示)
+      </div>
+
+      <div style="margin-bottom:0.85rem;">
+        <label style="font-size:0.78rem;color:#555;display:block;margin-bottom:0.3rem;font-weight:600;">YouTube 影片 ID <span style="color:#888;font-weight:400;">(必填,例如:abc1234XYZ)</span></label>
+        <input type="text" id="song-yt-id" placeholder="從 youtube.com/watch?v=【這裡】 複製" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.85rem;outline:none;"/>
+        <div style="font-size:0.7rem;color:#888;margin-top:0.25rem;">也可以直接貼完整 YouTube 網址,系統會自動抓 ID</div>
+      </div>
+
+      <div style="margin-bottom:0.85rem;">
+        <label style="font-size:0.78rem;color:#555;display:block;margin-bottom:0.3rem;font-weight:600;">歌名</label>
+        <input type="text" id="song-title" placeholder="例如:飛ぶ時" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+
+      <div style="margin-bottom:0.85rem;">
+        <label style="font-size:0.78rem;color:#555;display:block;margin-bottom:0.3rem;font-weight:600;">歌手</label>
+        <input type="text" id="song-artist" placeholder="例如:Vaundy" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+
+      <div style="margin-bottom:0.85rem;">
+        <label style="font-size:0.78rem;color:#555;display:block;margin-bottom:0.3rem;font-weight:600;">Spotify 連結 <span style="color:#888;font-weight:400;">(選填)</span></label>
+        <input type="text" id="song-spotify" placeholder="例如:https://open.spotify.com/track/..." style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #ddd;border-radius:6px;font-family:inherit;font-size:0.85rem;outline:none;"/>
+      </div>
+
+      <!-- 預覽區 -->
+      <div id="song-preview-area" style="display:none;margin-top:1rem;padding:0.85rem;background:#fafafa;border:1.5px solid #eee;border-radius:8px;">
+        <div style="font-size:0.7rem;color:#888;margin-bottom:0.5rem;font-weight:600;letter-spacing:0.05em;">預覽縮圖</div>
+        <div style="display:flex;gap:0.85rem;align-items:center;">
+          <img id="song-preview-thumb" style="width:120px;height:90px;object-fit:cover;border-radius:6px;background:#ddd;"/>
+          <div style="flex:1;min-width:0;">
+            <div id="song-preview-title" style="font-size:0.9rem;font-weight:600;color:#222;margin-bottom:0.2rem;"></div>
+            <div id="song-preview-artist" style="font-size:0.78rem;color:#666;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:1rem 1.5rem;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:0.75rem;flex-wrap:wrap;">
+      <div id="song-status" style="font-size:0.78rem;color:#888;"></div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+        <button onclick="closeSongModal()" style="padding:0.5rem 1.1rem;border:1.5px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;">取消</button>
+        <button id="song-save-btn" onclick="songSave()" style="padding:0.5rem 1.25rem;border:none;border-radius:8px;background:#238636;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;font-size:0.85rem;">☁ 同步到 GitHub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 let expResultItems = [];
 
@@ -2119,7 +2182,7 @@ let expResultItems = [];
 const EXP_IMG_BASE = 'https://liar-chang.github.io/bandori-badges/images/';
 const EXP_BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#888"};
 const EXP_CHAR_COLORS={"高松燈":"#77BBDD","千早愛音":"#FF8899","要樂奈":"#77DD77","長崎爽世":"#FFDD88","椎名立希":"#7777AA","三角初華":"#BB9955","若葉睦":"#779977","八幡海鈴":"#335566","祐天寺若麥":"#AA4477","豐川祥子":"#7799CC","仲町阿拉蕾":"#FFEE55","宮永野乃花":"#FFBBCC","峰月律":"#4477CC","藤都子":"#9977CC","千石由乃":"#EE5577","汐見螢":"#99FF99","伊澤棗":"#FF4444","琴平凪":"#5555FF","濱崎茉幌":"#77FFFF","和泉朋花":"#EE99EE","須賀蕾叶":"#FF7700","馬橋心玖":"#22CCFF","矢倉蓬咲":"#448888","梅里千櫻梨":"#FF55AA","四宮寧月":"#9999FF","default":"#c0bef0"};
-const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
+const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'撥片':{'en':'Guitar Pick'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
 function expBandColor(b){return EXP_BAND_COLORS[b]||'#888';}
 function expGetShortName(b){return b.short_event||(b.event&&b.event.length>10?b.event.slice(0,10)+'…':b.event)||'';}
 function expGetSizeName(size){return size;}
@@ -2145,7 +2208,7 @@ async function downloadExpGrid(){
   const ITEM_H=CELL+LABEL_H+GAP;
   const W=COLS*(CELL+GAP)+PAD*2;
   const TYPE_ORDER=['角色本身','角色相關','角色聲優',''];
-  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','名牌','磁鐵','約80mm布偶胸章','未確定'];
+  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const SIZE_56_GROUP=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形']);
   function isRound(s){return ROUND_SIZES.has(s||'');}
@@ -2497,6 +2560,172 @@ function copyAnnouncementText(){
     const popup = window.open('', '_blank', 'width=600,height=500');
     popup.document.write(`<pre style="font-family:monospace;white-space:pre-wrap;padding:1rem;">${text.replace(/</g,'&lt;')}</pre>`);
   });
+}
+
+// ═══════════════════════════════════════════════════
+// 推薦歌曲管理
+// ═══════════════════════════════════════════════════
+let songSha = null;
+
+function openSongModal(){
+  document.getElementById('song-overlay').style.display = 'flex';
+  document.getElementById('song-status').textContent = '';
+  // 第一次開啟時自動載入
+  if(songSha === null){
+    songLoadFromGH(false);
+  }
+  updateSongPreview();
+}
+
+function closeSongModal(){
+  document.getElementById('song-overlay').style.display = 'none';
+}
+
+// 從輸入欄位提取 YouTube ID(支援完整網址或純 ID)
+function extractYouTubeId(input){
+  if(!input) return '';
+  input = input.trim();
+  // 已經是純 ID(11 個字元的英數)
+  if(/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+  // 從各種網址格式提取
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /[?&]v=([a-zA-Z0-9_-]{11})/
+  ];
+  for(const p of patterns){
+    const m = input.match(p);
+    if(m) return m[1];
+  }
+  return input; // fallback,讓使用者看到自己輸入的
+}
+
+// 即時預覽
+function updateSongPreview(){
+  const ytRaw = document.getElementById('song-yt-id').value;
+  const ytId = extractYouTubeId(ytRaw);
+  const title = document.getElementById('song-title').value;
+  const artist = document.getElementById('song-artist').value;
+  const preview = document.getElementById('song-preview-area');
+  if(ytId && /^[a-zA-Z0-9_-]{11}$/.test(ytId)){
+    preview.style.display = 'block';
+    document.getElementById('song-preview-thumb').src = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+    document.getElementById('song-preview-title').textContent = title || '(未填歌名)';
+    document.getElementById('song-preview-artist').textContent = artist || '(未填歌手)';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+// 三個欄位都監聽 input,即時更新預覽
+['song-yt-id','song-title','song-artist'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updateSongPreview);
+});
+
+// 從 GitHub 載入現有 song.json
+async function songLoadFromGH(showAlerts=true){
+  const token = localStorage.getItem('gh_token');
+  document.getElementById('song-status').textContent = '載入中...';
+  try {
+    const headers = {'Accept':'application/vnd.github.v3+json'};
+    if(token) headers['Authorization'] = 'token '+token;
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/song.json?ref=${GH_BRANCH}&t=${Date.now()}`, {headers});
+    if(res.status === 404){
+      // song.json 還不存在,初始化空白
+      songSha = '';
+      document.getElementById('song-yt-id').value = '';
+      document.getElementById('song-title').value = '';
+      document.getElementById('song-artist').value = '';
+      document.getElementById('song-spotify').value = '';
+      document.getElementById('song-status').textContent = '尚未建立 song.json,填寫後同步即可建立';
+      updateSongPreview();
+      return;
+    }
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const fd = await res.json();
+    songSha = fd.sha;
+    const binary = atob(fd.content.replace(/\n/g,''));
+    const bytes = Uint8Array.from(binary, c=>c.charCodeAt(0));
+    const data = JSON.parse(new TextDecoder('utf-8').decode(bytes));
+    document.getElementById('song-yt-id').value = data.ytId || '';
+    document.getElementById('song-title').value = data.title || '';
+    document.getElementById('song-artist').value = data.artist || '';
+    document.getElementById('song-spotify').value = data.spotify || '';
+    document.getElementById('song-status').textContent = '✓ 已載入';
+    updateSongPreview();
+  } catch(e){
+    document.getElementById('song-status').textContent = '載入失敗:'+e.message;
+    if(showAlerts) showToast('載入失敗:'+e.message);
+  }
+}
+
+// 同步到 GitHub
+async function songSave(){
+  const token = localStorage.getItem('gh_token');
+  if(!token){alert('請先設定 GitHub Token');return;}
+  
+  const ytRaw = document.getElementById('song-yt-id').value.trim();
+  const ytId = extractYouTubeId(ytRaw);
+  const title = document.getElementById('song-title').value.trim();
+  const artist = document.getElementById('song-artist').value.trim();
+  const spotify = document.getElementById('song-spotify').value.trim();
+  
+  // 驗證:如果有填 ytId,必須是合法格式
+  if(ytId && !/^[a-zA-Z0-9_-]{11}$/.test(ytId)){
+    alert('YouTube 影片 ID 格式不正確,應為 11 字元的英數組合');
+    return;
+  }
+  
+  // 構建 JSON
+  const data = {};
+  if(ytId) data.ytId = ytId;
+  if(title) data.title = title;
+  if(artist) data.artist = artist;
+  if(spotify) data.spotify = spotify;
+  
+  const btn = document.getElementById('song-save-btn');
+  btn.textContent = '同步中...';
+  btn.disabled = true;
+  
+  try {
+    const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const body = {
+      message: ytId ? `更新推薦歌曲:${title || ytId}` : '清除推薦歌曲',
+      content: base64,
+      branch: GH_BRANCH
+    };
+    if(songSha) body.sha = songSha;
+    
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/song.json`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if(res.ok){
+      const result = await res.json();
+      songSha = result.content.sha;
+      // 自動回填可能被清理過的 ytId(如果使用者貼的是完整網址,存進去的是純 ID)
+      if(ytId && ytRaw !== ytId){
+        document.getElementById('song-yt-id').value = ytId;
+      }
+      showToast(ytId ? '✓ 推薦歌曲已更新!' : '✓ 推薦歌曲已清除!');
+      document.getElementById('song-status').textContent = '✓ 同步成功 ' + new Date().toLocaleTimeString();
+    } else {
+      const err = await res.json();
+      showToast('✗ 失敗:'+(err.message||res.status));
+      document.getElementById('song-status').textContent = '✗ 失敗:'+(err.message||res.status);
+    }
+  } catch(e){
+    showToast('✗ 錯誤:'+e.message);
+    document.getElementById('song-status').textContent = '✗ 錯誤:'+e.message;
+  }
+  
+  btn.textContent = '☁ 同步到 GitHub';
+  btn.disabled = false;
 }
 </script>
 
