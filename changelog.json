@@ -1,5 +1,23 @@
 [
   {
+    "date": "2026/4/30",
+    "content": {
+      "zh": "【新增/更新資料】\n・BanG Dream! ガールズバンドパーティ! トレーディングピック型カンバッジ(新增 25 張)\n\n【功能調整】\n・新增「撥片」徽章類型分類(篩選與資料庫)",
+      "ja": "【新規/更新データ】\n・BanG Dream! ガールズバンドパーティ! トレーディングピック型カンバッジ(25枚追加)\n\n【機能調整】\n・「ピック」缶バッジタイプの分類を追加(絞り込み・データベース対応)",
+      "en": "【New / Updated Data】\n・BanG Dream! Girls Band Party! Trading Pick-shaped Can Badges (25 added)\n\n【Feature Adjustments】\n・Added \"Guitar Pick\" badge type category (filter and database)",
+      "ko": "【추가/업데이트 데이터】\n・BanG Dream! 걸즈 밴드 파티! 트레이딩 피크형 캔뱃지 (25장 추가)\n\n【기능 조정】\n・\"피크\" 뱃지 유형 카테고리 추가 (필터 및 데이터베이스)"
+    }
+  },
+  {
+    "date": "2026/4/29",
+    "content": {
+      "zh": "【新增/更新資料】\n・Morfonica 6th Single「両翼のBrilliance」(新增 8 張)\n・Pastel*Palettes ミニAlbum「いろとりどり」(新增 8 張)\n\n【功能調整】\n(無)",
+      "ja": "【新規/更新データ】\n・Morfonica 6th Single「両翼のBrilliance」(8枚追加)\n・Pastel*Palettes ミニAlbum「いろとりどり」(8枚追加)\n\n【機能調整】\n(なし)",
+      "en": "【New / Updated Data】\n・Morfonica 6th Single \"Ryouyoku no Brilliance\" (8 added)\n・Pastel*Palettes Mini Album \"Irotoridori\" (8 added)\n\n【Feature Adjustments】\n(None)",
+      "ko": "【추가/업데이트 데이터】\n・Morfonica 6th Single「両翼のBrilliance」(8장 추가)\n・Pastel*Palettes 미니 앨범「いろとりどり」(8장 추가)\n\n【기능 조정】\n(없음)"
+    }
+  },
+  {
     "date": "2026/4/28",
     "content": {
       "zh": "【新增/更新資料】\n・Ave Mujica 1st Single「素晴らしき世界 でも どこにもない場所」(新增 2 張)\n・Ave Mujica ミニAlbum「ELEMENTS」(新增 3 張)\n・Morfonica 7th Single「Tempest/Wreath of Brave」(新增 8 張)\n・MyGO!!!!! 5th Single「端程山」(新增 5 張)\n・Poppin'Party 20th Single「TARINAI/トレモロアイズ」(新增 9 張)\n・RAISE A SUILEN 2nd Album「SAVAGE」(新增 11 張)\n・Roselia 15th Single「礎の花冠」(新增 10 張)\n・Roselia 3rd Album「Für immer」(新增 10 張)\n・Hello, Happy World! ミニAlbum「どうしたってカーニバル!」(新增 8 張)\n・バンドリ! カバーコレクション Vol.9(新增 8 張)\n・バンドリ! カバーコレクション Extra Volume(新增 1 張)\n\n【功能調整】\n・「公告」與「更新日誌」分頁標籤,現在會跟著語言切換顯示對應翻譯",
