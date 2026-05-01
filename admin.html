@@ -229,9 +229,13 @@ td.editable:hover .edit-hint{opacity:1;}
           <label>發售日期</label>
           <input type="text" id="d-year" placeholder="如 2024年7月10日"/>
         </div>
-        <div class="field">
+        <div class="field" style="grid-column:span 2">
           <label>活動名稱</label>
           <input type="text" id="d-event" placeholder="如 BanG Dream! 10th Live"/>
+        </div>
+        <div class="field">
+          <label>活動簡稱</label>
+          <input type="text" id="d-short_event" placeholder="如 10th Live"/>
         </div>
         <div class="field">
           <label>角色名稱</label>
@@ -240,16 +244,31 @@ td.editable:hover .edit-hint{opacity:1;}
           </select>
         </div>
         <div class="field" style="grid-column:1/-1">
-          <label>活動簡稱</label>
-          <input type="text" id="d-short_event" placeholder="如 10th Live"/>
-        </div>
-        <div class="field" style="grid-column:1/-1">
           <label>相關連結</label>
-          <input type="text" id="d-url" placeholder="https://..."/>
+          <input type="text" id="d-url" placeholder="https://..." oninput="checkUrlDuplicatesFor('d')"/>
+        </div>
+        <div id="d-url-dupe-card" style="grid-column:1/-1;display:none;background:#fffbe6;border:1.5px solid #f0d878;border-radius:8px;padding:0.6rem 0.85rem;margin-top:-0.3rem;font-size:0.85rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleUrlDupeCardFor('d')">
+            <span><strong>ℹ 此來源連結已建 <span id="d-url-dupe-count">0</span> 顆徽章</strong> <span style="color:#888;font-weight:400;font-size:0.8rem;">(供參考，非阻擋)</span></span>
+            <span id="d-url-dupe-toggle" style="font-size:0.85rem;color:#5a4fcf;">展開 ▼</span>
+          </div>
+          <div id="d-url-dupe-body" style="display:none;margin-top:0.7rem;">
+            <div style="display:flex;gap:0.85rem;flex-wrap:wrap;margin-bottom:0.6rem;font-size:0.78rem;color:#555;">
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="d-url-dupe-f-series" onchange="renderUrlDupeListFor('d')" style="accent-color:#3d3d8f;"/>同 工藝/版本</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="d-url-dupe-f-event" onchange="renderUrlDupeListFor('d')" style="accent-color:#3d3d8f;"/>同 活動</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="d-url-dupe-f-type" onchange="renderUrlDupeListFor('d')" style="accent-color:#3d3d8f;"/>同 類型</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="d-url-dupe-f-size" onchange="renderUrlDupeListFor('d')" style="accent-color:#3d3d8f;"/>同 尺寸</label>
+            </div>
+            <div id="d-url-dupe-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:0.5rem;max-height:280px;overflow-y:auto;padding:0.3rem;background:#fff;border-radius:6px;"></div>
+          </div>
         </div>
         <div class="field" style="grid-column:1/-1">
           <label>備註</label>
-          <input type="text" id="d-note" placeholder="其他備註"/>
+          <input type="text" id="d-note" placeholder="其他備註（前台會顯示）"/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>🔒 後台備註 <span style="font-weight:400;color:#888;font-size:0.78rem;">（僅自己看，不公開於前台）</span></label>
+          <textarea id="d-admin-note" rows="2" placeholder="批次套用至所有項目，例：柄 A，2025-04 補檔" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;min-height:50px;"></textarea>
         </div>
         <div class="field">
           <label>類型</label>
@@ -353,7 +372,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <label>活動名稱</label>
           <input type="text" id="t-event" placeholder="如 Ave Mujica 5th LIVE"/>
         </div>
-        <div class="field" style="grid-column:1/-1">
+        <div class="field">
           <label>活動簡稱</label>
           <input type="text" id="t-short_event" placeholder="如 5th LIVE"/>
         </div>
@@ -391,11 +410,30 @@ td.editable:hover .edit-hint{opacity:1;}
         </div>
         <div class="field" style="grid-column:1/-1">
           <label>相關連結</label>
-          <input type="text" id="t-url" placeholder="https://..."/>
+          <input type="text" id="t-url" placeholder="https://..." oninput="checkUrlDuplicatesFor('t')"/>
+        </div>
+        <div id="t-url-dupe-card" style="grid-column:1/-1;display:none;background:#fffbe6;border:1.5px solid #f0d878;border-radius:8px;padding:0.6rem 0.85rem;margin-top:-0.3rem;font-size:0.85rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleUrlDupeCardFor('t')">
+            <span><strong>ℹ 此來源連結已建 <span id="t-url-dupe-count">0</span> 顆徽章</strong> <span style="color:#888;font-weight:400;font-size:0.8rem;">(供參考，非阻擋)</span></span>
+            <span id="t-url-dupe-toggle" style="font-size:0.85rem;color:#5a4fcf;">展開 ▼</span>
+          </div>
+          <div id="t-url-dupe-body" style="display:none;margin-top:0.7rem;">
+            <div style="display:flex;gap:0.85rem;flex-wrap:wrap;margin-bottom:0.6rem;font-size:0.78rem;color:#555;">
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="t-url-dupe-f-series" onchange="renderUrlDupeListFor('t')" style="accent-color:#3d3d8f;"/>同 工藝/版本</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="t-url-dupe-f-event" onchange="renderUrlDupeListFor('t')" style="accent-color:#3d3d8f;"/>同 活動</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="t-url-dupe-f-type" onchange="renderUrlDupeListFor('t')" style="accent-color:#3d3d8f;"/>同 類型</label>
+              <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="t-url-dupe-f-size" onchange="renderUrlDupeListFor('t')" style="accent-color:#3d3d8f;"/>同 尺寸</label>
+            </div>
+            <div id="t-url-dupe-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:0.5rem;max-height:280px;overflow-y:auto;padding:0.3rem;background:#fff;border-radius:6px;"></div>
+          </div>
         </div>
         <div class="field" style="grid-column:1/-1">
           <label>備註</label>
-          <input type="text" id="t-note" placeholder="其他備註"/>
+          <input type="text" id="t-note" placeholder="其他備註（前台會顯示）"/>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>🔒 後台備註 <span style="font-weight:400;color:#888;font-size:0.78rem;">（僅自己看，不公開於前台）</span></label>
+          <textarea id="t-admin-note" rows="2" placeholder="批次套用至所有項目，例：柄 A，2025-04 補檔" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;min-height:50px;"></textarea>
         </div>
       </div>
 
@@ -562,7 +600,7 @@ td.editable:hover .edit-hint{opacity:1;}
       <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
       <div class="field" style="grid-column:1/-1"><label>活動名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
-      <div class="field" style="grid-column:1/-1"><label>活動簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
+      <div class="field"><label>活動簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
       <div class="field"><label>類型</label>
         <select id="f-type">
           <option value="">請選擇</option>
@@ -611,13 +649,44 @@ td.editable:hover .edit-hint{opacity:1;}
           <option>其他</option>
         </select>
       </div>
-      <div class="field" style="grid-column:1/-1"><label>相關連結</label><input type="text" id="f-url" placeholder="https://..."/></div>
-      <div class="field" style="grid-column:1/-1"><label>備註</label><input type="text" id="f-note" placeholder="其他備註"/></div>
+      <div class="field" style="grid-column:1/-1"><label>相關連結</label><input type="text" id="f-url" placeholder="https://..." oninput="checkUrlDuplicates()"/></div>
+      <div id="url-dupe-card" style="grid-column:1/-1;display:none;background:#fffbe6;border:1.5px solid #f0d878;border-radius:8px;padding:0.6rem 0.85rem;margin-top:-0.3rem;font-size:0.85rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;" onclick="toggleUrlDupeCard()">
+          <span><strong>ℹ 此來源連結已建 <span id="url-dupe-count">0</span> 顆徽章</strong> <span style="color:#888;font-weight:400;font-size:0.8rem;">(供參考，非阻擋)</span></span>
+          <span id="url-dupe-toggle" style="font-size:0.85rem;color:#5a4fcf;">展開 ▼</span>
+        </div>
+        <div id="url-dupe-body" style="display:none;margin-top:0.7rem;">
+          <div id="url-dupe-filter" style="display:flex;gap:0.85rem;flex-wrap:wrap;margin-bottom:0.6rem;font-size:0.78rem;color:#555;">
+            <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="url-dupe-f-series" onchange="renderUrlDupeList()" style="accent-color:#3d3d8f;"/>同 工藝/版本</label>
+            <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="url-dupe-f-event" onchange="renderUrlDupeList()" style="accent-color:#3d3d8f;"/>同 活動</label>
+            <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="url-dupe-f-type" onchange="renderUrlDupeList()" style="accent-color:#3d3d8f;"/>同 類型</label>
+            <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;"><input type="checkbox" id="url-dupe-f-size" onchange="renderUrlDupeList()" style="accent-color:#3d3d8f;"/>同 尺寸</label>
+          </div>
+          <div id="url-dupe-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:0.5rem;max-height:280px;overflow-y:auto;padding:0.3rem;background:#fff;border-radius:6px;"></div>
+        </div>
+      </div>
+      <div class="field" style="grid-column:1/-1"><label>備註</label><input type="text" id="f-note" placeholder="其他備註（前台會顯示）"/></div>
+      <div class="field" style="grid-column:1/-1">
+        <label>🔒 後台備註 <span style="font-weight:400;color:#888;font-size:0.78rem;">（僅自己看，不公開於前台）</span></label>
+        <textarea id="f-admin-note" rows="3" placeholder="例：柄 A，白底背景 / 跟編號 032 是同款不同柄 / 來源連結失效，從 Twitter 截圖建檔" style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.88rem;box-sizing:border-box;resize:vertical;min-height:60px;"></textarea>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">取消</button>
       <button class="btn btn-primary" onclick="saveSingle()">儲存</button>
     </div>
+  </div>
+</div>
+
+<!-- 六欄位強警告 modal -->
+<div class="modal-overlay" id="dupe-warn-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;max-width:680px;width:92%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+    <div style="padding:1.1rem 1.4rem;border-bottom:1.5px solid #f0d878;background:#fffbe6;border-radius:12px 12px 0 0;">
+      <h3 style="margin:0;font-size:1.05rem;color:#8a6800;">⚠ 偵測到高度疑似重複</h3>
+      <p style="margin:0.3rem 0 0;font-size:0.82rem;color:#777;" id="dupe-warn-subtitle">以下徽章的六個關鍵欄位完全相符</p>
+    </div>
+    <div id="dupe-warn-body" style="padding:1.1rem 1.4rem;overflow-y:auto;flex:1;font-size:0.88rem;"></div>
+    <div style="padding:0.9rem 1.4rem;border-top:1px solid #eee;display:flex;gap:0.5rem;justify-content:flex-end;flex-wrap:wrap;" id="dupe-warn-actions"></div>
   </div>
 </div>
 
@@ -680,7 +749,7 @@ function addFiles(files){
     const ext=file.name.split('.').pop().toLowerCase();
     const objectUrl=URL.createObjectURL(file);
     const isDupe=!!badges.find(b=>b.id===nameNoExt);
-    batchItems.push({id:nameNoExt,ext,objectUrl,band:'',character:'',series:'',year:'',event:'',type:'',size:'',country:'',url:'',note:'',isDupe});
+    batchItems.push({id:nameNoExt,ext,objectUrl,band:'',character:'',series:'',year:'',event:'',type:'',size:'',country:'',url:'',note:'',admin_note:'',isDupe});
   });
   renderBatchGrid();
   document.getElementById('defaults-card').style.display='';
@@ -699,12 +768,13 @@ function renderBatchGrid(){
     return;
   }
   grid.innerHTML=batchItems.map((item,i)=>`
-    <div class="batch-card ${item.isDupe?'has-dupe':''}">
+    <div class="batch-card ${item.isDupe?'has-dupe':''}" data-batch-idx="${i}">
       <img class="batch-card-img" src="${item.objectUrl}" alt="${item.id}"/>
       <div class="batch-card-body">
-        <div class="batch-card-id">
+        <div class="batch-card-id" style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
           <span>#${item.id}.${item.ext}</span>
           ${item.isDupe?'<span class="dupe-badge">⚠ 已存在</span>':''}
+          <span class="batch-status-slot">${renderBatchStatusBadge(item, i)}</span>
         </div>
         <div class="bf"><label>樂團</label>
           <select onchange="batchItems[${i}].band=this.value;renderBatchGrid();">
@@ -716,26 +786,26 @@ function renderBatchGrid(){
           ${(()=>{
             const chars = CHAR_MAP[item.band] || [];
             if(chars.length){
-              return `<select onchange="batchItems[${i}].character=this.value" style="width:100%;">
+              return `<select onchange="batchItems[${i}].character=this.value;updateBatchStatus(${i});" style="width:100%;">
                 <option value="">請選擇</option>
                 ${chars.map(c=>`<option value="${c}"${item.character===c?' selected':''}>${c}</option>`).join('')}
               </select>`;
             } else {
-              return `<input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value" style="width:100%;"/>`;
+              return `<input type="text" value="${item.character}" placeholder="如 湊友希那" oninput="batchItems[${i}].character=this.value;updateBatchStatus(${i});" style="width:100%;"/>`;
             }
           })()}
         </div>
         <div class="bf"><label>版本/工藝</label>
-          <input type="text" value="${item.series}" placeholder="如 Ani-Art / 全息圖" oninput="batchItems[${i}].series=this.value"/>
+          <input type="text" value="${item.series}" placeholder="如 Ani-Art / 全息圖" oninput="batchItems[${i}].series=this.value;updateBatchStatus(${i});"/>
         </div>
         <div class="bf"><label>發售日期</label>
           <input type="text" value="${item.year}" placeholder="2024年7月10日" oninput="batchItems[${i}].year=this.value"/>
         </div>
         <div class="bf"><label>活動</label>
-          <input type="text" value="${item.event}" placeholder="活動名稱" oninput="batchItems[${i}].event=this.value"/>
+          <input type="text" value="${item.event}" placeholder="活動名稱" oninput="batchItems[${i}].event=this.value;updateBatchStatus(${i});"/>
         </div>
         <div class="bf"><label>類型</label>
-          <select onchange="batchItems[${i}].type=this.value">
+          <select onchange="batchItems[${i}].type=this.value;updateBatchStatus(${i});">
             <option value="">請選擇</option>
             <option${item.type==='角色本身'?' selected':''}>角色本身</option>
             <option${item.type==='角色相關'?' selected':''}>角色相關</option>
@@ -744,7 +814,7 @@ function renderBatchGrid(){
           </select>
         </div>
         <div class="bf"><label>尺寸</label>
-          <select onchange="batchItems[${i}].size=this.value">
+          <select onchange="batchItems[${i}].size=this.value;updateBatchStatus(${i});">
             <option value="">請選擇</option>
             <option${item.size==='56mm圓形'?' selected':''}>56mm圓形</option>
             <option${item.size==='57mm圓形'?' selected':''}>57mm圓形</option>
@@ -782,7 +852,13 @@ function renderBatchGrid(){
           </select>
         </div>
         <div class="bf"><label>相關連結</label>
-          <input type="text" value="${item.url||''}" placeholder="https://..." oninput="batchItems[${i}].url=this.value"/>
+          <input type="text" value="${item.url||''}" placeholder="https://..." oninput="batchItems[${i}].url=this.value;updateBatchStatus(${i});"/>
+        </div>
+        <div class="bf"><label>備註 <span style="color:#888;font-size:0.7rem;font-weight:400;">(前台會顯示)</span></label>
+          <input type="text" value="${(item.note||'').replace(/"/g,'&quot;')}" placeholder="個別備註(覆蓋預設值)" oninput="batchItems[${i}].note=this.value"/>
+        </div>
+        <div class="bf"><label>🔒 後台備註 <span style="color:#888;font-size:0.7rem;font-weight:400;">(僅自己看)</span></label>
+          <textarea rows="2" placeholder="個別後台備註(覆蓋預設值)，例：柄 A" oninput="batchItems[${i}].admin_note=this.value" style="width:100%;padding:0.4rem 0.55rem;border:1.5px solid #ddd;border-radius:5px;font-family:inherit;font-size:0.82rem;box-sizing:border-box;resize:vertical;min-height:42px;">${(item.admin_note||'').replace(/</g,'&lt;')}</textarea>
         </div>
         <button class="remove-btn" onclick="removeFromBatch(${i})">✕ 移除</button>
       </div>
@@ -937,6 +1013,7 @@ function applyDefaults(){
   const url=document.getElementById('d-url').value.trim();
   const short_event=document.getElementById('d-short_event').value.trim();
   const note=document.getElementById('d-note').value.trim();
+  const admin_note=document.getElementById('d-admin-note').value.trim();
   batchItems=batchItems.map(item=>({
     ...item,
     band:band||item.band,
@@ -950,22 +1027,39 @@ function applyDefaults(){
     url:url||item.url,
     short_event:short_event||item.short_event,
     note:note||item.note,
+    admin_note:admin_note||item.admin_note||'',
   }));
   renderBatchGrid();
   showToast('✓ 已套用預設值到全部徽章');
 }
 
 function clearDefaults(){
-  ['d-band','d-series','d-year','d-event','d-short_event','d-character','d-type','d-size','d-country','d-url','d-note'].forEach(id=>{
+  ['d-band','d-series','d-year','d-event','d-short_event','d-character','d-type','d-size','d-country','d-url','d-note','d-admin-note'].forEach(id=>{
     const el=document.getElementById(id);
     el.value='';
   });
 }
 
-function saveBatch(){
-  let saved=0,updated=0;
+async function saveBatch(){
+  // 先檢查每個 item 是否有六欄位重複
+  const dupeChecks = batchItems.map((item,i)=>{
+    const {objectUrl, isDupe, ...data} = item;
+    const dupes = findSixFieldDupes(data, -1);
+    return {item, dupes, index:i};
+  }).filter(x=>x.dupes.length>0);
+
+  let skipIndices = new Set();
+  if(dupeChecks.length>0){
+    const choice = await showDupeWarning('batch', dupeChecks);
+    if(choice==='cancel') return;
+    if(choice==='skip-dupes') skipIndices = new Set(dupeChecks.map(x=>x.index));
+    // continue: 全部建檔
+  }
+
+  let saved=0,updated=0,skipped=0;
   const now = new Date().toISOString();
-  batchItems.forEach(item=>{
+  batchItems.forEach((item,i)=>{
+    if(skipIndices.has(i)){ skipped++; return; }
     const {objectUrl,isDupe,...data}=item;
     const idx=badges.findIndex(b=>b.id===data.id);
     if(idx>=0){
@@ -977,11 +1071,20 @@ function saveBatch(){
     }
     if(objectUrl) imageCache[data.id]=objectUrl;
   });
-  batchItems=[];
+  // 若有跳過,把跳過的留在 batchItems 給使用者繼續處理
+  if(skipped>0){
+    batchItems = batchItems.filter((_,i)=>skipIndices.has(i));
+  } else {
+    batchItems = [];
+  }
   persist();
   renderBatchGrid();
-  showToast(`✓ 完成！新增 ${saved} 筆${updated?`，更新 ${updated} 筆`:''}｜本次圖片已快取`);
-  setTimeout(()=>switchTab('list'),700);
+  let msg = `✓ 完成！新增 ${saved} 筆`;
+  if(updated) msg += `，更新 ${updated} 筆`;
+  if(skipped) msg += `，跳過 ${skipped} 筆疑似重複（保留在批次區供檢視）`;
+  msg += `｜本次圖片已快取`;
+  showToast(msg);
+  if(skipped===0) setTimeout(()=>switchTab('list'),700);
 }
 
 /* ── List ── */
@@ -1016,7 +1119,7 @@ function renderList(){
   const empty=document.getElementById('list-empty');
   const fm=document.getElementById('filter-missing').value;
   const filtered=badges.filter(b=>{
-    const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
+    const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.admin_note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
     const bandOk=!fb||b.band===fb;
     let missingOk=true;
     if(fm==='no_url') missingOk=!b.url&&!b.note;
@@ -1063,7 +1166,7 @@ function renderList(){
       <td><img class="badge-thumb"
         src="${imgUrl(b)}"
         onerror="this.style.visibility='hidden'" alt=""/></td>
-      <td><strong>#${b.id}</strong></td>
+      <td><strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}</td>
       <td ondblclick="startBandEdit(this,${ri})" title="雙擊編輯樂團" class="editable">
         <span class="edit-hint">✎</span>
         <span class="cell-display"><span class="band-pill" style="background:${c}22;color:${c}">${b.band||'—'}</span></span>
@@ -1357,13 +1460,26 @@ function openModal(idx=-1){
   document.getElementById('f-country').value=b.country||'';
   document.getElementById('f-url').value=b.url||'';
   document.getElementById('f-note').value=b.note||'';
+  document.getElementById('f-admin-note').value=b.admin_note||'';
   updateModalPath();
   document.getElementById('modal').classList.add('active');
+  // 開啟 modal 後檢查 URL 是否已存在（編輯模式或新增帶值時）
+  checkUrlDuplicates();
 }
 function closeModal(){
   document.getElementById('modal').classList.remove('active');
   editingIdx=-1;
   if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
+  // 重設 URL 提示卡
+  const card = document.getElementById('url-dupe-card');
+  const body = document.getElementById('url-dupe-body');
+  const toggle = document.getElementById('url-dupe-toggle');
+  if(card) card.style.display='none';
+  if(body) body.style.display='none';
+  if(toggle) toggle.textContent='展開 ▼';
+  ['url-dupe-f-series','url-dupe-f-event','url-dupe-f-type','url-dupe-f-size'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.checked=false;
+  });
 }
 function maybeCloseModal(e){if(e.target===document.getElementById('modal'))closeModal();}
 let modalImgObjectUrl = null;
@@ -1416,7 +1532,263 @@ function onModalImgSelect(e){
   updateModalPath();
   e.target.value='';
 }
-function saveSingle(){
+/* ── URL 重複偵測（通用版,支援 f/d/t 三種 prefix） ── */
+// prefix: 'f'=單筆 modal, 'd'=圖片批次, 't'=文字批次
+// id 規則: f 模式 = 'url-dupe-*'(沿用舊 id), d/t 模式 = 'd-url-dupe-*' / 't-url-dupe-*'
+function _dupeIdFor(prefix, suffix){
+  return prefix==='f' ? `url-dupe-${suffix}` : `${prefix}-url-dupe-${suffix}`;
+}
+function _urlInputIdFor(prefix){
+  return `${prefix}-url`;
+}
+// f 模式從 modal 表單取當前值,d/t 模式從預設值區塊取
+function _curFieldFor(prefix, field){
+  const id = `${prefix}-${field}`;
+  const el = document.getElementById(id);
+  return el ? (el.value||'').trim() : '';
+}
+
+function checkUrlDuplicatesFor(prefix){
+  const url = document.getElementById(_urlInputIdFor(prefix)).value.trim();
+  const card = document.getElementById(_dupeIdFor(prefix,'card'));
+  if(!card) return;
+  if(!url){
+    card.style.display='none';
+    return;
+  }
+  // f 模式排除正在編輯的這筆自己;d/t 模式不需要(都是新增)
+  const matches = badges.filter((b,i)=>{
+    if(b.url!==url) return false;
+    if(prefix==='f' && i===editingIdx) return false;
+    return true;
+  });
+  if(matches.length===0){
+    card.style.display='none';
+    return;
+  }
+  card.style.display='block';
+  document.getElementById(_dupeIdFor(prefix,'count')).textContent = matches.length;
+  window._urlDupeMatches = window._urlDupeMatches || {};
+  window._urlDupeMatches[prefix] = matches;
+  const body = document.getElementById(_dupeIdFor(prefix,'body'));
+  if(body && body.style.display!=='none'){
+    renderUrlDupeListFor(prefix);
+  }
+}
+
+function toggleUrlDupeCardFor(prefix){
+  const body = document.getElementById(_dupeIdFor(prefix,'body'));
+  const toggle = document.getElementById(_dupeIdFor(prefix,'toggle'));
+  if(body.style.display==='none'){
+    body.style.display='block';
+    toggle.textContent='收合 ▲';
+    renderUrlDupeListFor(prefix);
+  } else {
+    body.style.display='none';
+    toggle.textContent='展開 ▼';
+  }
+}
+
+function renderUrlDupeListFor(prefix){
+  const matches = (window._urlDupeMatches && window._urlDupeMatches[prefix]) || [];
+  const list = document.getElementById(_dupeIdFor(prefix,'list'));
+  if(!list) return;
+
+  // 取得當前表單值（用於 filter 比對）
+  const curSeries = _curFieldFor(prefix,'series');
+  const curEvent = _curFieldFor(prefix,'event');
+  const curType = _curFieldFor(prefix,'type');
+  const curSize = _curFieldFor(prefix,'size');
+
+  const fSeries = document.getElementById(_dupeIdFor(prefix,'f-series')).checked;
+  const fEvent = document.getElementById(_dupeIdFor(prefix,'f-event')).checked;
+  const fType = document.getElementById(_dupeIdFor(prefix,'f-type')).checked;
+  const fSize = document.getElementById(_dupeIdFor(prefix,'f-size')).checked;
+
+  let filtered = matches;
+  if(fSeries) filtered = filtered.filter(b => (b.series||'')===curSeries);
+  if(fEvent)  filtered = filtered.filter(b => (b.event||'')===curEvent);
+  if(fType)   filtered = filtered.filter(b => (b.type||'')===curType);
+  if(fSize)   filtered = filtered.filter(b => (b.size||'')===curSize);
+
+  if(filtered.length===0){
+    list.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#888;padding:1rem;font-size:0.82rem;">符合篩選條件下沒有徽章</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(b=>{
+    const tooltip = [
+      `#${b.id}`,
+      b.character||'(無角色)',
+      b.series||'(無 series)',
+      b.type||'(無類型)',
+      b.size||'(無尺寸)',
+      b.event||'(無活動)',
+      b.admin_note?`🔒 ${b.admin_note}`:''
+    ].filter(Boolean).join('\n');
+    const adminMark = b.admin_note ? '<span style="position:absolute;top:2px;right:2px;font-size:0.7rem;background:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(0,0,0,0.2);">🔒</span>' : '';
+    return `<div style="position:relative;text-align:center;" title="${tooltip.replace(/"/g,'&quot;')}">
+      <div style="position:relative;">
+        <img src="${imgUrl(b)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1.5px solid #ddd;" onerror="this.style.opacity='0.3';this.alt='?'"/>
+        ${adminMark}
+      </div>
+      <div style="font-size:0.7rem;color:#666;margin-top:0.15rem;">#${b.id}</div>
+    </div>`;
+  }).join('');
+}
+
+// 兼容單筆 modal 既有的 oninput / onclick / onchange 屬性（沿用舊函式名）
+function checkUrlDuplicates(){ checkUrlDuplicatesFor('f'); }
+function toggleUrlDupeCard(){ toggleUrlDupeCardFor('f'); }
+function renderUrlDupeList(){ renderUrlDupeListFor('f'); }
+
+/* ── Step 2: 六欄位完全相符的強警告 ── */
+// 比對六欄位:band, character, series, event, type, size(空字串也算相符)
+function findSixFieldDupes(badge, excludeIdx){
+  return badges.filter((b,i)=>{
+    if(i===excludeIdx) return false;
+    return (b.band||'')===(badge.band||'')
+        && (b.character||'')===(badge.character||'')
+        && (b.series||'')===(badge.series||'')
+        && (b.event||'')===(badge.event||'')
+        && (b.type||'')===(badge.type||'')
+        && (b.size||'')===(badge.size||'');
+  });
+}
+
+// 找同 URL 的徽章(不為空才算)
+function findSameUrl(url){
+  if(!url) return [];
+  return badges.filter(b => b.url===url);
+}
+
+// 計算批次 item 的狀態
+// 回傳 {level: 'gray'|'green'|'yellow'|'red', sixDupes:[...], urlDupes:[...]}
+function computeBatchItemStatus(item){
+  // 六欄位有任一個空 → 灰燈(資料還沒填完,不做查重判斷)
+  const sixFields = [item.band, item.character, item.series, item.event, item.type, item.size];
+  const hasEmpty = sixFields.some(v => !v || !String(v).trim());
+  if(hasEmpty){
+    return {level:'gray', sixDupes:[], urlDupes:[]};
+  }
+  const sixDupes = findSixFieldDupes(item, -1);
+  const urlDupes = findSameUrl((item.url||'').trim());
+  let level = 'green';
+  if(sixDupes.length>0) level = 'red';
+  else if(urlDupes.length>0) level = 'yellow';
+  return {level, sixDupes, urlDupes};
+}
+
+// 渲染單個批次 item 的狀態列(回傳 HTML 片段)
+function renderBatchStatusBadge(item, idx){
+  const {level, sixDupes, urlDupes} = computeBatchItemStatus(item);
+  if(level==='gray'){
+    return `<span class="batch-status" data-level="gray" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#888;background:#f0f0f0;border-radius:10px;padding:0.15rem 0.5rem;">⚪ 待填</span>`;
+  } else if(level==='green'){
+    return `<span class="batch-status" data-level="green" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#2a7a3a;background:#e8f5e9;border-radius:10px;padding:0.15rem 0.5rem;">🟢 OK</span>`;
+  } else if(level==='yellow'){
+    const ids = urlDupes.slice(0,5).map(b=>'#'+b.id).join(', ');
+    const more = urlDupes.length>5 ? ` 等 ${urlDupes.length} 顆` : '';
+    return `<span class="batch-status" data-level="yellow" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#8a6800;background:#fffbe6;border-radius:10px;padding:0.15rem 0.5rem;cursor:help;" title="同 URL 已建：${ids}${more}">🟡 同 URL 已建 ${urlDupes.length} 顆</span>`;
+  } else {
+    const ids = sixDupes.slice(0,5).map(b=>'#'+b.id).join(', ');
+    const more = sixDupes.length>5 ? ` 等 ${sixDupes.length} 顆` : '';
+    return `<span class="batch-status" data-level="red" style="display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#a52424;background:#ffe8e8;border-radius:10px;padding:0.15rem 0.5rem;cursor:help;font-weight:600;" title="六欄位完全相符：${ids}${more}">🔴 疑似重複 (${sixDupes.length})</span>`;
+  }
+}
+
+// 更新單個 item 的狀態列(局部更新,不重渲染整個 grid)
+function updateBatchStatus(idx){
+  const item = batchItems[idx];
+  if(!item) return;
+  const card = document.querySelector(`.batch-card[data-batch-idx="${idx}"]`);
+  if(!card) return;
+  const slot = card.querySelector('.batch-status-slot');
+  if(!slot) return;
+  slot.innerHTML = renderBatchStatusBadge(item, idx);
+}
+
+function _badgeFeatureRow(b){
+  const adminLine = b.admin_note
+    ? `<div style="margin-top:0.3rem;padding:0.4rem 0.55rem;background:#fffbe6;border-left:3px solid #f0c850;border-radius:4px;font-size:0.78rem;color:#7a5a00;white-space:pre-wrap;">🔒 ${(b.admin_note||'').replace(/</g,'&lt;')}</div>`
+    : '';
+  return `<div style="display:flex;gap:0.7rem;padding:0.6rem;background:#f8f8fc;border-radius:6px;margin-bottom:0.5rem;">
+    <img src="${imgUrl(b)}" style="width:60px;height:60px;object-fit:cover;border-radius:5px;flex-shrink:0;border:1px solid #ddd;" onerror="this.style.opacity='0.3'"/>
+    <div style="flex:1;min-width:0;">
+      <div style="font-weight:600;font-size:0.86rem;color:#3d3d8f;">編號 #${b.id}　${b.character||'(無角色)'}</div>
+      <div style="font-size:0.78rem;color:#666;margin-top:0.15rem;line-height:1.55;">
+        ${b.band||'—'}　|　${b.event||'(無活動)'}<br>
+        ${b.series||'(無 series)'}　|　${b.type||'—'}　|　${b.size||'—'}
+      </div>
+      ${adminLine}
+    </div>
+  </div>`;
+}
+
+// 顯示警告 modal,回傳 Promise<'continue'|'skip-dupes'|'cancel'>
+// scenario: 'single' | 'batch'
+// data: 單筆= {badge, dupes}; 批次= [{item, dupes}, ...]
+function showDupeWarning(scenario, data){
+  return new Promise(resolve=>{
+    const modal = document.getElementById('dupe-warn-modal');
+    const body = document.getElementById('dupe-warn-body');
+    const actions = document.getElementById('dupe-warn-actions');
+    const subtitle = document.getElementById('dupe-warn-subtitle');
+
+    if(scenario==='single'){
+      const {badge, dupes} = data;
+      subtitle.textContent = `欲新增的徽章與 ${dupes.length} 顆既有徽章六欄位完全相符`;
+      body.innerHTML = `
+        <div style="margin-bottom:0.8rem;padding:0.7rem 0.85rem;background:#eef0ff;border-radius:6px;font-size:0.83rem;">
+          <strong>欲新增:</strong> ${badge.character||'(無角色)'}　|　${badge.event||'(無活動)'}<br>
+          <span style="color:#666;font-size:0.78rem;">${badge.series||'(無 series)'}　|　${badge.type||'—'}　|　${badge.size||'—'}</span>
+        </div>
+        <div style="font-size:0.82rem;color:#666;margin-bottom:0.5rem;">疑似重複的既有徽章：</div>
+        ${dupes.map(_badgeFeatureRow).join('')}
+        <div style="margin-top:0.6rem;padding:0.55rem;background:#f0fff4;border-left:3px solid #4caf50;border-radius:4px;font-size:0.78rem;color:#2a6a30;">
+          💡 提示：若這是同活動不同柄圖，可在「後台備註」標註以利日後辨識
+        </div>`;
+      actions.innerHTML = `
+        <button class="btn btn-secondary" data-act="cancel">取消，回去檢查</button>
+        <button class="btn btn-primary" data-act="continue" style="background:#e07b2a;">仍然繼續儲存</button>`;
+    } else {
+      // batch
+      const items = data; // [{item, dupes, index}, ...]
+      subtitle.textContent = `批次中有 ${items.length} 個項目疑似重複`;
+      body.innerHTML = items.map(({item, dupes, index})=>`
+        <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px dashed #ddd;">
+          <div style="font-weight:600;font-size:0.9rem;color:#c8501e;margin-bottom:0.5rem;">
+            🔴 第 ${index+1} 個項目 (#${item.id||'?'})
+          </div>
+          <div style="margin-bottom:0.6rem;padding:0.55rem 0.7rem;background:#fff5f0;border-radius:5px;font-size:0.82rem;">
+            <strong>欲新增:</strong> ${item.character||'(無角色)'}　|　${item.event||'(無活動)'}<br>
+            <span style="color:#666;font-size:0.78rem;">${item.series||'(無 series)'}　|　${item.type||'—'}　|　${item.size||'—'}</span>
+          </div>
+          <div style="font-size:0.78rem;color:#888;margin-bottom:0.35rem;">已存在 ${dupes.length} 顆相符徽章：</div>
+          ${dupes.map(_badgeFeatureRow).join('')}
+        </div>`).join('');
+      actions.innerHTML = `
+        <button class="btn btn-secondary" data-act="cancel">取消，回去檢查</button>
+        <button class="btn btn-secondary" data-act="skip-dupes">跳過疑似項目，建檔其他</button>
+        <button class="btn btn-primary" data-act="continue" style="background:#e07b2a;">仍然全部建檔</button>`;
+    }
+
+    modal.style.display = 'flex';
+
+    function handleClick(e){
+      const btn = e.target.closest('button[data-act]');
+      if(!btn) return;
+      const act = btn.dataset.act;
+      modal.style.display = 'none';
+      actions.removeEventListener('click', handleClick);
+      resolve(act);
+    }
+    actions.addEventListener('click', handleClick);
+  });
+}
+
+
+async function saveSingle(){
   const id=document.getElementById('f-id').value.trim();
   if(!id){showToast('請填寫編號');return;}
   const badge={id,ext:document.getElementById('f-ext').value,band:document.getElementById('f-band').value,
@@ -1434,7 +1806,14 @@ function saveSingle(){
     size:document.getElementById('f-size').value,
     country:document.getElementById('f-country').value,
     url:document.getElementById('f-url').value.trim(),
-    note:document.getElementById('f-note').value.trim()};
+    note:document.getElementById('f-note').value.trim(),
+    admin_note:document.getElementById('f-admin-note').value.trim()};
+  // 六欄位強警告(編輯模式排除自己)
+  const dupes = findSixFieldDupes(badge, editingIdx>=0?editingIdx:-1);
+  if(dupes.length>0){
+    const choice = await showDupeWarning('single', {badge, dupes});
+    if(choice!=='continue') return;
+  }
   const now = new Date().toISOString();
   if(editingIdx>=0){
     badge.created_at = badges[editingIdx].created_at || now;
@@ -1595,6 +1974,7 @@ function getTextBatchItems(){
   const series = document.getElementById('t-series').value.trim();
   const url = document.getElementById('t-url').value.trim();
   const note = document.getElementById('t-note').value.trim();
+  const admin_note = document.getElementById('t-admin-note').value.trim();
   const ext = document.getElementById('t-ext').value;
 
   // 收集勾選的角色
@@ -1606,7 +1986,7 @@ function getTextBatchItems(){
   let nextId = parseInt(getNextId());
   return chars.map(char=>({
     id: String(nextId++).padStart(String(nextId).length > 3 ? String(nextId).length : 3, '0'),
-    ext, band, character: char, series, year, event, short_event, type, size, country, url, note
+    ext, band, character: char, series, year, event, short_event, type, size, country, url, note, admin_note
   }));
 }
 
@@ -1627,7 +2007,7 @@ function previewTextBatch(){
   preview.style.display = 'block';
 }
 
-function saveTextBatch(){
+async function saveTextBatch(){
   const items = getTextBatchItems();
   if(!items){ showToast('請至少勾選一個角色'); return; }
 
@@ -1638,17 +2018,42 @@ function saveTextBatch(){
     id: String(nextId++).padStart(String(nextId).length > 3 ? String(nextId).length : 3, '0'),
   }));
 
+  // 六欄位查重
+  const dupeChecks = finalItems.map((item,i)=>{
+    const dupes = findSixFieldDupes(item, -1);
+    return {item, dupes, index:i};
+  }).filter(x=>x.dupes.length>0);
+
+  let skipIndices = new Set();
+  if(dupeChecks.length>0){
+    const choice = await showDupeWarning('batch', dupeChecks);
+    if(choice==='cancel') return;
+    if(choice==='skip-dupes') skipIndices = new Set(dupeChecks.map(x=>x.index));
+  }
+
   const now = new Date().toISOString();
-  finalItems.forEach(b=>badges.push({...b, created_at: now, updated_at: now}));
+  let added = 0;
+  finalItems.forEach((b,i)=>{
+    if(skipIndices.has(i)) return;
+    badges.push({...b, created_at: now, updated_at: now});
+    added++;
+  });
   persist();
   renderList();
-  showToast(`✓ 已建立 ${finalItems.length} 筆資料（編號 #${finalItems[0].id}～#${finalItems[finalItems.length-1].id}）`);
+  const skipped = skipIndices.size;
+  let msg = `✓ 已建立 ${added} 筆資料`;
+  if(added>0){
+    const addedItems = finalItems.filter((_,i)=>!skipIndices.has(i));
+    msg += `（編號 #${addedItems[0].id}～#${addedItems[addedItems.length-1].id}）`;
+  }
+  if(skipped>0) msg += `，跳過 ${skipped} 筆疑似重複`;
+  showToast(msg);
 
   // 清空勾選
   document.querySelectorAll('.t-char-cb').forEach(cb=>cb.checked=false);
   updateTextCharPreview();
   document.getElementById('t-preview').style.display='none';
-  setTimeout(()=>switchTab('list'), 800);
+  if(added>0) setTimeout(()=>switchTab('list'), 800);
 }
 
 /* ── 更新日誌 ── */
