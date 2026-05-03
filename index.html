@@ -1302,10 +1302,10 @@ function renderGrid(list){
       <div class="badge-card-expand">
         ${b.event?`<div class="expand-field"><span class="expand-label">${L.event}</span><span class="expand-value">${eventHtml}</span></div>`:''}
         ${b.year?`<div class="expand-field"><span class="expand-label">${L.year}</span><span class="expand-value">${b.year}</span></div>`:''}
-        ${b.size?`<div class="expand-field"><span class="expand-label">${L.size}</span><span class="expand-value">${b.size}</span></div>`:''}
+        ${b.size?`<div class="expand-field"><span class="expand-label">${L.size}</span><span class="expand-value">${getSizeName(b.size,currentLang)}</span></div>`:''}
         ${b.series?`<div class="expand-field"><span class="expand-label">${L.series}</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">${L.type}</span><span class="expand-value">${b.type}</span></div>`:''}
-        ${b.country?`<div class="expand-field"><span class="expand-label">${L.country}</span><span class="expand-value">${b.country}</span></div>`:''}
+        ${b.country?`<div class="expand-field"><span class="expand-label">${L.country}</span><span class="expand-value">${getCountryName(b.country,currentLang)}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">${L.note}</span><span class="expand-value">${b.note}</span></div>`:''}
       </div>
     </div>`;
@@ -1330,11 +1330,11 @@ function openDetail(idx){
   dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
   document.getElementById('d-band').textContent=getBandName(b.band,currentLang)||'—';
   document.getElementById('d-band').style.cssText=`background:${c}20;color:${c}`;
-  document.getElementById('d-char').textContent=b.character||'—';
+  document.getElementById('d-char').textContent=getCharName(b.character,currentLang)||'—';
   document.getElementById('d-series').textContent=b.series||'—';
   document.getElementById('d-type').textContent=b.type||'—';
-  document.getElementById('d-size').textContent=b.size||'—';
-  document.getElementById('d-country').textContent=b.country||'—';
+  document.getElementById('d-size').textContent=getSizeName(b.size,currentLang)||'—';
+  document.getElementById('d-country').textContent=getCountryName(b.country,currentLang)||'—';
   document.getElementById('d-year').textContent=b.year||'—';
   const dEvent = document.getElementById('d-event');
   if(b.url){
