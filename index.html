@@ -707,9 +707,12 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
       <div class="detail-band-tag" id="d-band"></div>
       <div class="detail-char" id="d-char"></div>
       <div class="detail-fields">
-        <div class="detail-field"><label>版本/工藝</label><span id="d-series"></span></div>
-        <div class="detail-field"><label>發售年份</label><span id="d-year"></span></div>
-        <div class="detail-field" style="grid-column:1/-1"><label>活動</label><span id="d-event"></span></div>
+        <div class="detail-field"><label data-l-key="series">版本/工藝</label><span id="d-series"></span></div>
+        <div class="detail-field"><label data-l-key="yearFull">發售日期</label><span id="d-year"></span></div>
+        <div class="detail-field"><label data-l-key="type">類型</label><span id="d-type"></span></div>
+        <div class="detail-field"><label data-l-key="size">尺寸</label><span id="d-size"></span></div>
+        <div class="detail-field"><label data-l-key="country">販售/活動地</label><span id="d-country"></span></div>
+        <div class="detail-field" style="grid-column:1/-1"><label data-l-key="event">活動</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
       <div id="d-user-actions" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);gap:0.5rem;flex-wrap:wrap;">
@@ -857,14 +860,8 @@ function buildSidebar(){
   if(document.getElementById('event-modal-overlay').style.display==='flex'){
     buildEventList();
   }
-  // 類型：value 存繁中原始值，label 顯示對應語言
+  // 類型：value 存繁中原始值，label 透過 getTypeName 翻譯
   const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影'];
-  const typeDisplayMap = {
-    '角色本身': {'zh-TW':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
-    '角色相關': {'zh-TW':'角色相關','ja':'キャラクター關連','en':'Character-related','ko':'캐릭터 관련'},
-    '角色聲優': {'zh-TW':'角色聲優','ja':'声優','en':'Voice Actor','ko':'성우'},
-    '角色合影': {'zh-TW':'角色合影','ja':'キャラクター集合','en':'Group Shot','ko':'캐릭터 단체샷'},
-  };
   const availTypes = TYPE_ZH_LIST.filter(t => source.some(b => b.type === t));
   const typeSec = document.getElementById('type-section');
   const typeListEl = document.getElementById('type-list');
@@ -873,7 +870,7 @@ function buildSidebar(){
     else {
       typeSec.style.display='';
       typeListEl.innerHTML = availTypes.map(t => {
-        const label = (typeDisplayMap[t]||{})[currentLang] || t;
+        const label = getTypeName(t, currentLang);
         return `<label class="filter-item"><input type="checkbox" ${selTypes.has(t)?'checked':''} onchange="toggleType(this.value)" value="${t}"/><span>${label}</span></label>`;
       }).join('');
     }
@@ -1301,10 +1298,10 @@ function renderGrid(list){
       </div>
       <div class="badge-card-expand">
         ${b.event?`<div class="expand-field"><span class="expand-label">${L.event}</span><span class="expand-value">${eventHtml}</span></div>`:''}
-        ${b.year?`<div class="expand-field"><span class="expand-label">${L.year}</span><span class="expand-value">${b.year}</span></div>`:''}
+        ${b.year?`<div class="expand-field"><span class="expand-label">${L.year}</span><span class="expand-value">${getYear(b.year)}</span></div>`:''}
         ${b.size?`<div class="expand-field"><span class="expand-label">${L.size}</span><span class="expand-value">${getSizeName(b.size,currentLang)}</span></div>`:''}
         ${b.series?`<div class="expand-field"><span class="expand-label">${L.series}</span><span class="expand-value">${b.series}</span></div>`:''}
-        ${b.type?`<div class="expand-field"><span class="expand-label">${L.type}</span><span class="expand-value">${b.type}</span></div>`:''}
+        ${b.type?`<div class="expand-field"><span class="expand-label">${L.type}</span><span class="expand-value">${getTypeName(b.type,currentLang)}</span></div>`:''}
         ${b.country?`<div class="expand-field"><span class="expand-label">${L.country}</span><span class="expand-value">${getCountryName(b.country,currentLang)}</span></div>`:''}
         ${b.note?`<div class="expand-field"><span class="expand-label">${L.note}</span><span class="expand-value">${b.note}</span></div>`:''}
       </div>
@@ -1332,7 +1329,7 @@ function openDetail(idx){
   document.getElementById('d-band').style.cssText=`background:${c}20;color:${c}`;
   document.getElementById('d-char').textContent=getCharName(b.character,currentLang)||'—';
   document.getElementById('d-series').textContent=b.series||'—';
-  document.getElementById('d-type').textContent=b.type||'—';
+  document.getElementById('d-type').textContent=getTypeName(b.type,currentLang)||'—';
   document.getElementById('d-size').textContent=getSizeName(b.size,currentLang)||'—';
   document.getElementById('d-country').textContent=getCountryName(b.country,currentLang)||'—';
   document.getElementById('d-year').textContent=b.year||'—';
@@ -1463,6 +1460,43 @@ function getCountryName(country, lang){
   return t ? (t[lang]||country) : country;
 }
 
+// ── 類型多語言對照表 ──
+const TYPE_TRANS = {
+  '角色本身': {'ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
+  '角色相關': {'ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
+  '角色聲優': {'ja':'声優','en':'Voice Actor','ko':'성우'},
+  '角色合影': {'ja':'キャラクター集合','en':'Group','ko':'캐릭터 단체'},
+};
+
+function getTypeName(type, lang){
+  if(!type || !lang || lang==='zh-TW') return type;
+  const t = TYPE_TRANS[type];
+  return t ? (t[lang]||type) : type;
+}
+
+// ── 日期格式化(依語言調整) ──
+// 輸入:'2025年11月13日' 或 '2025年11月' 或 '2025年' 或其他格式
+// 輸出:依語言格式化
+function formatDate(dateStr, lang){
+  if(!dateStr) return '';
+  // 抓出年月日
+  const m = dateStr.match(/(\d{4})年(?:(\d{1,2})月)?(?:(\d{1,2})日)?/);
+  if(!m) return dateStr; // 不符合格式就原樣回傳
+  const [, y, mo, d] = m;
+  switch(lang){
+    case 'ja':
+      return d ? `${y}年${mo}月${d}日` : (mo ? `${y}年${mo}月` : `${y}年`);
+    case 'en':
+      if(d && mo) return `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+mo]} ${d}, ${y}`;
+      if(mo) return `${['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+mo]} ${y}`;
+      return y;
+    case 'ko':
+      return d ? `${y}년 ${mo}월 ${d}일` : (mo ? `${y}년 ${mo}월` : `${y}년`);
+    default: // zh-TW
+      return d ? `${y}年${mo}月${d}日` : (mo ? `${y}年${mo}月` : `${y}年`);
+  }
+}
+
 // ── 樂團名稱多語言對照表 ──
 const BAND_NAME_MAP = {
   '夢限大MewType': {'zh-TW':'夢限大MewType','ja':'夢限大みゅーたいぷ','en':'Mugendai Mewtype','ko':'무겐다이 뮤타입'},
@@ -1576,7 +1610,7 @@ function getCharName(charTW, lang) {
 const LANGS = {
   'zh-TW': {
     title:'BanG Dream! 徽章圖鑑', subtitle:' 徽章圖鑑',
-    search:'搜尋', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份',
+    search:'搜尋', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
     event:'活動', type:'類型', size:'尺寸', country:'販售/活動地', note:'備註',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
@@ -1618,7 +1652,7 @@ const LANGS = {
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
-    search:'検索', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年',
+    search:'検索', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
     event:'イベント', type:'タイプ', size:'サイズ', country:'販売/イベント地', note:'備考',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
@@ -1660,7 +1694,7 @@ const LANGS = {
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
-    search:'Search', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year',
+    search:'Search', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
     event:'Event', type:'Type', size:'Size', country:'Sales / Event Region', note:'Note',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
@@ -1702,7 +1736,7 @@ const LANGS = {
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
-    search:'검색', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도',
+    search:'검색', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
     event:'이벤트', type:'유형', size:'크기', country:'판매/이벤트 지역', note:'비고',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
@@ -1783,6 +1817,11 @@ function applyLang(){
   Object.entries(sidebarMap).forEach(([id, label]) => {
     const sec = document.getElementById(id);
     if(sec){ const h3 = sec.querySelector('h3'); if(h3 && label) h3.textContent = label; }
+  });
+  // [data-l-key] 機制:任何 element 標 data-l-key="xxx" 就會自動換成 L.xxx
+  document.querySelectorAll('[data-l-key]').forEach(el => {
+    const key = el.getAttribute('data-l-key');
+    if(L[key]) el.textContent = L[key];
   });
   // 重置按鈕（兩個）
   document.querySelectorAll('[onclick="resetFilters()"]').forEach(btn=>{ if(L.reset) btn.textContent = L.reset; });
@@ -2317,6 +2356,15 @@ let currentFiltered = [];
 
 function setView(v){
   currentView = v;
+  // 列表檢視使用率追蹤(累積到 localStorage,日後參考是否要保留此功能)
+  if(v==='table'){
+    try{
+      const cnt = parseInt(localStorage.getItem('_table_view_count')||'0') + 1;
+      localStorage.setItem('_table_view_count', String(cnt));
+      localStorage.setItem('_table_view_last', new Date().toISOString());
+      console.log(`[列表檢視追蹤] 累計開啟次數:${cnt} 次`);
+    }catch(e){}
+  }
   document.getElementById('badge-grid').style.display = v==='grid' ? 'grid' : 'none';
   document.getElementById('table-view').style.display = v==='table' ? 'block' : 'none';
   document.getElementById('btn-grid').classList.toggle('active', v==='grid');
@@ -2728,13 +2776,7 @@ async function doExport(){
   for(const g of groups){
     // 類型標題（只在換類型時顯示）
     if(g.type !== prevType){
-      const typeDisplayMap2 = {
-        '角色本身': {'zh-TW':'角色本身','ja':'キャラクター本人','en':'Character','ko':'캐릭터 본인'},
-        '角色相關': {'zh-TW':'角色相關','ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
-        '角色聲優': {'zh-TW':'角色聲優','ja':'声優','en':'Voice Actor','ko':'성우'},
-    '角色合影': {'zh-TW':'角色合影','ja':'キャラクター集合','en':'Group Shot','ko':'캐릭터 단체샷'},
-      };
-      const typeLabel = ((typeDisplayMap2[g.type]||{})[currentLang]) || g.type || '未分類';
+      const typeLabel = getTypeName(g.type, currentLang) || '未分類';
       ctx.fillStyle = '#1a1a2e';
       ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, TYPE_H, 8); ctx.fill();
       ctx.fillStyle = '#fff';
