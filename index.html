@@ -1298,7 +1298,13 @@ function renderGrid(list){
       </div>
       <div class="badge-card-expand">
         ${b.event?`<div class="expand-field"><span class="expand-label">${L.event}</span><span class="expand-value">${eventHtml}</span></div>`:''}
-        ${b.year?`<div class="expand-field"><span class="expand-label">${L.year}</span><span class="expand-value">${getYear(b.year)}</span></div>`:''}
+        ${b.year?(()=>{
+          const y = getYear(b.year);
+          // 只有年份時不顯示括號,有年月或年月日才顯示
+          const hasMore = /月|日/.test(b.year);
+          const dateDisplay = hasMore ? `${y} <span style="color:#999;font-size:0.85em;">(${b.year})</span>` : y;
+          return `<div class="expand-field"><span class="expand-label">${L.year}</span><span class="expand-value">${dateDisplay}</span></div>`;
+        })():''}
         ${b.size?`<div class="expand-field"><span class="expand-label">${L.size}</span><span class="expand-value">${getSizeName(b.size,currentLang)}</span></div>`:''}
         ${b.series?`<div class="expand-field"><span class="expand-label">${L.series}</span><span class="expand-value">${b.series}</span></div>`:''}
         ${b.type?`<div class="expand-field"><span class="expand-label">${L.type}</span><span class="expand-value">${getTypeName(b.type,currentLang)}</span></div>`:''}
