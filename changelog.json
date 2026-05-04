@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/5/3",
+    "content": {
+      "zh": "【新增/更新資料】\n・Afterglow 2nd Album「STAY GLOW」(新增 7 張)\n・Morfonica 1st Album「QUINTET」(新增 6 張)\n・Morfonica 5th Single「寄る辺のSunny, Sunny」(新增 6 張)\n・MyGO!!!!! 2nd Single「音一会」(新增 7 張)\n・Pastel＊Palettes 2nd Album「Pastel à la mode」(新增 7 張)\n・Poppin'Party ミニAlbum「青春 To Be Continued」(新增 5 張)\n・Roselia 12th Single「Swear 〜Night & Day〜」(新增 1 張)\n・Roselia 13th Single「THRONE OF ROSE」(新增 5 張)\n・ハロー、ハッピーワールド！ 2nd Album「SMILE ON PARADE」(新增 7 張)\n・バンドリ！ガールズバンドパーティ！ カバーコレクションVol.7(新增 6 張)\n【功能調整】\n・卡片發售日期顯示優化(主顯示年份,完整日期以括號輔助呈現)\n・多語言翻譯擴充(類型、銷售地等欄位)\n・欄位名稱「活動國家」更新為「販售/活動地」",
+      "ja": "【新規/更新データ】\n・Afterglow 2nd Album「STAY GLOW」(7枚追加)\n・Morfonica 1st Album「QUINTET」(6枚追加)\n・Morfonica 5th Single「寄る辺のSunny, Sunny」(6枚追加)\n・MyGO!!!!! 2nd Single「音一会」(7枚追加)\n・Pastel＊Palettes 2nd Album「Pastel à la mode」(7枚追加)\n・Poppin'Party ミニAlbum「青春 To Be Continued」(5枚追加)\n・Roselia 12th Single「Swear 〜Night & Day〜」(1枚追加)\n・Roselia 13th Single「THRONE OF ROSE」(5枚追加)\n・ハロー、ハッピーワールド！ 2nd Album「SMILE ON PARADE」(7枚追加)\n・バンドリ！ガールズバンドパーティ！ カバーコレクションVol.7(6枚追加)\n【機能調整】\n・カード発売日の表示を最適化(発売年をメイン表示、完全な日付は括弧で補助表示)\n・多言語翻訳を拡充(タイプ、販売地などの項目)\n・項目名「活動国」を「販売/イベント地」に変更",
+      "en": "【New / Updated Data】\n・Afterglow 2nd Album \"STAY GLOW\" (7 added)\n・Morfonica 1st Album \"QUINTET\" (6 added)\n・Morfonica 5th Single \"Yorube no Sunny, Sunny\" (6 added)\n・MyGO!!!!! 2nd Single \"Otohitoe\" (7 added)\n・Pastel＊Palettes 2nd Album \"Pastel à la mode\" (7 added)\n・Poppin'Party Mini Album \"Seishun To Be Continued\" (5 added)\n・Roselia 12th Single \"Swear 〜Night & Day〜\" (1 added)\n・Roselia 13th Single \"THRONE OF ROSE\" (5 added)\n・Hello, Happy World! 2nd Album \"SMILE ON PARADE\" (7 added)\n・BanG Dream! Girls Band Party! Cover Collection Vol.7 (6 added)\n【Feature Adjustments】\n・Card release date display optimized (year shown as main, full date in parentheses)\n・Multi-language translation expanded (type, sales region, etc.)\n・Field name \"Event Country\" renamed to \"Sales / Event Region\"",
+      "ko": "【추가/업데이트 데이터】\n・Afterglow 2nd 앨범「STAY GLOW」(7장 추가)\n・Morfonica 1st 앨범「QUINTET」(6장 추가)\n・Morfonica 5th 싱글「寄る辺のSunny, Sunny」(6장 추가)\n・MyGO!!!!! 2nd 싱글「音一会」(7장 추가)\n・Pastel＊Palettes 2nd 앨범「Pastel à la mode」(7장 추가)\n・Poppin'Party 미니 앨범「青春 To Be Continued」(5장 추가)\n・Roselia 12th 싱글「Swear 〜Night & Day〜」(1장 추가)\n・Roselia 13th 싱글「THRONE OF ROSE」(5장 추가)\n・Hello, Happy World! 2nd 앨범「SMILE ON PARADE」(7장 추가)\n・BanG Dream! 걸즈 밴드 파티! 커버 컬렉션 Vol.7(6장 추가)\n【기능 조정】\n・카드 발매일 표시 최적화(발매 연도를 메인으로 표시, 전체 날짜는 괄호로 보조 표시)\n・다국어 번역 확장(유형, 판매 지역 등 항목)\n・항목명「이벤트 국가」를「판매/이벤트 지역」으로 변경"
+    }
+  },
+  {
     "date": "2026/5/2",
     "content": {
       "zh": "【新增/更新資料】\n・Ave Mujica ミニAlbum「Alea jacta est」(新增 1 張)\n・MyGO!!!!! 3rd Single「壱雫空」(新增 7 張)\n・RAISE A SUILEN 15th Single「WHAT AN EXPLOSION」(新增 10 張)\n・バンドリ！ガールズバンドパーティ! カバーコレクションVol.8(新增 7 張)\n・RAISE A SUILEN ミニAlbum「REVELATION」(更新 1 張)\n【功能調整】\n(無)",
