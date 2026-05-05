@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/5/4",
+    "content": {
+      "zh": "【新增/更新資料】\n・Morfonica 4th Single「fly with the night」(新增 4 張)\n・Poppin'Party 18th Single「夏に閉じこめて」(新增 5 張)\n・RAISE A SUILEN 9th Single「CORUSCATE -DNA-」(新增 4 張)\n\n【功能調整】\n(無)",
+      "ja": "【新規/更新データ】\n・Morfonica 4th Single「fly with the night」(4枚追加)\n・Poppin'Party 18th Single「夏に閉じこめて」(5枚追加)\n・RAISE A SUILEN 9th Single「CORUSCATE -DNA-」(4枚追加)\n\n【機能調整】\n(なし)",
+      "en": "【New / Updated Data】\n・Morfonica 4th Single \"fly with the night\" (4 added)\n・Poppin'Party 18th Single \"Natsu ni Tojikomete\" (5 added)\n・RAISE A SUILEN 9th Single \"CORUSCATE -DNA-\" (4 added)\n\n【Feature Adjustments】\n(None)",
+      "ko": "【추가/업데이트 데이터】\n・Morfonica 4th 싱글「fly with the night」(4장 추가)\n・Poppin'Party 18th 싱글「夏に閉じこめて」(5장 추가)\n・RAISE A SUILEN 9th 싱글「CORUSCATE -DNA-」(4장 추가)\n\n【기능 조정】\n(없음)"
+    }
+  },
+  {
     "date": "2026/5/3",
     "content": {
       "zh": "【新增/更新資料】\n・Afterglow 2nd Album「STAY GLOW」(新增 7 張)\n・Morfonica 1st Album「QUINTET」(新增 6 張)\n・Morfonica 5th Single「寄る辺のSunny, Sunny」(新增 6 張)\n・MyGO!!!!! 2nd Single「音一会」(新增 7 張)\n・Pastel＊Palettes 2nd Album「Pastel à la mode」(新增 7 張)\n・Poppin'Party ミニAlbum「青春 To Be Continued」(新增 5 張)\n・Roselia 12th Single「Swear 〜Night & Day〜」(新增 1 張)\n・Roselia 13th Single「THRONE OF ROSE」(新增 5 張)\n・ハロー、ハッピーワールド！ 2nd Album「SMILE ON PARADE」(新增 7 張)\n・バンドリ！ガールズバンドパーティ！ カバーコレクションVol.7(新增 6 張)\n【功能調整】\n・卡片發售日期顯示優化(主顯示年份,完整日期以括號輔助呈現)\n・多語言翻譯擴充(類型、銷售地等欄位)\n・欄位名稱「活動國家」更新為「販售/活動地」",
