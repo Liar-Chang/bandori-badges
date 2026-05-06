@@ -1,0 +1,32 @@
+{
+  "name": "BanG Dream! 徽章圖鑑",
+  "short_name": "徽章圖鑑",
+  "description": "BanG Dream! 缶バッジ図鑑 - 由千早愛音的暴躁柯基整理維護",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#ff69b4",
+  "icons": [
+    {
+      "src": "favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "lang": "zh-TW"
+}

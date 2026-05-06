@@ -116,6 +116,14 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png"/>
 <link rel="icon" type="image/png" sizes="512x512" href="favicon-512.png"/>
 
+<!-- PWA 設定 -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#ff69b4"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="徽章圖鑑"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -422,6 +430,42 @@ body{
 .song-fab-player iframe{display:block;}
 [data-theme="dark"] .song-fab-bar{background:#1e1e1e;}
 [data-theme="dark"] .song-fab-player{background:#1e1e1e;}
+
+/* ── 手機版:song-fab 縮為圓形小按鈕,點擊展開資訊 ── */
+@media(max-width:640px){
+  /* 收合狀態(.song-fab 沒有 .expanded class) */
+  .song-fab:not(.expanded) .song-fab-bar{
+    padding:0;
+    border-radius:50%;
+    width:48px;
+    height:48px;
+    overflow:hidden;
+    max-width:none;
+    min-width:0;
+  }
+  .song-fab:not(.expanded) .song-fab-thumb{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+  }
+  .song-fab:not(.expanded) .song-fab-info,
+  .song-fab:not(.expanded) .song-fab-icons{
+    display:none;
+  }
+  /* 展開狀態(點過 .song-fab-thumb,加上 .expanded class) */
+  .song-fab.expanded .song-fab-bar{
+    max-width:calc(100vw - 3rem);
+  }
+  /* 展開的 player 寬度也限制不超過螢幕 */
+  .song-fab-player{
+    max-width:calc(100vw - 3rem);
+    width:300px;
+  }
+  /* 手機版 FAB 改放右下,離底部更近,因為小不會擋 */
+  .song-fab{
+    bottom:1rem;
+  }
+}
 
 
 @media(max-width:800px){
@@ -2157,6 +2201,30 @@ async function loadSong(){
   }
 }
 
+// 手機版:song-fab 點擊處理
+// - 手機未展開:第一次點擊只展開 bar(顯示縮圖→變橫條,顯示資訊)
+// - 手機已展開 / 桌機:照舊呼叫 toggleSongPlayer
+function handleSongFabClick(ev){
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const fab = document.getElementById('song-fab');
+  if(isMobile && !fab.classList.contains('expanded')){
+    fab.classList.add('expanded');
+    ev.stopPropagation();
+    return;
+  }
+  toggleSongPlayer();
+}
+
+// 點擊 FAB 之外的位置 → 收合(回到圓形小鈕)
+document.addEventListener('click', (ev)=>{
+  const fab = document.getElementById('song-fab');
+  if(!fab || !fab.classList.contains('expanded')) return;
+  if(fab.contains(ev.target)) return;
+  fab.classList.remove('expanded');
+  // 同時也收合 player
+  if(_songPlayerOpen){ toggleSongPlayer(); }
+});
+
 function toggleSongPlayer(){
   const player = document.getElementById('song-fab-player');
   const fab = document.getElementById('song-fab');
@@ -3062,7 +3130,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 <!-- 推薦歌曲浮動播放器 -->
 <div class="song-fab" id="song-fab" style="display:none;">
   <div class="song-fab-player" id="song-fab-player"></div>
-  <div class="song-fab-bar" onclick="toggleSongPlayer()">
+  <div class="song-fab-bar" onclick="handleSongFabClick(event)">
     <img class="song-fab-thumb" id="song-fab-thumb" src="" alt=""/>
     <div class="song-fab-info">
       <div style="font-size:0.6rem;color:var(--muted);margin-bottom:1px;" id="song-fab-label"></div>
