@@ -30998,7 +30998,7 @@
     "ext": "png",
     "band": "夢限大MewType",
     "character": "夢限大MewType全團",
-    "series": "特典",
+    "series": "特典－Joshinディスクピア",
     "year": "2025年4月30日",
     "event": "夢限大みゅーたいぷ 2nd Single「Hi-Vision」",
     "short_event": "2nd Single「Hi-Vision」",
@@ -31007,8 +31007,9 @@
     "country": "日本",
     "url": "https://bang-dream.com/discographies/3931/",
     "note": "",
+    "admin_note": "",
     "created_at": "2026-04-16T12:43:26.048Z",
-    "updated_at": "2026-04-16T12:43:26.048Z"
+    "updated_at": "2026-05-06T14:04:50.355Z"
   },
   {
     "id": "2080",
@@ -40369,20 +40370,20 @@
   {
     "id": "2618",
     "ext": "png",
-    "band": "",
-    "character": "",
+    "band": "RAISE A SUILEN",
+    "character": "和奏瑞依(LAYER)",
     "series": "特典",
     "year": "2021年4月21日",
     "event": "バンドリ！ ガールズバンドパーティ！ カバーコレクションVol.5",
+    "short_event": "邦邦翻唱合輯Vol.5",
     "type": "角色本身",
     "size": "57mm圓形",
     "country": "日本",
     "url": "https://bang-dream.com/discographies/2440/",
     "note": "",
     "admin_note": "",
-    "short_event": "邦邦翻唱合輯Vol.5",
     "created_at": "2026-05-06T13:18:11.530Z",
-    "updated_at": "2026-05-06T13:18:11.530Z"
+    "updated_at": "2026-05-06T14:00:43.801Z"
   },
   {
     "id": "2617",
@@ -40635,5 +40636,23 @@
     "short_event": "6th Single「mind of Prominence」",
     "created_at": "2026-05-06T13:41:00.451Z",
     "updated_at": "2026-05-06T13:41:00.451Z"
+  },
+  {
+    "id": "2634",
+    "ext": "png",
+    "band": "Afterglow",
+    "character": "羽澤鶇",
+    "series": "",
+    "year": "2020年10月28日",
+    "event": "Afterglow 7th Single「Sasanqua」",
+    "short_event": "7th Single「Sasanqua」",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/1864/",
+    "note": "",
+    "admin_note": "",
+    "created_at": "2026-05-06T14:02:53.609Z",
+    "updated_at": "2026-05-06T14:02:53.609Z"
   }
 ]
