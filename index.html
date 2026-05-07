@@ -465,6 +465,13 @@ body{
   .song-fab{
     bottom:1rem;
   }
+  /* 自訂/智慧清單的編輯/刪除按鈕,手機版加大 hit area + 加間距,避免重疊 */
+  .my-list-action-btn{
+    padding:0.35rem 0.5rem !important;
+    margin-left:0.15rem;
+    min-width:32px;
+    min-height:32px;
+  }
 }
 
 
@@ -1686,7 +1693,7 @@ const LANGS = {
     // 批次刪除 modal
     batchDelTitle:'🗑 批次刪除蒐集記錄', batchDelWarning:'⚠️ 此操作無法復原', batchDelMain:'即將刪除 {n} 筆蒐集記錄（共 {q} 個）。', batchDelSkip:'（另有 {n} 張勾選的徽章本來就沒記錄，會自動跳過）', batchDelHint:'💡 提示：刪除後這些徽章會回到「未蒐集」狀態。蒐集日期、數量、備註都會被清除。', batchDelEmpty:'⚠️ 您勾選的 {n} 張徽章都沒有蒐集記錄，沒有可刪除的內容。', batchDelCancel:'取消', batchDelConfirm:'確認刪除', batchDelNothingToast:'沒有可刪除的記錄', batchDelClose:'關閉',
     // 智慧清單
-    smartListTitle:'🔍 智慧清單', smartListEmpty:'尚無智慧清單。', smartListEmptyHint:'選好篩選條件後可儲存。', smartListClear:'取消套用', smartListSaveBtn:'💾 儲存為智慧清單', smartListPromptName:'智慧清單名稱（最多 50 字）：', smartListAlertLogin:'請先登入', smartListAlertMax:'智慧清單最多 {n} 個，請先刪除不用的', smartListAlertNoCondition:'請先選擇至少一個篩選條件', smartListAlertOverwrite:'已有同名清單「{name}」，覆蓋嗎？\n\n按「確定」覆蓋，按「取消」放棄', smartListToastSaved:'已儲存為智慧清單', smartListToastUpdated:'已更新智慧清單', smartListPromptRename:'新清單名稱：', smartListAlertRenameFail:'改名失敗', smartListAlertSaveFail:'儲存失敗：', smartListAlertDeleteFail:'刪除失敗', smartListConfirmDelete:'確定刪除智慧清單「{name}」？',
+    smartListTitle:'🔍 智慧清單', smartListEmpty:'尚無智慧清單。', smartListEmptyHint:'選好篩選條件後可儲存。', smartListIntro:'把常用的篩選條件存起來,下次一鍵套用!', smartListExample:'例如:「我推角色 + 56mm + 限定盤」', smartListClear:'取消套用', smartListSaveBtn:'💾 儲存為智慧清單', smartListPromptName:'智慧清單名稱（最多 50 字）：', smartListAlertLogin:'請先登入', smartListAlertMax:'智慧清單最多 {n} 個，請先刪除不用的', smartListAlertNoCondition:'請先選擇至少一個篩選條件', smartListAlertOverwrite:'已有同名清單「{name}」，覆蓋嗎？\n\n按「確定」覆蓋，按「取消」放棄', smartListToastSaved:'已儲存為智慧清單', smartListToastUpdated:'已更新智慧清單', smartListPromptRename:'新清單名稱：', smartListAlertRenameFail:'改名失敗', smartListAlertSaveFail:'儲存失敗：', smartListAlertDeleteFail:'刪除失敗', smartListConfirmDelete:'確定刪除智慧清單「{name}」？',
     // 蒐集記錄三段
     colSegAll:'全部', colSegCollected:'已蒐集', colSegUncollected:'未蒐集',
     // 批次操作
@@ -1728,7 +1735,7 @@ const LANGS = {
     // 批次刪除 modal
     batchDelTitle:'🗑 一括削除', batchDelWarning:'⚠️ この操作は元に戻せません', batchDelMain:'{n} 件のコレクション記録（合計 {q} 個）を削除します。', batchDelSkip:'（選択した {n} 個のバッジは記録がないため自動でスキップされます）', batchDelHint:'💡 ヒント：削除後、これらのバッジは「未収集」状態に戻ります。日付、数量、メモはすべて削除されます。', batchDelEmpty:'⚠️ 選択した {n} 個のバッジには記録がなく、削除する内容がありません。', batchDelCancel:'キャンセル', batchDelConfirm:'削除を確認', batchDelNothingToast:'削除する記録がありません', batchDelClose:'閉じる',
     // 智慧清單
-    smartListTitle:'🔍 スマートリスト', smartListEmpty:'スマートリストがまだありません。', smartListEmptyHint:'フィルターを選んで保存できます。', smartListClear:'適用解除', smartListSaveBtn:'💾 スマートリストとして保存', smartListPromptName:'スマートリスト名（50文字以内）：', smartListAlertLogin:'ログインしてください', smartListAlertMax:'スマートリストは最大 {n} 個までです。不要なものを削除してください', smartListAlertNoCondition:'少なくとも一つのフィルターを選んでください', smartListAlertOverwrite:'同名のリスト「{name}」が存在します。上書きしますか？\n\n「OK」で上書き、「キャンセル」で中止', smartListToastSaved:'スマートリストとして保存しました', smartListToastUpdated:'スマートリストを更新しました', smartListPromptRename:'新しいリスト名：', smartListAlertRenameFail:'名前変更に失敗', smartListAlertSaveFail:'保存に失敗：', smartListAlertDeleteFail:'削除に失敗', smartListConfirmDelete:'スマートリスト「{name}」を削除しますか？',
+    smartListTitle:'🔍 スマートリスト', smartListEmpty:'スマートリストがまだありません。', smartListEmptyHint:'フィルターを選んで保存できます。', smartListIntro:'よく使うフィルター条件を保存して、次回ワンクリックで適用!', smartListExample:'例:「推しキャラ + 56mm + 限定盤」', smartListClear:'適用解除', smartListSaveBtn:'💾 スマートリストとして保存', smartListPromptName:'スマートリスト名（50文字以内）：', smartListAlertLogin:'ログインしてください', smartListAlertMax:'スマートリストは最大 {n} 個までです。不要なものを削除してください', smartListAlertNoCondition:'少なくとも一つのフィルターを選んでください', smartListAlertOverwrite:'同名のリスト「{name}」が存在します。上書きしますか？\n\n「OK」で上書き、「キャンセル」で中止', smartListToastSaved:'スマートリストとして保存しました', smartListToastUpdated:'スマートリストを更新しました', smartListPromptRename:'新しいリスト名：', smartListAlertRenameFail:'名前変更に失敗', smartListAlertSaveFail:'保存に失敗：', smartListAlertDeleteFail:'削除に失敗', smartListConfirmDelete:'スマートリスト「{name}」を削除しますか？',
     // 蒐集記錄三段
     colSegAll:'すべて', colSegCollected:'収集済み', colSegUncollected:'未収集',
     // 批次操作
@@ -1770,7 +1777,7 @@ const LANGS = {
     // 批次刪除 modal
     batchDelTitle:'🗑 Batch Delete Collection Records', batchDelWarning:'⚠️ This action cannot be undone', batchDelMain:'About to delete {n} collection records ({q} items total).', batchDelSkip:'(Another {n} selected badges have no records and will be skipped)', batchDelHint:'💡 Tip: After deletion, these badges will return to "Not Collected" status. Date, quantity, and notes will all be cleared.', batchDelEmpty:'⚠️ The {n} badges you selected have no collection records — nothing to delete.', batchDelCancel:'Cancel', batchDelConfirm:'Confirm Delete', batchDelNothingToast:'No records to delete', batchDelClose:'Close',
     // 智慧清單
-    smartListTitle:'🔍 Smart Lists', smartListEmpty:'No smart lists yet.', smartListEmptyHint:'Save one after applying filters.', smartListClear:'Unapply', smartListSaveBtn:'💾 Save as Smart List', smartListPromptName:'Smart list name (max 50 chars):', smartListAlertLogin:'Please login first', smartListAlertMax:'Maximum {n} smart lists. Please delete unused ones first', smartListAlertNoCondition:'Please select at least one filter condition', smartListAlertOverwrite:'A list named "{name}" already exists. Overwrite?\n\nClick OK to overwrite, Cancel to abort', smartListToastSaved:'Saved as smart list', smartListToastUpdated:'Smart list updated', smartListPromptRename:'New list name:', smartListAlertRenameFail:'Rename failed', smartListAlertSaveFail:'Save failed: ', smartListAlertDeleteFail:'Delete failed', smartListConfirmDelete:'Delete smart list "{name}"?',
+    smartListTitle:'🔍 Smart Lists', smartListEmpty:'No smart lists yet.', smartListEmptyHint:'Save one after applying filters.', smartListIntro:'Save your favorite filter combos and apply with one click next time!', smartListExample:'e.g. "My oshi + 56mm + Limited Edition"', smartListClear:'Unapply', smartListSaveBtn:'💾 Save as Smart List', smartListPromptName:'Smart list name (max 50 chars):', smartListAlertLogin:'Please login first', smartListAlertMax:'Maximum {n} smart lists. Please delete unused ones first', smartListAlertNoCondition:'Please select at least one filter condition', smartListAlertOverwrite:'A list named "{name}" already exists. Overwrite?\n\nClick OK to overwrite, Cancel to abort', smartListToastSaved:'Saved as smart list', smartListToastUpdated:'Smart list updated', smartListPromptRename:'New list name:', smartListAlertRenameFail:'Rename failed', smartListAlertSaveFail:'Save failed: ', smartListAlertDeleteFail:'Delete failed', smartListConfirmDelete:'Delete smart list "{name}"?',
     // 蒐集記錄三段
     colSegAll:'All', colSegCollected:'Collected', colSegUncollected:'Not Collected',
     // 批次操作
@@ -1812,7 +1819,7 @@ const LANGS = {
     // 批次刪除 modal
     batchDelTitle:'🗑 일괄 삭제', batchDelWarning:'⚠️ 이 작업은 되돌릴 수 없습니다', batchDelMain:'{n}건의 수집 기록(총 {q}개)을 삭제합니다.', batchDelSkip:'(선택한 {n}개 배지는 기록이 없어 자동으로 건너뜁니다)', batchDelHint:'💡 안내: 삭제 후 이 배지들은 「미수집」 상태로 돌아갑니다. 날짜, 수량, 메모는 모두 삭제됩니다.', batchDelEmpty:'⚠️ 선택한 {n}개 배지에는 기록이 없어 삭제할 내용이 없습니다.', batchDelCancel:'취소', batchDelConfirm:'삭제 확인', batchDelNothingToast:'삭제할 기록이 없습니다', batchDelClose:'닫기',
     // 智慧清單
-    smartListTitle:'🔍 스마트 리스트', smartListEmpty:'스마트 리스트가 없습니다.', smartListEmptyHint:'필터 선택 후 저장할 수 있습니다.', smartListClear:'적용 해제', smartListSaveBtn:'💾 스마트 리스트로 저장', smartListPromptName:'스마트 리스트 이름 (최대 50자):', smartListAlertLogin:'로그인이 필요합니다', smartListAlertMax:'스마트 리스트는 최대 {n}개입니다. 사용하지 않는 것을 먼저 삭제해주세요', smartListAlertNoCondition:'최소 하나의 필터 조건을 선택해주세요', smartListAlertOverwrite:'동일한 이름의 리스트 「{name}」이(가) 있습니다. 덮어쓰시겠습니까?\n\n「확인」으로 덮어쓰기, 「취소」로 중단', smartListToastSaved:'스마트 리스트로 저장됨', smartListToastUpdated:'스마트 리스트 업데이트됨', smartListPromptRename:'새 리스트 이름:', smartListAlertRenameFail:'이름 변경 실패', smartListAlertSaveFail:'저장 실패: ', smartListAlertDeleteFail:'삭제 실패', smartListConfirmDelete:'스마트 리스트 「{name}」을(를) 삭제하시겠습니까?',
+    smartListTitle:'🔍 스마트 리스트', smartListEmpty:'스마트 리스트가 없습니다.', smartListEmptyHint:'필터 선택 후 저장할 수 있습니다.', smartListIntro:'자주 쓰는 필터 조건을 저장하고, 다음에 원클릭으로 적용!', smartListExample:'예:「최애 캐릭터 + 56mm + 한정반」', smartListClear:'적용 해제', smartListSaveBtn:'💾 스마트 리스트로 저장', smartListPromptName:'스마트 리스트 이름 (최대 50자):', smartListAlertLogin:'로그인이 필요합니다', smartListAlertMax:'스마트 리스트는 최대 {n}개입니다. 사용하지 않는 것을 먼저 삭제해주세요', smartListAlertNoCondition:'최소 하나의 필터 조건을 선택해주세요', smartListAlertOverwrite:'동일한 이름의 리스트 「{name}」이(가) 있습니다. 덮어쓰시겠습니까?\n\n「확인」으로 덮어쓰기, 「취소」로 중단', smartListToastSaved:'스마트 리스트로 저장됨', smartListToastUpdated:'스마트 리스트 업데이트됨', smartListPromptRename:'새 리스트 이름:', smartListAlertRenameFail:'이름 변경 실패', smartListAlertSaveFail:'저장 실패: ', smartListAlertDeleteFail:'삭제 실패', smartListConfirmDelete:'스마트 리스트 「{name}」을(를) 삭제하시겠습니까?',
     // 蒐集記錄三段
     colSegAll:'전체', colSegCollected:'수집됨', colSegUncollected:'미수집',
     // 批次操作
@@ -3688,8 +3695,8 @@ function buildMyListsSidebar(){
     return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#5a4fcf22':'transparent'};border:1.5px solid ${isActive?'#5a4fcf':'transparent'};margin-bottom:0.25rem;" onclick="filterByList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedList}')this.style.background='transparent'">
       <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">⭐ ${l.name}</span>
       <span style="font-size:0.7rem;color:var(--muted);margin:0 0.4rem;">${count}</span>
-      <button onclick="event.stopPropagation();renameList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
-      <button onclick="event.stopPropagation();deleteList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
+      <button class="my-list-action-btn" onclick="event.stopPropagation();renameList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
+      <button class="my-list-action-btn" onclick="event.stopPropagation();deleteList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="刪除">🗑</button>
     </div>`;
   }).join('') + (selectedList ? `<button onclick="clearListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">取消篩選</button>` : '');
 }
@@ -3951,7 +3958,14 @@ function buildSmartListsSidebar(){
   if(titleEl) titleEl.textContent = L.smartListTitle;
   if(!mySmartLists.length){
     document.getElementById('smart-lists-content').innerHTML =
-      `<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;line-height:1.5;">${L.smartListEmpty}<br>${L.smartListEmptyHint}</div>`;
+      `<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;line-height:1.6;">
+        <div style="margin-bottom:0.4rem;">${L.smartListEmpty}</div>
+        <div style="background:#0ea5e911;border-left:3px solid #0ea5e9;padding:0.5rem 0.6rem;border-radius:4px;color:var(--text);">
+          <div style="font-weight:600;margin-bottom:0.2rem;">${L.smartListIntro}</div>
+          <div style="font-size:0.68rem;color:var(--muted);">${L.smartListExample}</div>
+        </div>
+        <div style="margin-top:0.4rem;font-size:0.68rem;">${L.smartListEmptyHint}</div>
+      </div>`;
     return;
   }
   // 計算每個智慧清單的「總數 / 已蒐集數」
@@ -3971,8 +3985,8 @@ function buildSmartListsSidebar(){
     return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#0ea5e922':'transparent'};border:1.5px solid ${isActive?'#0ea5e9':'transparent'};margin-bottom:0.25rem;" onclick="filterBySmartList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedSmartList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedSmartList}')this.style.background='transparent'">
       <span style="font-size:0.78rem;color:${isActive?'#0ea5e9':'var(--text)'};font-weight:${isActive?'600':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">🔍 ${safeName}</span>
       <span style="font-size:0.7rem;color:${isActive?'#0ea5e9':'var(--muted)'};font-weight:${isActive?'600':'400'};margin:0 0.4rem;white-space:nowrap;">${collected}/${total}</span>
-      <button onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="✏">✏</button>
-      <button onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="🗑">🗑</button>
+      <button class="my-list-action-btn" onclick="event.stopPropagation();renameSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="✏">✏</button>
+      <button class="my-list-action-btn" onclick="event.stopPropagation();deleteSmartList('${l.id}','${safeName}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="🗑">🗑</button>
     </div>`;
   }).join('') + (selectedSmartList ? `<button onclick="clearSmartListFilter()" style="font-family:inherit;width:100%;font-size:0.7rem;padding:0.3rem;border-radius:6px;background:transparent;border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-top:0.4rem;">${L.smartListClear}</button>` : '');
 }
