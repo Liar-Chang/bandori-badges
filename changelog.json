@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/5/8",
+    "content": {
+      "zh": "【新增/更新資料】\n・Morfonica 1st Single「Daylight -デイライト-」(新增 3 張)\n・Poppin'Party 2nd Album「Breakthrough!」(新增 10 張)\n・アニメ「BanG Dream! 2nd＆3rd Season」オリジナル・サウンドトラック(新增 3 張)\n・バンドリ!ガールズバンドパーティ! カバーコレクションVol.4(新增 6 張)\n【功能調整】\n(無)",
+      "ja": "【新規/更新データ】\n・Morfonica 1st Single「Daylight -デイライト-」(3枚追加)\n・Poppin'Party 2nd Album「Breakthrough!」(10枚追加)\n・アニメ「BanG Dream! 2nd＆3rd Season」オリジナル・サウンドトラック(3枚追加)\n・バンドリ!ガールズバンドパーティ! カバーコレクションVol.4(6枚追加)\n【機能調整】\n(なし)",
+      "en": "【New / Updated Data】\n・Morfonica 1st Single \"Daylight\" (3 added)\n・Poppin'Party 2nd Album \"Breakthrough!\" (10 added)\n・Anime \"BanG Dream! 2nd & 3rd Season\" Original Soundtrack (3 added)\n・BanG Dream! Girls Band Party! Cover Collection Vol.4 (6 added)\n【Feature Adjustments】\n(None)",
+      "ko": "【추가/업데이트 데이터】\n・Morfonica 1st 싱글「Daylight -デイライト-」(3장 추가)\n・Poppin'Party 2nd 앨범「Breakthrough!」(10장 추가)\n・애니메이션「BanG Dream! 2nd＆3rd Season」오리지널 사운드트랙(3장 추가)\n・BanG Dream! 걸즈 밴드 파티! 커버 컬렉션 Vol.4(6장 추가)\n【기능 조정】\n(없음)"
+    }
+  },
+  {
     "date": "2026/5/7",
     "content": {
       "zh": "【新增/更新資料】\n・Afterglow 1st Album「ONE OF US」(新增 6 張)\n・Afterglow 7th Single「Sasanqua」(新增 1 張)\n・Morfonica 2nd Single「ブルームブルーム」(新增 5 張)\n・Pastel＊Palettes 7th Single「ゆめゆめグラデーション」(新增 1 張)\n・Poppin'Party 16th Single「Photograph」(新增 5 張)\n・RAISE A SUILEN 1st Album「ERA」(新增 6 張)\n・RAISE A SUILEN 6th Single「mind of Prominence」(新增 5 張)\n・Roselia 11th Single「ZEAL of proud」(新增 5 張)\n・Roselia 2nd Album「Wahl」(新增 6 張)\n・ガルパ ボカロカバーコレクション(新增 6 張)\n・ハロー、ハッピーワールド! 7th Single「うぃーきゃん☆フレフレっ!」(新增 1 張)\n・バンドリ!ガールズバンドパーティ! カバーコレクションVol.5(新增 8 張)\n・香澄×蘭×彩×友希那×こころ「大盛り一丁!ガルパ☆ピコ」(新增 6 張)\n・夢限大みゅーたいぷ 2nd Single「Hi-Vision」(更新 1 張)\n【功能調整】\n・手機版體驗大幅優化(浮動播放器縮為小圓鈕、清單按鈕加大點擊區域)\n・新增 PWA 功能,可加到手機主畫面像 App 一樣使用\n・搜尋功能擴充,新增「活動簡稱」可搜尋\n・類型新增「其他」分類\n・智慧清單空狀態介紹升級,新使用者更易上手",
