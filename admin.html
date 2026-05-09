@@ -290,6 +290,7 @@ td.editable:hover .edit-hint{opacity:1;}
             <option>58mm圓形</option>
             <option>15.2cm圓形</option>
             <option>15cm圓形</option>
+            <option>100mm圓形</option>
             <option>76mm圓形</option>
             <option>75mm圓形</option>
             <option>65mm圓形</option>
@@ -389,7 +390,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <select id="t-size">
             <option value="">請選擇</option>
             <option>56mm圓形</option><option>57mm圓形</option><option>58mm圓形</option>
-            <option>15.2cm圓形</option><option>15cm圓形</option>
+            <option>15.2cm圓形</option><option>15cm圓形</option><option>100mm圓形</option>
             <option>76mm圓形</option><option>75mm圓形</option>
             <option>65mm圓形</option><option>60mm圓形</option><option>55mm圓形</option><option>54mm圓形</option><option>50mm圓形</option>
             <option>30mm圓形</option><option>25mm圓形</option>
@@ -620,6 +621,7 @@ td.editable:hover .edit-hint{opacity:1;}
           <option value="58mm圓形">58mm圓形</option>
           <option value="15.2cm圓形">15.2cm圓形</option>
           <option value="15cm圓形">15cm圓形</option>
+          <option value="100mm圓形">100mm圓形</option>
           <option value="76mm圓形">76mm圓形</option>
           <option value="75mm圓形">75mm圓形</option>
           <option value="65mm圓形">65mm圓形</option>
@@ -824,6 +826,7 @@ function renderBatchGrid(){
             <option${item.size==='58mm圓形'?' selected':''}>58mm圓形</option>
             <option${item.size==='15.2cm圓形'?' selected':''}>15.2cm圓形</option>
             <option${item.size==='15cm圓形'?' selected':''}>15cm圓形</option>
+            <option${item.size==='100mm圓形'?' selected':''}>100mm圓形</option>
             <option${item.size==='76mm圓形'?' selected':''}>76mm圓形</option>
             <option${item.size==='75mm圓形'?' selected':''}>75mm圓形</option>
             <option${item.size==='65mm圓形'?' selected':''}>65mm圓形</option>
@@ -1183,7 +1186,7 @@ function renderList(){
       <td onclick="event.stopPropagation()">
         <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
           onchange="commitSizeEdit(this,${ri})">
-          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
+          ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       ${editableCell('year',b.year)}
@@ -1362,7 +1365,7 @@ function bulkDelete(){
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影","其他"],
-  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","磁鐵","約80mm布偶胸章","未確定"],
+  size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","100mm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","磁鐵","約80mm布偶胸章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
 };
 
@@ -2590,7 +2593,7 @@ let expResultItems = [];
 const EXP_IMG_BASE = 'https://liar-chang.github.io/bandori-badges/images/';
 const EXP_BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","其他":"#888"};
 const EXP_CHAR_COLORS={"高松燈":"#77BBDD","千早愛音":"#FF8899","要樂奈":"#77DD77","長崎爽世":"#FFDD88","椎名立希":"#7777AA","三角初華":"#BB9955","若葉睦":"#779977","八幡海鈴":"#335566","祐天寺若麥":"#AA4477","豐川祥子":"#7799CC","仲町阿拉蕾":"#FFEE55","宮永野乃花":"#FFBBCC","峰月律":"#4477CC","藤都子":"#9977CC","千石由乃":"#EE5577","汐見螢":"#99FF99","伊澤棗":"#FF4444","琴平凪":"#5555FF","濱崎茉幌":"#77FFFF","和泉朋花":"#EE99EE","須賀蕾葉":"#FF7700","馬橋心玖":"#22CCFF","矢倉蓬咲":"#448888","梅里千櫻梨":"#FF55AA","四宮寧月":"#9999FF","default":"#c0bef0"};
-const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'撥片':{'en':'Guitar Pick'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
+const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'100mm圓形':{'en':'100mm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'撥片':{'en':'Guitar Pick'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
 function expBandColor(b){return EXP_BAND_COLORS[b]||'#888';}
 function expGetShortName(b){return b.short_event||(b.event&&b.event.length>10?b.event.slice(0,10)+'…':b.event)||'';}
 function expGetSizeName(size){return size;}
@@ -2616,7 +2619,7 @@ async function downloadExpGrid(){
   const ITEM_H=CELL+LABEL_H+GAP;
   const W=COLS*(CELL+GAP)+PAD*2;
   const TYPE_ORDER=['角色本身','角色相關','角色聲優',''];
-  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'];
+  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'];
   const SIZE_56_GROUP=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形']);
   function isRound(s){return ROUND_SIZES.has(s||'');}
