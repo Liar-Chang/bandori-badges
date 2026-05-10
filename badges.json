@@ -42706,5 +42706,41 @@
     "short_event": "13th Single「Jumpin'」",
     "created_at": "2026-05-10T10:46:07.432Z",
     "updated_at": "2026-05-10T10:46:07.432Z"
+  },
+  {
+    "id": "2750",
+    "ext": "png",
+    "band": "Afterglow",
+    "character": "美竹蘭",
+    "series": "限定盤",
+    "year": "2019年2月20日",
+    "event": "Afterglow 4th Single「Y.O.L.O！！！！！」",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/737/",
+    "note": "",
+    "admin_note": "",
+    "short_event": "4th Single「Y.O.L.O！！！！！」",
+    "created_at": "2026-05-10T10:54:40.395Z",
+    "updated_at": "2026-05-10T10:54:40.395Z"
+  },
+  {
+    "id": "2749",
+    "ext": "png",
+    "band": "Afterglow",
+    "character": "宇田川巴",
+    "series": "限定盤",
+    "year": "2019年2月20日",
+    "event": "Afterglow 4th Single「Y.O.L.O！！！！！」",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/737/",
+    "note": "",
+    "admin_note": "",
+    "short_event": "4th Single「Y.O.L.O！！！！！」",
+    "created_at": "2026-05-10T10:54:40.395Z",
+    "updated_at": "2026-05-10T10:54:40.395Z"
   }
 ]
