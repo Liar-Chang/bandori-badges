@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>公告產生器 — BanG Dream! 徽章圖鑑</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0f0f13;--surface:#1a1a22;--surface2:#22222e;--border:#2e2e3e;
+  --accent:#ff6eb4;--accent2:#c084fc;--text:#f0f0f0;--muted:#888;
+  --green:#22c55e;--yellow:#f5c800;
+}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem;}
+h1{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-family:'Space Mono',monospace;margin-bottom:0.25rem;}
+.subtitle{font-size:0.72rem;color:var(--muted);margin-bottom:1.75rem;}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:1100px;margin:0 auto;}
+@media(max-width:768px){.layout{grid-template-columns:1fr;}}
+.panel{background:var(--surface);border-radius:12px;padding:1.25rem;border:1px solid var(--border);}
+.panel h2{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;}
+.field{margin-bottom:0.85rem;}
+.field label{font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;}
+.field input,.field textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:0.83rem;padding:0.5rem 0.7rem;outline:none;transition:border 0.15s;resize:vertical;}
+.field input:focus,.field textarea:focus{border-color:var(--accent2);}
+.field textarea{min-height:90px;line-height:1.6;}
+.btn{font-family:'Noto Sans TC',sans-serif;font-size:0.78rem;font-weight:700;padding:0.55rem 1.1rem;border-radius:8px;border:none;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:0.35rem;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.btn-primary:hover{opacity:0.85;}
+.btn-copy{background:var(--surface2);color:var(--muted);border:1.5px solid var(--border);font-size:0.72rem;padding:0.35rem 0.8rem;}
+.btn-copy:hover{border-color:var(--accent2);color:var(--accent2);}
+.btn-copy.copied{border-color:var(--green);color:var(--green);}
+.output-block{margin-bottom:1rem;}
+.output-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;}
+.output-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.char-count{font-size:0.65rem;color:var(--muted);font-family:'Space Mono',monospace;}
+.char-count.warn{color:var(--yellow);}
+.char-count.over{color:#e05c5c;}
+.output-text{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.7rem 0.85rem;font-size:0.8rem;line-height:1.8;white-space:pre-wrap;word-break:break-all;min-height:80px;color:var(--text);}
+textarea.output-text{font-family:'Noto Sans TC',sans-serif;width:100%;resize:vertical;outline:none;display:block;}
+textarea.output-text:focus{border-color:var(--accent2);}
+textarea.output-text:read-only{cursor:text;}
+.generate-row{display:flex;gap:0.5rem;margin-bottom:1.25rem;flex-wrap:wrap;}
+.divider{height:1px;background:var(--border);margin:1rem 0;}
+.hashtag-hint{font-size:0.67rem;color:var(--muted);margin-top:0.25rem;line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div style="max-width:1100px;margin:0 auto;">
+  <h1>📢 ANNOUNCEMENT GENERATOR</h1>
+  <div class="subtitle">BanG Dream! 徽章圖鑑 — 公告產生器</div>
+
+  <div class="layout">
+
+    <!-- 左側：輸入 -->
+    <div class="panel">
+      <h2>輸入內容</h2>
+
+      <div class="field">
+        <label>日期</label>
+        <input type="text" id="in-date" placeholder="如 2026/4/16"/>
+      </div>
+
+      <div class="field">
+        <label>【新增/更新資料】（繁中，空白則顯示「（無）」）</label>
+        <textarea id="in-new" placeholder="如：&#10;・新增 XXX 徽章&#10;・今日無新增徽章，圖文不符放上 XXX 照片"></textarea>
+      </div>
+
+      <div class="field">
+        <label>【功能調整】（繁中，空白則顯示「（無）」）</label>
+        <textarea id="in-func" placeholder="如：&#10;・篩選樂團時角色清單不再顯示其他團的單人成員"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>X 第一則日文內容（新增資料，貼上我幫你翻的）</label>
+        <textarea id="in-x1-ja" placeholder="如：&#10;新規缶バッジ追加！&#10;・BanG Dream! 缶バッジセット..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>X 第二則日文內容（功能調整，貼上我幫你翻的）</label>
+        <textarea id="in-x2-ja" placeholder="如：&#10;・バンド絞り込み時、他バンドの単体メンバーが..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>X 額外 Hashtag（對應樂團/角色）</label>
+        <input type="text" id="in-hashtag" placeholder="如 #MyGO #千早愛音"/>
+        <div class="hashtag-hint">固定已包含：#バンドリ #缶バッジ図鑑</div>
+      </div>
+
+      <div class="generate-row">
+        <button class="btn btn-primary" onclick="generate()">✨ 產生公告</button>
+      </div>
+    </div>
+
+    <!-- 右側：輸出 -->
+    <div class="panel">
+      <h2>輸出結果</h2>
+
+      <div class="output-block">
+        <div class="output-block-header">
+          <span class="output-label">🧵 Threads 版</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="char-count" id="threads-count">—</span>
+            <button class="btn btn-copy" onclick="copyText('threads-out', this)">複製</button>
+          </div>
+        </div>
+        <textarea class="output-text" id="threads-out" readonly rows="6">產生後顯示於此</textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="output-block">
+        <div class="output-block-header">
+          <span class="output-label">𝕏 X 第一則（新增資料）</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="char-count" id="x1-count">—</span>
+            <button class="btn btn-copy" onclick="copyText('x1-out', this)">複製</button>
+          </div>
+        </div>
+        <textarea class="output-text" id="x1-out" readonly rows="6">產生後顯示於此</textarea>
+      </div>
+
+      <div class="output-block" style="margin-top:0.85rem;">
+        <div class="output-block-header">
+          <span class="output-label">𝕏 X 第二則（功能調整）</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="char-count" id="x2-count">—</span>
+            <button class="btn btn-copy" onclick="copyText('x2-out', this)">複製</button>
+          </div>
+        </div>
+        <textarea class="output-text" id="x2-out" readonly rows="4">產生後顯示於此</textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SITE_URL = 'https://liar-chang.github.io/bandori-badges/';
+const FIXED_HASHTAGS = '#バンドリ #缶バッジ図鑑';
+
+function generate(){
+  const date = document.getElementById('in-date').value.trim();
+  const newData = document.getElementById('in-new').value.trim();
+  const funcData = document.getElementById('in-func').value.trim();
+  const x1ja = document.getElementById('in-x1-ja').value.trim();
+  const x2ja = document.getElementById('in-x2-ja').value.trim();
+  const extraHashtag = document.getElementById('in-hashtag').value.trim();
+
+  // ── Threads 版(繁中)──
+  const newSection = newData || '(無)';
+  const funcSection = funcData || '(無)';
+  const threads = `${date}網頁更新\n\n${SITE_URL}\n\n【新增/更新資料】\n${newSection}\n\n【功能調整】\n${funcSection}`;
+  document.getElementById('threads-out').value = threads;
+  updateCount('threads-count', threads, 500, false);
+
+  // ── X 第一則(日文)──
+  const hashtags = [FIXED_HASHTAGS, extraHashtag].filter(Boolean).join(' ');
+  const x1newSection = x1ja || '(なし)';
+  const x1 = `${SITE_URL}\n【図鑑更新✨】\n${x1newSection}\n\n${hashtags}`;
+  document.getElementById('x1-out').value = x1;
+  updateCount('x1-count', x1, 280, true);
+
+  // ── X 第二則(日文)──
+  const x2funcSection = x2ja ? `【機能調整】\n${x2ja}` : '【機能調整】\n(なし)';
+  document.getElementById('x2-out').value = x2funcSection;
+  updateCount('x2-count', x2funcSection, 280, true);
+}
+
+// X(Twitter)字數計算
+// - 半形字元 = 1
+// - 全形字元(CJK) = 2
+// - URL 固定 23 字(X 會自動短縮)
+function countX(text){
+  // 先把 URL 替換成佔位符,計為 23
+  const urlRegex = /https?:\/\/[^\s]+/g;
+  const urls = text.match(urlRegex) || [];
+  let stripped = text.replace(urlRegex, '');
+  let count = urls.length * 23;
+
+  // 計算剩餘文字
+  for(const ch of stripped){
+    const code = ch.codePointAt(0);
+    // 半形 ASCII (0x00-0x7F) 算 1
+    // 半形片假名 (0xFF61-0xFF9F) 算 1
+    if(code <= 0x7F || (code >= 0xFF61 && code <= 0xFF9F)){
+      count += 1;
+    } else {
+      count += 2;
+    }
+  }
+  return count;
+}
+
+function updateCount(elId, text, limit, isX){
+  const el = document.getElementById(elId);
+  const len = isX ? countX(text) : [...text].length;
+  el.textContent = `${len} / ${limit}`;
+  el.className = 'char-count' + (len > limit ? ' over' : len > limit * 0.85 ? ' warn' : '');
+}
+
+function copyText(elId, btn){
+  const text = document.getElementById(elId).value;
+  if(text === '產生後顯示於此' || !text) return;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ 已複製';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent=orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
