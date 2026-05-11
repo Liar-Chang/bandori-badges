@@ -4776,6 +4776,10 @@ function enterBatchMode(){
   _batchSelected.clear();
   document.body.classList.add('batch-mode');
   updateBatchBar();
+  // 表格視圖的 batch checkbox 是條件式渲染的 HTML,要手動 re-render 才會出現
+  if(currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+    renderTable(currentFiltered);
+  }
   showToast('已進入批次選取模式');
 }
 
@@ -4787,6 +4791,10 @@ function exitBatchMode(){
   document.querySelectorAll('.badge-card.batch-selected').forEach(c=>c.classList.remove('batch-selected'));
   document.querySelectorAll('.badge-batch-cb').forEach(cb=>cb.textContent='');
   updateBatchBar();
+  // 表格視圖需 re-render 來移除 checkbox
+  if(currentView === 'table' && typeof renderTable === 'function' && typeof currentFiltered !== 'undefined'){
+    renderTable(currentFiltered);
+  }
 }
 
 function toggleBatchMode(){
