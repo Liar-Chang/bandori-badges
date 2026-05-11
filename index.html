@@ -650,7 +650,7 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
 
     <div class="sidebar-section" id="search-section">
       <h3>搜尋</h3>
-      <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." oninput="applyFilters()"/>
+      <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
       <button class="btn-reset" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
       <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
         <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:#5a4fcf;cursor:pointer;"/>
@@ -1669,7 +1669,7 @@ function getCharName(charTW, lang) {
 const LANGS = {
   'zh-TW': {
     title:'BanG Dream! 徽章圖鑑', subtitle:' 徽章圖鑑',
-    search:'搜尋', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
+    search:'搜尋', searchPlaceholder:'角色、版本、活動...', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
     event:'活動', type:'類型', size:'尺寸', country:'販售/活動地', note:'備註',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
@@ -1711,7 +1711,7 @@ const LANGS = {
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
-    search:'検索', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
+    search:'検索', searchPlaceholder:'キャラ、バージョン、イベント...', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
     event:'イベント', type:'タイプ', size:'サイズ', country:'販売/イベント地', note:'備考',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
@@ -1753,7 +1753,7 @@ const LANGS = {
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
-    search:'Search', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
+    search:'Search', searchPlaceholder:'Character, version, event...', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
     event:'Event', type:'Type', size:'Size', country:'Sales / Event Region', note:'Note',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
@@ -1795,7 +1795,7 @@ const LANGS = {
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
-    search:'검색', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
+    search:'검색', searchPlaceholder:'캐릭터, 버전, 이벤트...', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
     event:'이벤트', type:'유형', size:'크기', country:'판매/이벤트 지역', note:'비고',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
@@ -1881,6 +1881,11 @@ function applyLang(){
   document.querySelectorAll('[data-l-key]').forEach(el => {
     const key = el.getAttribute('data-l-key');
     if(L[key]) el.textContent = L[key];
+  });
+  // [data-l-placeholder] 機制:input/textarea 標 data-l-placeholder="xxx" 就會自動換 placeholder
+  document.querySelectorAll('[data-l-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-l-placeholder');
+    if(L[key]) el.setAttribute('placeholder', L[key]);
   });
   // 重置按鈕（兩個）
   document.querySelectorAll('[onclick="resetFilters()"]').forEach(btn=>{ if(L.reset) btn.textContent = L.reset; });
