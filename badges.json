@@ -43108,7 +43108,7 @@
     "ext": "png",
     "band": "Poppin'Party",
     "character": "Poppin'Party全團",
-    "series": "限定版",
+    "series": "限定版－赤い熊さん",
     "year": "2025年12月24日",
     "event": "Poppin'Party 10th Anniversary LIVE「ホシノコドウ」Blu-ray",
     "short_event": "10th Anniversary LIVE「ホシノコドウ」Blu-ray",
@@ -43119,6 +43119,24 @@
     "note": "",
     "admin_note": "",
     "created_at": "2026-05-11T04:39:47.277Z",
-    "updated_at": "2026-05-11T04:39:47.277Z"
+    "updated_at": "2026-05-11T04:45:58.049Z"
+  },
+  {
+    "id": "2772",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "夢限大MewType全團",
+    "series": "特典－ゲーマーズ",
+    "year": "2025年11月19日",
+    "event": "夢限大みゅーたいぷ「ゆめみたのあゆみ」Blu-ray",
+    "short_event": "「ゆめみたのあゆみ」Blu-ray",
+    "type": "角色合影",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/4130/",
+    "note": "",
+    "admin_note": "",
+    "created_at": "2026-05-11T04:45:22.517Z",
+    "updated_at": "2026-05-11T04:45:22.517Z"
   }
 ]
