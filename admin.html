@@ -152,7 +152,9 @@ input[type=checkbox]{width:15px;height:15px;accent-color:#5a4fcf;cursor:pointer;
 tr.selected td{background:#f0effd !important;}
 
 /* 欄位排序 + 篩選 (admin 列表) */
-.th-sortable{cursor:pointer;user-select:none;position:relative;}
+/* 注意:不要在 .th-sortable 加 position:relative,會覆蓋 thead th 的 position:sticky
+   sticky 本身就是 positioned ancestor,popup 的 absolute 會以 th 為基準 */
+.th-sortable{cursor:pointer;user-select:none;}
 .th-sortable:hover{background:#e8e7f2;}
 .th-sort-arrow{font-size:0.85em;opacity:0.4;margin-left:2px;vertical-align:middle;}
 .th-sort-arrow.active{opacity:1;color:#5a4fcf;font-weight:700;}
