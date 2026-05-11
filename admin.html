@@ -215,7 +215,7 @@ tr.selected td{background:#f0effd !important;}
             <option>RAISE A SUILEN</option><option>Morfonica</option>
             <option>MyGO!!!!!</option><option>Ave Mujica</option>
             <option>夢限大MewType</option><option>millsage</option>
-            <option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>其他</option>
+            <option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>Glitter*Green</option><option>CRYCHIC</option><option>Sumimi</option><option>跨團合照</option><option>其他</option>
           </select>
         </div>
         <div class="field">
@@ -360,7 +360,7 @@ tr.selected td{background:#f0effd !important;}
             <option>Poppin'Party</option><option>Afterglow</option><option>Pastel*Palettes</option><option>Roselia</option><option>Hello, Happy World!</option><option>Morfonica</option><option>RAISE A SUILEN</option><option>MyGO!!!!!</option><option>Ave Mujica</option><option>夢限大MewType</option><option>millsage</option><option>一家Dumb Rock!</option>
             <option>Pastel*Palettes</option><option>Hello, Happy World!</option>
             <option>RAISE A SUILEN</option><option>Morfonica</option>
-            <option>millsage</option><option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>其他</option>
+            <option>millsage</option><option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>Glitter*Green</option><option>CRYCHIC</option><option>Sumimi</option><option>跨團合照</option><option>其他</option>
           </select>
         </div>
         <div class="field">
@@ -572,7 +572,7 @@ tr.selected td{background:#f0effd !important;}
           <option>RAISE A SUILEN</option><option>Morfonica</option>
           <option>MyGO!!!!!</option><option>Ave Mujica</option>
           <option>夢限大MewType</option><option>millsage</option>
-          <option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>其他</option>
+          <option>一家Dumb Rock!</option><option>夢ノ結唱</option><option>Glitter*Green</option><option>CRYCHIC</option><option>Sumimi</option><option>跨團合照</option><option>其他</option>
         </select>
       </div>
       <div class="field"><label>角色名稱</label>
@@ -702,10 +702,13 @@ const BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc
   "Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020",
   "Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111",
   "夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030",
-  "夢ノ結唱":"#a0c8bc","其他":"#aaa"};
+  "夢ノ結唱":"#a0c8bc",
+  "Glitter*Green":"#C4EADF","CRYCHIC":"#8cb3d4","Sumimi":"#26ca9b","跨團合照":"#9e9e9e",
+  "其他":"#aaa"};
 const BAND_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
   "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
-  "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","其他"];
+  "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱",
+  "Glitter*Green","CRYCHIC","Sumimi","跨團合照","其他"];
 
 let badges=JSON.parse(localStorage.getItem('bandori_badges')||'[]');
 let editingIdx=-1;
@@ -899,6 +902,10 @@ const CHAR_MAP = {
   "millsage": ["millsage全團", "汐見螢", "琴平凪", "濱崎茉幌", "伊澤棗", "和泉朋花"],
   "一家Dumb Rock!": ["一家Dumb Rock!全團", "須賀蕾葉", "馬橋心玖", "矢倉蓬咲", "梅里千櫻梨", "四宮寧月"],
   "夢ノ結唱": ["POPY", "ROSE", "Pastel", "Halo", "Aver"],
+  "Glitter*Green": ["Glitter*Green全團", "牛込百合", "鵜澤莉依", "二十騎雛子", "鰕部七菜"],
+  "CRYCHIC": ["CRYCHIC全團", "豐川祥子", "高松燈", "椎名立希", "若葉睦", "長崎爽世"],
+  "Sumimi": ["Sumimi全團", "三角初華", "純田真奈"],
+  "跨團合照": [],
   "其他": []
 }
 
@@ -989,7 +996,7 @@ function buildMultiCharList(filter){
   // 按樂團分組顯示
   const byBand={};
   filtered.forEach(m=>{ if(!byBand[m.band]) byBand[m.band]=[]; byBand[m.band].push(m.name); });
-  const BAND_ORDER_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱"];
+  const BAND_ORDER_LIST=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","Glitter*Green","CRYCHIC","Sumimi","跨團合照"];
   const orderedBands=[...BAND_ORDER_LIST.filter(b=>byBand[b]),...Object.keys(byBand).filter(b=>!BAND_ORDER_LIST.includes(b))];
   multiWrap.innerHTML=`
     <input type="text" placeholder="搜尋角色或樂團…" oninput="buildMultiCharList(this.value)"
@@ -1426,7 +1433,7 @@ function bulkDelete(){
 }
 // 各欄位的選項設定
 const BULK_SELECT_OPTIONS = {
-  band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","其他"],
+  band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","Glitter*Green","CRYCHIC","Sumimi","跨團合照","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影","其他"],
   size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","100mm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","磁鐵","約80mm布偶胸章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
@@ -1989,7 +1996,7 @@ function buildTextCharList(filter){
   const container = document.getElementById('t-char-list');
   if(!container) return;
   const allMembers = [];
-  const BAND_ORDER_LIST = ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱"];
+  const BAND_ORDER_LIST = ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","Glitter*Green","CRYCHIC","Sumimi","跨團合照"];
   BAND_ORDER_LIST.forEach(band=>{
     (CHAR_MAP[band]||[]).forEach(name=>{ allMembers.push({band,name}); });
   });
@@ -2693,7 +2700,7 @@ let expResultItems = [];
 
 // ── 網格圖所需常數 ──
 const EXP_IMG_BASE = 'https://liar-chang.github.io/bandori-badges/images/';
-const EXP_BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","夢ノ結唱":"#a0c8bc","其他":"#888"};
+const EXP_BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","夢ノ結唱":"#a0c8bc","Glitter*Green":"#C4EADF","CRYCHIC":"#8cb3d4","Sumimi":"#26ca9b","跨團合照":"#9e9e9e","其他":"#888"};
 const EXP_CHAR_COLORS={"高松燈":"#77BBDD","千早愛音":"#FF8899","要樂奈":"#77DD77","長崎爽世":"#FFDD88","椎名立希":"#7777AA","三角初華":"#BB9955","若葉睦":"#779977","八幡海鈴":"#335566","祐天寺若麥":"#AA4477","豐川祥子":"#7799CC","仲町阿拉蕾":"#FFEE55","宮永野乃花":"#FFBBCC","峰月律":"#4477CC","藤都子":"#9977CC","千石由乃":"#EE5577","汐見螢":"#99FF99","伊澤棗":"#FF4444","琴平凪":"#5555FF","濱崎茉幌":"#77FFFF","和泉朋花":"#EE99EE","須賀蕾葉":"#FF7700","馬橋心玖":"#22CCFF","矢倉蓬咲":"#448888","梅里千櫻梨":"#FF55AA","四宮寧月":"#9999FF","default":"#c0bef0"};
 const EXP_SIZE_TRANS={'56-58mm圓形':{'en':'56-58mm Circle'},'15.2cm圓形':{'en':'15.2cm Circle'},'15cm圓形':{'en':'15cm Circle'},'100mm圓形':{'en':'100mm Circle'},'76mm圓形':{'en':'76mm Circle'},'75mm圓形':{'en':'75mm Circle'},'65mm圓形':{'en':'65mm Circle'},'60mm圓形':{'en':'60mm Circle'},'55mm圓形':{'en':'55mm Circle'},'54mm圓形':{'en':'54mm Circle'},'50mm圓形':{'en':'50mm Circle'},'30mm圓形':{'en':'30mm Circle'},'25mm圓形':{'en':'25mm Circle'},'橢圓形':{'en':'Oval'},'方形':{'en':'Rectangle'},'心形':{'en':'Heart'},'撥片':{'en':'Guitar Pick'},'名牌':{'en':'Name Plate'},'磁鐵':{'en':'Magnet'},'約80mm布偶胸章':{'en':'~80mm Plush Badge'},'未確定':{'en':'Unknown'}};
 function expBandColor(b){return EXP_BAND_COLORS[b]||'#888';}
