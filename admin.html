@@ -1672,6 +1672,10 @@ function updateBulkValueInput(){
 function toggleBulkEdit(){
   const bar=document.getElementById('bulk-edit-bar');
   bar.classList.toggle('show');
+  // 開啟時同步當前 field 的輸入元件(下拉 vs 文字),否則 band 等預設選項會看不到下拉
+  if(bar.classList.contains('show')){
+    updateBulkValueInput();
+  }
 }
 function applyBulkEdit(){
   if(!selectedIds.size){showToast('請先勾選要修改的資料');return;}
