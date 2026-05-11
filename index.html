@@ -507,6 +507,7 @@ body{
 body.batch-mode .badge-batch-cb{display:flex;}
 body.batch-mode .fav-btn,
 body.batch-mode .col-btn{pointer-events:none;opacity:0.4;}
+body.batch-mode .detail-btn{display:none;} /* 批次模式時讓位給右上的批次 checkbox */
 .badge-card.batch-selected{outline:3px solid #5a4fcf;outline-offset:-3px;}
 .badge-card.batch-selected .badge-batch-cb{background:#5a4fcf;border-color:#5a4fcf;}
 body.batch-mode .badge-card{cursor:pointer;}
@@ -1333,6 +1334,7 @@ function renderGrid(list){
       <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
+      <button class="detail-btn" onclick="event.stopPropagation();openDetail(${idx})" style="position:absolute;top:5px;right:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:#fff;font-size:0.85rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="查看詳細資訊">🔍</button>
       <div class="badge-img-wrap">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
