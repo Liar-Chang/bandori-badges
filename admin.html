@@ -151,6 +151,27 @@ tr:hover td{background:#fafafa;}
 input[type=checkbox]{width:15px;height:15px;accent-color:#5a4fcf;cursor:pointer;}
 tr.selected td{background:#f0effd !important;}
 
+/* 欄位排序 + 篩選 (admin 列表) */
+.th-sortable{cursor:pointer;user-select:none;position:relative;}
+.th-sortable:hover{background:#e8e7f2;}
+.th-sort-arrow{font-size:0.85em;opacity:0.4;margin-left:2px;vertical-align:middle;}
+.th-sort-arrow.active{opacity:1;color:#5a4fcf;font-weight:700;}
+.th-filter-icon{display:inline-block;margin-left:4px;font-size:0.7em;cursor:pointer;opacity:0.3;padding:2px 4px;border-radius:3px;vertical-align:middle;transition:opacity 0.15s;}
+.th-filter-icon:hover{opacity:1;background:#d9d8e8;}
+.th-filter-icon.active{opacity:1;color:#5a4fcf;background:#d9d8e8;}
+.col-filter-popup{position:absolute;top:100%;left:0;z-index:50;background:#fff;border:1.5px solid #c0bef0;border-radius:8px;padding:8px;min-width:220px;max-height:380px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 4px 16px rgba(0,0,0,0.15);text-align:left;font-weight:normal;color:#333;text-transform:none;letter-spacing:0;}
+.col-filter-popup.open{display:flex;}
+.col-filter-search{width:100%;padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:0.82rem;margin-bottom:6px;font-family:inherit;outline:none;box-sizing:border-box;}
+.col-filter-search:focus{border-color:#5a4fcf;}
+.col-filter-options{flex:1;max-height:240px;overflow-y:auto;margin-bottom:6px;}
+.col-filter-options label{display:flex;align-items:center;gap:6px;padding:3px 4px;cursor:pointer;font-size:0.82rem;font-weight:normal;color:#333;text-transform:none;letter-spacing:0;}
+.col-filter-options label:hover{background:#f5f4f0;}
+.col-filter-options .count{margin-left:auto;color:#aaa;font-size:0.75em;}
+.col-filter-actions{display:flex;justify-content:space-between;gap:4px;border-top:1px solid #eee;padding-top:6px;}
+.col-filter-actions button{flex:1;padding:4px 8px;font-size:0.8rem;border:1px solid #ddd;border-radius:4px;cursor:pointer;font-family:inherit;background:#fff;color:#333;}
+.col-filter-actions .apply-btn{background:#5a4fcf;color:#fff;border-color:#5a4fcf;}
+.col-filter-actions .apply-btn:hover{background:#4d40c3;}
+
 </style>
 </head>
 <body>
@@ -476,7 +497,6 @@ tr.selected td{background:#f0effd !important;}
 
     <div class="filter-bar">
       <input type="text" id="search" placeholder="搜尋編號、角色、系列..." oninput="renderList()"/>
-      <select id="filter-band" onchange="renderList()"><option value="">所有樂團</option></select>
       <select id="filter-missing" onchange="renderList()" style="font-family:inherit;font-size:0.82rem;padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;">
         <option value="">全部顯示</option>
         <option value="no_url">缺少相關連結（且無備註）</option>
@@ -524,8 +544,13 @@ tr.selected td{background:#f0effd !important;}
         <thead><tr>
           <th class="cb-col"></th>
           <th style="width:28px;"></th>
-          <th>圖片</th><th id="th-sort-id" onclick="toggleIdSort()" style="cursor:pointer;user-select:none;" title="點擊排序">編號 <span id="th-sort-arrow">↕</span></th><th>樂團</th><th>角色</th>
-          <th>尺寸</th><th>發售日期</th><th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
+          <th>圖片</th>
+          <th data-col="id" class="th-sortable" onclick="toggleColSort('id')" title="點擊排序">編號 <span class="th-sort-arrow">↕</span></th>
+          <th data-col="band" class="th-sortable" onclick="toggleColSort('band',event)" title="點擊排序,點漏斗篩選">樂團 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('band')">🔽</span><div class="col-filter-popup"></div></th>
+          <th data-col="char" class="th-sortable" onclick="toggleColSort('char',event)" title="點擊排序,點漏斗篩選">角色 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('char')">🔽</span><div class="col-filter-popup"></div></th>
+          <th data-col="size" class="th-sortable" onclick="toggleColSort('size',event)" title="點擊排序,點漏斗篩選">尺寸 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('size')">🔽</span><div class="col-filter-popup"></div></th>
+          <th data-col="year" class="th-sortable" onclick="toggleColSort('year',event)" title="點擊排序,點漏斗篩選">發售日期 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('year')">🔽</span><div class="col-filter-popup"></div></th>
+          <th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -726,7 +751,6 @@ function imgUrl(b){
 function persist(){
   localStorage.setItem('bandori_badges',JSON.stringify(badges));
   document.getElementById('total-count').textContent=badges.length;
-  updateBandFilter();
 }
 
 function switchTab(t){
@@ -1143,51 +1167,225 @@ async function saveBatch(){
 }
 
 /* ── List ── */
-function updateBandFilter(){
-  const sel=document.getElementById('filter-band');
-  const cur=sel.value;
-  const BAND_ORDER=["Poppin'Party","Afterglow","Pastel*Palettes","Roselia",
-    "Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!",
-    "Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","其他"];
-  const existing=new Set(badges.map(b=>b.band).filter(Boolean));
-  const bands=[...BAND_ORDER.filter(b=>existing.has(b)),...[...existing].filter(b=>!BAND_ORDER.includes(b)).sort()];
-  sel.innerHTML='<option value="">所有樂團</option>'+bands.map(b=>`<option${b===cur?' selected':''}>${b}</option>`).join('');
-}
-
 let selectedIds = new Set();
 let lastClickedId = null;
 let filteredCache = []; // 快取目前 filtered 清單供 Shift 選取用
 
-let listSortField = null; // 'id-asc' | 'id-desc' | null
-function toggleIdSort(){
-  if(listSortField === 'id-asc') listSortField = 'id-desc';
-  else listSortField = 'id-asc';
-  const arrow = document.getElementById('th-sort-arrow');
-  if(arrow) arrow.textContent = listSortField === 'id-asc' ? '↑' : '↓';
+/* ── 欄位排序 + 篩選 (admin 列表) ── */
+let listSortCol = null;     // 'id' | 'band' | 'char' | 'size' | 'year' | null
+let listSortDir = 'asc';    // 'asc' | 'desc'
+let listColFilters = {      // 每欄已套用的篩選值
+  band: new Set(),
+  char: new Set(),
+  size: new Set(),
+  year: new Set(),
+};
+const ADMIN_SIZE_ORDER = ['15.2cm圓形','15cm圓形','100mm圓形','約80mm布偶胸章','76mm圓形','75mm圓形','65mm圓形','60mm圓形','58mm圓形','57mm圓形','56mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','未確定'];
+
+function toggleColSort(col, ev){
+  // 點到 filter icon 或 popup 內部不觸發排序(由 stopPropagation 保護,這裡多一層保險)
+  if(ev && (ev.target.closest('.th-filter-icon') || ev.target.closest('.col-filter-popup'))) return;
+  if(listSortCol === col){
+    if(listSortDir === 'asc') listSortDir = 'desc';
+    else { listSortCol = null; listSortDir = 'asc'; } // cycle: asc→desc→無
+  } else {
+    listSortCol = col;
+    listSortDir = 'asc';
+  }
+  updateColSortArrows();
   renderList();
 }
+function updateColSortArrows(){
+  document.querySelectorAll('th[data-col]').forEach(th=>{
+    const arrow = th.querySelector('.th-sort-arrow');
+    if(!arrow) return;
+    if(th.dataset.col === listSortCol){
+      arrow.textContent = listSortDir === 'asc' ? '↑' : '↓';
+      arrow.classList.add('active');
+    } else {
+      arrow.textContent = '↕';
+      arrow.classList.remove('active');
+    }
+  });
+}
+
+function _yearToISO(s){
+  if(!s) return '';
+  const m = (s+'').match(/(\d{4})年(?:(\d{1,2})月)?(?:(\d{1,2})日)?/);
+  if(!m) return '';
+  return m[1].padStart(4,'0') + '-' + (m[2]||'00').padStart(2,'0') + '-' + (m[3]||'00').padStart(2,'0');
+}
+function _compareBy(col, a, b){
+  if(col === 'id') return (a.id||'').localeCompare(b.id||'', undefined, {numeric:true});
+  if(col === 'band'){
+    const ai = BAND_LIST.indexOf(a.band); const bi = BAND_LIST.indexOf(b.band);
+    return (ai === -1 ? 9999 : ai) - (bi === -1 ? 9999 : bi);
+  }
+  if(col === 'char') return (a.character||'').localeCompare(b.character||'','zh');
+  if(col === 'size'){
+    const ai = ADMIN_SIZE_ORDER.indexOf(a.size); const bi = ADMIN_SIZE_ORDER.indexOf(b.size);
+    return (ai === -1 ? 9999 : ai) - (bi === -1 ? 9999 : bi);
+  }
+  if(col === 'year') return _yearToISO(a.year).localeCompare(_yearToISO(b.year));
+  return 0;
+}
+
+function toggleColFilter(col){
+  const th = document.querySelector(`th[data-col="${col}"]`);
+  const popup = th && th.querySelector('.col-filter-popup');
+  if(!popup) return;
+  // 先關掉其他 popup
+  document.querySelectorAll('.col-filter-popup.open').forEach(p=>{ if(p!==popup) p.classList.remove('open'); });
+  if(popup.classList.contains('open')){ popup.classList.remove('open'); return; }
+  _buildColFilterPopup(col, popup);
+  popup.classList.add('open');
+}
+function _buildColFilterPopup(col, popup){
+  const values = _getUniqueColValues(col);
+  const current = listColFilters[col] || new Set();
+  const showSearch = col === 'char' || values.length > 12;
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  popup.innerHTML = `
+    ${showSearch ? `<input class="col-filter-search" placeholder="搜尋..." oninput="_filterColPopupOptions('${col}',this.value)"/>` : ''}
+    <div class="col-filter-options">
+      ${values.map(v => `
+        <label>
+          <input type="checkbox" value="${esc(v.value)}" ${current.has(v.value)?'checked':''}/>
+          <span>${esc(v.label)}</span>
+          <span class="count">${v.count}</span>
+        </label>
+      `).join('')}
+    </div>
+    <div class="col-filter-actions">
+      <button onclick="clearColFilter('${col}')">清除</button>
+      <button class="apply-btn" onclick="applyColFilter('${col}')">套用</button>
+    </div>
+  `;
+}
+function _filterColPopupOptions(col, query){
+  const th = document.querySelector(`th[data-col="${col}"]`);
+  const popup = th && th.querySelector('.col-filter-popup');
+  if(!popup) return;
+  const q = (query||'').toLowerCase();
+  popup.querySelectorAll('.col-filter-options label').forEach(label=>{
+    const text = label.textContent.toLowerCase();
+    label.style.display = !q || text.includes(q) ? 'flex' : 'none';
+  });
+}
+function _getUniqueColValues(col){
+  const counts = {};
+  badges.forEach(b=>{
+    if(col === 'char'){
+      const s = (b.character||'').trim();
+      if(!s){ counts['(無)'] = (counts['(無)']||0)+1; return; }
+      // 拆 x 多角色,個別計數
+      s.split('x').map(x=>x.trim()).filter(Boolean).forEach(c=>{ counts[c] = (counts[c]||0)+1; });
+    } else if(col === 'band'){
+      const v = b.band || '(無)';
+      counts[v] = (counts[v]||0)+1;
+    } else if(col === 'size'){
+      const v = b.size || '(無)';
+      counts[v] = (counts[v]||0)+1;
+    } else if(col === 'year'){
+      const m = (b.year||'').match(/(\d{4})年/);
+      const v = m ? m[1] : '(無)';
+      counts[v] = (counts[v]||0)+1;
+    }
+  });
+  let entries = Object.entries(counts).map(([k,v])=>({value:k,label:k,count:v}));
+  if(col === 'band'){
+    entries.sort((a,c)=>{
+      const ai = BAND_LIST.indexOf(a.value); const bi = BAND_LIST.indexOf(c.value);
+      return (ai === -1 ? 9999 : ai) - (bi === -1 ? 9999 : bi);
+    });
+  } else if(col === 'size'){
+    entries.sort((a,c)=>{
+      const ai = ADMIN_SIZE_ORDER.indexOf(a.value); const bi = ADMIN_SIZE_ORDER.indexOf(c.value);
+      return (ai === -1 ? 9999 : ai) - (bi === -1 ? 9999 : bi);
+    });
+  } else if(col === 'year'){
+    entries.sort((a,c)=>c.value.localeCompare(a.value)); // desc(新→舊)
+  } else {
+    entries.sort((a,c)=>a.value.localeCompare(c.value,'zh'));
+  }
+  return entries;
+}
+function applyColFilter(col){
+  const th = document.querySelector(`th[data-col="${col}"]`);
+  const popup = th && th.querySelector('.col-filter-popup');
+  if(!popup) return;
+  const selected = new Set();
+  popup.querySelectorAll('input[type=checkbox]:checked').forEach(cb=>selected.add(cb.value));
+  listColFilters[col] = selected;
+  popup.classList.remove('open');
+  updateColFilterIconStates();
+  renderList();
+}
+function clearColFilter(col){
+  listColFilters[col] = new Set();
+  const th = document.querySelector(`th[data-col="${col}"]`);
+  const popup = th && th.querySelector('.col-filter-popup');
+  if(popup) popup.classList.remove('open');
+  updateColFilterIconStates();
+  renderList();
+}
+function updateColFilterIconStates(){
+  ['band','char','size','year'].forEach(col=>{
+    const th = document.querySelector(`th[data-col="${col}"]`);
+    const icon = th && th.querySelector('.th-filter-icon');
+    if(icon) icon.classList.toggle('active', listColFilters[col]?.size > 0);
+  });
+}
+// 點 popup 外面就關閉所有 popup
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.col-filter-popup') && !e.target.closest('.th-filter-icon')){
+    document.querySelectorAll('.col-filter-popup.open').forEach(p=>p.classList.remove('open'));
+  }
+});
 
 function renderList(){
   const q=document.getElementById('search').value.toLowerCase();
-  const fb=document.getElementById('filter-band').value;
   const tbody=document.getElementById('badge-tbody');
   const empty=document.getElementById('list-empty');
   const fm=document.getElementById('filter-missing').value;
   const filtered=badges.filter(b=>{
     const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.admin_note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
-    const bandOk=!fb||b.band===fb;
     let missingOk=true;
     if(fm==='no_url') missingOk=!b.url&&!b.note;
     else if(fm==='no_short') missingOk=!b.short_event;
     else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
-    return mq&&bandOk&&missingOk;
+    if(!mq || !missingOk) return false;
+    // 欄位篩選(band/char/size/year)
+    if(listColFilters.band.size){
+      const v = b.band || '(無)';
+      if(!listColFilters.band.has(v)) return false;
+    }
+    if(listColFilters.char.size){
+      const s = (b.character||'').trim();
+      if(!s){ if(!listColFilters.char.has('(無)')) return false; }
+      else {
+        const parts = s.split('x').map(x=>x.trim()).filter(Boolean);
+        if(!parts.some(p=>listColFilters.char.has(p))) return false;
+      }
+    }
+    if(listColFilters.size.size){
+      const v = b.size || '(無)';
+      if(!listColFilters.size.has(v)) return false;
+    }
+    if(listColFilters.year.size){
+      const m = (b.year||'').match(/(\d{4})年/);
+      const v = m ? m[1] : '(無)';
+      if(!listColFilters.year.has(v)) return false;
+    }
+    return true;
   });
-  // 依編號排序
+  // 排序
   let sorted = filtered.slice();
-  if(listSortField === 'id-asc'){
-    sorted.sort((a,b)=>(a.id||'').localeCompare(b.id||'',undefined,{numeric:true}));
-  } else if(listSortField === 'id-desc'){
-    sorted.sort((a,b)=>(b.id||'').localeCompare(a.id||'',undefined,{numeric:true}));
+  if(listSortCol){
+    sorted.sort((a,b)=>{
+      const cmp = _compareBy(listSortCol, a, b);
+      return listSortDir === 'desc' ? -cmp : cmp;
+    });
   }
   filteredCache = sorted;
   if(!sorted.length){tbody.innerHTML='';empty.style.display='block';updateBulkBar();return;}
@@ -1503,6 +1701,17 @@ function openModal(idx=-1){
   editingIdx=idx;
   modalImgChanged=false; // 開啟 modal 時 flag 歸零,避免從上一筆殘留
   modalImgFile=null;     // 同步清掉上一筆的 file ref
+  // 重置複數角色模式狀態(避免上一筆勾選殘留洗掉這筆的角色)
+  const singleRadio=document.getElementById('f-char-mode-single');
+  const multiRadio=document.getElementById('f-char-mode-multi');
+  if(singleRadio) singleRadio.checked=true;
+  if(multiRadio) multiRadio.checked=false;
+  const multiWrap=document.getElementById('f-char-multi-wrap');
+  if(multiWrap){ multiWrap.innerHTML=''; multiWrap.style.display='none'; }
+  const multiPreview=document.getElementById('f-char-multi-preview');
+  if(multiPreview){ multiPreview.textContent=''; multiPreview.style.display='none'; }
+  const fcharSelClear=document.getElementById('f-character');
+  if(fcharSelClear) delete fcharSelClear.dataset.multiValue;
   const b=idx>=0?badges[idx]:{};
   // Reset local preview
   if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
@@ -1543,6 +1752,19 @@ function openModal(idx=-1){
   const charVal = CHAR_MIGRATION[b.character] || b.character || '';
   if(fcharSel.style.display==='none'&&fcharTxt){ fcharTxt.value=charVal; }
   else { fcharSel.value=charVal; if(charVal&&fcharSel.value!==charVal){ fcharSel.style.display='none'; if(fcharTxt){fcharTxt.style.display='';fcharTxt.value=charVal;} } }
+  // 如 character 含 'x' (複數角色),自動切到複數模式並預勾選
+  if(charVal && charVal.includes('x')){
+    if(singleRadio) singleRadio.checked=false;
+    if(multiRadio) multiRadio.checked=true;
+    switchCharMode('multi'); // 切到複數模式並 build list
+    // 預勾既有角色
+    const parts = charVal.split('x').map(s=>s.trim()).filter(Boolean);
+    parts.forEach(name=>{
+      const cbs = document.querySelectorAll('.f-char-cb');
+      cbs.forEach(cb=>{ if(cb.value===name) cb.checked=true; });
+    });
+    if(typeof updateMultiCharValue === 'function') updateMultiCharValue();
+  }
   document.getElementById('f-series').value=b.series||'';
   document.getElementById('f-year').value=b.year||'';
   document.getElementById('f-event').value=b.event||'';
