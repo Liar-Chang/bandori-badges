@@ -336,16 +336,36 @@ detail modal 只在「列表檢視點某列」會開啟。已補齊 d-size / d-t
 
 目前 detail modal 只能從列表檢視點某一列才能開,卡片檢視沒入口。可以考慮加放大鏡按鈕。
 
-### 6. PWA 階段 2:離線快取(規劃中)
+### 6. ~~PWA 階段 2:離線快取~~（**已決定不做**，2026-05-11）
 
-目前 PWA 沒 service-worker,沒網路就不能瀏覽。下次可考慮加。
+明羽決策:**跳過,不主動實作**。理由:「這年頭誰手機會沒網路啊」。
+PWA 安裝到主畫面/全螢幕/icon/theme_color 等不靠 SW 的功能已具備。離線快取的維護成本(快取版本管理、使用者卡舊版、debug 痛點)大於實際效益。
 
-### 7. 夢ノ結唱(尚未實作,等資料齊)
+未來不要主動建議加 service-worker。除非有具體使用者反饋「我需要離線瀏覽」,才重新評估。
+
+### 7. 夢ノ結唱(框架已實作 2026-05-11,首批 10 顆已入 badges.json #2775-#2784)
 
 採方案 C+:資料層當第 13 樂團、前台獨立呈現。
-- BAND_LIST 加入「夢ノ結唱」、CHAR_MAP 加 Popy/Rose/Pastel/Halo/Aver
-- admin_note 自動填衍生來源:Popy←戶山香澄、Rose←湊友希那、Pastel←丸山彩、Halo←弦卷心、Aver←三角初華
-- 等資料齊(預估 10+ 顆)再一次做完前後台
+
+**已完成:**
+- `BAND_LIST` / `BAND_COLORS` / `BAND_ORDER` 加入「夢ノ結唱」(顏色 `#a0c8bc` 薄荷灰青,呼應官方視覺)
+- `CHAR_MAP['夢ノ結唱']` = [POPY, ROSE, Pastel, Halo, Aver](全部 5 個,即使後 3 個尚無徽章)
+- `CHAR_TO_BAND` 加入 5 個角色→夢ノ結唱
+- `CHAR_COLORS` 加 5 個角色顏色
+- **前台側欄獨立呈現**:`INDEPENDENT_BANDS = new Set(["夢ノ結唱"])` + 新 `<div id="independent-section">` 區塊,跟「樂團」section 分開顯示。標題「✨ 獨立計畫」4 語言皆有翻譯
+- **後台列表 ID 旁加 ✨ icon** 視覺區分(`b.band === '夢ノ結唱'` 時)
+- **admin_note 自動填衍生來源**:`autoFillYumeAdminNote()` 在 saveSingle/saveBatch/saveTextBatch 都會呼叫(admin_note 為空才填)
+  - POPY ← 戶山香澄 (Poppin'Party)
+  - ROSE ← 湊友希那 (Roselia)
+  - Pastel ← 丸山彩 (Pastel*Palettes)
+  - Halo ← 弦卷心 (Hello, Happy World!)
+  - Aver ← 三角初華 (Ave Mujica)
+
+**待處理(使用者操作):**
+- 補入 `year` 欄位(發售日期,xlsx 沒提供)
+- 透過 admin 上傳 10 張圖(對應檔名 2775.png-2784.png)然後同步到 GitHub
+
+**未來新增徽章:** 只要 band 填「夢ノ結唱」、character 填 5 個拉丁名之一,admin_note 會自動填衍生來源,前台側欄會出現在「✨ 獨立計畫」section。
 
 ---
 

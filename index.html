@@ -674,6 +674,10 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
       <h3>樂團</h3>
       <div class="band-list" id="band-list"></div>
     </div>
+    <div class="sidebar-section" id="independent-section" style="display:none;">
+      <h3>✨ 獨立計畫</h3>
+      <div class="band-list" id="independent-list"></div>
+    </div>
     <div class="sidebar-section" id="char-section" style="display:none;">
       <h3>角色</h3>
       <div class="filter-group" id="char-list"></div>
@@ -808,6 +812,7 @@ const BAND_COLORS={
   "夢限大MewType":"#e060aa",
   "millsage":"#b8d44a",
   "一家Dumb Rock!":"#e85030",
+  "夢ノ結唱":"#a0c8bc",
   "其他":"#888"
 };
 const CHAR_COLORS={
@@ -836,11 +841,18 @@ const CHAR_COLORS={
   "矢倉蓬咲":"#448888",
   "梅里千櫻梨":"#FF55AA",
   "四宮寧月":"#9999FF",
+  "POPY":"#88c8b8",
+  "ROSE":"#b8a0d4",
+  "Pastel":"#f5b8c8",
+  "Halo":"#e0d088",
+  "Aver":"#c87878",
   "default":"#c0bef0"
 };
 const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
   "Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica",
-  "夢限大MewType","millsage","一家Dumb Rock!"];
+  "夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱"];
+// 獨立計畫:在 sidebar 跟一般樂團分開呈現的樂團(資料層仍是 band 欄位,UI 層獨立)
+const INDEPENDENT_BANDS = new Set(["夢ノ結唱"]);
 
 let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
@@ -886,8 +898,11 @@ function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 function buildSidebar(){
   const bc={};
   all.forEach(b=>{bc[b.band]=(bc[b.band]||0)+1;});
-  const bands=[...BAND_ORDER.filter(b=>bc[b]),...[...new Set(all.map(b=>b.band))].filter(b=>!BAND_ORDER.includes(b)&&bc[b])];
-  document.getElementById('band-list').innerHTML=bands.map(band=>{
+  // 一般樂團清單(排除 INDEPENDENT_BANDS)
+  const bands=[...BAND_ORDER.filter(b=>bc[b]&&!INDEPENDENT_BANDS.has(b)),...[...new Set(all.map(b=>b.band))].filter(b=>!BAND_ORDER.includes(b)&&!INDEPENDENT_BANDS.has(b)&&bc[b])];
+  // 獨立計畫清單(只取 INDEPENDENT_BANDS 中有資料的)
+  const independents = [...INDEPENDENT_BANDS].filter(b=>bc[b]);
+  const renderChip = band => {
     const c=bandColor(band);
     const isActive=selBands.has(band);
     return `<div class="band-chip${isActive?' active':''}" id="bc-${band.replace(/[^a-z0-9]/gi,'_')}"
@@ -897,7 +912,20 @@ function buildSidebar(){
       <span style="color:${c}">${getBandName(band,currentLang)}</span>
       <span class="band-chip-count">${bc[band]}</span>
     </div>`;
-  }).join('');
+  };
+  document.getElementById('band-list').innerHTML = bands.map(renderChip).join('');
+  // 獨立計畫 section:只有當有資料時才顯示
+  const indepSection = document.getElementById('independent-section');
+  const indepList = document.getElementById('independent-list');
+  if(indepSection && indepList){
+    if(independents.length){
+      indepSection.style.display = '';
+      indepList.innerHTML = independents.map(renderChip).join('');
+    } else {
+      indepSection.style.display = 'none';
+      indepList.innerHTML = '';
+    }
+  }
 
   // 有選樂團時只顯示該樂團的選項，否則顯示全部
   const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
@@ -1016,6 +1044,8 @@ function buildCharList(){
     "Poppin'Party全團",'Afterglow全團','Pastel*Palettes全團','Roselia全團',
     'Hello, Happy World!全團','Morfonica全團','RAISE A SUILEN全團',
     'MyGO!!!!!全團','Ave Mujica全團','夢限大MewType全團','millsage全團','一家Dumb Rock!全團',
+    // 夢ノ結唱 (獨立計畫,衍生自既有角色)
+    'POPY','ROSE','Pastel','Halo','Aver',
     // Poppin'Party
     '戶山香澄','花園多惠','牛込里美','山吹紗綾','市谷有咲',
     '美竹蘭','青葉摩卡','上原緋瑪麗','宇田川巴','羽澤鶇',
@@ -1112,6 +1142,7 @@ const CHAR_TO_BAND = {
   "仲町阿拉蕾":"夢限大MewType","宮永野乃花":"夢限大MewType","峰月律":"夢限大MewType","藤都子":"夢限大MewType","千石由乃":"夢限大MewType","夢限大MewType全團":"夢限大MewType",
   "汐見螢":"millsage","琴平凪":"millsage","濱崎茉幌":"millsage","伊澤棗":"millsage","和泉朋花":"millsage","millsage全團":"millsage",
   "須賀蕾葉":"一家Dumb Rock!","馬橋心玖":"一家Dumb Rock!","矢倉蓬咲":"一家Dumb Rock!","梅里千櫻梨":"一家Dumb Rock!","四宮寧月":"一家Dumb Rock!","一家Dumb Rock!全團":"一家Dumb Rock!",
+  "POPY":"夢ノ結唱","ROSE":"夢ノ結唱","Pastel":"夢ノ結唱","Halo":"夢ノ結唱","Aver":"夢ノ結唱",
 };
 function badgeBands(b){
   const bands = new Set();
@@ -1143,6 +1174,7 @@ function applyFilters(){
     "仲町阿拉蕾":"夢限大MewType","宮永野乃花":"夢限大MewType","峰月律":"夢限大MewType","藤都子":"夢限大MewType","千石由乃":"夢限大MewType","夢限大MewType全團":"夢限大MewType",
     "汐見螢":"millsage","琴平凪":"millsage","濱崎茉幌":"millsage","伊澤棗":"millsage","和泉朋花":"millsage","millsage全團":"millsage",
     "須賀蕾葉":"一家Dumb Rock!","馬橋心玖":"一家Dumb Rock!","矢倉蓬咲":"一家Dumb Rock!","梅里千櫻梨":"一家Dumb Rock!","四宮寧月":"一家Dumb Rock!","一家Dumb Rock!全團":"一家Dumb Rock!",
+  "POPY":"夢ノ結唱","ROSE":"夢ノ結唱","Pastel":"夢ノ結唱","Halo":"夢ノ結唱","Aver":"夢ノ結唱",
   };
   function badgeBands(b){
     // 回傳這個徽章相關的所有樂團
@@ -1671,7 +1703,7 @@ function getCharName(charTW, lang) {
 const LANGS = {
   'zh-TW': {
     title:'BanG Dream! 徽章圖鑑', subtitle:' 徽章圖鑑',
-    search:'搜尋', searchPlaceholder:'角色、版本、活動...', band:'樂團', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
+    search:'搜尋', searchPlaceholder:'角色、版本、活動...', band:'樂團', independentProject:'✨ 獨立計畫', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
     event:'活動', type:'類型', size:'尺寸', country:'販售/活動地', note:'備註',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
@@ -1713,7 +1745,7 @@ const LANGS = {
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
-    search:'検索', searchPlaceholder:'キャラ、バージョン、イベント...', band:'バンド', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
+    search:'検索', searchPlaceholder:'キャラ、バージョン、イベント...', band:'バンド', independentProject:'✨ 独立プロジェクト', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
     event:'イベント', type:'タイプ', size:'サイズ', country:'販売/イベント地', note:'備考',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
@@ -1755,7 +1787,7 @@ const LANGS = {
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
-    search:'Search', searchPlaceholder:'Character, version, event...', band:'Band', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
+    search:'Search', searchPlaceholder:'Character, version, event...', band:'Band', independentProject:'✨ Independent Project', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
     event:'Event', type:'Type', size:'Size', country:'Sales / Event Region', note:'Note',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
@@ -1797,7 +1829,7 @@ const LANGS = {
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
-    search:'검색', searchPlaceholder:'캐릭터, 버전, 이벤트...', band:'밴드', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
+    search:'검색', searchPlaceholder:'캐릭터, 버전, 이벤트...', band:'밴드', independentProject:'✨ 독립 프로젝트', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
     event:'이벤트', type:'유형', size:'크기', country:'판매/이벤트 지역', note:'비고',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
@@ -1871,7 +1903,7 @@ function applyLang(){
   if(searchEl) searchEl.placeholder = L.search;
   // sidebar h3
   const sidebarMap = {
-    'search-section': L.search, 'band-section': L.band, 'char-section': L.char,
+    'search-section': L.search, 'band-section': L.band, 'independent-section': L.independentProject, 'char-section': L.char,
     'year-section': L.year, 'series-section': L.series, 'event-section': L.event,
     'type-section': L.type, 'size-section': L.size, 'country-section': L.country,
   };
