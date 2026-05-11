@@ -42278,7 +42278,7 @@
   {
     "id": "2723",
     "ext": "png",
-    "band": "Poppin'Party",
+    "band": "跨團合照",
     "character": "戶山香澄x美竹蘭x丸山彩x湊友希那x弦卷心",
     "series": "グッズ付初回完全生産限定盤",
     "year": "2019年12月18日",
@@ -42291,7 +42291,8 @@
     "note": "",
     "admin_note": "",
     "created_at": "2026-05-09T14:36:21.026Z",
-    "updated_at": "2026-05-09T14:37:05.614Z"
+    "updated_at": "2026-05-11T15:08:30.970Z",
+    "image_updated_at": null
   },
   {
     "id": "2728",
