@@ -1090,7 +1090,11 @@ async function saveBatch(){
     const idx=badges.findIndex(b=>b.id===data.id);
     // 批次模式每張都有圖,所以一律寫 image_updated_at
     if(idx>=0){
-      badges[idx]={...data, created_at: badges[idx].created_at||now, updated_at: now, image_updated_at: now};
+      // 既有 ID:過濾掉空字串欄位,避免洗掉預填的資料(例如夢ノ結唱預先建好的 band/character/admin_note)
+      const cleanData = Object.fromEntries(
+        Object.entries(data).filter(([k,v]) => v !== '' && v !== undefined && v !== null)
+      );
+      badges[idx]={...badges[idx], ...cleanData, created_at: badges[idx].created_at||now, updated_at: now, image_updated_at: now};
       updated++;
     } else {
       badges.push({...data, created_at: now, updated_at: now, image_updated_at: now});
