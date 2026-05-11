@@ -31833,7 +31833,7 @@
   {
     "id": "2127",
     "ext": "png",
-    "band": "MyGO!!!!!",
+    "band": "CRYCHIC",
     "character": "高松燈x長崎爽世x椎名立希x若葉睦x豐川祥子",
     "series": "CRYCHIC/ホログラム",
     "year": "2025年3月22日",
@@ -31848,7 +31848,7 @@
   {
     "id": "2126",
     "ext": "png",
-    "band": "MyGO!!!!!",
+    "band": "CRYCHIC",
     "character": "高松燈x長崎爽世x椎名立希x若葉睦x豐川祥子",
     "series": "CRYCHIC",
     "year": "2025年3月22日",
@@ -35925,8 +35925,8 @@
   {
     "id": "2368",
     "ext": "png",
-    "band": "MyGO!!!!!",
-    "character": "高松燈x三角初華(Doloris)",
+    "band": "跨團合照",
+    "character": "高松燈x三角初華(Doloris)x高松燈",
     "series": "通常盤－楽天ブックス",
     "year": "2024年7月10日",
     "event": "バンドリ！ カバーコレクション Extra Volume",
@@ -35936,8 +35936,10 @@
     "country": "日本",
     "url": "https://bang-dream.com/discographies/3750/",
     "note": "37mm角",
+    "admin_note": "",
     "created_at": "2026-04-28T12:40:07.488Z",
-    "updated_at": "2026-04-28T12:41:10.614Z"
+    "updated_at": "2026-05-11T15:41:51.973Z",
+    "image_updated_at": null
   },
   {
     "id": "2376",
@@ -39524,7 +39526,7 @@
   {
     "id": "2572",
     "ext": "png",
-    "band": "Afterglow",
+    "band": "跨團合照",
     "character": "山吹紗綾x青葉摩卡x羽澤鶇x丸山彩x松原花音",
     "series": "限定盤－amazon",
     "year": "2022年3月16日",
@@ -39537,7 +39539,8 @@
     "note": "",
     "admin_note": "",
     "created_at": "2026-05-05T12:59:56.358Z",
-    "updated_at": "2026-05-05T12:59:56.358Z"
+    "updated_at": "2026-05-11T15:43:28.252Z",
+    "image_updated_at": null
   },
   {
     "id": "2577",
