@@ -712,6 +712,7 @@ let badges=JSON.parse(localStorage.getItem('bandori_badges')||'[]');
 let editingIdx=-1;
 let batchItems=[];
 let imageCache={}; // id -> objectUrl (記憶體快取，關頁消失)
+let modalImgChanged=false; // 單筆 modal 內是否換過圖 (saveSingle 判斷要不要寫 image_updated_at)
 
 function imgUrl(b){
   if(imageCache[b.id]) return imageCache[b.id];
@@ -1068,11 +1069,12 @@ async function saveBatch(){
     if(skipIndices.has(i)){ skipped++; return; }
     const {objectUrl,isDupe,...data}=item;
     const idx=badges.findIndex(b=>b.id===data.id);
+    // 批次模式每張都有圖,所以一律寫 image_updated_at
     if(idx>=0){
-      badges[idx]={...data, created_at: badges[idx].created_at||now, updated_at: now};
+      badges[idx]={...data, created_at: badges[idx].created_at||now, updated_at: now, image_updated_at: now};
       updated++;
     } else {
-      badges.push({...data, created_at: now, updated_at: now});
+      badges.push({...data, created_at: now, updated_at: now, image_updated_at: now});
       saved++;
     }
     if(objectUrl) imageCache[data.id]=objectUrl;
@@ -1417,6 +1419,7 @@ function deleteBadge(i){
 /* ── Modal ── */
 function openModal(idx=-1){
   editingIdx=idx;
+  modalImgChanged=false; // 開啟 modal 時 flag 歸零,避免從上一筆殘留
   const b=idx>=0?badges[idx]:{};
   // Reset local preview
   if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
@@ -1517,6 +1520,7 @@ function updateModalPath(){
 function onModalImgSelect(e){
   const file = e.target.files[0];
   if(!file) return;
+  modalImgChanged=true; // 使用者主動換過圖,saveSingle 會寫 image_updated_at
   if(modalImgObjectUrl) URL.revokeObjectURL(modalImgObjectUrl);
   modalImgObjectUrl = URL.createObjectURL(file);
   const t = document.getElementById('modal-thumb');
@@ -1824,11 +1828,15 @@ async function saveSingle(){
   if(editingIdx>=0){
     badge.created_at = badges[editingIdx].created_at || now;
     badge.updated_at = now;
+    // 編輯模式:有換圖才更新 image_updated_at,否則保留原值
+    badge.image_updated_at = modalImgChanged ? now : (badges[editingIdx].image_updated_at || null);
     badges[editingIdx]=badge;showToast('已更新');
   } else {
     if(badges.find(b=>b.id===id)){showToast('此編號已存在');return;}
     badge.created_at = now;
     badge.updated_at = now;
+    // 新增模式:有換圖才寫 image_updated_at (純文字建檔不寫)
+    badge.image_updated_at = modalImgChanged ? now : null;
     badges.push(badge);showToast('已新增');
   }
   persist();renderList();closeModal();

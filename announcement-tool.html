@@ -63,8 +63,18 @@ textarea.output-text:read-only{cursor:text;}
       </div>
 
       <div class="field">
-        <label>【新增/更新資料】（繁中，空白則顯示「（無）」）</label>
-        <textarea id="in-new" placeholder="如：&#10;・新增 XXX 徽章&#10;・今日無新增徽章，圖文不符放上 XXX 照片"></textarea>
+        <label>【新增】（繁中，空白則略過此標題）</label>
+        <textarea id="in-new-add" placeholder="如：&#10;・Afterglow 3rd Single「ツナグ、ソラモヨウ」(新增 1 張)"></textarea>
+      </div>
+
+      <div class="field">
+        <label>【更新資料】（繁中，空白則略過此標題）</label>
+        <textarea id="in-new-update" placeholder="如：&#10;・修正 #2745 的活動簡稱"></textarea>
+      </div>
+
+      <div class="field">
+        <label>【更新圖檔】（繁中，空白則略過此標題）</label>
+        <textarea id="in-new-image" placeholder="如：&#10;・#2740 換更清晰的圖"></textarea>
       </div>
 
       <div class="field">
@@ -144,16 +154,28 @@ const FIXED_HASHTAGS = '#バンドリ #缶バッジ図鑑';
 
 function generate(){
   const date = document.getElementById('in-date').value.trim();
-  const newData = document.getElementById('in-new').value.trim();
+  const addData = document.getElementById('in-new-add').value.trim();
+  const updateData = document.getElementById('in-new-update').value.trim();
+  const imageData = document.getElementById('in-new-image').value.trim();
   const funcData = document.getElementById('in-func').value.trim();
   const x1ja = document.getElementById('in-x1-ja').value.trim();
   const x2ja = document.getElementById('in-x2-ja').value.trim();
   const extraHashtag = document.getElementById('in-hashtag').value.trim();
 
   // ── Threads 版(繁中)──
-  const newSection = newData || '(無)';
+  // 三類組合：有資料才印標題；全空則向後相容輸出單一【新增/更新資料】+ (無)
+  let newSection;
+  if(!addData && !updateData && !imageData){
+    newSection = '【新增/更新資料】\n(無)';
+  } else {
+    const parts = [];
+    if(addData)    parts.push(`【新增】\n${addData}`);
+    if(updateData) parts.push(`【更新資料】\n${updateData}`);
+    if(imageData)  parts.push(`【更新圖檔】\n${imageData}`);
+    newSection = parts.join('\n\n');
+  }
   const funcSection = funcData || '(無)';
-  const threads = `${date}網頁更新\n\n${SITE_URL}\n\n【新增/更新資料】\n${newSection}\n\n【功能調整】\n${funcSection}`;
+  const threads = `${date}網頁更新\n\n${SITE_URL}\n\n${newSection}\n\n【功能調整】\n${funcSection}`;
   document.getElementById('threads-out').value = threads;
   updateCount('threads-count', threads, 500, false);
 
