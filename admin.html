@@ -95,7 +95,15 @@ thead{background:#f0eff9;}
 th{padding:0.75rem 1rem;text-align:left;font-weight:600;color:#3d3d8f;white-space:nowrap;font-size:0.78rem;}
 td{padding:0.6rem 1rem;border-top:1px solid #f0f0f0;vertical-align:middle;}
 tr:hover td{background:#fafafa;}
-.badge-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #e0e0e0;background:#f5f5f5;}
+.badge-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid #e0e0e0;background:#f5f5f5;display:block;}
+/* 列表縮圖換圖區（點/拖） */
+.thumb-cell{transition:background 0.15s;}
+.thumb-cell.drag-over{background:rgba(90,79,207,0.18);outline:2px dashed #5a4fcf;outline-offset:-3px;}
+.badge-thumb-wrap{position:relative;width:40px;height:40px;cursor:pointer;border-radius:50%;}
+.badge-thumb-wrap .thumb-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;font-size:0.55rem;font-weight:600;line-height:1.15;display:none;align-items:center;justify-content:center;text-align:center;pointer-events:none;}
+.badge-thumb-wrap:hover .thumb-overlay{display:flex;}
+.thumb-cell.drag-over .badge-thumb-wrap{box-shadow:0 0 0 2px #5a4fcf;}
+.thumb-cell.drag-over .thumb-overlay{display:flex;background:rgba(90,79,207,0.85);}
 .band-pill{display:inline-block;padding:0.18rem 0.55rem;border-radius:10px;font-size:0.72rem;font-weight:600;}
 .row-actions{display:flex;gap:0.4rem;}
 
@@ -143,17 +151,6 @@ tr:hover td{background:#fafafa;}
 input[type=checkbox]{width:15px;height:15px;accent-color:#5a4fcf;cursor:pointer;}
 tr.selected td{background:#f0effd !important;}
 
-/* Inline editable cell */
-td.editable{cursor:pointer;position:relative;}
-td.editable:hover{background:#f5f4ff !important;}
-td.editable.editing{padding:0;}
-td.editable .cell-display{display:block;}
-td.editable .cell-input{display:none;width:100%;font-family:inherit;font-size:0.85rem;
-  padding:0.55rem 0.75rem;border:none;border-bottom:2px solid #5a4fcf;background:#f0effd;outline:none;}
-td.editable.editing .cell-display{display:none;}
-td.editable.editing .cell-input{display:block;}
-td.editable .edit-hint{position:absolute;top:2px;right:4px;font-size:0.6rem;color:#c0bef0;opacity:0;transition:opacity 0.15s;}
-td.editable:hover .edit-hint{opacity:1;}
 </style>
 </head>
 <body>
@@ -471,8 +468,9 @@ td.editable:hover .edit-hint{opacity:1;}
   </div>
 
   <div class="tab-content" id="tab-list">
+    <input type="file" id="list-img-input" accept="image/*" style="display:none" onchange="onListImgSelect(event)"/>
     <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
-      <span style="font-size:0.78rem;color:#aaa;">點格子直接編輯｜勾選後可批次操作</span>
+      <span style="font-size:0.78rem;color:#aaa;">點縮圖換圖｜點列勾選｜編輯走右側按鈕</span>
       <button class="btn btn-secondary" onclick="openModal()">＋ 單筆新增</button>
     </div>
 
@@ -713,6 +711,8 @@ let editingIdx=-1;
 let batchItems=[];
 let imageCache={}; // id -> objectUrl (記憶體快取，關頁消失)
 let modalImgChanged=false; // 單筆 modal 內是否換過圖 (saveSingle 判斷要不要寫 image_updated_at)
+let modalImgFile=null;     // 單筆 modal 內目前選到的原始 File 物件 (用於 GitHub 同步)
+let pendingImageUploads={}; // 待推 GitHub 的圖檔暫存: { id: {file, ext} }
 
 function imgUrl(b){
   if(imageCache[b.id]) return imageCache[b.id];
@@ -754,7 +754,7 @@ function addFiles(files){
     const ext=file.name.split('.').pop().toLowerCase();
     const objectUrl=URL.createObjectURL(file);
     const isDupe=!!badges.find(b=>b.id===nameNoExt);
-    batchItems.push({id:nameNoExt,ext,objectUrl,band:'',character:'',series:'',year:'',event:'',type:'',size:'',country:'',url:'',note:'',admin_note:'',isDupe});
+    batchItems.push({id:nameNoExt,ext,file,objectUrl,band:'',character:'',series:'',year:'',event:'',type:'',size:'',country:'',url:'',note:'',admin_note:'',isDupe});
   });
   renderBatchGrid();
   document.getElementById('defaults-card').style.display='';
@@ -1067,7 +1067,7 @@ async function saveBatch(){
   const now = new Date().toISOString();
   batchItems.forEach((item,i)=>{
     if(skipIndices.has(i)){ skipped++; return; }
-    const {objectUrl,isDupe,...data}=item;
+    const {objectUrl,isDupe,file,...data}=item;
     const idx=badges.findIndex(b=>b.id===data.id);
     // 批次模式每張都有圖,所以一律寫 image_updated_at
     if(idx>=0){
@@ -1078,7 +1078,10 @@ async function saveBatch(){
       saved++;
     }
     if(objectUrl) imageCache[data.id]=objectUrl;
+    // 加入待推 GitHub 隊列
+    if(file) pendingImageUploads[data.id] = { file, ext: data.ext };
   });
+  updateSyncButtonLabel();
   // 若有跳過,把跳過的留在 batchItems 給使用者繼續處理
   if(skipped>0){
     batchItems = batchItems.filter((_,i)=>skipIndices.has(i));
@@ -1154,15 +1157,6 @@ function renderList(){
     const checked=selectedIds.has(b.id)?'checked':'';
     const selClass=selectedIds.has(b.id)?'selected':'';
 
-    const editableCell = (field,val) => `
-      <td class="editable" ondblclick="startInlineEdit(this,${ri},'${field}')" title="雙擊編輯">
-        <span class="edit-hint">✎</span>
-        <span class="cell-display">${val||'—'}</span>
-        <input class="cell-input" value="${(val||'').replace(/"/g,'&quot;')}"
-          onblur="commitInlineEdit(this,${ri},'${field}')"
-          onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape')cancelInlineEdit(this)"/>
-      </td>`;
-
     return `<tr class="${selClass}" data-id="${b.id}" data-ri="${ri}" draggable="true"
       ondragstart="dragStart(event,${ri})"
       ondragover="dragOver(event)"
@@ -1171,30 +1165,29 @@ function renderList(){
       onclick="handleRowClick(event,'${b.id}')" style="cursor:pointer;">
       <td class="cb-col"><input type="checkbox" ${checked}/></td>
       <td style="cursor:grab;color:#ccc;text-align:center;padding:0 4px;" title="拖曳排序">⠿</td>
-      <td><img class="badge-thumb"
-        src="${imgUrl(b)}"
-        onerror="this.style.visibility='hidden'" alt=""/></td>
-      <td><strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}</td>
-      <td ondblclick="startBandEdit(this,${ri})" title="雙擊編輯樂團" class="editable">
-        <span class="edit-hint">✎</span>
-        <span class="cell-display"><span class="band-pill" style="background:${c}22;color:${c}">${b.band||'—'}</span></span>
-        <select class="cell-input" style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.4rem;border:none;border-bottom:2px solid #5a4fcf;background:#f0effd;"
-          onblur="commitBandEdit(this,${ri})"
-          onchange="commitBandEdit(this,${ri})">
-          ${BAND_LIST.map(bl=>`<option${bl===b.band?' selected':''}>${bl}</option>`).join('')}
-        </select>
+      <td class="thumb-cell"
+        ondragover="onListThumbDragOver(event,this)"
+        ondragleave="onListThumbDragLeave(event,this)"
+        ondrop="onListThumbDrop(event,${ri},this)">
+        <div class="badge-thumb-wrap" title="點擊或拖入圖片即可換圖"
+          onclick="event.stopPropagation();triggerListImgUpload(${ri})">
+          <img class="badge-thumb" src="${imgUrl(b)}" onerror="this.style.visibility='hidden'" alt=""/>
+          <div class="thumb-overlay">點擊或<br>拖入換圖</div>
+        </div>
       </td>
-      ${editableCell('character',b.character)}
+      <td><strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}</td>
+      <td><span class="band-pill" style="background:${c}22;color:${c}">${b.band||'—'}</span></td>
+      <td>${b.character||'—'}</td>
       <td onclick="event.stopPropagation()" style="min-width:140px;">
         <select style="width:100%;min-width:130px;font-family:inherit;font-size:0.82rem;padding:0.3rem 1.4rem 0.3rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;white-space:nowrap;text-overflow:ellipsis;"
           onchange="commitSizeEdit(this,${ri})">
           ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
-      ${editableCell('year',b.year)}
-      ${editableCell('event',b.event)}
-      ${editableCell('short_event',b.short_event)}
-      ${editableCell('series',b.series)}
+      <td>${b.year||'—'}</td>
+      <td>${b.event||'—'}</td>
+      <td>${b.short_event||'—'}</td>
+      <td>${b.series||'—'}</td>
       <td><div class="row-actions">
         <button class="btn btn-secondary btn-sm" onclick="openModal(${ri})">編輯</button>
         <button class="btn btn-danger btn-sm" onclick="deleteBadge(${ri})">刪除</button>
@@ -1204,46 +1197,92 @@ function renderList(){
   updateBulkBar();
 }
 
-/* ── Inline edit ── */
-function startInlineEdit(td,ri,field){
-  td.classList.add('editing');
-  td.querySelector('.cell-input').focus();
-}
-function commitInlineEdit(input,ri,field){
-  const val=input.value.trim();
-  badges[ri][field]=val;
-  persist();
-  const td=input.closest('td');
-  td.classList.remove('editing');
-  td.querySelector('.cell-display').textContent=val||'—';
-}
-function cancelInlineEdit(input){
-  const td=input.closest('td');
-  td.classList.remove('editing');
-}
+/* ── 尺寸下拉 inline 更新（其他欄位請用編輯 modal） ── */
 function commitSizeEdit(sel,ri){
   badges[ri].size = sel.value;
   persist();
   renderList();
 }
 
-function commitSizeEdit(sel,ri){
-  badges[ri].size = sel.value;
-  persist();
-  renderList();
+/* ── 列表縮圖換圖（點/拖） ── */
+let pendingListImgRi = -1; // 暫存被點擊的 ri,等 file input change
+
+function triggerListImgUpload(ri){
+  pendingListImgRi = ri;
+  document.getElementById('list-img-input').click();
+}
+function onListImgSelect(e){
+  const file = e.target.files[0];
+  e.target.value = '';
+  if(!file || pendingListImgRi < 0) return;
+  processListImgChange(file, pendingListImgRi);
+  pendingListImgRi = -1;
+}
+function onListThumbDragOver(e, el){
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect = 'copy';
+  el.classList.add('drag-over');
+}
+function onListThumbDragLeave(e, el){
+  e.stopPropagation();
+  el.classList.remove('drag-over');
+}
+function onListThumbDrop(e, ri, el){
+  e.preventDefault();
+  e.stopPropagation();
+  el.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){ showToast('只接受圖片檔'); return; }
+  processListImgChange(file, ri);
+}
+/* File → base64 字串 (GitHub blob API binary 編碼用) */
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // readAsDataURL 結果格式: "data:image/png;base64,iVBOR..." 只取 base64 部分
+      const i = reader.result.indexOf(',');
+      resolve(i>=0 ? reader.result.slice(i+1) : reader.result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-function startBandEdit(td,ri){
-  td.classList.add('editing');
-  td.querySelector('select.cell-input').focus();
+/* 同步按鈕標籤更新 (顯示待推圖檔數) */
+function updateSyncButtonLabel(){
+  const btn = document.querySelector('[onclick="syncToGitHub()"]');
+  if(!btn) return;
+  const count = Object.keys(pendingImageUploads).length;
+  btn.textContent = count > 0 ? `🔄 同步到 GitHub (${count} 張圖待推)` : '🔄 同步到 GitHub';
 }
-function commitBandEdit(sel,ri){
-  badges[ri].band=sel.value;
+
+function processListImgChange(file, ri){
+  const b = badges[ri];
+  if(!b){ showToast('找不到該筆資料'); return; }
+  // 副檔名檢查 + 正規化 (jpeg→jpg)
+  let ext = (file.name.split('.').pop()||'').toLowerCase();
+  if(ext === 'jpeg') ext = 'jpg';
+  if(!['jpg','png','webp'].includes(ext)){
+    showToast('只接受 jpg / png / webp');
+    return;
+  }
+  // 釋放舊 objectURL,建立新的
+  if(imageCache[b.id]) URL.revokeObjectURL(imageCache[b.id]);
+  imageCache[b.id] = URL.createObjectURL(file);
+  // 更新欄位
+  const now = new Date().toISOString();
+  b.ext = ext;
+  b.image_updated_at = now;
+  b.updated_at = now;
+  // 加入待推 GitHub 隊列
+  pendingImageUploads[b.id] = { file, ext };
   persist();
-  const td=sel.closest('td');
-  td.classList.remove('editing');
-  const c=BAND_COLORS[sel.value]||'#aaa';
-  td.querySelector('.cell-display').innerHTML=`<span class="band-pill" style="background:${c}22;color:${c}">${sel.value||'—'}</span>`;
+  renderList();
+  updateSyncButtonLabel();
+  showToast(`#${b.id} 已換圖（待同步）`);
 }
 
 /* ── Checkbox / bulk ── */
@@ -1286,9 +1325,8 @@ function dragDrop(e, targetRi){
 }
 
 function handleRowClick(e, id){
-  // 如果點到按鈕或雙擊編輯區域則不處理
-  if(e.target.closest('button') || e.target.closest('.cell-input') || e.target.closest('select')) return;
-  if(e.target.closest('.editable') && e.detail >= 2) return; // 雙擊編輯不觸發選取
+  // 點到按鈕/尺寸下拉/縮圖時不切換選取
+  if(e.target.closest('button') || e.target.closest('select') || e.target.closest('.badge-thumb-wrap')) return;
 
   // Shift/Ctrl 時防止文字反白
   if(e.shiftKey || e.ctrlKey || e.metaKey) e.preventDefault();
@@ -1420,6 +1458,7 @@ function deleteBadge(i){
 function openModal(idx=-1){
   editingIdx=idx;
   modalImgChanged=false; // 開啟 modal 時 flag 歸零,避免從上一筆殘留
+  modalImgFile=null;     // 同步清掉上一筆的 file ref
   const b=idx>=0?badges[idx]:{};
   // Reset local preview
   if(modalImgObjectUrl){URL.revokeObjectURL(modalImgObjectUrl);modalImgObjectUrl=null;}
@@ -1521,6 +1560,7 @@ function onModalImgSelect(e){
   const file = e.target.files[0];
   if(!file) return;
   modalImgChanged=true; // 使用者主動換過圖,saveSingle 會寫 image_updated_at
+  modalImgFile=file;    // 暫存 File 物件,saveSingle 時送進 pendingImageUploads
   if(modalImgObjectUrl) URL.revokeObjectURL(modalImgObjectUrl);
   modalImgObjectUrl = URL.createObjectURL(file);
   const t = document.getElementById('modal-thumb');
@@ -1838,6 +1878,11 @@ async function saveSingle(){
     // 新增模式:有換圖才寫 image_updated_at (純文字建檔不寫)
     badge.image_updated_at = modalImgChanged ? now : null;
     badges.push(badge);showToast('已新增');
+  }
+  // 有換圖則加入待推 GitHub 隊列
+  if(modalImgChanged && modalImgFile){
+    pendingImageUploads[badge.id] = { file: modalImgFile, ext: badge.ext };
+    updateSyncButtonLabel();
   }
   persist();renderList();closeModal();
 }
@@ -2280,6 +2325,7 @@ async function syncToGitHub(){
   try{
     // 準備 JSON 內容
     const json = JSON.stringify(badges, null, 2);
+    const pendingEntries = Object.entries(pendingImageUploads); // [[id, {file, ext}], ...]
 
     // 1. 取得目前 branch 指向的 commit sha
     const refData = await ghFetch(`${apiBase}/git/refs/heads/${GH_BRANCH}`);
@@ -2289,44 +2335,65 @@ async function syncToGitHub(){
     const commitData = await ghFetch(`${apiBase}/git/commits/${latestCommitSha}`);
     const baseTreeSha = commitData.tree.sha;
 
-    // 3. 建立 blob（沒有 1 MB 限制，可直接送 utf-8 明文）
-    const blobData = await ghFetch(`${apiBase}/git/blobs`, {
+    // 3. 建立 badges.json blob (utf-8 明文)
+    if(pendingEntries.length) btn.textContent = `同步中... (1/${pendingEntries.length+1})`;
+    const jsonBlob = await ghFetch(`${apiBase}/git/blobs`, {
       method: 'POST',
       body: JSON.stringify({ content: json, encoding: 'utf-8' }),
     });
-    const blobSha = blobData.sha;
 
-    // 4. 建立新 tree（只改 badges.json 這一個檔案）
+    // 4. 建立每張待推圖檔的 blob (binary base64 編碼)
+    const imageBlobs = [];
+    for(let i=0; i<pendingEntries.length; i++){
+      const [id, {file, ext}] = pendingEntries[i];
+      btn.textContent = `同步中... (${i+2}/${pendingEntries.length+1})`;
+      const base64 = await fileToBase64(file);
+      const blob = await ghFetch(`${apiBase}/git/blobs`, {
+        method: 'POST',
+        body: JSON.stringify({ content: base64, encoding: 'base64' }),
+      });
+      imageBlobs.push({ path: `images/${id}.${ext}`, sha: blob.sha });
+    }
+
+    // 5. 建立新 tree (badges.json + 所有新圖)
+    btn.textContent = '同步中... (建立 commit)';
+    const treeEntries = [
+      { path: GH_FILE, mode: '100644', type: 'blob', sha: jsonBlob.sha },
+      ...imageBlobs.map(b => ({ path: b.path, mode: '100644', type: 'blob', sha: b.sha })),
+    ];
     const treeData = await ghFetch(`${apiBase}/git/trees`, {
       method: 'POST',
-      body: JSON.stringify({
-        base_tree: baseTreeSha,
-        tree: [{ path: GH_FILE, mode: '100644', type: 'blob', sha: blobSha }],
-      }),
+      body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
     });
 
-    // 5. 建立新 commit
+    // 6. 建立新 commit (訊息含圖檔數)
+    const commitMsg = pendingEntries.length
+      ? `更新 badges.json + ${pendingEntries.length} 張圖（${new Date().toLocaleString('zh-TW')}）`
+      : `更新 badges.json（${new Date().toLocaleString('zh-TW')}）`;
     const newCommitData = await ghFetch(`${apiBase}/git/commits`, {
       method: 'POST',
       body: JSON.stringify({
-        message: `更新 badges.json（${new Date().toLocaleString('zh-TW')}）`,
+        message: commitMsg,
         tree: treeData.sha,
         parents: [latestCommitSha],
       }),
     });
 
-    // 6. 更新 branch ref 指向新 commit
+    // 7. 更新 branch ref 指向新 commit
     await ghFetch(`${apiBase}/git/refs/heads/${GH_BRANCH}`, {
       method: 'PATCH',
       body: JSON.stringify({ sha: newCommitData.sha }),
     });
 
-    showToast(`✓ 已同步到 GitHub！共 ${badges.length} 筆`);
+    // 清空待推隊列
+    pendingImageUploads = {};
+    showToast(`✓ 已同步到 GitHub！${badges.length} 筆資料` + (pendingEntries.length ? ` + ${pendingEntries.length} 張圖` : ''));
   } catch(e){
     showToast(`✗ 同步失敗：${e.message}`);
   }
 
-  btn.textContent = origText; btn.disabled = false;
+  btn.disabled = false;
+  updateSyncButtonLabel(); // 同步後重設按鈕文字 (顯示剩餘待推數,成功的話就是 0)
 }
 
 function showToast(msg){
