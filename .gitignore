@@ -1,1 +1,6 @@
 .claude/
+
+# 後台 admin 已用 GitHub API 直接推 images/ 到 origin,
+# 本機這份只是備份。手動丟新檔進來不該被 commit,
+# 避免跟 admin 推的內容衝突。
+images/
