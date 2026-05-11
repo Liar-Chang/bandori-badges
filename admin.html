@@ -1185,8 +1185,8 @@ function renderList(){
         </select>
       </td>
       ${editableCell('character',b.character)}
-      <td onclick="event.stopPropagation()">
-        <select style="width:100%;font-family:inherit;font-size:0.82rem;padding:0.3rem;border:1px solid #ddd;border-radius:4px;background:#fff;"
+      <td onclick="event.stopPropagation()" style="min-width:140px;">
+        <select style="width:100%;min-width:130px;font-family:inherit;font-size:0.82rem;padding:0.3rem 1.4rem 0.3rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;white-space:nowrap;text-overflow:ellipsis;"
           onchange="commitSizeEdit(this,${ri})">
           ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
