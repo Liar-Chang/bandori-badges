@@ -1020,11 +1020,11 @@ function switchCharMode(mode){
 function buildMultiCharList(filter){
   const multiWrap=document.getElementById('f-char-multi-wrap');
   if(!multiWrap) return;
-  // 收集所有樂團成員（排除全團選項）
+  // 收集所有樂團成員 (包含全團選項,方便建立 4 團跨團合照之類的徽章)
   const allMembers=[];
   Object.entries(CHAR_MAP).forEach(([band,members])=>{
     if(band==='其他') return;
-    members.filter(m=>!m.includes('全團')).forEach(m=>{
+    members.forEach(m=>{
       allMembers.push({band,name:m});
     });
   });
