@@ -43403,5 +43403,24 @@
     "created_at": "2026-05-12T13:45:58.406Z",
     "updated_at": "2026-05-12T13:45:58.406Z",
     "image_updated_at": "2026-05-12T13:45:58.406Z"
+  },
+  {
+    "id": "2786",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "山吹紗綾",
+    "series": "特典",
+    "year": "2017年7月26日",
+    "event": "TVアニメ「BanG Dream!」キャラクターソング 山吹沙綾「遠い音楽 ～ハートビート～」",
+    "type": "角色本身",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/100/",
+    "note": "",
+    "admin_note": "",
+    "short_event": "山吹沙綾「遠い音楽 ～ハートビート～」",
+    "created_at": "2026-05-12T13:58:56.893Z",
+    "updated_at": "2026-05-12T13:58:56.893Z",
+    "image_updated_at": "2026-05-12T13:58:56.893Z"
   }
 ]
