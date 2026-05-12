@@ -5399,7 +5399,7 @@
     "ext": "png",
     "band": "跨團合照",
     "character": "Poppin'Party全團xMyGO!!!!!全團",
-    "series": "完全生産限定版/通常版－Neowing",
+    "series": "アニメイト通常版",
     "year": "2024年9月25日",
     "event": "Poppin'Party×MyGO!!!!! 合同ライブ「Divide/Unite」Blu-ray",
     "short_event": "「Divide/Unite」Blu-ray",
@@ -5407,10 +5407,10 @@
     "size": "方形",
     "country": "日本",
     "url": "https://bang-dream.com/discographies/3752/",
-    "note": "51×76mm",
+    "note": "",
     "admin_note": "",
     "created_at": "2026-05-12T15:34:57.719Z",
-    "updated_at": "2026-05-12T15:55:12.790Z",
+    "updated_at": "2026-05-12T15:50:53.569Z",
     "image_updated_at": "2026-05-12T15:35:09.190Z"
   },
   {
@@ -43559,5 +43559,24 @@
     "created_at": "2026-05-12T15:01:19.876Z",
     "updated_at": "2026-05-12T15:15:45.561Z",
     "image_updated_at": "2026-05-12T15:15:45.561Z"
+  },
+  {
+    "id": "2794",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "",
+    "series": "完全生産限定版/通常版－amiami",
+    "year": "2024年9月25日",
+    "event": "Poppin'Party×MyGO!!!!! 合同ライブ「Divide/Unite」Blu-ray",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/3752/",
+    "note": "78×53mm",
+    "admin_note": "",
+    "short_event": "「Divide/Unite」Blu-ray",
+    "created_at": "2026-05-12T15:57:53.087Z",
+    "updated_at": "2026-05-12T15:57:53.087Z",
+    "image_updated_at": "2026-05-12T15:57:53.087Z"
   }
 ]
