@@ -43384,5 +43384,24 @@
     "created_at": "2026-05-11T21:31:44.836518+08:00",
     "updated_at": "2026-05-11T13:45:06.080Z",
     "image_updated_at": "2026-05-11T13:45:06.080Z"
+  },
+  {
+    "id": "2785",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "市谷有咲",
+    "series": "特典",
+    "year": "2017年7月26日",
+    "event": "TVアニメ「BanG Dream!」キャラクターソング 市ヶ谷有咲「す、好きなんかじゃない！」",
+    "type": "角色本身",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/101/",
+    "note": "",
+    "admin_note": "",
+    "short_event": "市ヶ谷有咲「す、好きなんかじゃない！」",
+    "created_at": "2026-05-12T13:45:58.406Z",
+    "updated_at": "2026-05-12T13:45:58.406Z",
+    "image_updated_at": "2026-05-12T13:45:58.406Z"
   }
 ]
