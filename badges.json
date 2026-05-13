@@ -43735,5 +43735,43 @@
     "created_at": "2026-05-13T12:37:34.542Z",
     "updated_at": "2026-05-13T12:37:34.542Z",
     "image_updated_at": "2026-05-13T12:37:34.542Z"
+  },
+  {
+    "id": "2804",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "弦卷心xRAISE A SUILEN全團",
+    "series": "特典",
+    "year": " 2019年11月27日",
+    "event": "Blu-ray「BanG Dream! 6th☆LIVE」",
+    "short_event": "Blu-ray「BanG Dream! 6th☆LIVE」",
+    "type": "角色聲優",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/1273/",
+    "note": "",
+    "admin_note": "",
+    "created_at": "2026-05-13T12:47:44.214Z",
+    "updated_at": "2026-05-13T12:48:18.937Z",
+    "image_updated_at": "2026-05-13T12:47:44.214Z"
+  },
+  {
+    "id": "2803",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "Poppin'Party全團",
+    "series": "特典",
+    "year": " 2019年11月27日",
+    "event": "Blu-ray「BanG Dream! 6th☆LIVE」",
+    "type": "角色聲優",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/1273/",
+    "note": "",
+    "admin_note": "",
+    "short_event": "Blu-ray「BanG Dream! 6th☆LIVE」",
+    "created_at": "2026-05-13T12:47:44.214Z",
+    "updated_at": "2026-05-13T12:47:44.214Z",
+    "image_updated_at": "2026-05-13T12:47:44.214Z"
   }
 ]
