@@ -122,12 +122,13 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .batch-list-empty{color:var(--muted);font-size:0.7rem;text-align:center;padding:1rem;}
 .batch-list table{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:0.7rem;}
 .batch-list th{color:var(--muted);font-weight:400;text-align:left;padding:0.18rem 0.25rem;border-bottom:1px solid var(--border);}
-.batch-list td{padding:0.12rem 0.25rem;}
+.batch-list td{padding:0.18rem 0.25rem;vertical-align:middle;}
 .batch-list tr.selected td{background:var(--surface2);}
 .batch-list input{width:100%;background:var(--bg);border:1px solid transparent;border-radius:3px;color:var(--text);padding:0.18rem 0.3rem;font-size:0.72rem;font-family:'Space Mono',monospace;outline:none;}
 .batch-list input:focus,.batch-list input:hover{border-color:var(--accent);background:var(--surface2);}
 .batch-list .del-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;padding:0 0.2rem;}
 .batch-list .del-btn:hover{color:#ef4444;}
+.batch-row-thumb{display:block;width:36px;height:36px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a36;}
 .batch-crop-btn{font-family:inherit;font-size:0.85rem;font-weight:700;padding:0.7rem;border-radius:8px;border:none;background:var(--green);color:#0a0a0a;cursor:pointer;flex-shrink:0;}
 .batch-crop-btn:hover{opacity:0.85;}
 .batch-crop-btn:disabled{opacity:0.4;cursor:not-allowed;}
@@ -992,7 +993,11 @@ updateNumPreview();
     <div class="batch-body">
       <div class="batch-canvas-area" id="batch-canvas-area">
         <div class="hint" id="batch-canvas-hint">請先在主畫面左側選一張圖片</div>
-        <canvas id="batch-canvas" style="display:none;" onclick="onBatchCanvasClick(event)"></canvas>
+        <canvas id="batch-canvas" style="display:none;"
+          onmousedown="onBatchCanvasMouseDown(event)"
+          onmousemove="onBatchCanvasMouseMove(event)"
+          onmouseup="onBatchCanvasMouseUp(event)"
+          onmouseleave="onBatchCanvasMouseUp(event)"></canvas>
       </div>
       <div class="batch-side">
         <div class="batch-config">
@@ -1000,17 +1005,32 @@ updateNumPreview();
           <div><label>起始編號</label><input type="number" id="batch-start-num" value="2900" min="1"/></div>
           <div><label>副檔名</label><select id="batch-ext"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option></select></div>
           <div><label>背景</label><select id="batch-bg"><option value="transparent">透明</option><option value="#ffffff">白</option><option value="#000000">黑</option><option value="#00ff00">綠</option><option value="#ff00ff">紫紅</option><option value="#888888">灰</option></select></div>
+          <div style="grid-column:1/-1;display:flex;align-items:center;gap:0.4rem;font-size:0.7rem;">
+            <input type="checkbox" id="batch-grid-on" onchange="renderBatchCanvas()" style="accent-color:var(--accent);cursor:pointer;"/>
+            <label for="batch-grid-on" style="cursor:pointer;color:var(--text);">顯示格線</label>
+            <select id="batch-grid-size" onchange="renderBatchCanvas()" style="margin-left:auto;font-family:'Space Mono',monospace;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.2rem 0.35rem;font-size:0.72rem;">
+              <option value="50">50 px</option>
+              <option value="100" selected>100 px</option>
+              <option value="200">200 px</option>
+              <option value="500">500 px</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.4rem;align-items:end;padding:0.5rem 0.6rem;background:var(--surface2);border-radius:8px;">
+          <div><label style="color:var(--muted);font-size:0.66rem;">偏移 ΔX</label><input type="number" id="batch-offset-x" value="0" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;"/></div>
+          <div><label style="color:var(--muted);font-size:0.66rem;">偏移 ΔY</label><input type="number" id="batch-offset-y" value="0" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;"/></div>
+          <button onclick="addBatchCropWithOffset()" style="font-family:inherit;font-size:0.72rem;padding:0.45rem 0.7rem;border-radius:5px;background:var(--accent);border:none;color:#fff;cursor:pointer;font-weight:600;">+ 偏移加入</button>
         </div>
         <div class="batch-list-wrap">
           <div class="batch-list-head">
             <span class="count">共 <span id="batch-count">0</span> 個</span>
             <span>
-              <button onclick="addBatchCropRow()">+ 新增</button>
+              <button onclick="addBatchCropRow()">+ 空白</button>
               <button onclick="clearAllBatchCrops()">清除</button>
             </span>
           </div>
           <div class="batch-list" id="batch-list">
-            <div class="batch-list-empty">尚未新增 ・ 點圖片或按「+ 新增」開始</div>
+            <div class="batch-list-empty">尚未新增 ・ 點圖片或按下方按鈕開始</div>
           </div>
         </div>
         <button class="batch-crop-btn" onclick="cropBatchAll()">📦 全部裁切下載 ZIP</button>
@@ -1025,6 +1045,13 @@ updateNumPreview();
 // ═══════════════════════════════════════════════════
 let batchCrops = [];      // [{cx, cy, r}, ...] 圖片像素座標
 let batchSelectedIdx = -1; // 視覺高亮哪一筆
+let batchMouse = {        // 拖曳狀態
+  down: false,
+  dragIdx: -1,
+  dragOffsetX: 0,
+  dragOffsetY: 0,
+  isDragging: false,
+};
 
 function openBatchMode(){
   if(currentIdx < 0 || !fileItems[currentIdx]){
@@ -1055,6 +1082,25 @@ function renderBatchCanvas(){
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, 0, 0);
+  // 格線(可選)
+  const gridOn = document.getElementById('batch-grid-on');
+  if(gridOn && gridOn.checked){
+    const step = parseInt(document.getElementById('batch-grid-size').value) || 100;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(192,132,252,0.25)';
+    ctx.lineWidth = 1;
+    ctx.font = `${Math.max(11, step*0.1)}px Space Mono,monospace`;
+    ctx.fillStyle = 'rgba(192,132,252,0.7)';
+    for(let px=0; px<=canvas.width; px+=step){
+      ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, canvas.height); ctx.stroke();
+      if(px>0) ctx.fillText(px, px+3, 14);
+    }
+    for(let py=0; py<=canvas.height; py+=step){
+      ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(canvas.width, py); ctx.stroke();
+      if(py>0) ctx.fillText(py, 3, py-3);
+    }
+    ctx.restore();
+  }
   // 畫每個圓 + 編號
   batchCrops.forEach((c, i) => {
     ctx.beginPath();
@@ -1075,16 +1121,105 @@ function renderBatchCanvas(){
   });
 }
 
+// 把滑鼠座標換成圖片像素座標
+function batchMouseToImageCoords(e){
+  const canvas = document.getElementById('batch-canvas');
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+// hit test:回傳 cursor 下面的 circle index,沒有則 -1
+function batchHitTest(x, y){
+  for(let i = batchCrops.length - 1; i >= 0; i--){
+    const c = batchCrops[i];
+    if(Math.hypot(x - c.cx, y - c.cy) < c.r) return i;
+  }
+  return -1;
+}
+function onBatchCanvasMouseDown(e){
+  e.preventDefault();
+  const pos = batchMouseToImageCoords(e);
+  batchMouse.down = true;
+  batchMouse.isDragging = false;
+  batchMouse.dragIdx = batchHitTest(pos.x, pos.y);
+  if(batchMouse.dragIdx >= 0){
+    const c = batchCrops[batchMouse.dragIdx];
+    batchMouse.dragOffsetX = pos.x - c.cx;
+    batchMouse.dragOffsetY = pos.y - c.cy;
+    batchSelectedIdx = batchMouse.dragIdx;
+    document.getElementById('batch-canvas').style.cursor = 'grabbing';
+  }
+}
+function onBatchCanvasMouseMove(e){
+  if(!batchMouse.down){
+    // 沒按下:只更新游標樣式(進入圓上方時 grab)
+    const pos = batchMouseToImageCoords(e);
+    const hit = batchHitTest(pos.x, pos.y);
+    document.getElementById('batch-canvas').style.cursor = hit >= 0 ? 'grab' : 'crosshair';
+    return;
+  }
+  const pos = batchMouseToImageCoords(e);
+  // 偵測是否變成 drag(防止點擊也算 drag)
+  if(!batchMouse.isDragging && batchMouse.dragIdx >= 0){
+    batchMouse.isDragging = true;
+  }
+  if(batchMouse.isDragging && batchMouse.dragIdx >= 0){
+    const c = batchCrops[batchMouse.dragIdx];
+    c.cx = pos.x - batchMouse.dragOffsetX;
+    c.cy = pos.y - batchMouse.dragOffsetY;
+    renderBatchCanvas();
+    updateBatchThumbnail(batchMouse.dragIdx); // 即時更新該列縮圖
+  }
+}
+function onBatchCanvasMouseUp(e){
+  if(!batchMouse.down) return;
+  const pos = batchMouseToImageCoords(e);
+  if(!batchMouse.isDragging){
+    // 沒拖曳:當作點擊
+    if(batchMouse.dragIdx < 0){
+      // 點空白處 → 新增一個圓
+      const r = parseInt(document.getElementById('batch-default-r').value) || 100;
+      batchCrops.push({cx: pos.x, cy: pos.y, r});
+      renderBatchCanvas();
+      renderBatchList();
+    }
+    // 點到既有圓:沒拖、僅選中(已在 mousedown 設好 batchSelectedIdx)
+  } else {
+    // 拖完:更新清單(顯示新 cx/cy)
+    renderBatchList();
+  }
+  batchMouse.down = false;
+  batchMouse.isDragging = false;
+  batchMouse.dragIdx = -1;
+  document.getElementById('batch-canvas').style.cursor = 'crosshair';
+}
+// 偏移加入:用上一個圓的位置 + ΔX/ΔY 推算新位置,半徑沿用上一個
+function addBatchCropWithOffset(){
+  if(!batchCrops.length){
+    alert('請先點圖加入第一個裁切點,才有「上一個」可以偏移');
+    return;
+  }
+  const dx = parseFloat(document.getElementById('batch-offset-x').value) || 0;
+  const dy = parseFloat(document.getElementById('batch-offset-y').value) || 0;
+  const last = batchCrops[batchCrops.length - 1];
+  batchCrops.push({ cx: last.cx + dx, cy: last.cy + dy, r: last.r });
+  renderBatchCanvas();
+  renderBatchList();
+}
+
 function renderBatchList(){
   document.getElementById('batch-count').textContent = batchCrops.length;
   const list = document.getElementById('batch-list');
   if(!batchCrops.length){
-    list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按「+ 新增」開始</div>';
+    list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按下方按鈕開始</div>';
     return;
   }
-  list.innerHTML = '<table><thead><tr><th style="width:28px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
+  list.innerHTML = '<table><thead><tr><th style="width:40px;">預覽</th><th style="width:22px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
     batchCrops.map((c, i) => `
       <tr class="${i === batchSelectedIdx ? 'selected' : ''}" onmouseenter="batchSelectedIdx=${i};renderBatchCanvas()" onmouseleave="batchSelectedIdx=-1;renderBatchCanvas()">
+        <td><canvas class="batch-row-thumb" data-idx="${i}" width="36" height="36"></canvas></td>
         <td>${i+1}</td>
         <td><input type="number" value="${Math.round(c.cx)}" onchange="updateBatchCrop(${i},'cx',this.value)"/></td>
         <td><input type="number" value="${Math.round(c.cy)}" onchange="updateBatchCrop(${i},'cy',this.value)"/></td>
@@ -1092,19 +1227,47 @@ function renderBatchList(){
         <td><button class="del-btn" onclick="removeBatchCrop(${i})" title="刪除">✕</button></td>
       </tr>
     `).join('') + '</tbody></table>';
+  // 渲染所有縮圖
+  updateAllBatchThumbnails();
 }
 
-function onBatchCanvasClick(e){
-  const canvas = document.getElementById('batch-canvas');
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const cx = Math.round((e.clientX - rect.left) * scaleX);
-  const cy = Math.round((e.clientY - rect.top) * scaleY);
-  const r = parseInt(document.getElementById('batch-default-r').value) || 100;
-  batchCrops.push({cx, cy, r});
-  renderBatchCanvas();
-  renderBatchList();
+// 畫單一裁切點的縮圖到指定 canvas
+function drawBatchThumbnail(canvas, c, img){
+  const size = 36;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  if(!c || !img || c.r <= 0) return;
+  // 圓形遮罩
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
+  ctx.clip();
+  // 從原圖切出縮放後繪製
+  try {
+    ctx.drawImage(img, c.cx - c.r, c.cy - c.r, c.r*2, c.r*2, 0, 0, size, size);
+  } catch(e) { /* 超出範圍會丟例外,讓 canvas 留空 */ }
+  ctx.restore();
+  // 邊框
+  ctx.strokeStyle = 'rgba(192,132,252,0.7)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
+  ctx.stroke();
+}
+function updateAllBatchThumbnails(){
+  const item = fileItems[currentIdx];
+  if(!item || !item.imgEl) return;
+  const img = item.imgEl;
+  document.querySelectorAll('.batch-row-thumb').forEach(canvas => {
+    const idx = parseInt(canvas.dataset.idx);
+    if(batchCrops[idx]) drawBatchThumbnail(canvas, batchCrops[idx], img);
+  });
+}
+function updateBatchThumbnail(idx){
+  const canvas = document.querySelector(`.batch-row-thumb[data-idx="${idx}"]`);
+  const item = fileItems[currentIdx];
+  if(!canvas || !item || !item.imgEl || !batchCrops[idx]) return;
+  drawBatchThumbnail(canvas, batchCrops[idx], item.imgEl);
 }
 
 function addBatchCropRow(){
@@ -1121,6 +1284,7 @@ function updateBatchCrop(idx, field, value){
   if(!batchCrops[idx]) return;
   batchCrops[idx][field] = v;
   renderBatchCanvas();
+  updateBatchThumbnail(idx); // 即時更新該列縮圖
 }
 
 function removeBatchCrop(idx){
