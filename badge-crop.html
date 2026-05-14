@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Badge Crop — 徽章裁圖工具</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<!-- 批次裁切打包 ZIP 用 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -92,6 +94,43 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .grid-row{display:flex;align-items:center;gap:0.4rem;font-size:0.7rem;color:var(--muted);margin-bottom:0.35rem;}
 .grid-row input{accent-color:var(--accent);cursor:pointer;}
 .cursor-info{position:fixed;background:rgba(0,0,0,0.88);color:var(--accent);font-family:'Space Mono',monospace;font-size:0.67rem;padding:0.15rem 0.5rem;border-radius:4px;pointer-events:none;z-index:200;display:none;}
+
+/* ── 批次裁切 modal ── */
+.batch-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem;}
+.batch-overlay.open{display:flex;}
+.batch-modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;width:min(1200px,98vw);max-height:96vh;display:flex;flex-direction:column;overflow:hidden;}
+.batch-head{display:flex;align-items:center;gap:0.6rem;padding:0.7rem 1.1rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.batch-head h2{font-size:0.9rem;font-weight:700;color:var(--accent);}
+.batch-head .hint{font-size:0.7rem;color:var(--muted);}
+.batch-head .close{margin-left:auto;background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.batch-head .close:hover{color:var(--text);}
+.batch-body{flex:1;display:grid;grid-template-columns:1fr 360px;gap:0.85rem;padding:0.85rem;overflow:hidden;min-height:0;}
+.batch-canvas-area{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;position:relative;padding:0.5rem;}
+.batch-canvas-area .hint{color:var(--muted);font-size:0.78rem;padding:2rem;text-align:center;width:100%;}
+.batch-canvas-area canvas{display:block;max-width:100%;height:auto;cursor:crosshair;border-radius:4px;}
+.batch-side{display:flex;flex-direction:column;gap:0.6rem;overflow:hidden;min-height:0;}
+.batch-config{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.6rem;padding:0.6rem;background:var(--surface2);border-radius:8px;font-size:0.72rem;}
+.batch-config label{color:var(--muted);font-size:0.66rem;display:block;margin-bottom:0.15rem;}
+.batch-config input,.batch-config select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;}
+.batch-config input:focus,.batch-config select:focus{border-color:var(--accent);}
+.batch-list-wrap{flex:1;display:flex;flex-direction:column;background:var(--surface2);border-radius:8px;padding:0.6rem;min-height:0;}
+.batch-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;}
+.batch-list-head .count{font-size:0.7rem;color:var(--muted);}
+.batch-list-head button{font-family:inherit;font-size:0.7rem;padding:0.3rem 0.6rem;border-radius:5px;background:var(--bg);border:1.5px solid var(--border);color:var(--text);cursor:pointer;margin-left:0.3rem;}
+.batch-list-head button:hover{border-color:var(--accent);}
+.batch-list{flex:1;overflow-y:auto;background:var(--bg);border-radius:6px;padding:0.25rem;}
+.batch-list-empty{color:var(--muted);font-size:0.7rem;text-align:center;padding:1rem;}
+.batch-list table{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:0.7rem;}
+.batch-list th{color:var(--muted);font-weight:400;text-align:left;padding:0.18rem 0.25rem;border-bottom:1px solid var(--border);}
+.batch-list td{padding:0.12rem 0.25rem;}
+.batch-list tr.selected td{background:var(--surface2);}
+.batch-list input{width:100%;background:var(--bg);border:1px solid transparent;border-radius:3px;color:var(--text);padding:0.18rem 0.3rem;font-size:0.72rem;font-family:'Space Mono',monospace;outline:none;}
+.batch-list input:focus,.batch-list input:hover{border-color:var(--accent);background:var(--surface2);}
+.batch-list .del-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;padding:0 0.2rem;}
+.batch-list .del-btn:hover{color:#ef4444;}
+.batch-crop-btn{font-family:inherit;font-size:0.85rem;font-weight:700;padding:0.7rem;border-radius:8px;border:none;background:var(--green);color:#0a0a0a;cursor:pointer;flex-shrink:0;}
+.batch-crop-btn:hover{opacity:0.85;}
+.batch-crop-btn:disabled{opacity:0.4;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -100,6 +139,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
   <span style="font-size:1.1rem;">🎯</span>
   <h1>BADGE CROP</h1>
   <span>徽章裁圖工具</span>
+  <button id="btn-open-batch" onclick="openBatchMode()" style="margin-left:auto;background:linear-gradient(135deg,#c084fc,#818cf8);color:#fff;border:none;padding:0.4rem 0.9rem;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">🎁 批次模式</button>
 </header>
 
 <div class="layout">
@@ -937,6 +977,228 @@ function updateNumPreview(){
 }
 document.getElementById('ext-sel').addEventListener('change',updateNumPreview);
 updateNumPreview();
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     批次裁切 modal(手動座標輸入,目前只支援圓形)
+     ═══════════════════════════════════════════════════ -->
+<div class="batch-overlay" id="batch-overlay">
+  <div class="batch-modal">
+    <div class="batch-head">
+      <h2>🎁 批次裁切（圓形）</h2>
+      <span class="hint">點圖片新增 ・ 也可手動編輯欄位 ・ 用主畫面當前選的圖</span>
+      <button class="close" onclick="closeBatchMode()">✕</button>
+    </div>
+    <div class="batch-body">
+      <div class="batch-canvas-area" id="batch-canvas-area">
+        <div class="hint" id="batch-canvas-hint">請先在主畫面左側選一張圖片</div>
+        <canvas id="batch-canvas" style="display:none;" onclick="onBatchCanvasClick(event)"></canvas>
+      </div>
+      <div class="batch-side">
+        <div class="batch-config">
+          <div><label>預設半徑</label><input type="number" id="batch-default-r" value="100" min="10"/></div>
+          <div><label>起始編號</label><input type="number" id="batch-start-num" value="2900" min="1"/></div>
+          <div><label>副檔名</label><select id="batch-ext"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option></select></div>
+          <div><label>背景</label><select id="batch-bg"><option value="transparent">透明</option><option value="#ffffff">白</option><option value="#000000">黑</option><option value="#00ff00">綠</option><option value="#ff00ff">紫紅</option><option value="#888888">灰</option></select></div>
+        </div>
+        <div class="batch-list-wrap">
+          <div class="batch-list-head">
+            <span class="count">共 <span id="batch-count">0</span> 個</span>
+            <span>
+              <button onclick="addBatchCropRow()">+ 新增</button>
+              <button onclick="clearAllBatchCrops()">清除</button>
+            </span>
+          </div>
+          <div class="batch-list" id="batch-list">
+            <div class="batch-list-empty">尚未新增 ・ 點圖片或按「+ 新增」開始</div>
+          </div>
+        </div>
+        <button class="batch-crop-btn" onclick="cropBatchAll()">📦 全部裁切下載 ZIP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// 批次裁切:全域狀態
+// ═══════════════════════════════════════════════════
+let batchCrops = [];      // [{cx, cy, r}, ...] 圖片像素座標
+let batchSelectedIdx = -1; // 視覺高亮哪一筆
+
+function openBatchMode(){
+  if(currentIdx < 0 || !fileItems[currentIdx]){
+    alert('請先在左側選一張圖片');
+    return;
+  }
+  document.getElementById('batch-overlay').classList.add('open');
+  renderBatchCanvas();
+  renderBatchList();
+}
+function closeBatchMode(){
+  document.getElementById('batch-overlay').classList.remove('open');
+}
+
+function renderBatchCanvas(){
+  const item = fileItems[currentIdx];
+  if(!item || !item.imgEl){
+    document.getElementById('batch-canvas-hint').style.display = '';
+    document.getElementById('batch-canvas').style.display = 'none';
+    return;
+  }
+  const img = item.imgEl;
+  document.getElementById('batch-canvas-hint').style.display = 'none';
+  const canvas = document.getElementById('batch-canvas');
+  canvas.style.display = '';
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  // 畫每個圓 + 編號
+  batchCrops.forEach((c, i) => {
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI*2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = i === batchSelectedIdx ? '#ff6eb4' : '#22c55e';
+    ctx.stroke();
+    // 編號標籤
+    const fontSize = Math.max(20, c.r * 0.3);
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = Math.max(3, fontSize/8);
+    ctx.strokeStyle = '#000';
+    ctx.fillStyle = '#fff';
+    ctx.strokeText(String(i+1), c.cx, c.cy);
+    ctx.fillText(String(i+1), c.cx, c.cy);
+  });
+}
+
+function renderBatchList(){
+  document.getElementById('batch-count').textContent = batchCrops.length;
+  const list = document.getElementById('batch-list');
+  if(!batchCrops.length){
+    list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按「+ 新增」開始</div>';
+    return;
+  }
+  list.innerHTML = '<table><thead><tr><th style="width:28px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
+    batchCrops.map((c, i) => `
+      <tr class="${i === batchSelectedIdx ? 'selected' : ''}" onmouseenter="batchSelectedIdx=${i};renderBatchCanvas()" onmouseleave="batchSelectedIdx=-1;renderBatchCanvas()">
+        <td>${i+1}</td>
+        <td><input type="number" value="${Math.round(c.cx)}" onchange="updateBatchCrop(${i},'cx',this.value)"/></td>
+        <td><input type="number" value="${Math.round(c.cy)}" onchange="updateBatchCrop(${i},'cy',this.value)"/></td>
+        <td><input type="number" value="${Math.round(c.r)}" onchange="updateBatchCrop(${i},'r',this.value)"/></td>
+        <td><button class="del-btn" onclick="removeBatchCrop(${i})" title="刪除">✕</button></td>
+      </tr>
+    `).join('') + '</tbody></table>';
+}
+
+function onBatchCanvasClick(e){
+  const canvas = document.getElementById('batch-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const cx = Math.round((e.clientX - rect.left) * scaleX);
+  const cy = Math.round((e.clientY - rect.top) * scaleY);
+  const r = parseInt(document.getElementById('batch-default-r').value) || 100;
+  batchCrops.push({cx, cy, r});
+  renderBatchCanvas();
+  renderBatchList();
+}
+
+function addBatchCropRow(){
+  const r = parseInt(document.getElementById('batch-default-r').value) || 100;
+  // 新增空白筆,座標 0,0 讓使用者自己填(或之後點圖)
+  batchCrops.push({cx: 0, cy: 0, r});
+  renderBatchCanvas();
+  renderBatchList();
+}
+
+function updateBatchCrop(idx, field, value){
+  const v = parseFloat(value);
+  if(!isFinite(v) || v < 0) return;
+  if(!batchCrops[idx]) return;
+  batchCrops[idx][field] = v;
+  renderBatchCanvas();
+}
+
+function removeBatchCrop(idx){
+  batchCrops.splice(idx, 1);
+  renderBatchCanvas();
+  renderBatchList();
+}
+
+function clearAllBatchCrops(){
+  if(batchCrops.length && !confirm('確定清除所有裁切點?')) return;
+  batchCrops = [];
+  renderBatchCanvas();
+  renderBatchList();
+}
+
+async function cropBatchAll(){
+  if(!batchCrops.length){ alert('請先新增至少一個裁切點'); return; }
+  const item = fileItems[currentIdx];
+  if(!item || !item.imgEl){ alert('沒有可裁切的圖片'); return; }
+  if(typeof JSZip === 'undefined'){ alert('JSZip 未載入,請重新整理頁面'); return; }
+  // 檢查每個裁切是否在圖片範圍內
+  const img = item.imgEl;
+  const W = img.naturalWidth || img.width;
+  const H = img.naturalHeight || img.height;
+  const invalid = batchCrops.filter(c => c.cx - c.r < 0 || c.cy - c.r < 0 || c.cx + c.r > W || c.cy + c.r > H || c.r <= 0);
+  if(invalid.length){
+    if(!confirm(`有 ${invalid.length} 個裁切點超出圖片範圍或半徑無效,可能裁出空白/異常結果。要繼續嗎?`)) return;
+  }
+
+  const startNum = parseInt(document.getElementById('batch-start-num').value) || 1;
+  const ext = document.getElementById('batch-ext').value;
+  const bg = document.getElementById('batch-bg').value;
+  const mime = ext === 'jpg' ? 'image/jpeg' : ext === 'webp' ? 'image/webp' : 'image/png';
+  const btn = document.querySelector('.batch-crop-btn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+
+  const zip = new JSZip();
+  for(let i = 0; i < batchCrops.length; i++){
+    btn.textContent = `裁切中... (${i+1}/${batchCrops.length})`;
+    const c = batchCrops[i];
+    const size = Math.round(c.r * 2);
+    const cropCanvas = document.createElement('canvas');
+    cropCanvas.width = size;
+    cropCanvas.height = size;
+    const cctx = cropCanvas.getContext('2d');
+    // 背景
+    if(bg !== 'transparent'){
+      cctx.fillStyle = bg;
+      cctx.fillRect(0, 0, size, size);
+    }
+    // 圓形遮罩
+    cctx.save();
+    cctx.beginPath();
+    cctx.arc(c.r, c.r, c.r, 0, Math.PI*2);
+    cctx.clip();
+    // 從原圖切出
+    cctx.drawImage(img, c.cx - c.r, c.cy - c.r, size, size, 0, 0, size, size);
+    cctx.restore();
+    const blob = await new Promise(resolve => cropCanvas.toBlob(resolve, mime));
+    if(blob){
+      const filename = String(startNum + i).padStart(3, '0') + '.' + ext;
+      zip.file(filename, blob);
+    }
+  }
+
+  btn.textContent = '打包 ZIP 中...';
+  const zipBlob = await zip.generateAsync({type: 'blob'});
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `badge-crop-${Date.now()}.zip`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  btn.textContent = `✓ 已下載 ${batchCrops.length} 張`;
+  setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 1800);
+}
 </script>
 
 </body>
