@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/5/17",
+    "content": {
+      "zh": "【新增】\n・PalVerse BanG Dream! Poppin'Party【BOX】(新增 1 張)\n・PalVerse BanG Dream! Pastel＊Palettes【BOX】(新增 1 張)\n・PalVerse BanG Dream! Roselia【BOX】(新增 1 張)\n・《BanG Dream！少女樂團派對》主題咖啡廳「BanG Dream! CAFÉ」(新增 7 張)\n・「バンドリ！ガールズバンドパーティ！カフェ」2018 秋葉原会場 (新增 5 張)\n・「バンドリ！ガールズバンドパーティ！カフェ」2019 (新增 5 張)\n・「バンドリ！ガールズバンドパーティ！カフェ」2021 (新增 4 張)\n・キリン 午後の紅茶×BanG Dream! (新增 5 張)\n・スギ薬局×「バンドリ！ガールズバンドパーティ！」2024 (新增 7 張)\n【功能調整】\n・新增「🎲 抽獎徽章」標記:抽獎取得的徽章右下角會顯示 🎲;側欄勾選「隱藏抽獎徽章」可從圖鑑與蒐集進度中排除這類徽章",
+      "ja": "【新規】\n・PalVerse BanG Dream! Poppin'Party【BOX】(1枚追加)\n・PalVerse BanG Dream! Pastel＊Palettes【BOX】(1枚追加)\n・PalVerse BanG Dream! Roselia【BOX】(1枚追加)\n・「バンドリ！ガールズバンドパーティ！」テーマカフェ「BanG Dream! CAFÉ」(7枚追加)\n・「バンドリ！ガールズバンドパーティ！カフェ」2018 秋葉原会場 (5枚追加)\n・「バンドリ！ガールズバンドパーティ！カフェ」2019 (5枚追加)\n・「バンドリ！ガールズバンドパーティ！カフェ」2021 (4枚追加)\n・キリン 午後の紅茶×BanG Dream! (5枚追加)\n・スギ薬局×「バンドリ！ガールズバンドパーティ！」2024 (7枚追加)\n【機能調整】\n・「🎲 抽選バッジ」マーク機能を追加:抽選で取得したバッジは右下に 🎲 が表示されます。サイドバーで「抽選バッジを隠す」にチェックすると図鑑と収集進捗から除外できます",
+      "en": "【New】\n・PalVerse BanG Dream! Poppin'Party [BOX] (1 added)\n・PalVerse BanG Dream! Pastel＊Palettes [BOX] (1 added)\n・PalVerse BanG Dream! Roselia [BOX] (1 added)\n・\"BanG Dream! Girls Band Party!\" Theme Café \"BanG Dream! CAFÉ\" (7 added)\n・\"BanG Dream! Girls Band Party! Cafe\" 2018 Akihabara Venue (5 added)\n・\"BanG Dream! Girls Band Party! Cafe\" 2019 (5 added)\n・\"BanG Dream! Girls Band Party! Cafe\" 2021 (4 added)\n・Kirin Gogo no Kocha × BanG Dream! (5 added)\n・Sugi Pharmacy × \"BanG Dream! Girls Band Party!\" 2024 (7 added)\n【Feature Adjustments】\n・Added \"🎲 Lottery Badge\" marker: lottery-obtained badges now show 🎲 in the bottom-right corner; tick \"Hide lottery badges\" in the sidebar to exclude them from the encyclopedia and collection progress",
+      "ko": "【추가】\n・PalVerse BanG Dream! Poppin'Party【BOX】(1장 추가)\n・PalVerse BanG Dream! Pastel＊Palettes【BOX】(1장 추가)\n・PalVerse BanG Dream! Roselia【BOX】(1장 추가)\n・《BanG Dream! 소녀 밴드 파티》테마 카페「BanG Dream! CAFÉ」(7장 추가)\n・「バンドリ！ガールズバンドパーティ！카페」2018 아키하바라 회장 (5장 추가)\n・「バンドリ！ガールズバンドパーティ！카페」2019 (5장 추가)\n・「バンドリ！ガールズバンドパーティ！카페」2021 (4장 추가)\n・키린 오후의 홍차 × BanG Dream! (5장 추가)\n・스기약국 × 「バンドリ！ガールズバンドパーティ！」2024 (7장 추가)\n【기능 조정】\n・「🎲 추첨 뱃지」마크 기능 추가: 추첨으로 획득한 뱃지는 오른쪽 아래에 🎲 가 표시됩니다. 사이드바에서 \"추첨 뱃지 숨기기\"를 체크하면 도감과 수집 진행률에서 제외됩니다"
+    }
+  },
+  {
     "date": "2026/5/16",
     "content": {
       "zh": "【新增】\n・「バンドリ！ガールズバンドパーティ！カフェ」誕生日限定（弦巻こころ）(新增 1 張)\n【功能調整】\n(無)",
