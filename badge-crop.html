@@ -68,6 +68,10 @@ header span{font-size:0.7rem;color:var(--muted);}
 .st.active{background:var(--accent2);color:#fff;border-color:var(--accent2);}
 .canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .canvas-scroll{flex:1;display:flex;align-items:center;justify-content:center;padding:1rem;overflow:auto;background:var(--bg);}
+.single-zoom-controls{position:absolute;bottom:0.6rem;right:0.6rem;display:flex;align-items:center;gap:0.3rem;background:rgba(0,0,0,0.7);border:1px solid var(--border);border-radius:6px;padding:0.25rem 0.4rem;backdrop-filter:blur(4px);z-index:5;}
+.single-zoom-controls button{background:transparent;border:none;color:var(--text);font-size:0.95rem;font-weight:700;cursor:pointer;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;}
+.single-zoom-controls button:hover{background:var(--surface2);color:var(--accent);}
+.single-zoom-controls span{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:42px;text-align:center;}
 .canvas-hint{color:var(--muted);font-size:0.8rem;text-align:center;line-height:1.7;}
 canvas#mc{display:block;border-radius:4px;border:1px solid var(--border);}
 canvas#mc.bg-checker,#preview-canvas.bg-checker{
@@ -105,9 +109,13 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .batch-head .close{margin-left:auto;background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
 .batch-head .close:hover{color:var(--text);}
 .batch-body{flex:1;display:grid;grid-template-columns:1fr 360px;gap:0.85rem;padding:0.85rem;overflow:hidden;min-height:0;}
-.batch-canvas-area{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;position:relative;padding:0.5rem;}
+.batch-canvas-area{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;position:relative;padding:0.5rem;touch-action:none;}
 .batch-canvas-area .hint{color:var(--muted);font-size:0.78rem;padding:2rem;text-align:center;width:100%;}
 .batch-canvas-area canvas{display:block;max-width:100%;height:auto;cursor:crosshair;border-radius:4px;}
+.batch-zoom-controls{position:absolute;bottom:0.6rem;right:0.6rem;display:flex;align-items:center;gap:0.3rem;background:rgba(0,0,0,0.7);border:1px solid var(--border);border-radius:6px;padding:0.25rem 0.4rem;backdrop-filter:blur(4px);}
+.batch-zoom-controls button{background:transparent;border:none;color:var(--text);font-size:0.95rem;font-weight:700;cursor:pointer;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;}
+.batch-zoom-controls button:hover{background:var(--surface2);color:var(--accent);}
+.batch-zoom-controls span{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:42px;text-align:center;}
 .batch-side{display:flex;flex-direction:column;gap:0.6rem;overflow:hidden;min-height:0;}
 .batch-config{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.6rem;padding:0.6rem;background:var(--surface2);border-radius:8px;font-size:0.72rem;}
 .batch-config label{color:var(--muted);font-size:0.66rem;display:block;margin-bottom:0.15rem;}
@@ -128,7 +136,12 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .batch-list input:focus,.batch-list input:hover{border-color:var(--accent);background:var(--surface2);}
 .batch-list .del-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;padding:0 0.2rem;}
 .batch-list .del-btn:hover{color:#ef4444;}
-.batch-row-thumb{display:block;width:36px;height:36px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a36;}
+.batch-row-thumb{display:block;width:48px;height:48px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a36;}
+/* 滑鼠 hover 列時的大圖預覽 */
+.batch-hover-preview-wrap{position:fixed;display:none;z-index:1000;flex-direction:column;align-items:center;gap:0.35rem;pointer-events:none;background:rgba(20,20,28,0.96);border:1.5px solid var(--accent);border-radius:12px;padding:0.6rem;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+.batch-hover-preview-wrap.show{display:flex;}
+.batch-hover-preview-wrap canvas{display:block;width:220px;height:220px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#2a2a36;}
+.batch-hover-preview-wrap .label{font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--accent);}
 .batch-crop-btn{font-family:inherit;font-size:0.85rem;font-weight:700;padding:0.7rem;border-radius:8px;border:none;background:var(--green);color:#0a0a0a;cursor:pointer;flex-shrink:0;}
 .batch-crop-btn:hover{opacity:0.85;}
 .batch-crop-btn:disabled{opacity:0.4;cursor:not-allowed;}
@@ -189,7 +202,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
             <div class="field"><label>中心 Y</label><input type="number" id="cy" placeholder="0" oninput="previewShape()"/></div>
           </div>
           <div class="field"><label id="r-label">半徑（px）</label><input type="number" id="r" placeholder="190" oninput="previewShape()"/></div>
-          <p style="font-size:0.67rem;color:var(--muted);line-height:1.6;">💡 右鍵快速設中心<br>滾輪微調大小</p>
+          <p style="font-size:0.67rem;color:var(--muted);line-height:1.6;">💡 右鍵快速設中心<br>滾輪縮放畫面 ・ Shift+滾輪微調大小<br>中鍵拖曳平移 ・ 觸控兩指縮放</p>
         </div>
         <!-- 任意方形/橢圓/心形：矩形拖曳 -->
         <div id="ctrl-rect" style="display:none;">
@@ -283,10 +296,16 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
   </div>
 
   <!-- ③ 右側：畫布 -->
-  <div class="canvas-area">
+  <div class="canvas-area" style="position:relative;">
     <div class="canvas-scroll" id="canvas-scroll">
       <div class="canvas-hint" id="canvas-hint">← 上傳圖片後點選清單中的圖片開始裁圖</div>
       <canvas id="mc" style="display:none;cursor:crosshair;"></canvas>
+    </div>
+    <div class="single-zoom-controls">
+      <button onclick="zoomSingleOut()" title="縮小">−</button>
+      <span id="single-zoom-label">100%</span>
+      <button onclick="zoomSingleIn()" title="放大">+</button>
+      <button onclick="zoomSingleReset()" title="重設縮放">⤢</button>
     </div>
   </div>
 
@@ -306,6 +325,9 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 
 <script>
 let img=null, scale=1, cx=0, cy=0, r=0;
+let userZoom=1.0, baseScale=1.0; // 單張模式的使用者縮放(獨立於 fit-to-area 的 baseScale)
+let singlePan={active:false, startX:0, startY:0, startScrollLeft:0, startScrollTop:0};
+let singlePinch={active:false, initialDist:0, initialZoom:1};
 let rx1=0,ry1=0,rx2=0,ry2=0; // 矩形模式
 let mode='manual', shape='circle';
 let dragging=false, dragOrigin=null;
@@ -472,12 +494,45 @@ function fitCanvasToArea(){
   const area=document.getElementById('canvas-scroll');
   const maxW=Math.max(100,area.clientWidth-32);
   const maxH=Math.max(100,area.clientHeight-32);
-  let s=Math.min(1,maxW/img.naturalWidth,maxH/img.naturalHeight);
-  if(!isFinite(s)||s<=0) s=0.1; // 容器還沒 layout 完成時的保底值
-  scale=s;
+  baseScale=Math.min(1,maxW/img.naturalWidth,maxH/img.naturalHeight);
+  if(!isFinite(baseScale)||baseScale<=0) baseScale=0.1; // 容器還沒 layout 完成時的保底值
+  scale=baseScale*userZoom;
   mc.width=Math.max(1,Math.round(img.naturalWidth*scale));
   mc.height=Math.max(1,Math.round(img.naturalHeight*scale));
 }
+
+// 套用使用者縮放(以滑鼠位置為錨點),維持游標對應的圖片像素不變
+function applyUserZoom(anchorClientX, anchorClientY){
+  if(!img) return;
+  userZoom = Math.max(0.1, Math.min(8, userZoom));
+  let anchorImg = null;
+  if(anchorClientX !== undefined){
+    const rect = mc.getBoundingClientRect();
+    if(rect.width > 0){
+      anchorImg = {
+        ix: (anchorClientX - rect.left) / scale,
+        iy: (anchorClientY - rect.top) / scale,
+        ax: anchorClientX, ay: anchorClientY,
+      };
+    }
+  }
+  fitCanvasToArea();
+  draw();
+  // 把錨點重新拉回原本螢幕位置
+  if(anchorImg){
+    const container = document.getElementById('canvas-scroll');
+    const newRect = mc.getBoundingClientRect();
+    const newCursorX = anchorImg.ix * scale + newRect.left;
+    const newCursorY = anchorImg.iy * scale + newRect.top;
+    container.scrollLeft += (newCursorX - anchorImg.ax);
+    container.scrollTop  += (newCursorY - anchorImg.ay);
+  }
+  const label = document.getElementById('single-zoom-label');
+  if(label) label.textContent = Math.round(userZoom * 100) + '%';
+}
+function zoomSingleIn(){ userZoom *= 1.25; applyUserZoom(); }
+function zoomSingleOut(){ userZoom /= 1.25; applyUserZoom(); }
+function zoomSingleReset(){ userZoom = 1.0; applyUserZoom(); }
 
 // 視窗 resize 時，自動重新計算畫布大小並重繪
 let _resizeTimer=null;
@@ -870,6 +925,14 @@ function setBgMode(){
 function getPos(e){const rect=mc.getBoundingClientRect();return{x:(e.clientX-rect.left)/scale,y:(e.clientY-rect.top)/scale};}
 
 mc.addEventListener('mousemove',e=>{
+  // 中鍵 pan 中:更新 container 捲動
+  if(singlePan.active){
+    e.preventDefault();
+    const container = document.getElementById('canvas-scroll');
+    container.scrollLeft = singlePan.startScrollLeft - (e.clientX - singlePan.startX);
+    container.scrollTop  = singlePan.startScrollTop  - (e.clientY - singlePan.startY);
+    return;
+  }
   const pos=getPos(e);
   const ci=document.getElementById('cursor-info');
   ci.style.display='block';ci.style.left=(e.clientX+14)+'px';ci.style.top=(e.clientY+14)+'px';
@@ -881,8 +944,23 @@ mc.addEventListener('mousemove',e=>{
     draw();
   }
 });
-mc.addEventListener('mouseleave',()=>{document.getElementById('cursor-info').style.display='none';});
+mc.addEventListener('mouseleave',()=>{
+  document.getElementById('cursor-info').style.display='none';
+  if(singlePan.active){singlePan.active=false; mc.style.cursor='';}
+});
 mc.addEventListener('mousedown',e=>{
+  // 中鍵:啟動 pan 模式(任何模式都可用,不衝突)
+  if(e.button === 1){
+    e.preventDefault();
+    singlePan.active = true;
+    singlePan.startX = e.clientX;
+    singlePan.startY = e.clientY;
+    const container = document.getElementById('canvas-scroll');
+    singlePan.startScrollLeft = container.scrollLeft;
+    singlePan.startScrollTop  = container.scrollTop;
+    mc.style.cursor = 'move';
+    return;
+  }
   if(e.button!==0)return;
   if(mode==='click'){
     const pos=getPos(e);
@@ -894,6 +972,7 @@ mc.addEventListener('mousedown',e=>{
   }
 });
 mc.addEventListener('mouseup',e=>{
+  if(singlePan.active){singlePan.active=false; mc.style.cursor=''; return;}
   if(mode==='click'&&dragging){
     dragging=false;syncInputs();
     document.getElementById('click-hint').innerHTML='✓ 完成！可重新拖曳或微調';
@@ -907,9 +986,44 @@ mc.addEventListener('contextmenu',e=>{
 });
 mc.addEventListener('wheel',e=>{
   if(!img)return;e.preventDefault();
-  const isCenterR=shape==='circle'||shape==='square';
-  if(isCenterR){r=Math.max(1,r+(e.deltaY>0?-2:2));document.getElementById('r').value=Math.round(r);draw();}
+  if(e.shiftKey){
+    // Shift+滾輪:微調大小(原本行為)
+    const isCenterR=shape==='circle'||shape==='square';
+    if(isCenterR){r=Math.max(1,r+(e.deltaY>0?-2:2));document.getElementById('r').value=Math.round(r);draw();}
+  } else {
+    // 純滾輪:縮放
+    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    userZoom *= factor;
+    applyUserZoom(e.clientX, e.clientY);
+  }
 },{passive:false});
+// 觸控雙指 pinch
+mc.addEventListener('touchstart',e=>{
+  if(e.touches.length === 2){
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    singlePinch.active = true;
+    singlePinch.initialDist = Math.hypot(dx, dy);
+    singlePinch.initialZoom = userZoom;
+  }
+},{passive:false});
+mc.addEventListener('touchmove',e=>{
+  if(singlePinch.active && e.touches.length === 2){
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const newDist = Math.hypot(dx, dy);
+    const ratio = newDist / singlePinch.initialDist;
+    const ccx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const ccy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    userZoom = singlePinch.initialZoom * ratio;
+    applyUserZoom(ccx, ccy);
+  }
+},{passive:false});
+mc.addEventListener('touchend',e=>{
+  if(e.touches.length < 2) singlePinch.active = false;
+});
 
 // ── 裁切下載 ──
 function doCrop(){
@@ -984,6 +1098,11 @@ updateNumPreview();
      批次裁切 modal(手動座標輸入,目前只支援圓形)
      ═══════════════════════════════════════════════════ -->
 <div class="batch-overlay" id="batch-overlay">
+  <!-- Hover row 顯示的大圖預覽(position:fixed,不受 modal 限制) -->
+  <div class="batch-hover-preview-wrap">
+    <canvas id="batch-hover-preview" width="220" height="220"></canvas>
+    <div class="label" id="batch-hover-preview-label"></div>
+  </div>
   <div class="batch-modal">
     <div class="batch-head">
       <h2>🎁 批次裁切（圓形）</h2>
@@ -997,7 +1116,17 @@ updateNumPreview();
           onmousedown="onBatchCanvasMouseDown(event)"
           onmousemove="onBatchCanvasMouseMove(event)"
           onmouseup="onBatchCanvasMouseUp(event)"
-          onmouseleave="onBatchCanvasMouseUp(event)"></canvas>
+          onmouseleave="onBatchCanvasMouseUp(event)"
+          onwheel="onBatchCanvasWheel(event)"
+          ontouchstart="onBatchCanvasTouchStart(event)"
+          ontouchmove="onBatchCanvasTouchMove(event)"
+          ontouchend="onBatchCanvasTouchEnd(event)"></canvas>
+        <div class="batch-zoom-controls">
+          <button onclick="zoomBatchOut()" title="縮小">−</button>
+          <span id="batch-zoom-label">100%</span>
+          <button onclick="zoomBatchIn()" title="放大">+</button>
+          <button onclick="zoomBatchReset()" title="重設縮放">⤢</button>
+        </div>
       </div>
       <div class="batch-side">
         <div class="batch-config">
@@ -1045,12 +1174,23 @@ updateNumPreview();
 // ═══════════════════════════════════════════════════
 let batchCrops = [];      // [{cx, cy, r}, ...] 圖片像素座標
 let batchSelectedIdx = -1; // 視覺高亮哪一筆
+let batchZoom = 1.0;      // 縮放倍率(1.0 = 100%)
 let batchMouse = {        // 拖曳狀態
   down: false,
   dragIdx: -1,
   dragOffsetX: 0,
   dragOffsetY: 0,
   isDragging: false,
+  panMode: false,
+  panStartClientX: 0,
+  panStartClientY: 0,
+  panStartScrollLeft: 0,
+  panStartScrollTop: 0,
+};
+let batchPinch = {        // 觸控雙指縮放
+  active: false,
+  initialDist: 0,
+  initialZoom: 1,
 };
 
 function openBatchMode(){
@@ -1058,12 +1198,89 @@ function openBatchMode(){
     alert('請先在左側選一張圖片');
     return;
   }
+  batchZoom = 1.0;
   document.getElementById('batch-overlay').classList.add('open');
   renderBatchCanvas();
+  applyBatchZoom();
   renderBatchList();
 }
 function closeBatchMode(){
   document.getElementById('batch-overlay').classList.remove('open');
+}
+
+// 套用 zoom 到 canvas CSS 大小,可選 anchor(滑鼠位置,讓縮放錨點在指標處)
+function applyBatchZoom(anchorClientX, anchorClientY){
+  const canvas = document.getElementById('batch-canvas');
+  if(!canvas || !canvas.width) return;
+  const container = document.getElementById('batch-canvas-area');
+  batchZoom = Math.max(0.1, Math.min(8, batchZoom));
+  // 記錄 anchor 在縮放前的圖片座標
+  let anchorImg = null;
+  if(anchorClientX !== undefined && container){
+    const rect = canvas.getBoundingClientRect();
+    if(rect.width > 0){
+      anchorImg = {
+        ix: (anchorClientX - rect.left) * (canvas.width / rect.width),
+        iy: (anchorClientY - rect.top) * (canvas.height / rect.height),
+        ax: anchorClientX, ay: anchorClientY,
+      };
+    }
+  }
+  // 套新尺寸
+  canvas.style.maxWidth = 'none';
+  canvas.style.width = (canvas.width * batchZoom) + 'px';
+  canvas.style.height = (canvas.height * batchZoom) + 'px';
+  // 同步把 anchor 點重新拉回原本螢幕位置(透過調整 scroll)
+  if(anchorImg && container){
+    const newRect = canvas.getBoundingClientRect();
+    const scale = canvas.width / newRect.width;
+    const newCursorX = anchorImg.ix / scale + newRect.left;
+    const newCursorY = anchorImg.iy / scale + newRect.top;
+    container.scrollLeft += (newCursorX - anchorImg.ax);
+    container.scrollTop  += (newCursorY - anchorImg.ay);
+  }
+  // 更新顯示
+  const zoomLabel = document.getElementById('batch-zoom-label');
+  if(zoomLabel) zoomLabel.textContent = Math.round(batchZoom * 100) + '%';
+}
+function zoomBatchIn(){ batchZoom *= 1.25; applyBatchZoom(); }
+function zoomBatchOut(){ batchZoom /= 1.25; applyBatchZoom(); }
+function zoomBatchReset(){ batchZoom = 1.0; applyBatchZoom(); }
+
+function onBatchCanvasWheel(e){
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+  batchZoom *= factor;
+  applyBatchZoom(e.clientX, e.clientY);
+}
+// 觸控雙指 pinch
+function onBatchCanvasTouchStart(e){
+  if(e.touches.length === 2){
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    batchPinch.active = true;
+    batchPinch.initialDist = Math.hypot(dx, dy);
+    batchPinch.initialZoom = batchZoom;
+  }
+}
+function onBatchCanvasTouchMove(e){
+  if(batchPinch.active && e.touches.length === 2){
+    e.preventDefault();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const newDist = Math.hypot(dx, dy);
+    const ratio = newDist / batchPinch.initialDist;
+    const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+    const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+    batchZoom = batchPinch.initialZoom * ratio;
+    applyBatchZoom(cx, cy);
+  }
+}
+function onBatchCanvasTouchEnd(e){
+  if(e.touches.length < 2){
+    batchPinch.active = false;
+  }
 }
 
 function renderBatchCanvas(){
@@ -1143,6 +1360,7 @@ function onBatchCanvasMouseDown(e){
   const pos = batchMouseToImageCoords(e);
   batchMouse.down = true;
   batchMouse.isDragging = false;
+  batchMouse.panMode = false;
   batchMouse.dragIdx = batchHitTest(pos.x, pos.y);
   if(batchMouse.dragIdx >= 0){
     const c = batchCrops[batchMouse.dragIdx];
@@ -1150,6 +1368,13 @@ function onBatchCanvasMouseDown(e){
     batchMouse.dragOffsetY = pos.y - c.cy;
     batchSelectedIdx = batchMouse.dragIdx;
     document.getElementById('batch-canvas').style.cursor = 'grabbing';
+  } else {
+    // 紀錄起始位置,等 mousemove 判斷是「點擊新增」還是「拖曳平移」
+    batchMouse.panStartClientX = e.clientX;
+    batchMouse.panStartClientY = e.clientY;
+    const container = document.getElementById('batch-canvas-area');
+    batchMouse.panStartScrollLeft = container.scrollLeft;
+    batchMouse.panStartScrollTop = container.scrollTop;
   }
 }
 function onBatchCanvasMouseMove(e){
@@ -1161,38 +1386,51 @@ function onBatchCanvasMouseMove(e){
     return;
   }
   const pos = batchMouseToImageCoords(e);
-  // 偵測是否變成 drag(防止點擊也算 drag)
-  if(!batchMouse.isDragging && batchMouse.dragIdx >= 0){
-    batchMouse.isDragging = true;
-  }
-  if(batchMouse.isDragging && batchMouse.dragIdx >= 0){
+  if(batchMouse.dragIdx >= 0){
+    // 拖曳既有圓
+    if(!batchMouse.isDragging) batchMouse.isDragging = true;
     const c = batchCrops[batchMouse.dragIdx];
     c.cx = pos.x - batchMouse.dragOffsetX;
     c.cy = pos.y - batchMouse.dragOffsetY;
     renderBatchCanvas();
-    updateBatchThumbnail(batchMouse.dragIdx); // 即時更新該列縮圖
+    updateBatchThumbnail(batchMouse.dragIdx);
+  } else {
+    // 在空白處按住:超過 3px 進入「拖曳平移」模式
+    const dx = e.clientX - batchMouse.panStartClientX;
+    const dy = e.clientY - batchMouse.panStartClientY;
+    if(!batchMouse.isDragging && Math.hypot(dx, dy) > 3){
+      batchMouse.isDragging = true;
+      batchMouse.panMode = true;
+      document.getElementById('batch-canvas').style.cursor = 'move';
+    }
+    if(batchMouse.panMode){
+      const container = document.getElementById('batch-canvas-area');
+      container.scrollLeft = batchMouse.panStartScrollLeft - dx;
+      container.scrollTop  = batchMouse.panStartScrollTop  - dy;
+    }
   }
 }
 function onBatchCanvasMouseUp(e){
   if(!batchMouse.down) return;
-  const pos = batchMouseToImageCoords(e);
   if(!batchMouse.isDragging){
     // 沒拖曳:當作點擊
     if(batchMouse.dragIdx < 0){
       // 點空白處 → 新增一個圓
+      const pos = batchMouseToImageCoords(e);
       const r = parseInt(document.getElementById('batch-default-r').value) || 100;
       batchCrops.push({cx: pos.x, cy: pos.y, r});
       renderBatchCanvas();
       renderBatchList();
     }
-    // 點到既有圓:沒拖、僅選中(已在 mousedown 設好 batchSelectedIdx)
-  } else {
-    // 拖完:更新清單(顯示新 cx/cy)
+  } else if(batchMouse.dragIdx >= 0){
+    // 拖完圓 → 更新清單顯示新 cx/cy
     renderBatchList();
   }
+  // panMode 不需要 finalize 動作,scroll 已即時生效
   batchMouse.down = false;
   batchMouse.isDragging = false;
   batchMouse.dragIdx = -1;
+  batchMouse.panMode = false;
   document.getElementById('batch-canvas').style.cursor = 'crosshair';
 }
 // 偏移加入:用上一個圓的位置 + ΔX/ΔY 推算新位置,半徑沿用上一個
@@ -1216,10 +1454,12 @@ function renderBatchList(){
     list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按下方按鈕開始</div>';
     return;
   }
-  list.innerHTML = '<table><thead><tr><th style="width:40px;">預覽</th><th style="width:22px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
+  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
     batchCrops.map((c, i) => `
-      <tr class="${i === batchSelectedIdx ? 'selected' : ''}" onmouseenter="batchSelectedIdx=${i};renderBatchCanvas()" onmouseleave="batchSelectedIdx=-1;renderBatchCanvas()">
-        <td><canvas class="batch-row-thumb" data-idx="${i}" width="36" height="36"></canvas></td>
+      <tr class="${i === batchSelectedIdx ? 'selected' : ''}"
+        onmouseenter="batchSelectedIdx=${i};renderBatchCanvas();showBatchHoverPreview(${i},event)"
+        onmouseleave="batchSelectedIdx=-1;renderBatchCanvas();hideBatchHoverPreview()">
+        <td><canvas class="batch-row-thumb" data-idx="${i}" width="48" height="48"></canvas></td>
         <td>${i+1}</td>
         <td><input type="number" value="${Math.round(c.cx)}" onchange="updateBatchCrop(${i},'cx',this.value)"/></td>
         <td><input type="number" value="${Math.round(c.cy)}" onchange="updateBatchCrop(${i},'cy',this.value)"/></td>
@@ -1232,8 +1472,11 @@ function renderBatchList(){
 }
 
 // 畫單一裁切點的縮圖到指定 canvas
-function drawBatchThumbnail(canvas, c, img){
-  const size = 36;
+// size 可選,預設取自 canvas.width(若 canvas 已設好寬度則用其大小)
+function drawBatchThumbnail(canvas, c, img, size){
+  size = size || canvas.width || 48;
+  canvas.width = size;
+  canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, size, size);
   if(!c || !img || c.r <= 0) return;
@@ -1242,7 +1485,6 @@ function drawBatchThumbnail(canvas, c, img){
   ctx.beginPath();
   ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
   ctx.clip();
-  // 從原圖切出縮放後繪製
   try {
     ctx.drawImage(img, c.cx - c.r, c.cy - c.r, c.r*2, c.r*2, 0, 0, size, size);
   } catch(e) { /* 超出範圍會丟例外,讓 canvas 留空 */ }
@@ -1253,6 +1495,37 @@ function drawBatchThumbnail(canvas, c, img){
   ctx.beginPath();
   ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
   ctx.stroke();
+}
+// hover 某列時在游標旁顯示大圖預覽
+function showBatchHoverPreview(idx, ev){
+  const item = fileItems[currentIdx];
+  if(!item || !item.imgEl || !batchCrops[idx]) return;
+  const preview = document.getElementById('batch-hover-preview');
+  if(!preview) return;
+  const filename = document.getElementById('batch-hover-preview-label');
+  drawBatchThumbnail(preview, batchCrops[idx], item.imgEl, 220);
+  // 顯示對應的檔名(起始編號 + idx)
+  if(filename){
+    const start = parseInt(document.getElementById('batch-start-num').value) || 1;
+    const ext = document.getElementById('batch-ext').value;
+    filename.textContent = `#${idx+1} → ${String(start+idx).padStart(3,'0')}.${ext}`;
+  }
+  // 定位:放在列的左側,若空間不夠改放右側
+  const wrap = preview.parentElement;
+  const row = ev.currentTarget;
+  const rect = row.getBoundingClientRect();
+  let x = rect.left - 250;
+  if(x < 10) x = rect.right + 10;
+  let y = rect.top + rect.height/2 - 130;
+  if(y < 10) y = 10;
+  if(y + 260 > window.innerHeight) y = window.innerHeight - 270;
+  wrap.style.left = x + 'px';
+  wrap.style.top = y + 'px';
+  wrap.classList.add('show');
+}
+function hideBatchHoverPreview(){
+  const wrap = document.querySelector('.batch-hover-preview-wrap');
+  if(wrap) wrap.classList.remove('show');
 }
 function updateAllBatchThumbnails(){
   const item = fileItems[currentIdx];

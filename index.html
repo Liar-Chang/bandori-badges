@@ -656,6 +656,10 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
         <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:#5a4fcf;cursor:pointer;"/>
         <span id="hide-no-image-label">隱藏無圖徽章</span>
       </label>
+      <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
+        <input type="checkbox" id="hide-lottery" onchange="applyFiltersAndSaveHideLottery()" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <span id="hide-lottery-label">隱藏抽獎徽章</span>
+      </label>
     </div>
     <div class="sidebar-section" id="my-lists-section" style="display:none;">
       <h3 id="my-lists-title">⭐ 我的最愛</h3>
@@ -905,7 +909,7 @@ async function init(){
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
 
 const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
-  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
+  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
 function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
@@ -988,7 +992,7 @@ function buildSidebar(){
   // 尺寸：分類篩選
   // 56-58mm圓形常駐;其他圓形/方形/橢圓形/心形/撥片分類;其他歸到「其他」
   const SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
-  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形'];
+  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形'];
   const SIZE_NAMED = ['橢圓形','方形','心形','撥片'];
   const SIZE_OTHER_VALS = new Set(['名牌','磁鐵','約80mm布偶胸章','未確定']);
 
@@ -1194,6 +1198,20 @@ function badgeBands(b){
   return bands;
 }
 
+// 隱藏抽獎徽章切換時:存進 localStorage 並 applyFilters
+function applyFiltersAndSaveHideLottery(){
+  try{ localStorage.setItem('bandori_hide_lottery', document.getElementById('hide-lottery').checked ? '1' : '0'); }catch(e){}
+  applyFilters();
+}
+// 頁面載入時還原 hide-lottery 狀態
+try{
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('bandori_hide_lottery');
+    const cb = document.getElementById('hide-lottery');
+    if(saved === '1' && cb){ cb.checked = true; }
+  });
+}catch(e){}
+
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
@@ -1259,6 +1277,7 @@ function applyFilters(){
     if(selCountries.size&&!selCountries.has(b.country)) return false;
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
+    if(document.getElementById('hide-lottery')?.checked && b.is_lottery === true) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
     return true;
   });
@@ -1413,7 +1432,7 @@ function renderGrid(list){
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}');_maybeRefreshHideNoImg()"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
-        <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>
+        <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>${b.is_lottery?`<div class="lottery-tag" style="position:absolute;bottom:5px;right:5px;z-index:2;background:rgba(0,0,0,0.55);color:#ffd700;font-size:0.8rem;padding:0.1rem 0.3rem;border-radius:4px;pointer-events:none;" title="抽獎取得">🎲</div>`:''}
       </div>
       <div class="badge-info">
         <div class="badge-char">${getCharName(b.character,currentLang)||'—'}</div>
@@ -1557,6 +1576,7 @@ const SIZE_TRANS = {
   '55mm圓形':        {'ja':'55mmサークル','en':'55mm Circle','ko':'55mm 원형'},
   '54mm圓形':        {'ja':'54mmサークル','en':'54mm Circle','ko':'54mm 원형'},
   '50mm圓形':        {'ja':'50mmサークル','en':'50mm Circle','ko':'50mm 원형'},
+  '44mm圓形':        {'ja':'44mmサークル','en':'44mm Circle','ko':'44mm 원형'},
   '30mm圓形':        {'ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
   '25mm圓形':        {'ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
   '橢圓形':          {'ja':'楕円形','en':'Oval','ko':'타원형'},
@@ -1759,7 +1779,7 @@ const LANGS = {
     expCancel:'取消', expDownload:'⬇ 下載',
     announceTitle:'📢 更新日誌', pinBoxTitle:'📌 公告', tabPin:'📌 公告', tabLog:'📕 更新日誌', noData:'無符合資料',
     pinLabel:'📌 置頂', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
-    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'本站圖像、角色名稱、樂團名稱與相關資料之著作權歸 © Bushiroad 所有。本站為非營利同人愛好者整理收藏，與官方無關。網站程式碼與資料整理採 CC BY-NC-SA 4.0 授權。', login:'登入', logout:'登出', myFavorites:'⭐ 我的最愛',
+    reportLabel:'錯誤回報', contactLabel:'聯絡方式', authorLabel:'作者：千早愛音的暴躁柯基', copiedLabel:'✓ 已複製！', featuredSong:'推薦歌曲', hideNoImage:'隱藏無圖徽章', hideLottery:'隱藏抽獎徽章', onlyWithImage:'只輸出有圖的徽章', copyright:'本站圖像、角色名稱、樂團名稱與相關資料之著作權歸 © Bushiroad 所有。本站為非營利同人愛好者整理收藏，與官方無關。網站程式碼與資料整理採 CC BY-NC-SA 4.0 授權。', login:'登入', logout:'登出', myFavorites:'⭐ 我的最愛',
     // 蒐集記錄 modal（新版）
     colTitle:'✓ 蒐集記錄', colTotal:'總數量', colUnit:'個', colHistory:'📜 購買歷史', colHistoryUnit:'筆', colAddNew:'+ 新增記錄', colEmpty:'尚無購買記錄', colEmptyHint:'點上方「+ 新增記錄」開始', colClose:'關閉',
     // 新增/編輯記錄表單
@@ -1801,7 +1821,7 @@ const LANGS = {
     expCancel:'キャンセル', expDownload:'⬇ ダウンロード',
     announceTitle:'📢 更新ログ', pinBoxTitle:'📌 お知らせ', tabPin:'📌 お知らせ', tabLog:'📕 更新履歴', noData:'該当データなし',
     pinLabel:'📌 固定', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
-    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', onlyWithImage:'画像ありのみ出力', copyright:'本サイトの画像、キャラクター名、バンド名等の著作権は © Bushiroad に帰属します。本サイトは非営利のファン作成アーカイブであり、公式とは関係ありません。ウェブサイトのコードとデータ整理は CC BY-NC-SA 4.0 ライセンスに基づきます。', login:'ログイン', logout:'ログアウト', myFavorites:'⭐ お気に入り',
+    reportLabel:'エラー報告', contactLabel:'お問い合わせ', authorLabel:'作者：千早愛音のコーギー', copiedLabel:'✓ コピー済み！', featuredSong:'おすすめ曲', hideNoImage:'画像なしを非表示', hideLottery:'抽選バッジを隠す', onlyWithImage:'画像ありのみ出力', copyright:'本サイトの画像、キャラクター名、バンド名等の著作権は © Bushiroad に帰属します。本サイトは非営利のファン作成アーカイブであり、公式とは関係ありません。ウェブサイトのコードとデータ整理は CC BY-NC-SA 4.0 ライセンスに基づきます。', login:'ログイン', logout:'ログアウト', myFavorites:'⭐ お気に入り',
     // 蒐集記錄 modal（新版）
     colTitle:'✓ コレクション記録', colTotal:'合計', colUnit:'個', colHistory:'📜 購入履歴', colHistoryUnit:'件', colAddNew:'+ 記録を追加', colEmpty:'購入履歴がありません', colEmptyHint:'上の「+ 記録を追加」をタップして開始', colClose:'閉じる',
     // 新增/編輯記錄表單
@@ -1843,7 +1863,7 @@ const LANGS = {
     expCancel:'Cancel', expDownload:'⬇ Download',
     announceTitle:'📢 Update Log', pinBoxTitle:'📌 Notice', tabPin:'📌 Notice', tabLog:'📕 Changelog', noData:'No matching data',
     pinLabel:'📌 Pinned', filterSub:'Select Band, Character, Type and more',
-    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', onlyWithImage:'Only export badges with images', copyright:'All BanG Dream! related images, character names, band names and related content are © Bushiroad. This is an unofficial non-profit fan-made archive, not affiliated with the official. Website code and data compilation are licensed under CC BY-NC-SA 4.0.', login:'Login', logout:'Logout', myFavorites:'⭐ My Favorites',
+    reportLabel:'Report Error', contactLabel:'Contact', authorLabel:"Author: Anon's Corgi", copiedLabel:'✓ Copied!', featuredSong:'Featured Song', hideNoImage:'Hide badges without images', hideLottery:'Hide lottery badges', onlyWithImage:'Only export badges with images', copyright:'All BanG Dream! related images, character names, band names and related content are © Bushiroad. This is an unofficial non-profit fan-made archive, not affiliated with the official. Website code and data compilation are licensed under CC BY-NC-SA 4.0.', login:'Login', logout:'Logout', myFavorites:'⭐ My Favorites',
     // 蒐集記錄 modal（新版）
     colTitle:'✓ Collection Record', colTotal:'Total', colUnit:'', colHistory:'📜 Purchase History', colHistoryUnit:'records', colAddNew:'+ Add Record', colEmpty:'No purchase records yet', colEmptyHint:'Tap "+ Add Record" above to start', colClose:'Close',
     // 新增/編輯記錄表單
@@ -1885,7 +1905,7 @@ const LANGS = {
     expCancel:'취소', expDownload:'⬇ 다운로드',
     announceTitle:'📢 업데이트 로그', pinBoxTitle:'📌 공지', tabPin:'📌 공지사항', tabLog:'📕 업데이트 로그', noData:'해당 데이터 없음',
     pinLabel:'📌 고정', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
-    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'본 사이트의 이미지, 캐릭터명, 밴드명 등의 저작권은 © Bushiroad에 귀속됩니다. 본 사이트는 비영리 팬 제작 아카이브이며 공식과는 관련이 없습니다. 웹사이트 코드 및 데이터 정리는 CC BY-NC-SA 4.0 라이선스를 따릅니다.', login:'로그인', logout:'로그아웃', myFavorites:'⭐ 즐겨찾기',
+    reportLabel:'오류 신고', contactLabel:'연락처', authorLabel:'작자: 치하야 아논의 코기', copiedLabel:'✓ 복사됨!', featuredSong:'추천 곡', hideNoImage:'이미지 없는 배지 숨기기', hideLottery:'추첨 뱃지 숨기기', onlyWithImage:'이미지 있는 배지만 출력', copyright:'본 사이트의 이미지, 캐릭터명, 밴드명 등의 저작권은 © Bushiroad에 귀속됩니다. 본 사이트는 비영리 팬 제작 아카이브이며 공식과는 관련이 없습니다. 웹사이트 코드 및 데이터 정리는 CC BY-NC-SA 4.0 라이선스를 따릅니다.', login:'로그인', logout:'로그아웃', myFavorites:'⭐ 즐겨찾기',
     // 蒐集記錄 modal（新版）
     colTitle:'✓ 수집 기록', colTotal:'총 수량', colUnit:'개', colHistory:'📜 구매 내역', colHistoryUnit:'건', colAddNew:'+ 기록 추가', colEmpty:'구매 기록이 없습니다', colEmptyHint:'위의 「+ 기록 추가」를 눌러 시작', colClose:'닫기',
     // 新增/編輯記錄表單
@@ -2020,6 +2040,7 @@ function applyLang(){
   const frl=document.getElementById('footer-report-label'); if(frl&&L.reportLabel) frl.textContent=L.reportLabel;
   const sfl=document.getElementById('song-fab-label'); if(sfl&&L.featuredSong) sfl.textContent=L.featuredSong;
   const hni=document.getElementById('hide-no-image-label'); if(hni&&L.hideNoImage) hni.textContent=L.hideNoImage;
+  const hlot=document.getElementById('hide-lottery-label'); if(hlot&&L.hideLottery) hlot.textContent=L.hideLottery;
   const owi=document.getElementById('exp-only-img-label'); if(owi&&L.onlyWithImage) owi.textContent=L.onlyWithImage;
   const cpr=document.getElementById('footer-copyright'); if(cpr&&L.copyright) cpr.textContent=L.copyright;
   const bll=document.getElementById('btn-login-label'); if(bll&&L.login) bll.textContent=L.login;
@@ -2818,14 +2839,14 @@ async function doExport(){
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
-    '54mm圓形','50mm圓形','30mm圓形','25mm圓形',
+    '54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形',
     '橢圓形','方形','心形','撥片','名牌','磁鐵','約80mm布偶胸章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '100mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形',
-    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','30mm圓形','25mm圓形']);
+    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
 
