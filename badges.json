@@ -47569,5 +47569,25 @@
     "created_at": "2026-05-18T13:51:10.109Z",
     "updated_at": "2026-05-18T13:51:10.109Z",
     "image_updated_at": "2026-05-18T13:51:10.109Z"
+  },
+  {
+    "id": "3000",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "戶山香澄",
+    "series": "",
+    "year": "2025年8月28日",
+    "event": "BanG Dream! Dream Vacation",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://prtimes.jp/main/html/rd/p/000000248.000066407.html",
+    "note": "販售連結已失效。",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "Dream Vacation",
+    "created_at": "2026-05-18T14:01:58.174Z",
+    "updated_at": "2026-05-18T14:01:58.174Z",
+    "image_updated_at": "2026-05-18T14:01:58.174Z"
   }
 ]
