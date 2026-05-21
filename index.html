@@ -914,7 +914,14 @@ function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
   const bc={};
-  all.forEach(b=>{bc[b.band]=(bc[b.band]||0)+1;});
+  // 計數用 badgeBands(),讓 sidebar 數字和篩選結果一致
+  // (例如:band="MyGO!!!!!" + character="高松燈x豐川祥子" 會在 MyGO 和 Ave Mujica 都+1)
+  // 注意:跨團合照徽章已在 badgeBands() 內短路,只會算進「跨團合照」
+  all.forEach(b=>{
+    badgeBands(b).forEach(band => {
+      bc[band]=(bc[band]||0)+1;
+    });
+  });
   // 一般樂團清單(排除 BACKGROUND_BANDS 跟 INDEPENDENT_BANDS)
   const bands=[
     ...BAND_ORDER.filter(b=>bc[b]&&!BACKGROUND_BANDS.has(b)&&!INDEPENDENT_BANDS.has(b)),
@@ -1189,6 +1196,8 @@ const CHAR_TO_BAND = {
 function badgeBands(b){
   const bands = new Set();
   if(b.band) bands.add(b.band);
+  // 跨團合照:不展開 character 衍生的樂團,只歸在「跨團合照」這個 section
+  if(b.band === '跨團合照') return bands;
   if(b.character){
     b.character.split('x').forEach(c=>{
       const ct = c.trim();
@@ -1239,6 +1248,8 @@ function applyFilters(){
     // 回傳這個徽章相關的所有樂團
     const bands = new Set();
     if(b.band) bands.add(b.band);
+    // 跨團合照:不展開 character 衍生的樂團,只歸在「跨團合照」這個 section
+    if(b.band === '跨團合照') return bands;
     if(b.character){
       b.character.split('x').forEach(c=>{
         const ct = c.trim();

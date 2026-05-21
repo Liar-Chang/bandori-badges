@@ -134,13 +134,18 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .batch-list tr.selected td{background:var(--surface2);}
 .batch-list input{width:100%;background:var(--bg);border:1px solid transparent;border-radius:3px;color:var(--text);padding:0.18rem 0.3rem;font-size:0.72rem;font-family:'Space Mono',monospace;outline:none;}
 .batch-list input:focus,.batch-list input:hover{border-color:var(--accent);background:var(--surface2);}
+/* 隱藏 number input 的上下箭頭,釋放空間給數字顯示 */
+.batch-list input[type=number]::-webkit-inner-spin-button,
+.batch-list input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.batch-list input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .batch-list .del-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:0.85rem;padding:0 0.2rem;}
 .batch-list .del-btn:hover{color:#ef4444;}
-.batch-row-thumb{display:block;width:48px;height:48px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a36;}
+.batch-row-thumb{display:block;width:48px;height:48px;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:8px 8px;background-position:0 0,0 4px,4px -4px,-4px 0;background-color:#2a2a36;}
+/* border-radius 改由 JS 依形狀動態設定,圓形才 50% */
 /* 滑鼠 hover 列時的大圖預覽 */
 .batch-hover-preview-wrap{position:fixed;display:none;z-index:1000;flex-direction:column;align-items:center;gap:0.35rem;pointer-events:none;background:rgba(20,20,28,0.96);border:1.5px solid var(--accent);border-radius:12px;padding:0.6rem;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
 .batch-hover-preview-wrap.show{display:flex;}
-.batch-hover-preview-wrap canvas{display:block;width:220px;height:220px;border-radius:50%;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#2a2a36;}
+.batch-hover-preview-wrap canvas{display:block;width:220px;height:220px;background-image:linear-gradient(45deg,#3a3a48 25%,transparent 25%),linear-gradient(-45deg,#3a3a48 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3a3a48 75%),linear-gradient(-45deg,transparent 75%,#3a3a48 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#2a2a36;}
 .batch-hover-preview-wrap .label{font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--accent);}
 .batch-crop-btn{font-family:inherit;font-size:0.85rem;font-weight:700;padding:0.7rem;border-radius:8px;border:none;background:var(--green);color:#0a0a0a;cursor:pointer;flex-shrink:0;}
 .batch-crop-btn:hover{opacity:0.85;}
@@ -1130,6 +1135,7 @@ updateNumPreview();
       </div>
       <div class="batch-side">
         <div class="batch-config">
+          <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option></select></div>
           <div><label>預設半徑</label><input type="number" id="batch-default-r" value="100" min="10"/></div>
           <div><label>起始編號</label><input type="number" id="batch-start-num" value="2900" min="1"/></div>
           <div><label>副檔名</label><select id="batch-ext"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option></select></div>
@@ -1172,8 +1178,52 @@ updateNumPreview();
 // ═══════════════════════════════════════════════════
 // 批次裁切:全域狀態
 // ═══════════════════════════════════════════════════
-let batchCrops = [];      // [{cx, cy, r}, ...] 圖片像素座標
+let batchCrops = [];      // [{shape, cx, cy, hw, hh}, ...] 圖片像素座標,每筆獨立形狀
 let batchSelectedIdx = -1; // 視覺高亮哪一筆
+let batchShape = 'circle'; // 當前選的「新增時用的形狀」(circle/square/rect/pick)
+let batchRectCreate = null; // 任意方形拖曳建立中:{x1,y1,x2,y2} or null
+function onBatchShapeChange(){
+  batchShape = document.getElementById('batch-shape').value;
+  // 同步更新所有現有 crop 為新形狀(對齊使用者直覺)
+  batchCrops.forEach(c => {
+    c.shape = batchShape;
+    // 圓形 / 正方形要求 hw = hh,取較小值保證形狀正確
+    if(batchShape === 'circle' || batchShape === 'square'){
+      const s = Math.min(c.hw, c.hh);
+      c.hw = s; c.hh = s;
+    }
+  });
+  renderBatchCanvas();
+  renderBatchList();
+}
+// 計算 crop 的繪製路徑(以圖片像素座標)
+function batchDrawShape(ctx, c){
+  if(c.shape === 'circle' || !c.shape){
+    ctx.arc(c.cx, c.cy, Math.min(c.hw, c.hh), 0, Math.PI*2);
+  } else if(c.shape === 'square' || c.shape === 'rect'){
+    ctx.rect(c.cx - c.hw, c.cy - c.hh, c.hw*2, c.hh*2);
+  } else if(c.shape === 'pick'){
+    // 撥片路徑:借用單張模式的 drawPickPath 函式
+    drawPickPath(ctx, c.cx, c.cy - c.hh, c.hw, c.hh*2);
+  }
+}
+// hit test:游標是否在 crop 內
+function batchHitTest(x, y){
+  for(let i = batchCrops.length - 1; i >= 0; i--){
+    const c = batchCrops[i];
+    if(c.shape === 'circle' || !c.shape){
+      if(Math.hypot(x - c.cx, y - c.cy) < Math.min(c.hw, c.hh)) return i;
+    } else {
+      // 方形 / 撥片用 bounding box(撥片底部稍有空白,但夠用)
+      if(x >= c.cx - c.hw && x <= c.cx + c.hw && y >= c.cy - c.hh && y <= c.cy + c.hh) return i;
+    }
+  }
+  return -1;
+}
+// 形狀符號(列表用)
+function batchShapeSymbol(shape){
+  return {circle:'⊙', square:'▢', rect:'▭', pick:'♪'}[shape || 'circle'] || '⊙';
+}
 let batchZoom = 1.0;      // 縮放倍率(1.0 = 100%)
 let batchMouse = {        // 拖曳狀態
   down: false,
@@ -1203,9 +1253,11 @@ function openBatchMode(){
   renderBatchCanvas();
   applyBatchZoom();
   renderBatchList();
+  _attachBatchHoverGuards();
 }
 function closeBatchMode(){
   document.getElementById('batch-overlay').classList.remove('open');
+  hideBatchHoverPreview(); // 關 modal 時強制收掉 popup,避免殘留
 }
 
 // 套用 zoom 到 canvas CSS 大小,可選 anchor(滑鼠位置,讓縮放錨點在指標處)
@@ -1318,15 +1370,16 @@ function renderBatchCanvas(){
     }
     ctx.restore();
   }
-  // 畫每個圓 + 編號
+  // 畫每個 crop + 編號
   batchCrops.forEach((c, i) => {
     ctx.beginPath();
-    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI*2);
+    batchDrawShape(ctx, c);
     ctx.lineWidth = 4;
     ctx.strokeStyle = i === batchSelectedIdx ? '#ff6eb4' : '#22c55e';
     ctx.stroke();
     // 編號標籤
-    const fontSize = Math.max(20, c.r * 0.3);
+    const baseSize = Math.min(c.hw, c.hh);
+    const fontSize = Math.max(20, baseSize * 0.3);
     ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1336,6 +1389,16 @@ function renderBatchCanvas(){
     ctx.strokeText(String(i+1), c.cx, c.cy);
     ctx.fillText(String(i+1), c.cx, c.cy);
   });
+  // 任意方形拖曳建立中:畫預覽框
+  if(batchRectCreate){
+    const r = batchRectCreate;
+    ctx.save();
+    ctx.strokeStyle = '#ff6eb4';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 4]);
+    ctx.strokeRect(Math.min(r.x1,r.x2), Math.min(r.y1,r.y2), Math.abs(r.x2-r.x1), Math.abs(r.y2-r.y1));
+    ctx.restore();
+  }
 }
 
 // 把滑鼠座標換成圖片像素座標
@@ -1346,14 +1409,6 @@ function batchMouseToImageCoords(e){
     x: (e.clientX - rect.left) * (canvas.width / rect.width),
     y: (e.clientY - rect.top) * (canvas.height / rect.height)
   };
-}
-// hit test:回傳 cursor 下面的 circle index,沒有則 -1
-function batchHitTest(x, y){
-  for(let i = batchCrops.length - 1; i >= 0; i--){
-    const c = batchCrops[i];
-    if(Math.hypot(x - c.cx, y - c.cy) < c.r) return i;
-  }
-  return -1;
 }
 function onBatchCanvasMouseDown(e){
   e.preventDefault();
@@ -1368,6 +1423,10 @@ function onBatchCanvasMouseDown(e){
     batchMouse.dragOffsetY = pos.y - c.cy;
     batchSelectedIdx = batchMouse.dragIdx;
     document.getElementById('batch-canvas').style.cursor = 'grabbing';
+  } else if(batchShape === 'rect'){
+    // 任意方形:拖曳建立模式
+    batchRectCreate = { x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y };
+    batchMouse.isDragging = true; // 不要 mouseup 當成 click 新增
   } else {
     // 紀錄起始位置,等 mousemove 判斷是「點擊新增」還是「拖曳平移」
     batchMouse.panStartClientX = e.clientX;
@@ -1386,8 +1445,13 @@ function onBatchCanvasMouseMove(e){
     return;
   }
   const pos = batchMouseToImageCoords(e);
-  if(batchMouse.dragIdx >= 0){
-    // 拖曳既有圓
+  if(batchRectCreate){
+    // 拖曳建立任意方形:更新第 2 角
+    batchRectCreate.x2 = pos.x;
+    batchRectCreate.y2 = pos.y;
+    renderBatchCanvas();
+  } else if(batchMouse.dragIdx >= 0){
+    // 拖曳既有 crop
     if(!batchMouse.isDragging) batchMouse.isDragging = true;
     const c = batchCrops[batchMouse.dragIdx];
     c.cx = pos.x - batchMouse.dragOffsetX;
@@ -1412,18 +1476,36 @@ function onBatchCanvasMouseMove(e){
 }
 function onBatchCanvasMouseUp(e){
   if(!batchMouse.down) return;
-  if(!batchMouse.isDragging){
+  if(batchRectCreate){
+    // 拖曳建立任意方形:確認
+    const r = batchRectCreate;
+    const x1 = Math.min(r.x1, r.x2), x2 = Math.max(r.x1, r.x2);
+    const y1 = Math.min(r.y1, r.y2), y2 = Math.max(r.y1, r.y2);
+    const hw = (x2 - x1) / 2, hh = (y2 - y1) / 2;
+    if(hw > 5 && hh > 5){
+      batchCrops.push({shape:'rect', cx: x1+hw, cy: y1+hh, hw, hh});
+      renderBatchCanvas();
+      renderBatchList();
+    }
+    batchRectCreate = null;
+    renderBatchCanvas(); // 清掉預覽虛線
+  } else if(!batchMouse.isDragging){
     // 沒拖曳:當作點擊
     if(batchMouse.dragIdx < 0){
-      // 點空白處 → 新增一個圓
+      // 點空白處 → 用當前形狀新增
       const pos = batchMouseToImageCoords(e);
       const r = parseInt(document.getElementById('batch-default-r').value) || 100;
-      batchCrops.push({cx: pos.x, cy: pos.y, r});
+      const shape = batchShape;
+      let hw, hh;
+      if(shape === 'pick'){ hw = r; hh = Math.round(r * 1.2); }
+      else { hw = r; hh = r; } // circle / square
+      // 任意方形不會走到這(rect 在 mousedown 已設 isDragging=true)
+      batchCrops.push({shape, cx: pos.x, cy: pos.y, hw, hh});
       renderBatchCanvas();
       renderBatchList();
     }
   } else if(batchMouse.dragIdx >= 0){
-    // 拖完圓 → 更新清單顯示新 cx/cy
+    // 拖完 crop → 更新清單
     renderBatchList();
   }
   // panMode 不需要 finalize 動作,scroll 已即時生效
@@ -1442,7 +1524,8 @@ function addBatchCropWithOffset(){
   const dx = parseFloat(document.getElementById('batch-offset-x').value) || 0;
   const dy = parseFloat(document.getElementById('batch-offset-y').value) || 0;
   const last = batchCrops[batchCrops.length - 1];
-  batchCrops.push({ cx: last.cx + dx, cy: last.cy + dy, r: last.r });
+  // 沿用上一筆的 shape / hw / hh
+  batchCrops.push({ shape: last.shape || 'circle', cx: last.cx + dx, cy: last.cy + dy, hw: last.hw, hh: last.hh });
   renderBatchCanvas();
   renderBatchList();
 }
@@ -1454,16 +1537,18 @@ function renderBatchList(){
     list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按下方按鈕開始</div>';
     return;
   }
-  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th>X</th><th>Y</th><th>R</th><th style="width:24px;"></th></tr></thead><tbody>' +
+  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th style="width:28px;">形</th><th>X</th><th>Y</th><th>W</th><th>H</th><th style="width:24px;"></th></tr></thead><tbody>' +
     batchCrops.map((c, i) => `
       <tr class="${i === batchSelectedIdx ? 'selected' : ''}"
         onmouseenter="batchSelectedIdx=${i};renderBatchCanvas();showBatchHoverPreview(${i},event)"
         onmouseleave="batchSelectedIdx=-1;renderBatchCanvas();hideBatchHoverPreview()">
         <td><canvas class="batch-row-thumb" data-idx="${i}" width="48" height="48"></canvas></td>
         <td>${i+1}</td>
-        <td><input type="number" value="${Math.round(c.cx)}" onchange="updateBatchCrop(${i},'cx',this.value)"/></td>
-        <td><input type="number" value="${Math.round(c.cy)}" onchange="updateBatchCrop(${i},'cy',this.value)"/></td>
-        <td><input type="number" value="${Math.round(c.r)}" onchange="updateBatchCrop(${i},'r',this.value)"/></td>
+        <td title="${c.shape||'circle'}">${batchShapeSymbol(c.shape)}</td>
+        <td><input type="number" value="${Math.round(c.cx)}" oninput="updateBatchCrop(${i},'cx',this.value)"/></td>
+        <td><input type="number" value="${Math.round(c.cy)}" oninput="updateBatchCrop(${i},'cy',this.value)"/></td>
+        <td><input type="number" value="${Math.round(c.hw*2)}" oninput="updateBatchCrop(${i},'w',this.value)"/></td>
+        <td><input type="number" value="${Math.round(c.hh*2)}" oninput="updateBatchCrop(${i},'h',this.value)"/></td>
         <td><button class="del-btn" onclick="removeBatchCrop(${i})" title="刪除">✕</button></td>
       </tr>
     `).join('') + '</tbody></table>';
@@ -1471,37 +1556,53 @@ function renderBatchList(){
   updateAllBatchThumbnails();
 }
 
-// 畫單一裁切點的縮圖到指定 canvas
-// size 可選,預設取自 canvas.width(若 canvas 已設好寬度則用其大小)
+// 畫單一裁切點的縮圖到指定 canvas (形狀感知)
 function drawBatchThumbnail(canvas, c, img, size){
   size = size || canvas.width || 48;
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, size, size);
-  if(!c || !img || c.r <= 0) return;
-  // 圓形遮罩
+  if(!c || !img || c.hw <= 0 || c.hh <= 0) return;
+  // 計算 source rect(從原圖切出的範圍)
+  const sx = c.cx - c.hw, sy = c.cy - c.hh;
+  const sw = c.hw * 2, sh = c.hh * 2;
+  // 計算 dest rect:在縮圖內保持比例置中
+  const aspect = sw / sh;
+  let dw, dh, dx, dy;
+  if(aspect >= 1){ dw = size; dh = size / aspect; dx = 0; dy = (size - dh)/2; }
+  else { dh = size; dw = size * aspect; dy = 0; dx = (size - dw)/2; }
+  // 形狀遮罩
   ctx.save();
   ctx.beginPath();
-  ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
+  const shape = c.shape || 'circle';
+  if(shape === 'circle'){ ctx.arc(size/2, size/2, Math.min(dw,dh)/2 - 0.5, 0, Math.PI*2); }
+  else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx, dy, dw, dh); }
+  else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy, dw/2, dh); }
   ctx.clip();
   try {
-    ctx.drawImage(img, c.cx - c.r, c.cy - c.r, c.r*2, c.r*2, 0, 0, size, size);
+    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
   } catch(e) { /* 超出範圍會丟例外,讓 canvas 留空 */ }
   ctx.restore();
-  // 邊框
+  // 邊框(顏色淡)
   ctx.strokeStyle = 'rgba(192,132,252,0.7)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(size/2, size/2, size/2-0.5, 0, Math.PI*2);
+  if(shape === 'circle'){ ctx.arc(size/2, size/2, Math.min(dw,dh)/2 - 0.5, 0, Math.PI*2); }
+  else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx+0.5, dy+0.5, dw-1, dh-1); }
+  else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
   ctx.stroke();
+  // 動態 borderRadius:圓形才圓,其他維持方形 canvas
+  canvas.style.borderRadius = (shape === 'circle') ? '50%' : '6px';
 }
 // hover 某列時在游標旁顯示大圖預覽
+let batchHoverIdx = -1; // 當前 popup 顯示的列 idx,讓編輯時可同步刷新
 function showBatchHoverPreview(idx, ev){
   const item = fileItems[currentIdx];
   if(!item || !item.imgEl || !batchCrops[idx]) return;
   const preview = document.getElementById('batch-hover-preview');
   if(!preview) return;
+  batchHoverIdx = idx;
   const filename = document.getElementById('batch-hover-preview-label');
   drawBatchThumbnail(preview, batchCrops[idx], item.imgEl, 220);
   // 顯示對應的檔名(起始編號 + idx)
@@ -1526,6 +1627,24 @@ function showBatchHoverPreview(idx, ev){
 function hideBatchHoverPreview(){
   const wrap = document.querySelector('.batch-hover-preview-wrap');
   if(wrap) wrap.classList.remove('show');
+  batchHoverIdx = -1;
+}
+// 多個時機強制關閉 popup,避免「卡在畫面上」
+function _attachBatchHoverGuards(){
+  if(window._batchHoverGuardsAttached) return;
+  window._batchHoverGuardsAttached = true;
+  // 1. 滑出 batch-list 整個區域 → 關
+  const list = document.getElementById('batch-list');
+  if(list) list.addEventListener('mouseleave', hideBatchHoverPreview);
+  // 2. 列表捲動時 → 關(座標已失準)
+  if(list) list.addEventListener('scroll', hideBatchHoverPreview);
+  // 3. 點到 canvas、設定區、按鈕 → 關
+  document.addEventListener('mousedown', e => {
+    if(!e.target.closest('.batch-list')) hideBatchHoverPreview();
+  });
+  // 4. 切到非 batch 區域(滑鼠跑出 modal 之類) → 關
+  const modal = document.querySelector('.batch-overlay');
+  if(modal) modal.addEventListener('mouseleave', hideBatchHoverPreview);
 }
 function updateAllBatchThumbnails(){
   const item = fileItems[currentIdx];
@@ -1545,8 +1664,10 @@ function updateBatchThumbnail(idx){
 
 function addBatchCropRow(){
   const r = parseInt(document.getElementById('batch-default-r').value) || 100;
-  // 新增空白筆,座標 0,0 讓使用者自己填(或之後點圖)
-  batchCrops.push({cx: 0, cy: 0, r});
+  const shape = batchShape === 'rect' ? 'rect' : batchShape;
+  const hw = r, hh = (shape === 'pick') ? Math.round(r * 1.2) : r;
+  // 新增空白筆,座標 0,0 讓使用者自己填
+  batchCrops.push({shape, cx: 0, cy: 0, hw, hh});
   renderBatchCanvas();
   renderBatchList();
 }
@@ -1554,10 +1675,42 @@ function addBatchCropRow(){
 function updateBatchCrop(idx, field, value){
   const v = parseFloat(value);
   if(!isFinite(v) || v < 0) return;
-  if(!batchCrops[idx]) return;
-  batchCrops[idx][field] = v;
+  const c = batchCrops[idx];
+  if(!c) return;
+  if(field === 'w'){
+    c.hw = v / 2;
+    // 圓形 / 正方形:W=H 連動
+    if(c.shape === 'circle' || c.shape === 'square') c.hh = v / 2;
+  } else if(field === 'h'){
+    c.hh = v / 2;
+    if(c.shape === 'circle' || c.shape === 'square') c.hw = v / 2;
+  } else {
+    c[field] = v;
+  }
   renderBatchCanvas();
-  updateBatchThumbnail(idx); // 即時更新該列縮圖
+  updateBatchThumbnail(idx);
+  // 如果 hover popup 正顯示這列,同步刷新
+  if(batchHoverIdx === idx){
+    const preview = document.getElementById('batch-hover-preview');
+    const item = fileItems[currentIdx];
+    if(preview && item && item.imgEl){
+      drawBatchThumbnail(preview, c, item.imgEl, 220);
+    }
+  }
+  // W/H 連動:圓形/正方形時,改 W 自動同步 H(反之亦然)
+  // 不 re-render 整個 list(會洗掉 input focus),只 surgically 更新對方欄位的 value
+  if((field === 'w' || field === 'h') && (c.shape === 'circle' || c.shape === 'square')){
+    const rows = document.querySelectorAll('.batch-list tbody tr');
+    const tr = rows[idx];
+    if(tr){
+      // 列結構: 預覽(0) #(1) 形(2) X(3) Y(4) W(5) H(6) ✕(7)
+      const linkedCol = (field === 'w') ? 6 : 5;
+      const linkedInput = tr.children[linkedCol]?.querySelector('input');
+      if(linkedInput && document.activeElement !== linkedInput){
+        linkedInput.value = (field === 'w') ? Math.round(c.hh*2) : Math.round(c.hw*2);
+      }
+    }
+  }
 }
 
 function removeBatchCrop(idx){
@@ -1582,7 +1735,7 @@ async function cropBatchAll(){
   const img = item.imgEl;
   const W = img.naturalWidth || img.width;
   const H = img.naturalHeight || img.height;
-  const invalid = batchCrops.filter(c => c.cx - c.r < 0 || c.cy - c.r < 0 || c.cx + c.r > W || c.cy + c.r > H || c.r <= 0);
+  const invalid = batchCrops.filter(c => c.cx - c.hw < 0 || c.cy - c.hh < 0 || c.cx + c.hw > W || c.cy + c.hh > H || c.hw <= 0 || c.hh <= 0);
   if(invalid.length){
     if(!confirm(`有 ${invalid.length} 個裁切點超出圖片範圍或半徑無效,可能裁出空白/異常結果。要繼續嗎?`)) return;
   }
@@ -1599,23 +1752,27 @@ async function cropBatchAll(){
   for(let i = 0; i < batchCrops.length; i++){
     btn.textContent = `裁切中... (${i+1}/${batchCrops.length})`;
     const c = batchCrops[i];
-    const size = Math.round(c.r * 2);
+    const ow = Math.round(c.hw * 2);
+    const oh = Math.round(c.hh * 2);
     const cropCanvas = document.createElement('canvas');
-    cropCanvas.width = size;
-    cropCanvas.height = size;
+    cropCanvas.width = ow;
+    cropCanvas.height = oh;
     const cctx = cropCanvas.getContext('2d');
-    // 背景
+    // 背景(透明跳過)
     if(bg !== 'transparent'){
       cctx.fillStyle = bg;
-      cctx.fillRect(0, 0, size, size);
+      cctx.fillRect(0, 0, ow, oh);
     }
-    // 圓形遮罩
+    // 形狀遮罩
     cctx.save();
     cctx.beginPath();
-    cctx.arc(c.r, c.r, c.r, 0, Math.PI*2);
+    const shape = c.shape || 'circle';
+    if(shape === 'circle'){ cctx.arc(ow/2, oh/2, Math.min(ow,oh)/2, 0, Math.PI*2); }
+    else if(shape === 'square' || shape === 'rect'){ cctx.rect(0, 0, ow, oh); }
+    else if(shape === 'pick'){ drawPickPath(cctx, ow/2, 0, ow/2, oh); }
     cctx.clip();
     // 從原圖切出
-    cctx.drawImage(img, c.cx - c.r, c.cy - c.r, size, size, 0, 0, size, size);
+    cctx.drawImage(img, c.cx - c.hw, c.cy - c.hh, ow, oh, 0, 0, ow, oh);
     cctx.restore();
     const blob = await new Promise(resolve => cropCanvas.toBlob(resolve, mime));
     if(blob){

@@ -378,6 +378,23 @@ PWA 安裝到主畫面/全螢幕/icon/theme_color 等不靠 SW 的功能已具�
 
 ---
 
+### 8. 重要背景樂團 + 跨團合照(2026-05-21 起)
+
+**重要背景樂團:** `BACKGROUND_BANDS = new Set(["Glitter*Green","CRYCHIC","Sumimi"])`
+- 前台側欄獨立 section「🎬 重要背景樂團」(`background-section`),跟主要 12 樂團、獨立計畫平行
+- 樂團顏色:Glitter\*Green `#01DFA5`、CRYCHIC `#8cb3d4`、Sumimi `#BBFF77`
+- 目前只支援「全團」單一角色項 (`CRYCHIC全團` 等),個別角色徽章未來再加
+
+**跨團合照(`band="跨團合照"`):**
+- 用於跨越多個樂團的合照徽章(例:CRYCHIC 五人合照、各團聯動)
+- 顏色 `#9e9e9e` 灰色
+- **不算進** character 衍生樂團(`badgeBands()` 短路) — 例如 band=跨團合照 + character=CRYCHIC全團 的徽章**只**會出現在「跨團合照」section,不會跑進 CRYCHIC section
+- 理由:跨團合照已有獨立分類,再灌進每個相關樂團會造成 sidebar 計數失準 + 重複出現
+
+**badgeBands() 函式:** 集中決定「一個徽章該歸在哪些樂團 section」,index.html 的 buildSidebar 計數、applyFilters、buildCharList 都用同一個邏輯,確保 sidebar 數字和點擊後篩出來的結果一致。
+
+---
+
 ## 開發環境工作流
 
 ### 改 code 步驟
