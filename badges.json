@@ -50550,5 +50550,25 @@
     "created_at": "2026-05-22T14:00:51.904Z",
     "updated_at": "2026-05-22T14:00:51.904Z",
     "image_updated_at": "2026-05-22T14:00:51.904Z"
+  },
+  {
+    "id": "3149",
+    "ext": "png",
+    "band": "Sumimi",
+    "character": "Sumimi全團",
+    "series": "",
+    "year": "2025年3月22日",
+    "event": "MyGO!!!!!×Ave Mujica 合同ライブ「わかれ道の、その先へ」",
+    "type": "角色合影",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/mygo-ave-mujica0426/products/2000221000412",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "雞狗聯合演唱會",
+    "created_at": "2026-05-22T14:13:35.384Z",
+    "updated_at": "2026-05-22T14:13:35.384Z",
+    "image_updated_at": "2026-05-22T14:13:35.384Z"
   }
 ]
