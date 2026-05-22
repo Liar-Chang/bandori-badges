@@ -4864,15 +4864,34 @@ function _webviewOpenExternal(){
 let _batchMode = false;
 let _batchSelected = new Set();   // badge_id 集合
 
+// 記錄卡片 mousedown 起始座標,用來區分「點擊」 vs 「拖曳反白文字」
+let _cardMouseDownPos = null;
+document.addEventListener('mousedown', (e) => {
+  const card = e.target.closest && e.target.closest('.badge-card');
+  _cardMouseDownPos = card ? {x: e.clientX, y: e.clientY} : null;
+}, true);
+
 function handleCardClick(ev, card, idx){
-  // 批次模式：整張卡片點擊 = toggle 選取
+  // 批次模式:整張卡片點擊 = toggle 選取(優先,且批次模式不在意反白)
   if(_batchMode){
     ev.stopPropagation();
     const id = card.dataset.badgeId;
     if(id) toggleBadgeSelection(id);
     return;
   }
-  // 非批次模式：維持原本的展開行為
+  // 反白文字保護:如果使用者剛剛是拖曳反白(不是純點擊),不要 toggle 卡片
+  // (1) mousedown 到 mouseup 的距離 > 5px → 判定為拖曳
+  if(_cardMouseDownPos){
+    const dx = ev.clientX - _cardMouseDownPos.x;
+    const dy = ev.clientY - _cardMouseDownPos.y;
+    if(dx*dx + dy*dy > 25) return; // 5px 平方 = 25
+  }
+  // (2) 還有選取文字(雙保險:有些瀏覽器 click 觸發時 selection 還在)
+  try{
+    const sel = window.getSelection && window.getSelection();
+    if(sel && sel.toString().trim().length > 0) return;
+  }catch(e){}
+  // 非批次模式:維持原本的展開行為
   toggleCard(card, idx);
 }
 
