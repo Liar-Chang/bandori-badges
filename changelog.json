@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/5/23",
+    "content": {
+      "zh": "【新增】\n・Animelo Summer Live 2021 -COLORS- RAISE A SUILEN（新增 1 張）\n・Pastel＊Palettes Sound Only Live「Flowerful＊」（新增 10 張）\n・Pastel＊Palettes Special Live「TITLE DREAM」（新增 8 張）\n・Rausch und/and Craziness Ⅱ（新增 20 張）\n・バンドリ！ポッピンラジオ！（新增 1 張）\n・ブシロード劇場フェア in 東京キャラクターストリート（新增 5 張）\n・劇場版「BanG Dream! Episode of Roselia Ⅰ : 約束」（新增 5 張）\n・香澄とたえの放課後居残りツアー（新增 6 張）\n【功能調整】\n・修正展開卡片內反白選取文字後，卡片會被收合的問題",
+      "ja": "【新規】\n・Animelo Summer Live 2021 -COLORS- RAISE A SUILEN（1枚追加）\n・Pastel＊Palettes Sound Only Live「Flowerful＊」（10枚追加）\n・Pastel＊Palettes Special Live「TITLE DREAM」（8枚追加）\n・Rausch und/and Craziness Ⅱ（20枚追加）\n・バンドリ！ポッピンラジオ！（1枚追加）\n・ブシロード劇場フェア in 東京キャラクターストリート（5枚追加）\n・劇場版「BanG Dream! Episode of Roselia Ⅰ : 約束」（5枚追加）\n・香澄とたえの放課後居残りツアー（6枚追加）\n【機能調整】\n・展開したバッジカード内でテキストを選択した際にカードが閉じてしまう問題を修正",
+      "en": "【New】\n・Animelo Summer Live 2021 -COLORS- RAISE A SUILEN (1 added)\n・Pastel＊Palettes Sound Only Live \"Flowerful＊\" (10 added)\n・Pastel＊Palettes Special Live \"TITLE DREAM\" (8 added)\n・Rausch und/and Craziness Ⅱ (20 added)\n・BanG Dream! Poppin Radio! (1 added)\n・Bushiroad Theatre Fair @ Tokyo Character Street (5 added)\n・\"BanG Dream! Episode of Roselia I: Promise\" Movie (5 added)\n・Kasumi & Tae's After-School Detention Tour (6 added)\n【Feature Adjustments】\n・Fixed expanded badge cards collapsing when text was selected inside them",
+      "ko": "【추가】\n・Animelo Summer Live 2021 -COLORS- RAISE A SUILEN (1장 추가)\n・Pastel＊Palettes Sound Only Live「Flowerful＊」(10장 추가)\n・Pastel＊Palettes Special Live「TITLE DREAM」(8장 추가)\n・Rausch und/and Craziness Ⅱ (20장 추가)\n・バンドリ！ポッピンラジオ！(1장 추가)\n・ブシロード劇場フェア in 東京キャラクターストリート (5장 추가)\n・극장판「BanG Dream! Episode of Roselia Ⅰ : 약속」(5장 추가)\n・香澄とたえの放課後居残りツアー (6장 추가)\n【기능 조정】\n・확장된 뱃지 카드 내에서 텍스트를 선택할 때 카드가 접히던 문제 수정"
+    }
+  },
+  {
     "date": "2026/5/22",
     "content": {
       "zh": "【新增】\n・BanG Dream! Afterglow Flower Garden ver.(新增 15 張)\n・MyGO!!!!! × Ave Mujica 合同 Live「わかれ道の、その先へ」(新增 1 張)\n・「꿈의 결창 × 일러스타 카페」(新增 20 張)\n【功能調整】\n・修正「跨團合照」徽章重複出現在相關樂團 section 的問題，sidebar 計數現在與篩選結果一致\n・補上「跨團合照」「其他」樂團名稱的日/英/韓翻譯\n・尺寸分類「磁鐵」更名為「金屬」（涵蓋範圍更廣）",
