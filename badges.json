@@ -50730,5 +50730,25 @@
     "created_at": "2026-05-23T08:49:47.052Z",
     "updated_at": "2026-05-23T08:49:47.052Z",
     "image_updated_at": "2026-05-23T08:49:47.052Z"
+  },
+  {
+    "id": "3158",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "丸山彩",
+    "series": "プレミアムシート特製グッズ",
+    "year": "2021年7月8日",
+    "event": "Pastel＊Palettes Special Live 「TITLE DREAM」",
+    "type": "角色聲優",
+    "size": "54mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/events/psplsp2/",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "Special Live 「TITLE DREAM」",
+    "created_at": "2026-05-23T08:54:40.749Z",
+    "updated_at": "2026-05-23T08:54:40.749Z",
+    "image_updated_at": "2026-05-23T08:54:40.749Z"
   }
 ]
