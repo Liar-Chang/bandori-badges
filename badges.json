@@ -50850,5 +50850,25 @@
     "created_at": "2026-05-23T09:34:31.063Z",
     "updated_at": "2026-05-23T09:34:31.063Z",
     "image_updated_at": "2026-05-23T09:34:31.063Z"
+  },
+  {
+    "id": "3164",
+    "ext": "png",
+    "band": "其他",
+    "character": "",
+    "series": "",
+    "year": "2021年3月9日",
+    "event": "バンドリ！ポッピンラジオ！",
+    "type": "其他",
+    "size": "54mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/news/1155/",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "バンドリ！ポッピンラジオ！",
+    "created_at": "2026-05-23T13:38:27.780Z",
+    "updated_at": "2026-05-23T13:38:27.780Z",
+    "image_updated_at": "2026-05-23T13:38:27.780Z"
   }
 ]
