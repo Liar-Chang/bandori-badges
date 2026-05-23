@@ -1537,21 +1537,34 @@ function renderBatchList(){
     list.innerHTML = '<div class="batch-list-empty">尚未新增 ・ 點圖片或按下方按鈕開始</div>';
     return;
   }
-  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th style="width:28px;">形</th><th>X</th><th>Y</th><th>W</th><th>H</th><th style="width:24px;"></th></tr></thead><tbody>' +
-    batchCrops.map((c, i) => `
+  // 任意方形:用左上(X1,Y1)+右下(X2,Y2),跟單張模式一致
+  // 其他形狀:用中心(X,Y)+寬高(W,H)
+  const isRect = batchShape === 'rect';
+  const headerCols = isRect
+    ? '<th>X1</th><th>Y1</th><th>X2</th><th>Y2</th>'
+    : '<th>X</th><th>Y</th><th>W</th><th>H</th>';
+  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th style="width:28px;">形</th>'+headerCols+'<th style="width:24px;"></th></tr></thead><tbody>' +
+    batchCrops.map((c, i) => {
+      const cols = isRect
+        ? `<td><input type="number" value="${Math.round(c.cx - c.hw)}" oninput="updateBatchCrop(${i},'x1',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.cy - c.hh)}" oninput="updateBatchCrop(${i},'y1',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.cx + c.hw)}" oninput="updateBatchCrop(${i},'x2',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.cy + c.hh)}" oninput="updateBatchCrop(${i},'y2',this.value)"/></td>`
+        : `<td><input type="number" value="${Math.round(c.cx)}" oninput="updateBatchCrop(${i},'cx',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.cy)}" oninput="updateBatchCrop(${i},'cy',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.hw*2)}" oninput="updateBatchCrop(${i},'w',this.value)"/></td>
+           <td><input type="number" value="${Math.round(c.hh*2)}" oninput="updateBatchCrop(${i},'h',this.value)"/></td>`;
+      return `
       <tr class="${i === batchSelectedIdx ? 'selected' : ''}"
         onmouseenter="batchSelectedIdx=${i};renderBatchCanvas();showBatchHoverPreview(${i},event)"
         onmouseleave="batchSelectedIdx=-1;renderBatchCanvas();hideBatchHoverPreview()">
         <td><canvas class="batch-row-thumb" data-idx="${i}" width="48" height="48"></canvas></td>
         <td>${i+1}</td>
         <td title="${c.shape||'circle'}">${batchShapeSymbol(c.shape)}</td>
-        <td><input type="number" value="${Math.round(c.cx)}" oninput="updateBatchCrop(${i},'cx',this.value)"/></td>
-        <td><input type="number" value="${Math.round(c.cy)}" oninput="updateBatchCrop(${i},'cy',this.value)"/></td>
-        <td><input type="number" value="${Math.round(c.hw*2)}" oninput="updateBatchCrop(${i},'w',this.value)"/></td>
-        <td><input type="number" value="${Math.round(c.hh*2)}" oninput="updateBatchCrop(${i},'h',this.value)"/></td>
+        ${cols}
         <td><button class="del-btn" onclick="removeBatchCrop(${i})" title="刪除">✕</button></td>
       </tr>
-    `).join('') + '</tbody></table>';
+    `;}).join('') + '</tbody></table>';
   // 渲染所有縮圖
   updateAllBatchThumbnails();
 }
@@ -1684,6 +1697,23 @@ function updateBatchCrop(idx, field, value){
   } else if(field === 'h'){
     c.hh = v / 2;
     if(c.shape === 'circle' || c.shape === 'square') c.hw = v / 2;
+  } else if(field === 'x1'){
+    // 任意方形:改左邊,右邊固定 → 重算中心 cx 與 hw
+    const x2 = c.cx + c.hw;
+    c.cx = (v + x2) / 2;
+    c.hw = (x2 - v) / 2;
+  } else if(field === 'x2'){
+    const x1 = c.cx - c.hw;
+    c.cx = (x1 + v) / 2;
+    c.hw = (v - x1) / 2;
+  } else if(field === 'y1'){
+    const y2 = c.cy + c.hh;
+    c.cy = (v + y2) / 2;
+    c.hh = (y2 - v) / 2;
+  } else if(field === 'y2'){
+    const y1 = c.cy - c.hh;
+    c.cy = (y1 + v) / 2;
+    c.hh = (v - y1) / 2;
   } else {
     c[field] = v;
   }
