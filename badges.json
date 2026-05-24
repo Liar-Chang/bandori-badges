@@ -53130,5 +53130,25 @@
     "created_at": "2026-05-24T13:09:57.445Z",
     "updated_at": "2026-05-24T13:09:57.445Z",
     "image_updated_at": "2026-05-24T13:09:57.445Z"
+  },
+  {
+    "id": "3278",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "戶山香澄x湊友希那",
+    "series": "",
+    "year": "2018年10月05日",
+    "event": "ガルパと赤い羽根共同募金のコラボレーション",
+    "short_event": "赤い羽根募金",
+    "type": "角色本身",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/news/244/",
+    "note": "尺寸參考第2彈",
+    "admin_note": "",
+    "is_lottery": false,
+    "created_at": "2026-05-24T13:31:12.120Z",
+    "updated_at": "2026-05-24T13:31:28.585Z",
+    "image_updated_at": "2026-05-24T13:31:12.120Z"
   }
 ]
