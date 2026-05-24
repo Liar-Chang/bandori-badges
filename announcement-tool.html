@@ -95,9 +95,19 @@ textarea.output-text:read-only{cursor:text;}
       </div>
 
       <div class="field">
-        <label>X 額外 Hashtag（對應樂團/角色）</label>
+        <label>X 第一則韓文內容（新增資料，貼上我幫你翻的）</label>
+        <textarea id="in-x1-ko" placeholder="如：&#10;새 캔뱃지 추가！&#10;・..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>X 第二則韓文內容（功能調整，貼上我幫你翻的）</label>
+        <textarea id="in-x2-ko" placeholder="如：&#10;・밴드 필터링 시..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>X 額外 Hashtag（對應樂團/角色，日韓共用）</label>
         <input type="text" id="in-hashtag" placeholder="如 #MyGO #千早愛音"/>
-        <div class="hashtag-hint">固定已包含：#バンドリ #缶バッジ図鑑</div>
+        <div class="hashtag-hint">日文固定：#バンドリ #BanGDream #缶バッジ図鑑<br>韓文固定：#뱅드림 #BanGDream #뱃지도감</div>
       </div>
 
       <div class="generate-row">
@@ -122,26 +132,18 @@ textarea.output-text:read-only{cursor:text;}
 
       <div class="divider"></div>
 
-      <div class="output-block">
-        <div class="output-block-header">
-          <span class="output-label">𝕏 X 第一則（新增資料）</span>
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <span class="char-count" id="x1-count">—</span>
-            <button class="btn btn-copy" onclick="copyText('x1-out', this)">複製</button>
-          </div>
-        </div>
-        <textarea class="output-text" id="x1-out" readonly rows="6">產生後顯示於此</textarea>
+      <div class="lang-section" style="margin-bottom:0.85rem;">
+        <h3 style="font-size:0.7rem;color:var(--accent2);margin-bottom:0.5rem;letter-spacing:0.1em;text-transform:uppercase;">🇯🇵 日文 𝕏</h3>
+        <div id="x1ja-container"><div class="output-block" style="opacity:0.5;"><div class="output-text" style="font-size:0.78rem;color:var(--muted);min-height:auto;padding:0.5rem 0.85rem;">第一則（新增資料）— 產生後顯示於此</div></div></div>
+        <div id="x2ja-container" style="margin-top:0.6rem;"><div class="output-block" style="opacity:0.5;"><div class="output-text" style="font-size:0.78rem;color:var(--muted);min-height:auto;padding:0.5rem 0.85rem;">第二則（機能調整）— 產生後顯示於此</div></div></div>
       </div>
 
-      <div class="output-block" style="margin-top:0.85rem;">
-        <div class="output-block-header">
-          <span class="output-label">𝕏 X 第二則（功能調整）</span>
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <span class="char-count" id="x2-count">—</span>
-            <button class="btn btn-copy" onclick="copyText('x2-out', this)">複製</button>
-          </div>
-        </div>
-        <textarea class="output-text" id="x2-out" readonly rows="4">產生後顯示於此</textarea>
+      <div class="divider"></div>
+
+      <div class="lang-section">
+        <h3 style="font-size:0.7rem;color:var(--accent2);margin-bottom:0.5rem;letter-spacing:0.1em;text-transform:uppercase;">🇰🇷 韓文 𝕏</h3>
+        <div id="x1ko-container"><div class="output-block" style="opacity:0.5;"><div class="output-text" style="font-size:0.78rem;color:var(--muted);min-height:auto;padding:0.5rem 0.85rem;">第一則（추가 데이터）— 產生後顯示於此</div></div></div>
+        <div id="x2ko-container" style="margin-top:0.6rem;"><div class="output-block" style="opacity:0.5;"><div class="output-text" style="font-size:0.78rem;color:var(--muted);min-height:auto;padding:0.5rem 0.85rem;">第二則（기능 조정）— 產生後顯示於此</div></div></div>
       </div>
     </div>
 
@@ -150,7 +152,107 @@ textarea.output-text:read-only{cursor:text;}
 
 <script>
 const SITE_URL = 'https://liar-chang.github.io/bandori-badges/';
-const FIXED_HASHTAGS = '#バンドリ #缶バッジ図鑑';
+const JA_FIXED_HASHTAGS = '#バンドリ #BanGDream #缶バッジ図鑑';
+const KO_FIXED_HASHTAGS = '#뱅드림 #BanGDream #뱃지도감';
+const JA_TITLE = '【図鑑更新✨】';
+const KO_TITLE = '【도감 업데이트✨】';
+const JA_FUNC = '【機能調整】';
+const KO_FUNC = '【기능 조정】';
+const JA_NONE = '(なし)';
+const KO_NONE = '(없음)';
+const X_LIMIT = 280;
+
+// 自動分格:把超過 X 字數上限的內容切成多則 post
+// - preamble:只放第一則的開頭(URL + 標題)
+// - content:主要內容,按 \n 切行 greedy pack
+// - postamble:只放第一則的結尾(hashtags) — 計入第一則字數
+// - prefixReserve:預留給 "(N/M)" 標記的字數(8 字就夠 `\n(10/10)`)
+function splitForX({preamble = '', content = '', postamble = '', limit = X_LIMIT, prefixReserve = 8}){
+  // 先試試是否能塞進單一 post
+  const single = (preamble ? preamble + '\n' : '') + content + (postamble ? '\n\n' + postamble : '');
+  if(countX(single) <= limit) return [single];
+
+  // 需要分格,按行切 content (typically 每行 = 1 條 ・bullet)
+  const lines = content.split('\n');
+  const preambleLen = preamble ? countX(preamble) + 1 : 0;       // +1 for \n
+  const postambleLen = postamble ? 2 + countX(postamble) : 0;    // +2 for \n\n
+  const firstBudget = limit - preambleLen - postambleLen - prefixReserve;
+  const restBudget = limit - prefixReserve;
+
+  const chunks = [];
+  let curLines = [];
+  let curLen = 0;
+  let isFirst = true;
+
+  function flushChunk(){
+    if(curLines.length > 0){
+      chunks.push(curLines.join('\n'));
+      curLines = [];
+      curLen = 0;
+      isFirst = false;
+    }
+  }
+
+  for(const line of lines){
+    const lineLen = countX(line);
+    const wouldBeLen = curLines.length === 0 ? lineLen : curLen + 1 + lineLen;
+    const budget = isFirst ? firstBudget : restBudget;
+
+    if(wouldBeLen > budget){
+      flushChunk();
+      curLines = [line];
+      curLen = lineLen;
+    } else {
+      curLines.push(line);
+      curLen = wouldBeLen;
+    }
+  }
+  flushChunk();
+
+  // 組裝最終 posts:每則加上 (N/M);第一則前置 preamble,結尾加 postamble
+  const total = chunks.length;
+  return chunks.map((chunk, i) => {
+    const numSuffix = total > 1 ? `\n(${i+1}/${total})` : '';
+    if(i === 0){
+      let post = preamble ? preamble + '\n' : '';
+      post += chunk + numSuffix;
+      if(postamble) post += '\n\n' + postamble;
+      return post;
+    }
+    return chunk + numSuffix;
+  });
+}
+
+// 動態渲染多則 post 到指定容器
+function renderXPosts(containerId, posts, labelPrefix){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  container.innerHTML = posts.map((post, i) => {
+    const subLabel = posts.length > 1 ? ` (${i+1}/${posts.length})` : '';
+    const safeId = `${containerId}-${i}`;
+    const rows = Math.min(8, Math.max(4, post.split('\n').length));
+    const overLimit = countX(post) > X_LIMIT;
+    return `
+      <div class="output-block" style="margin-top:${i > 0 ? '0.6rem' : '0'};">
+        <div class="output-block-header">
+          <span class="output-label">${labelPrefix}${subLabel}${overLimit ? ' ⚠️ 超字' : ''}</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="char-count" id="${safeId}-count">—</span>
+            <button class="btn btn-copy" onclick="copyText('${safeId}', this)">複製</button>
+          </div>
+        </div>
+        <textarea class="output-text" id="${safeId}" readonly rows="${rows}"></textarea>
+      </div>
+    `;
+  }).join('');
+  // 用 .value 設值(避開 HTML escape 問題)+ 更新字數
+  posts.forEach((post, i) => {
+    const safeId = `${containerId}-${i}`;
+    const ta = document.getElementById(safeId);
+    if(ta) ta.value = post;
+    updateCount(`${safeId}-count`, post, X_LIMIT, true);
+  });
+}
 
 function generate(){
   const date = document.getElementById('in-date').value.trim();
@@ -160,10 +262,11 @@ function generate(){
   const funcData = document.getElementById('in-func').value.trim();
   const x1ja = document.getElementById('in-x1-ja').value.trim();
   const x2ja = document.getElementById('in-x2-ja').value.trim();
+  const x1ko = document.getElementById('in-x1-ko').value.trim();
+  const x2ko = document.getElementById('in-x2-ko').value.trim();
   const extraHashtag = document.getElementById('in-hashtag').value.trim();
 
   // ── Threads 版(繁中)──
-  // 三類組合：有資料才印標題；全空則向後相容輸出單一【新增/更新資料】+ (無)
   let newSection;
   if(!addData && !updateData && !imageData){
     newSection = '【新增/更新資料】\n(無)';
@@ -179,17 +282,33 @@ function generate(){
   document.getElementById('threads-out').value = threads;
   updateCount('threads-count', threads, 500, false);
 
-  // ── X 第一則(日文)──
-  const hashtags = [FIXED_HASHTAGS, extraHashtag].filter(Boolean).join(' ');
-  const x1newSection = x1ja || '(なし)';
-  const x1 = `${SITE_URL}\n【図鑑更新✨】\n${x1newSection}\n\n${hashtags}`;
-  document.getElementById('x1-out').value = x1;
-  updateCount('x1-count', x1, 280, true);
+  // ── 日文 𝕏 ──
+  const jaHashtags = [JA_FIXED_HASHTAGS, extraHashtag].filter(Boolean).join(' ');
+  // 第一則:URL + 標題 + 內容 + hashtags(第一則的字數含 hashtags)
+  const x1jaPosts = splitForX({
+    preamble: `${SITE_URL}\n${JA_TITLE}`,
+    content: x1ja || JA_NONE,
+    postamble: jaHashtags
+  });
+  renderXPosts('x1ja-container', x1jaPosts, '𝕏 JP 第一則（新增資料）');
+  // 第二則:機能調整(無 URL / hashtags)
+  const x2jaPosts = splitForX({
+    content: `${JA_FUNC}\n${x2ja || JA_NONE}`
+  });
+  renderXPosts('x2ja-container', x2jaPosts, '𝕏 JP 第二則（機能調整）');
 
-  // ── X 第二則(日文)──
-  const x2funcSection = x2ja ? `【機能調整】\n${x2ja}` : '【機能調整】\n(なし)';
-  document.getElementById('x2-out').value = x2funcSection;
-  updateCount('x2-count', x2funcSection, 280, true);
+  // ── 韓文 𝕏 ──
+  const koHashtags = [KO_FIXED_HASHTAGS, extraHashtag].filter(Boolean).join(' ');
+  const x1koPosts = splitForX({
+    preamble: `${SITE_URL}\n${KO_TITLE}`,
+    content: x1ko || KO_NONE,
+    postamble: koHashtags
+  });
+  renderXPosts('x1ko-container', x1koPosts, '𝕏 KO 第一則（추가 데이터）');
+  const x2koPosts = splitForX({
+    content: `${KO_FUNC}\n${x2ko || KO_NONE}`
+  });
+  renderXPosts('x2ko-container', x2koPosts, '𝕏 KO 第二則（기능 조정）');
 }
 
 // X(Twitter)字數計算
