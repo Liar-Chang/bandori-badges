@@ -22,10 +22,10 @@
 ├── index.html              # 前台(主網頁)~5300 行
 ├── admin.html              # 後台管理工具 ~3140 行
 ├── announcement-tool.html  # 公告產生器
-├── badge-crop.html         # 徽章截圖/裁切工具
+├── badge-crop.html         # 徽章截圖/裁切工具(支援單張+批次裁切,批次有 🔍 Hough 自動偵測)
 ├── badges.json             # 徽章主資料(2700+ 筆)
 ├── manifest.json           # PWA 設定
-├── favicon-*.png           # 各尺寸 icon(16, 32, 180, 192, 512)
+├── favicon-*.png           # 各尺寸 icon(180, 192, 512;16/32 走 favicon.ico 內含尺寸)
 └── images/                 # 徽章圖片(由徽章 ID 為檔名)
 ```
 

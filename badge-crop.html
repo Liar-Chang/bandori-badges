@@ -1156,6 +1156,18 @@ updateNumPreview();
           <div><label style="color:var(--muted);font-size:0.66rem;">偏移 ΔY</label><input type="number" id="batch-offset-y" value="0" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;"/></div>
           <button onclick="addBatchCropWithOffset()" style="font-family:inherit;font-size:0.72rem;padding:0.45rem 0.7rem;border-radius:5px;background:var(--accent);border:none;color:#fff;cursor:pointer;font-weight:600;">+ 偏移加入</button>
         </div>
+        <!-- 🔍 自動偵測 (Hough Circle Transform):用「預設半徑」當目標半徑,容差控制接受範圍 -->
+        <div style="display:grid;grid-template-columns:1fr auto;gap:0.5rem;align-items:end;padding:0.5rem 0.6rem;background:linear-gradient(135deg, #c084fc18, #5a4fcf18);border:1px solid #c084fc55;border-radius:8px;">
+          <div>
+            <label style="color:var(--muted);font-size:0.66rem;display:flex;justify-content:space-between;">
+              <span>🔍 自動偵測(只支援圓形)</span>
+              <span>容差:<span id="batch-detect-tol-val" style="color:var(--accent2);font-family:'Space Mono',monospace;">50%</span></span>
+            </label>
+            <input type="range" id="batch-detect-tol" min="10" max="100" value="50" oninput="document.getElementById('batch-detect-tol-val').textContent=this.value+'%'" style="width:100%;accent-color:var(--accent2);"/>
+            <div id="batch-detect-status" style="font-size:0.65rem;color:var(--muted);min-height:1em;margin-top:0.2rem;font-family:'Space Mono',monospace;"></div>
+          </div>
+          <button id="batch-detect-btn" onclick="runBatchAutoDetect()" style="font-family:inherit;font-size:0.78rem;padding:0.55rem 0.9rem;border-radius:5px;background:linear-gradient(135deg,#c084fc,#5a4fcf);border:none;color:#fff;cursor:pointer;font-weight:700;letter-spacing:0.02em;">🔍 自動偵測</button>
+        </div>
         <div class="batch-list-wrap">
           <div class="batch-list-head">
             <span class="count">共 <span id="batch-count">0</span> 個</span>
@@ -1754,6 +1766,349 @@ function clearAllBatchCrops(){
   batchCrops = [];
   renderBatchCanvas();
   renderBatchList();
+}
+
+// ═══════════════════════════════════════════════════
+// 🔍 自動偵測:Hough Circle Transform (單一目標半徑 + 容差)
+// 適用結構化商品圖(白底、清楚圓框)。photo-style 雜訊圖效果有限。
+// ═══════════════════════════════════════════════════
+async function runBatchAutoDetect(){
+  const item = fileItems[currentIdx];
+  if(!item || !item.imgEl){
+    alert('請先在主畫面左側選一張圖片');
+    return;
+  }
+  if(batchShape !== 'circle'){
+    if(!confirm('自動偵測目前只針對「圓形」。要先把形狀切到「圓形」並繼續嗎?')) return;
+    document.getElementById('batch-shape').value = 'circle';
+    onBatchShapeChange();
+  }
+
+  const targetR = parseInt(document.getElementById('batch-default-r').value) || 100;
+  const tolerance = (parseInt(document.getElementById('batch-detect-tol').value) || 15) / 100;
+  const btn = document.getElementById('batch-detect-btn');
+  const status = document.getElementById('batch-detect-status');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ 偵測中...';
+  status.textContent = '前處理圖像...';
+  // 讓 UI 有機會更新後再開跑(否則 button 不會變 disabled 樣式)
+  await new Promise(r => setTimeout(r, 30));
+
+  try {
+    const t0 = performance.now();
+    // 第一次嘗試:用使用者設定的容差
+    let circles = await detectCirclesInImage(
+      item.imgEl, targetR, tolerance,
+      (msg) => { status.textContent = msg; }
+    );
+    // 自動 fallback:如果偵測不到,加大容差到 50%(不去 100%,避免抓到內部小特徵)
+    let retried = false;
+    if(circles.length === 0 && tolerance < 0.45){
+      status.textContent = '初次未偵測到,自動加大容差 50% 重試...';
+      await new Promise(r => setTimeout(r, 30));
+      circles = await detectCirclesInImage(
+        item.imgEl, targetR, 0.5,
+        (msg) => { status.textContent = '(寬容模式) ' + msg; }
+      );
+      retried = true;
+    }
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+
+    if(circles.length === 0){
+      status.textContent = `未偵測到圓形(${elapsed}s)。請手動框一個徽章測量正確半徑,再回來調整「預設半徑」。`;
+    } else {
+      // 過濾掉與既有裁切點過近的(防止重複按按鈕加倍)
+      const minDistOrig = (circles[0]?.r || targetR) * 1.3;
+      const minDistSqOrig = minDistOrig * minDistOrig;
+      const fresh = circles.filter(c => {
+        return !batchCrops.some(ex => {
+          const dx = ex.cx - c.cx, dy = ex.cy - c.cy;
+          return dx*dx + dy*dy < minDistSqOrig;
+        });
+      });
+      fresh.forEach(c => {
+        batchCrops.push({ shape:'circle', cx: c.cx, cy: c.cy, hw: c.r, hh: c.r });
+      });
+      renderBatchCanvas();
+      renderBatchList();
+      // 報告偵測到的半徑統計
+      const radii = circles.map(c => c.r).sort((a,b) => a-b);
+      const medR = radii[Math.floor(radii.length/2)];
+      const minR = radii[0], maxR = radii[radii.length-1];
+      const skipped = circles.length - fresh.length;
+      const skipMsg = skipped > 0 ? `,${skipped} 個與既有重疊` : '';
+      const retryMsg = retried ? '(寬容模式)' : '';
+      const radiusHint = (Math.abs(medR - targetR) > targetR * 0.2)
+        ? ` ⚠️ 實際半徑中位數 ${medR}(離 預設半徑 ${targetR} 較遠,建議改設 ${medR})`
+        : ` 實際半徑 ${minR}~${maxR}(中位 ${medR})`;
+      status.textContent = `✓ ${retryMsg} 偵測到 ${circles.length} 個圓${skipMsg},加入 ${fresh.length}(${elapsed}s)${radiusHint}`;
+    }
+  } catch(e) {
+    console.error('[autoDetect]', e);
+    status.textContent = '偵測失敗:' + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 自動偵測';
+  }
+}
+
+// 1D 可分離 Gaussian 模糊(sigma≈1.4),減少文字/雜訊邊緣
+function _gaussianBlur(src, w, h){
+  const k = [0.06136, 0.24477, 0.38774, 0.24477, 0.06136];
+  const tmp = new Float32Array(w * h);
+  const dst = new Float32Array(w * h);
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      let s = 0;
+      for(let i = -2; i <= 2; i++){
+        const xx = x + i < 0 ? 0 : x + i >= w ? w - 1 : x + i;
+        s += src[y*w + xx] * k[i+2];
+      }
+      tmp[y*w + x] = s;
+    }
+  }
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      let s = 0;
+      for(let i = -2; i <= 2; i++){
+        const yy = y + i < 0 ? 0 : y + i >= h ? h - 1 : y + i;
+        s += tmp[yy*w + x] * k[i+2];
+      }
+      dst[y*w + x] = s;
+    }
+  }
+  return dst;
+}
+
+// 核心:回傳 [{cx, cy, r}, ...](座標已映射回原圖座標系)
+//
+// 演算法:Hough Gradient + 圓周共識驗證(per-candidate radius refinement)
+//   1. Gaussian blur → 抑制文字 / 雜訊邊緣
+//   2. Sobel → gradient magnitude + direction
+//   3. 動態閾值取前 8% 強邊緣
+//   4. 沿 gradient 法線投票到 ±[rMin..rMax] 候選中心
+//   5. 平滑 accumulator + 找局部最大值
+//   6. 對每個 candidate:
+//      - 試 rMin..rMax 找 best radius(perimeter consensus 最高)
+//      - 若 consensus < 0.55 → 拒絕(代表這不是真圓,只是投票剛好集中)
+//   7. NMS 用 detected radius(不重疊)
+async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
+  const W = imgEl.naturalWidth || imgEl.width;
+  const H = imgEl.naturalHeight || imgEl.height;
+  // 大圖降採樣加速:長邊不超過 MAX_DIM
+  const MAX_DIM = 1024;
+  const scale = Math.min(1, MAX_DIM / Math.max(W, H));
+  const sW = Math.round(W * scale);
+  const sH = Math.round(H * scale);
+  const sR = targetR * scale;
+  // rMin 絕對下限 20px:徽章不會比這小;避免 fallback 抓到內部裝飾、文字等小特徵
+  const rMin = Math.max(20, Math.floor(sR * (1 - tolerance)));
+  const rMax = Math.min(Math.min(sW, sH) / 2, Math.ceil(sR * (1 + tolerance)));
+  if(rMax <= rMin) throw new Error('半徑範圍無效,請檢查「預設半徑」與「容差」');
+
+  // 1. 畫到離屏 canvas 取 imageData
+  onProgress && onProgress('讀取像素 + Gaussian 模糊...');
+  await new Promise(r => setTimeout(r, 0));
+  const canvas = document.createElement('canvas');
+  canvas.width = sW;
+  canvas.height = sH;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(imgEl, 0, 0, sW, sH);
+  const imgData = ctx.getImageData(0, 0, sW, sH);
+  const data = imgData.data;
+
+  // 2. 灰階 → Gaussian blur(降低文字邊緣的影響)
+  const grayRaw = new Float32Array(sW * sH);
+  for(let i = 0, p = 0; i < sW * sH; i++, p += 4){
+    grayRaw[i] = 0.299 * data[p] + 0.587 * data[p+1] + 0.114 * data[p+2];
+  }
+  const gray = _gaussianBlur(grayRaw, sW, sH);
+
+  // 3. Sobel(在 blur 後的灰階上,得到 gx, gy, mag)
+  onProgress && onProgress('Sobel 邊緣偵測...');
+  await new Promise(r => setTimeout(r, 0));
+  const gx = new Float32Array(sW * sH);
+  const gy = new Float32Array(sW * sH);
+  const magArr = new Float32Array(sW * sH);
+  for(let y = 1; y < sH - 1; y++){
+    for(let x = 1; x < sW - 1; x++){
+      const idx = y * sW + x;
+      const gxv = -gray[idx-sW-1] + gray[idx-sW+1]
+                  - 2*gray[idx-1] + 2*gray[idx+1]
+                  - gray[idx+sW-1] + gray[idx+sW+1];
+      const gyv = -gray[idx-sW-1] - 2*gray[idx-sW] - gray[idx-sW+1]
+                  + gray[idx+sW-1] + 2*gray[idx+sW] + gray[idx+sW+1];
+      gx[idx] = gxv;
+      gy[idx] = gyv;
+      magArr[idx] = Math.sqrt(gxv*gxv + gyv*gyv);
+    }
+  }
+
+  // 自適應邊緣閾值:取前 8% 強的當邊緣(用 histogram 估算分位數)
+  const histBins = 256;
+  const hist = new Uint32Array(histBins);
+  let maxMag = 0;
+  for(let i = 0; i < magArr.length; i++) if(magArr[i] > maxMag) maxMag = magArr[i];
+  if(maxMag === 0) maxMag = 1;
+  for(let i = 0; i < magArr.length; i++){
+    const b = Math.min(histBins-1, Math.floor(magArr[i] / maxMag * (histBins-1)));
+    hist[b]++;
+  }
+  // 取前 12% 強的當邊緣(折衷:Q 版需要 15%、photo 需要 8%,12% 兩邊都能照顧)
+  const targetCount = Math.floor(magArr.length * 0.12);
+  let cum = 0, threshBin = histBins - 1;
+  for(let b = histBins - 1; b >= 0; b--){
+    cum += hist[b];
+    if(cum >= targetCount){ threshBin = b; break; }
+  }
+  const edgeThresh = Math.max(20, threshBin * maxMag / (histBins-1));
+
+  // 4. Hough 投票:每個邊緣沿 gradient 法線投票到 ±[rMin..rMax] 範圍的候選中心
+  onProgress && onProgress('Hough 投票中...');
+  await new Promise(r => setTimeout(r, 0));
+  const accum = new Float32Array(sW * sH);
+  let edgeCount = 0;
+  for(let y = 1; y < sH - 1; y++){
+    for(let x = 1; x < sW - 1; x++){
+      const idx = y * sW + x;
+      const m = magArr[idx];
+      if(m < edgeThresh) continue;
+      edgeCount++;
+      const nx = gx[idx] / m;
+      const ny = gy[idx] / m;
+      for(let r = rMin; r <= rMax; r++){
+        const c1x = (x + r * nx) | 0;
+        const c1y = (y + r * ny) | 0;
+        if(c1x >= 0 && c1x < sW && c1y >= 0 && c1y < sH){
+          accum[c1y * sW + c1x] += 1;
+        }
+        const c2x = (x - r * nx) | 0;
+        const c2y = (y - r * ny) | 0;
+        if(c2x >= 0 && c2x < sW && c2y >= 0 && c2y < sH){
+          accum[c2y * sW + c2x] += 1;
+        }
+      }
+    }
+  }
+
+  // 5. 平滑 accumulator (3x3) 讓鄰近票數合併
+  onProgress && onProgress('平滑投票結果...');
+  await new Promise(r => setTimeout(r, 0));
+  const smooth = new Float32Array(sW * sH);
+  for(let y = 1; y < sH - 1; y++){
+    for(let x = 1; x < sW - 1; x++){
+      const idx = y * sW + x;
+      smooth[idx] = (
+        accum[idx-sW-1] + accum[idx-sW] + accum[idx-sW+1] +
+        accum[idx-1]    + accum[idx]    + accum[idx+1]    +
+        accum[idx+sW-1] + accum[idx+sW] + accum[idx+sW+1]
+      ) / 9;
+    }
+  }
+
+  // 6. 找候選中心(局部最大值,5×5 window)
+  onProgress && onProgress('找候選中心...');
+  await new Promise(r => setTimeout(r, 0));
+  let maxVote = 0;
+  for(let i = 0; i < smooth.length; i++) if(smooth[i] > maxVote) maxVote = smooth[i];
+  // 投票閾值:用 max 的比例 + 預期周長下限的較大者
+  // 比較寬鬆(讓真人照片版的弱邊緣也能過 vote),靠後續 verification 把假陽性篩掉
+  const voteThresh = Math.max(maxVote * 0.10, 2 * Math.PI * sR * 0.08);
+
+  const candidates = [];
+  const peakWin = 3;
+  for(let y = peakWin; y < sH - peakWin; y++){
+    for(let x = peakWin; x < sW - peakWin; x++){
+      const v = smooth[y * sW + x];
+      if(v < voteThresh) continue;
+      let isMax = true;
+      for(let dy = -peakWin; dy <= peakWin && isMax; dy++){
+        for(let dx = -peakWin; dx <= peakWin && isMax; dx++){
+          if(dx === 0 && dy === 0) continue;
+          if(smooth[(y+dy) * sW + (x+dx)] > v){ isMax = false; }
+        }
+      }
+      if(isMax){ candidates.push({ x, y, score: v }); }
+    }
+  }
+
+  // 7. 對每個候選:找最佳半徑(perimeter consensus 最高的 r),
+  //    並驗證 consensus ≥ MIN_CONSENSUS(過濾文字/banner 等假陽性)
+  //    取樣時對每個角度檢查 r-1/r/r+1 三條同心圓 band,容許 anti-aliasing 邊緣
+  onProgress && onProgress(`驗證 ${candidates.length} 個候選...`);
+  await new Promise(r => setTimeout(r, 0));
+  const N_SAMPLES = 48;  // 7.5° steps
+  const MIN_CONSENSUS = 0.40;  // 真圓通常 0.45+,文字假陽性 ~0.10-0.20,中間留 buffer
+  candidates.sort((a, b) => b.score - a.score);
+  const toVerify = candidates.slice(0, Math.min(200, candidates.length));
+  const verified = [];
+  // 預先算好 cos/sin 查表(避免重複算)
+  const cosT = new Float32Array(N_SAMPLES);
+  const sinT = new Float32Array(N_SAMPLES);
+  for(let i = 0; i < N_SAMPLES; i++){
+    const theta = i * 2 * Math.PI / N_SAMPLES;
+    cosT[i] = Math.cos(theta);
+    sinT[i] = Math.sin(theta);
+  }
+  for(const c of toVerify){
+    let bestR = sR, bestConsensus = 0;
+    for(let r = rMin; r <= rMax; r++){
+      let strong = 0;
+      for(let i = 0; i < N_SAMPLES; i++){
+        const ct = cosT[i], st = sinT[i];
+        // 在 r-1, r, r+1 三條同心圓 band 內找最強的 edge,並要求徑向對齊
+        // 徑向對齊:gradient 方向應該幾乎平行於半徑方向 (ct, st)
+        //   真圓 perimeter:|dot((nx,ny), (ct,st))| ≈ 1
+        //   文字/雜訊:|dot| 接近 0(gradient 方向隨機)
+        let bestMag = 0, bestAlign = 0;
+        for(let dr = -1; dr <= 1; dr++){
+          const rr = r + dr;
+          const px = (c.x + rr * ct) | 0;
+          const py = (c.y + rr * st) | 0;
+          if(px < 0 || px >= sW || py < 0 || py >= sH) continue;
+          const idx = py * sW + px;
+          const m = magArr[idx];
+          if(m < edgeThresh) continue;
+          // 計算徑向對齊度 (gradient direction · radial direction)
+          const align = Math.abs((gx[idx] * ct + gy[idx] * st) / m);
+          if(m > bestMag){ bestMag = m; bestAlign = align; }
+        }
+        // 要同時 edge 強 + 徑向對齊 ≥ 0.8(37° 內偏離角)才算「真實 perimeter point」
+        // 真圓的 perimeter:gradient 沿半徑,align ≈ 0.85-0.95;
+        // 文字、photo 內部隨機 gradient 平均 0.4-0.6,過不了 0.8 — 強力濾掉假陽性
+        if(bestMag >= edgeThresh && bestAlign >= 0.8) strong++;
+      }
+      const consensus = strong / N_SAMPLES;
+      if(consensus > bestConsensus){ bestConsensus = consensus; bestR = r; }
+    }
+    if(bestConsensus >= MIN_CONSENSUS){
+      verified.push({ x: c.x, y: c.y, r: bestR, score: c.score, consensus: bestConsensus });
+    }
+  }
+
+  // 8. NMS:按 consensus × score 降序(合併兩個品質指標),dedupe 同一徽章內的多峰
+  //    NMS 距離 0.8 × r:夠涵蓋同一徽章內部分散峰值(裝飾邊框 / 內部圖樣導致),
+  //    但仍 < 2×r(相鄰 grid 徽章中心距 ≥ 2r 時不會誤殺)
+  verified.sort((a, b) => (b.consensus * b.score) - (a.consensus * a.score));
+  const peaks = [];
+  for(const v of verified){
+    let tooClose = false;
+    for(const p of peaks){
+      const dx = v.x - p.x, dy = v.y - p.y;
+      const useDist = Math.max(25, Math.max(v.r, p.r) * 0.8);
+      if(dx*dx + dy*dy < useDist * useDist){ tooClose = true; break; }
+    }
+    if(!tooClose) peaks.push(v);
+  }
+
+  // 9. 映射回原圖座標(返回每個圓的 DETECTED 半徑,非固定 targetR)
+  return peaks.map(p => ({
+    cx: Math.round(p.x / scale),
+    cy: Math.round(p.y / scale),
+    r: Math.round(p.r / scale),
+    consensus: p.consensus.toFixed(2)
+  }));
 }
 
 async function cropBatchAll(){
