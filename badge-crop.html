@@ -207,7 +207,13 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
             <div class="field"><label>中心 Y</label><input type="number" id="cy" placeholder="0" oninput="previewShape()"/></div>
           </div>
           <div class="field"><label id="r-label">半徑（px）</label><input type="number" id="r" placeholder="190" oninput="previewShape()"/></div>
-          <p style="font-size:0.67rem;color:var(--muted);line-height:1.6;">💡 右鍵快速設中心<br>滾輪縮放畫面 ・ Shift+滾輪微調大小<br>中鍵拖曳平移 ・ 觸控兩指縮放</p>
+          <!-- 🔍 自動偵測 (單張模式;只支援圓形/正方形)。共用批次模式的 Hough Circle Transform 演算法 -->
+          <div style="margin-top:0.55rem;padding:0.5rem 0.55rem;background:linear-gradient(135deg, #c084fc18, #5a4fcf18);border:1px solid #c084fc55;border-radius:6px;">
+            <button onclick="singleAutoDetect()" id="single-detect-btn" style="width:100%;font-family:inherit;font-size:0.76rem;padding:0.45rem 0.7rem;border-radius:5px;background:linear-gradient(135deg,#c084fc,#5a4fcf);border:none;color:#fff;cursor:pointer;font-weight:700;letter-spacing:0.02em;">🔍 自動偵測徽章</button>
+            <div id="single-detect-status" style="font-size:0.62rem;color:var(--muted);min-height:1em;margin-top:0.3rem;font-family:'Space Mono',monospace;line-height:1.4;"></div>
+            <button id="single-detect-next" onclick="singleAutoDetectNext()" style="display:none;margin-top:0.3rem;width:100%;font-family:inherit;font-size:0.7rem;padding:0.35rem 0.5rem;border-radius:5px;background:var(--surface2);border:1.5px solid var(--accent2);color:var(--accent2);cursor:pointer;">↻ 下一個偵測點</button>
+          </div>
+          <p style="font-size:0.67rem;color:var(--muted);line-height:1.6;margin-top:0.5rem;">💡 右鍵快速設中心<br>滾輪縮放畫面 ・ Shift+滾輪微調大小<br>中鍵拖曳平移 ・ 觸控兩指縮放</p>
         </div>
         <!-- 任意方形/橢圓/心形：矩形拖曳 -->
         <div id="ctrl-rect" style="display:none;">
@@ -855,6 +861,96 @@ function updatePreview(){
   document.getElementById('preview-filename').textContent=fileItems[currentIdx]?.file.name||'';
   const isCR=shape==='circle'||shape==='square';
   document.getElementById('preview-size').textContent=isCR?`${Math.round(r*2)} × ${Math.round(r*2)} px`:`${Math.round(rx2-rx1)} × ${Math.round(ry2-ry1)} px`;
+}
+
+// ═══════════════════════════════════════════════════
+// 🔍 單張模式自動偵測:共用批次模式的 detectCirclesInImage 演算法
+// - 用當前「半徑(px)」當 targetR + 50% 容差搜索
+// - 找不到 → fallback 加大到 100% 容差
+// - 找到多個圓 → 用最強的(consensus × score 最高);「↻ 下一個」按鈕可循環
+// ═══════════════════════════════════════════════════
+let _singleDetectCircles = null;
+let _singleDetectIdx = -1;
+
+async function singleAutoDetect(){
+  if(!img){
+    alert('請先選一張圖片');
+    return;
+  }
+  if(shape !== 'circle' && shape !== 'square'){
+    if(!confirm('自動偵測只支援「圓形 / 正方形」。要先切到「圓形」並繼續嗎?')) return;
+    setShape('circle');
+  }
+  const targetR = parseFloat(document.getElementById('r').value) || 100;
+  const btn = document.getElementById('single-detect-btn');
+  const status = document.getElementById('single-detect-status');
+  const nextBtn = document.getElementById('single-detect-next');
+  btn.disabled = true;
+  btn.textContent = '⏳ 偵測中...';
+  status.textContent = '處理中...';
+  nextBtn.style.display = 'none';
+  await new Promise(r => setTimeout(r, 30));
+
+  try {
+    const t0 = performance.now();
+    // 第一次:50% 容差
+    let circles = await detectCirclesInImage(img, targetR, 0.5, (msg) => {
+      status.textContent = msg;
+    });
+    let retried = false;
+    // Fallback:加大到 100% 容差(允許比設定值大/小很多的徽章)
+    if(circles.length === 0){
+      status.textContent = '初次未偵測到,加寬重試...';
+      await new Promise(r => setTimeout(r, 30));
+      circles = await detectCirclesInImage(img, targetR, 1.0, null);
+      retried = true;
+    }
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+
+    if(circles.length === 0){
+      status.textContent = `未偵測到圓形(${elapsed}s)。請手動框或切到「滑鼠拖曳」。`;
+      _singleDetectCircles = null;
+      _singleDetectIdx = -1;
+    } else {
+      // 套用最強的(circles 已按 consensus × score 降序)
+      _singleDetectCircles = circles;
+      _singleDetectIdx = 0;
+      applySingleDetectCircle(circles[0]);
+      const more = circles.length > 1 ? ` ↻ 還有 ${circles.length - 1} 個可循環` : '';
+      const retryMsg = retried ? '(寬容模式) ' : '';
+      status.textContent = `✓ ${retryMsg}套用 (cx=${circles[0].cx}, cy=${circles[0].cy}, r=${circles[0].r})${more} (${elapsed}s)`;
+      // 多個結果時顯示「下一個」按鈕
+      if(circles.length > 1) nextBtn.style.display = '';
+    }
+  } catch(e) {
+    console.error('[singleAutoDetect]', e);
+    status.textContent = '偵測失敗:' + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 自動偵測徽章';
+  }
+}
+
+function singleAutoDetectNext(){
+  if(!_singleDetectCircles || _singleDetectCircles.length === 0) return;
+  _singleDetectIdx = (_singleDetectIdx + 1) % _singleDetectCircles.length;
+  const c = _singleDetectCircles[_singleDetectIdx];
+  applySingleDetectCircle(c);
+  const status = document.getElementById('single-detect-status');
+  status.textContent = `✓ 切到第 ${_singleDetectIdx + 1}/${_singleDetectCircles.length} 個 (cx=${c.cx}, cy=${c.cy}, r=${c.r})`;
+}
+
+function applySingleDetectCircle(circle){
+  cx = circle.cx;
+  cy = circle.cy;
+  r = circle.r;
+  // 同步輸入欄並重畫
+  document.getElementById('cx').value = Math.round(cx);
+  document.getElementById('cy').value = Math.round(cy);
+  document.getElementById('r').value = Math.round(r);
+  const rc = document.getElementById('r-click');
+  if(rc) rc.value = Math.round(r);
+  if(typeof draw === 'function') draw();
 }
 
 function previewShape(){
