@@ -1208,6 +1208,9 @@ updateNumPreview();
     <div class="batch-head">
       <h2>🎁 批次裁切（圓形）</h2>
       <span class="hint">點圖片新增 ・ 也可手動編輯欄位 ・ 用主畫面當前選的圖</span>
+      <button id="batch-select-mode-btn" onclick="toggleBatchSelectMode()"
+        style="margin-left:auto;font-family:inherit;font-size:0.72rem;padding:0.4rem 0.75rem;border-radius:5px;background:var(--surface2);border:1.5px solid var(--accent2);color:var(--accent2);cursor:pointer;font-weight:600;"
+        title="切到選取模式 — 拖曳框選或點圓選取多項,批次修改數據">✋ 選取模式</button>
       <button class="close" onclick="closeBatchMode()">✕</button>
     </div>
     <div class="batch-body">
@@ -1264,6 +1267,32 @@ updateNumPreview();
           </div>
           <button id="batch-detect-btn" onclick="runBatchAutoDetect()" style="font-family:inherit;font-size:0.78rem;padding:0.55rem 0.9rem;border-radius:5px;background:linear-gradient(135deg,#c084fc,#5a4fcf);border:none;color:#fff;cursor:pointer;font-weight:700;letter-spacing:0.02em;">🔍 自動偵測</button>
         </div>
+        <!-- 批次修改 bar:選取模式下且有 selection 時顯示 -->
+        <div id="batch-bulk-bar" style="display:none;padding:0.5rem 0.6rem;background:linear-gradient(135deg,#c084fc25,#5a4fcf25);border:1px solid #c084fc88;border-radius:8px;flex-direction:column;gap:0.4rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.72rem;">
+            <span style="color:var(--accent2);font-weight:700;">✋ 已選 <span id="batch-bulk-count">0</span> 項</span>
+            <span>
+              <button onclick="batchSelectAll()" style="font-family:inherit;font-size:0.65rem;padding:0.25rem 0.5rem;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;">全選</button>
+              <button onclick="batchClearSelection()" style="font-family:inherit;font-size:0.65rem;padding:0.25rem 0.5rem;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;">取消</button>
+            </span>
+          </div>
+          <div style="display:grid;grid-template-columns:auto auto 1fr auto;gap:0.35rem;align-items:center;font-size:0.7rem;">
+            <select id="batch-bulk-field" style="font-family:inherit;font-size:0.72rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:0.3rem;">
+              <option value="cx">中心 X</option>
+              <option value="cy">中心 Y</option>
+              <option value="w">寬 W</option>
+              <option value="h">高 H</option>
+              <option value="r">半徑 (W=H)</option>
+            </select>
+            <select id="batch-bulk-op" style="font-family:inherit;font-size:0.72rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:0.3rem;">
+              <option value="set">設為</option>
+              <option value="add">加 Δ</option>
+              <option value="align_first">對齊第一項</option>
+            </select>
+            <input type="number" id="batch-bulk-value" placeholder="值" style="font-family:'Space Mono',monospace;font-size:0.72rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:0.3rem;width:100%;"/>
+            <button onclick="applyBatchBulkEdit()" style="font-family:inherit;font-size:0.72rem;padding:0.3rem 0.65rem;border-radius:4px;background:var(--accent2);border:none;color:#fff;cursor:pointer;font-weight:600;">套用</button>
+          </div>
+        </div>
         <div class="batch-list-wrap">
           <div class="batch-list-head">
             <span class="count">共 <span id="batch-count">0</span> 個</span>
@@ -1287,9 +1316,129 @@ updateNumPreview();
 // 批次裁切:全域狀態
 // ═══════════════════════════════════════════════════
 let batchCrops = [];      // [{shape, cx, cy, hw, hh}, ...] 圖片像素座標,每筆獨立形狀
-let batchSelectedIdx = -1; // 視覺高亮哪一筆
+let batchSelectedIdx = -1; // 視覺高亮哪一筆 (hover)
 let batchShape = 'circle'; // 當前選的「新增時用的形狀」(circle/square/rect/pick)
 let batchRectCreate = null; // 任意方形拖曳建立中:{x1,y1,x2,y2} or null
+// ── 批次選取模式 / 批次修改 ──
+let _batchSelectMode = false;          // 選取模式開關
+let _batchSelectedSet = new Set();      // 已選的 batchCrops index
+let _batchMarquee = null;               // 框選中的矩形:{x1,y1,x2,y2}
+
+function toggleBatchSelectMode(){
+  _batchSelectMode = !_batchSelectMode;
+  const btn = document.getElementById('batch-select-mode-btn');
+  if(btn){
+    if(_batchSelectMode){
+      btn.style.background = 'linear-gradient(135deg,#c084fc,#5a4fcf)';
+      btn.style.color = '#fff';
+      btn.textContent = '✓ 退出選取';
+    } else {
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.textContent = '✋ 選取模式';
+      _batchSelectedSet.clear();
+      _batchMarquee = null;
+    }
+  }
+  updateBatchBulkBar();
+  renderBatchCanvas();
+  renderBatchList();
+}
+function updateBatchBulkBar(){
+  const bar = document.getElementById('batch-bulk-bar');
+  const cnt = document.getElementById('batch-bulk-count');
+  if(!bar || !cnt) return;
+  cnt.textContent = _batchSelectedSet.size;
+  bar.style.display = (_batchSelectMode && _batchSelectedSet.size > 0) ? 'flex' : 'none';
+}
+function toggleBatchSelectionAt(idx){
+  if(idx < 0 || idx >= batchCrops.length) return;
+  if(_batchSelectedSet.has(idx)) _batchSelectedSet.delete(idx);
+  else _batchSelectedSet.add(idx);
+  updateBatchBulkBar();
+  renderBatchCanvas();
+  renderBatchList();
+}
+function batchSelectAll(){
+  _batchSelectedSet.clear();
+  batchCrops.forEach((_, i) => _batchSelectedSet.add(i));
+  updateBatchBulkBar();
+  renderBatchCanvas();
+  renderBatchList();
+}
+function batchClearSelection(){
+  _batchSelectedSet.clear();
+  updateBatchBulkBar();
+  renderBatchCanvas();
+  renderBatchList();
+}
+// Marquee 框選結束時:把矩形內(中心點落入)的 crop 加入 selection
+function _batchApplyMarquee(addMode){
+  if(!_batchMarquee) return;
+  const m = _batchMarquee;
+  const x1 = Math.min(m.x1, m.x2), x2 = Math.max(m.x1, m.x2);
+  const y1 = Math.min(m.y1, m.y2), y2 = Math.max(m.y1, m.y2);
+  // addMode true 表示「加入」(預設),false 表示「替換」
+  if(!addMode) _batchSelectedSet.clear();
+  batchCrops.forEach((c, i) => {
+    if(c.cx >= x1 && c.cx <= x2 && c.cy >= y1 && c.cy <= y2){
+      _batchSelectedSet.add(i);
+    }
+  });
+  _batchMarquee = null;
+  updateBatchBulkBar();
+  renderBatchCanvas();
+  renderBatchList();
+}
+// 套用批次編輯
+function applyBatchBulkEdit(){
+  if(_batchSelectedSet.size === 0){ alert('請先框選或點選至少一個項目'); return; }
+  const field = document.getElementById('batch-bulk-field').value;
+  const op = document.getElementById('batch-bulk-op').value;
+  const valStr = document.getElementById('batch-bulk-value').value;
+  const selected = [..._batchSelectedSet].sort((a, b) => a - b);
+
+  let value;
+  if(op === 'align_first'){
+    const first = batchCrops[selected[0]];
+    if(field === 'cx') value = first.cx;
+    else if(field === 'cy') value = first.cy;
+    else if(field === 'w') value = first.hw * 2;
+    else if(field === 'h') value = first.hh * 2;
+    else if(field === 'r') value = first.hw;
+  } else {
+    value = parseFloat(valStr);
+    if(!isFinite(value)){ alert('請輸入有效數值'); return; }
+  }
+
+  for(const idx of selected){
+    const c = batchCrops[idx];
+    if(!c) continue;
+    if(field === 'cx'){
+      c.cx = (op === 'add') ? c.cx + value : value;
+    } else if(field === 'cy'){
+      c.cy = (op === 'add') ? c.cy + value : value;
+    } else if(field === 'w'){
+      const newW = (op === 'add') ? c.hw * 2 + value : value;
+      if(newW <= 0) continue;
+      c.hw = newW / 2;
+      if(c.shape === 'circle' || c.shape === 'square') c.hh = c.hw;
+    } else if(field === 'h'){
+      const newH = (op === 'add') ? c.hh * 2 + value : value;
+      if(newH <= 0) continue;
+      c.hh = newH / 2;
+      if(c.shape === 'circle' || c.shape === 'square') c.hw = c.hh;
+    } else if(field === 'r'){
+      const newR = (op === 'add') ? c.hw + value : value;
+      if(newR <= 0) continue;
+      c.hw = newR;
+      c.hh = newR;
+    }
+  }
+  renderBatchCanvas();
+  renderBatchList();
+}
+
 function onBatchShapeChange(){
   batchShape = document.getElementById('batch-shape').value;
   // 同步更新所有現有 crop 為新形狀(對齊使用者直覺)
@@ -1482,9 +1631,17 @@ function renderBatchCanvas(){
   batchCrops.forEach((c, i) => {
     ctx.beginPath();
     batchDrawShape(ctx, c);
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = i === batchSelectedIdx ? '#ff6eb4' : '#22c55e';
+    // 顏色優先級: hover (pink) > selected (orange) > 預設 (green)
+    const isSel = _batchSelectedSet.has(i);
+    const isHover = i === batchSelectedIdx;
+    ctx.lineWidth = isSel ? 6 : 4;
+    ctx.strokeStyle = isHover ? '#ff6eb4' : (isSel ? '#f97316' : '#22c55e');
     ctx.stroke();
+    // 選中時加半透明填色
+    if(isSel){
+      ctx.fillStyle = 'rgba(249,115,22,0.18)';
+      ctx.fill();
+    }
     // 編號標籤
     const baseSize = Math.min(c.hw, c.hh);
     const fontSize = Math.max(20, baseSize * 0.3);
@@ -1507,6 +1664,20 @@ function renderBatchCanvas(){
     ctx.strokeRect(Math.min(r.x1,r.x2), Math.min(r.y1,r.y2), Math.abs(r.x2-r.x1), Math.abs(r.y2-r.y1));
     ctx.restore();
   }
+  // 選取模式 marquee 框
+  if(_batchMarquee){
+    const m = _batchMarquee;
+    ctx.save();
+    ctx.strokeStyle = '#c084fc';
+    ctx.fillStyle = 'rgba(192,132,252,0.12)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 5]);
+    const mx = Math.min(m.x1,m.x2), my = Math.min(m.y1,m.y2);
+    const mw = Math.abs(m.x2-m.x1), mh = Math.abs(m.y2-m.y1);
+    ctx.fillRect(mx, my, mw, mh);
+    ctx.strokeRect(mx, my, mw, mh);
+    ctx.restore();
+  }
 }
 
 // 把滑鼠座標換成圖片像素座標
@@ -1525,6 +1696,21 @@ function onBatchCanvasMouseDown(e){
   batchMouse.isDragging = false;
   batchMouse.panMode = false;
   batchMouse.dragIdx = batchHitTest(pos.x, pos.y);
+
+  // ─── 選取模式:點圓 = toggle 選取;拖空白 = marquee ───
+  if(_batchSelectMode){
+    if(batchMouse.dragIdx >= 0){
+      // 點到 crop:記錄起點,mouseup 時若沒拖動才當 toggle
+      batchMouse.panStartClientX = e.clientX;
+      batchMouse.panStartClientY = e.clientY;
+    } else {
+      // 空白處:啟動 marquee
+      _batchMarquee = { x1: pos.x, y1: pos.y, x2: pos.x, y2: pos.y };
+      batchMouse.isDragging = true;
+    }
+    return;
+  }
+
   if(batchMouse.dragIdx >= 0){
     const c = batchCrops[batchMouse.dragIdx];
     batchMouse.dragOffsetX = pos.x - c.cx;
@@ -1546,13 +1732,19 @@ function onBatchCanvasMouseDown(e){
 }
 function onBatchCanvasMouseMove(e){
   if(!batchMouse.down){
-    // 沒按下:只更新游標樣式(進入圓上方時 grab)
     const pos = batchMouseToImageCoords(e);
     const hit = batchHitTest(pos.x, pos.y);
-    document.getElementById('batch-canvas').style.cursor = hit >= 0 ? 'grab' : 'crosshair';
+    document.getElementById('batch-canvas').style.cursor = hit >= 0 ? (_batchSelectMode ? 'pointer' : 'grab') : 'crosshair';
     return;
   }
   const pos = batchMouseToImageCoords(e);
+  // ─── 選取模式 marquee 進行中 ───
+  if(_batchSelectMode && _batchMarquee){
+    _batchMarquee.x2 = pos.x;
+    _batchMarquee.y2 = pos.y;
+    renderBatchCanvas();
+    return;
+  }
   if(batchRectCreate){
     // 拖曳建立任意方形:更新第 2 角
     batchRectCreate.x2 = pos.x;
@@ -1584,6 +1776,25 @@ function onBatchCanvasMouseMove(e){
 }
 function onBatchCanvasMouseUp(e){
   if(!batchMouse.down) return;
+  // ─── 選取模式 ───
+  if(_batchSelectMode){
+    if(_batchMarquee){
+      // 結束 marquee:套用選取(加入,不覆蓋)
+      _batchApplyMarquee(true);
+    } else if(batchMouse.dragIdx >= 0){
+      // 點到圓但沒拖動 → toggle 選取
+      const dx = e.clientX - batchMouse.panStartClientX;
+      const dy = e.clientY - batchMouse.panStartClientY;
+      if(Math.hypot(dx, dy) < 5){
+        toggleBatchSelectionAt(batchMouse.dragIdx);
+      }
+    }
+    batchMouse.down = false;
+    batchMouse.isDragging = false;
+    batchMouse.dragIdx = -1;
+    document.getElementById('batch-canvas').style.cursor = 'crosshair';
+    return;
+  }
   if(batchRectCreate){
     // 拖曳建立任意方形:確認
     const r = batchRectCreate;
@@ -1662,15 +1873,18 @@ function renderBatchList(){
            <td><input type="number" value="${Math.round(c.cy)}" oninput="updateBatchCrop(${i},'cy',this.value)"/></td>
            <td><input type="number" value="${Math.round(c.hw*2)}" oninput="updateBatchCrop(${i},'w',this.value)"/></td>
            <td><input type="number" value="${Math.round(c.hh*2)}" oninput="updateBatchCrop(${i},'h',this.value)"/></td>`;
+      const isSel = _batchSelectedSet.has(i);
+      const rowStyle = isSel ? 'background:rgba(249,115,22,0.2);' : '';
+      const rowClick = _batchSelectMode ? `onclick="toggleBatchSelectionAt(${i})" style="cursor:pointer;${rowStyle}"` : `style="${rowStyle}"`;
       return `
-      <tr class="${i === batchSelectedIdx ? 'selected' : ''}"
+      <tr class="${i === batchSelectedIdx ? 'selected' : ''}" ${rowClick}
         onmouseenter="batchSelectedIdx=${i};renderBatchCanvas();showBatchHoverPreview(${i},event)"
         onmouseleave="batchSelectedIdx=-1;renderBatchCanvas();hideBatchHoverPreview()">
         <td><canvas class="batch-row-thumb" data-idx="${i}" width="48" height="48"></canvas></td>
-        <td>${i+1}</td>
+        <td>${i+1}${isSel ? ' ●' : ''}</td>
         <td title="${c.shape||'circle'}">${batchShapeSymbol(c.shape)}</td>
         ${cols}
-        <td><button class="del-btn" onclick="removeBatchCrop(${i})" title="刪除">✕</button></td>
+        <td><button class="del-btn" onclick="event.stopPropagation();removeBatchCrop(${i})" title="刪除">✕</button></td>
       </tr>
     `;}).join('') + '</tbody></table>';
   // 渲染所有縮圖
@@ -1853,6 +2067,14 @@ function updateBatchCrop(idx, field, value){
 
 function removeBatchCrop(idx){
   batchCrops.splice(idx, 1);
+  // 同步調整 _batchSelectedSet:idx 之後的全部往前移
+  const newSet = new Set();
+  for(const i of _batchSelectedSet){
+    if(i < idx) newSet.add(i);
+    else if(i > idx) newSet.add(i - 1);
+  }
+  _batchSelectedSet = newSet;
+  updateBatchBulkBar();
   renderBatchCanvas();
   renderBatchList();
 }
@@ -1860,6 +2082,8 @@ function removeBatchCrop(idx){
 function clearAllBatchCrops(){
   if(batchCrops.length && !confirm('確定清除所有裁切點?')) return;
   batchCrops = [];
+  _batchSelectedSet.clear();
+  updateBatchBulkBar();
   renderBatchCanvas();
   renderBatchList();
 }
