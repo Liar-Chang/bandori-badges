@@ -56850,5 +56850,25 @@
     "created_at": "2026-05-27T13:53:13.075Z",
     "updated_at": "2026-05-27T13:53:41.324Z",
     "image_updated_at": "2026-05-27T13:53:13.075Z"
+  },
+  {
+    "id": "3451",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "",
+    "series": "",
+    "year": "2019年2月20日",
+    "event": "BanG Dream! ガルパ☆ピコ トレーディングスクエア缶バッジvol.2",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bang-dream.com/7th-live/",
+    "note": "本体サイズ　W53×H78mm",
+    "admin_note": "https://bang-dream.com/news/465/",
+    "is_lottery": false,
+    "short_event": "BanG Dream! ガルパ☆ピコ vol.2 スクエア",
+    "created_at": "2026-05-27T13:55:30.928Z",
+    "updated_at": "2026-05-27T13:55:30.928Z",
+    "image_updated_at": "2026-05-27T13:55:30.928Z"
   }
 ]
