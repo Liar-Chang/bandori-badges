@@ -57150,5 +57150,25 @@
     "created_at": "2026-05-27T14:14:21.507Z",
     "updated_at": "2026-05-27T14:14:45.299Z",
     "image_updated_at": "2026-05-27T14:14:21.507Z"
+  },
+  {
+    "id": "3466",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "青葉摩卡x上原緋瑪麗x羽澤鶇x若宮伊芙",
+    "series": "",
+    "year": "2019年2月20日",
+    "event": "BanG Dream! ガルパ☆ピコ トレーディングスクエア缶バッジvol.2",
+    "short_event": "BanG Dream! ガルパ☆ピコ vol.2 スクエア",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bang-dream.com/7th-live/",
+    "note": "本体サイズ　W53×H78mm",
+    "admin_note": "https://bang-dream.com/news/465/",
+    "is_lottery": false,
+    "created_at": "2026-05-27T14:15:36.035Z",
+    "updated_at": "2026-05-27T14:16:10.250Z",
+    "image_updated_at": "2026-05-27T14:15:36.035Z"
   }
 ]
