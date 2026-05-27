@@ -87,7 +87,7 @@ See [LICENSE](./LICENSE) for details.
 
 ## 🔗 社群 / Social
 
-- Threads: [@bangdreambadgeencyclopedia](https://www.threads.com/@bangdreambadgeencyclopedia)
+- Threads: [@liarforbarexamination](https://www.threads.com/@liarforbarexamination)
 - Twitter/X: [@AnonsCorgi](https://x.com/AnonsCorgi)
 
 ---
