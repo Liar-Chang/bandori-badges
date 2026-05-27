@@ -32192,14 +32192,17 @@
     "series": "",
     "year": "2026年4月16日",
     "event": "ドロリスバースデーグッズ2026",
-    "short_event": "Birthday ver. vol.2",
+    "short_event": "Birthday vol.2",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/doloris-birthday2026/products/2000287200986",
     "note": "",
+    "admin_note": "",
+    "is_lottery": false,
     "created_at": "2026-04-15T13:52:21.307Z",
-    "updated_at": "2026-04-15T16:14:08.125Z"
+    "updated_at": "2026-05-27T12:13:52.621Z",
+    "image_updated_at": null
   },
   {
     "id": "2139",
@@ -32209,14 +32212,17 @@
     "series": "",
     "year": "2026年4月16日",
     "event": "ドロリスバースデーグッズ2026",
-    "short_event": "Birthday ver. vol.2",
+    "short_event": "Birthday vol.2",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/doloris-birthday2026/products/2000287200986",
     "note": "",
+    "admin_note": "",
+    "is_lottery": false,
     "created_at": "2026-04-15T13:52:21.307Z",
-    "updated_at": "2026-04-15T16:14:14.458Z"
+    "updated_at": "2026-05-27T12:14:00.935Z",
+    "image_updated_at": null
   },
   {
     "id": "2144",
