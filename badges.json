@@ -58770,5 +58770,25 @@
     "created_at": "2026-05-28T15:52:23.637Z",
     "updated_at": "2026-05-28T15:52:23.637Z",
     "image_updated_at": "2026-05-28T15:52:23.637Z"
+  },
+  {
+    "id": "3558",
+    "ext": "png",
+    "band": "其他",
+    "character": "",
+    "series": "バスご利用者様限定",
+    "year": "2019年5月18日",
+    "event": "「NO GIRL NO CRY 直前トークステージ」からPoppin’Party×SILENT SIREN 対バンライブ「NO GIRL NO CRY」までのスペシャル直通バス",
+    "short_event": "NO GIRL NO CRY直通バス",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://bang-dream.com/news/550/",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "created_at": "2026-05-28T16:05:42.543Z",
+    "updated_at": "2026-05-28T16:07:09.257Z",
+    "image_updated_at": "2026-05-28T16:05:42.543Z"
   }
 ]
