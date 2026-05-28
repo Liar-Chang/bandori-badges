@@ -116,17 +116,23 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 .batch-zoom-controls button{background:transparent;border:none;color:var(--text);font-size:0.95rem;font-weight:700;cursor:pointer;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;padding:0;font-family:inherit;}
 .batch-zoom-controls button:hover{background:var(--surface2);color:var(--accent);}
 .batch-zoom-controls span{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:42px;text-align:center;}
-.batch-side{display:flex;flex-direction:column;gap:0.6rem;overflow:hidden;min-height:0;}
-.batch-config{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.6rem;padding:0.6rem;background:var(--surface2);border-radius:8px;font-size:0.72rem;}
-.batch-config label{color:var(--muted);font-size:0.66rem;display:block;margin-bottom:0.15rem;}
-.batch-config input,.batch-config select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;}
+.batch-side{display:flex;flex-direction:column;gap:0.45rem;overflow:hidden;min-height:0;}
+.batch-config{display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 0.5rem;padding:0.45rem 0.6rem;background:var(--surface2);border-radius:8px;font-size:0.72rem;}
+.batch-config label{color:var(--muted);font-size:0.64rem;display:block;margin-bottom:0.12rem;}
+.batch-config input,.batch-config select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.28rem 0.4rem;font-size:0.76rem;font-family:'Space Mono',monospace;outline:none;}
 .batch-config input:focus,.batch-config select:focus{border-color:var(--accent);}
-.batch-list-wrap{flex:1;display:flex;flex-direction:column;background:var(--surface2);border-radius:8px;padding:0.6rem;min-height:0;}
-.batch-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;}
+.batch-list-wrap{flex:1 1 0;display:flex;flex-direction:column;background:var(--surface2);border-radius:8px;padding:0.5rem;min-height:200px;}
+.batch-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;}
 .batch-list-head .count{font-size:0.7rem;color:var(--muted);}
-.batch-list-head button{font-family:inherit;font-size:0.7rem;padding:0.3rem 0.6rem;border-radius:5px;background:var(--bg);border:1.5px solid var(--border);color:var(--text);cursor:pointer;margin-left:0.3rem;}
+.batch-list-head button{font-family:inherit;font-size:0.7rem;padding:0.28rem 0.55rem;border-radius:5px;background:var(--bg);border:1.5px solid var(--border);color:var(--text);cursor:pointer;margin-left:0.25rem;}
 .batch-list-head button:hover{border-color:var(--accent);}
 .batch-list{flex:1;overflow-y:auto;background:var(--bg);border-radius:6px;padding:0.25rem;}
+/* 拖曳排序視覺回饋 */
+.batch-list tr.drag-over{background:rgba(192,132,252,0.25)!important;box-shadow:inset 0 0 0 2px var(--accent2);}
+.batch-list tr.dragging{opacity:0.35;}
+.batch-list .drag-handle{cursor:grab;color:var(--muted);user-select:none;padding:0 0.1rem;font-size:0.85rem;line-height:1;}
+.batch-list .drag-handle:hover{color:var(--accent2);}
+.batch-list .drag-handle:active{cursor:grabbing;}
 .batch-list-empty{color:var(--muted);font-size:0.7rem;text-align:center;padding:1rem;}
 .batch-list table{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:0.7rem;}
 .batch-list th{color:var(--muted);font-weight:400;text-align:left;padding:0.18rem 0.25rem;border-bottom:1px solid var(--border);}
@@ -1208,8 +1214,11 @@ updateNumPreview();
     <div class="batch-head">
       <h2>🎁 批次裁切（圓形）</h2>
       <span class="hint">點圖片新增 ・ 也可手動編輯欄位 ・ 用主畫面當前選的圖</span>
+      <button id="batch-fold-btn" onclick="toggleBatchConfigFold()"
+        style="margin-left:auto;font-family:inherit;font-size:0.72rem;padding:0.4rem 0.75rem;border-radius:5px;background:var(--surface2);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;"
+        title="摺疊上方設定,給列表更多空間">▲ 摺疊設定</button>
       <button id="batch-select-mode-btn" onclick="toggleBatchSelectMode()"
-        style="margin-left:auto;font-family:inherit;font-size:0.72rem;padding:0.4rem 0.75rem;border-radius:5px;background:var(--surface2);border:1.5px solid var(--accent2);color:var(--accent2);cursor:pointer;font-weight:600;"
+        style="font-family:inherit;font-size:0.72rem;padding:0.4rem 0.75rem;border-radius:5px;background:var(--surface2);border:1.5px solid var(--accent2);color:var(--accent2);cursor:pointer;font-weight:600;"
         title="切到選取模式 — 拖曳框選或點圓選取多項,批次修改數據">✋ 選取模式</button>
       <button class="close" onclick="closeBatchMode()">✕</button>
     </div>
@@ -1233,6 +1242,7 @@ updateNumPreview();
         </div>
       </div>
       <div class="batch-side">
+        <div id="batch-config-foldable" style="display:flex;flex-direction:column;gap:0.45rem;">
         <div class="batch-config">
           <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option></select></div>
           <div><label>預設半徑</label><input type="number" id="batch-default-r" value="100" min="10"/></div>
@@ -1266,6 +1276,7 @@ updateNumPreview();
             <div id="batch-detect-status" style="font-size:0.65rem;color:var(--muted);min-height:1em;margin-top:0.2rem;font-family:'Space Mono',monospace;"></div>
           </div>
           <button id="batch-detect-btn" onclick="runBatchAutoDetect()" style="font-family:inherit;font-size:0.78rem;padding:0.55rem 0.9rem;border-radius:5px;background:linear-gradient(135deg,#c084fc,#5a4fcf);border:none;color:#fff;cursor:pointer;font-weight:700;letter-spacing:0.02em;">🔍 自動偵測</button>
+        </div>
         </div>
         <!-- 批次修改 bar:選取模式下且有 selection 時顯示 -->
         <div id="batch-bulk-bar" style="display:none;padding:0.5rem 0.6rem;background:linear-gradient(135deg,#c084fc25,#5a4fcf25);border:1px solid #c084fc88;border-radius:8px;flex-direction:column;gap:0.4rem;">
@@ -1324,6 +1335,26 @@ let _batchSelectMode = false;          // 選取模式開關
 let _batchSelectedSet = new Set();      // 已選的 batchCrops index
 let _batchMarquee = null;               // 框選中的矩形:{x1,y1,x2,y2}
 
+// ─── 摺疊上方設定區塊,讓 list 拿到更多高度 ───
+let _batchConfigFolded = false;
+function toggleBatchConfigFold(){
+  _batchConfigFolded = !_batchConfigFolded;
+  const foldable = document.getElementById('batch-config-foldable');
+  const btn = document.getElementById('batch-fold-btn');
+  if(!foldable || !btn) return;
+  if(_batchConfigFolded){
+    foldable.style.display = 'none';
+    btn.textContent = '▼ 展開設定';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'var(--accent)';
+  } else {
+    foldable.style.display = '';
+    btn.textContent = '▲ 摺疊設定';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }
+}
+
 function toggleBatchSelectMode(){
   _batchSelectMode = !_batchSelectMode;
   const btn = document.getElementById('batch-select-mode-btn');
@@ -1355,9 +1386,31 @@ function toggleBatchSelectionAt(idx){
   if(idx < 0 || idx >= batchCrops.length) return;
   if(_batchSelectedSet.has(idx)) _batchSelectedSet.delete(idx);
   else _batchSelectedSet.add(idx);
+  _batchLastClickedIdx = idx;
   updateBatchBulkBar();
   renderBatchCanvas();
   renderBatchList();
+}
+// 記住最近一次「單擊」的 idx,讓 Shift+click 可以做範圍選取(類似 file manager)
+let _batchLastClickedIdx = -1;
+// Shift+click 範圍選:從 _batchLastClickedIdx 到 idx 全部加入 selection
+function handleBatchSelectionClick(idx, shiftKey){
+  if(idx < 0 || idx >= batchCrops.length) return;
+  if(shiftKey && _batchLastClickedIdx >= 0 && _batchLastClickedIdx !== idx){
+    // 範圍選取:不取消既有,只「加」這個範圍進去(類似 Ctrl+Shift 的延伸選取)
+    const start = Math.min(_batchLastClickedIdx, idx);
+    const end = Math.max(_batchLastClickedIdx, idx);
+    for(let i = start; i <= end; i++){
+      _batchSelectedSet.add(i);
+    }
+    // shift 操作不更新 lastClicked(讓使用者可以一次拖大範圍後再 shift 加另一段)
+    updateBatchBulkBar();
+    renderBatchCanvas();
+    renderBatchList();
+  } else {
+    // 一般單擊:toggle
+    toggleBatchSelectionAt(idx);
+  }
 }
 function batchSelectAll(){
   _batchSelectedSet.clear();
@@ -1786,7 +1839,8 @@ function onBatchCanvasMouseUp(e){
       const dx = e.clientX - batchMouse.panStartClientX;
       const dy = e.clientY - batchMouse.panStartClientY;
       if(Math.hypot(dx, dy) < 5){
-        toggleBatchSelectionAt(batchMouse.dragIdx);
+        // canvas click 也支援 Shift+click 範圍選取
+        handleBatchSelectionClick(batchMouse.dragIdx, e.shiftKey);
       }
     }
     batchMouse.down = false;
@@ -1862,7 +1916,7 @@ function renderBatchList(){
   const headerCols = isRect
     ? '<th>X1</th><th>Y1</th><th>X2</th><th>Y2</th>'
     : '<th>X</th><th>Y</th><th>W</th><th>H</th>';
-  list.innerHTML = '<table><thead><tr><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th style="width:28px;">形</th>'+headerCols+'<th style="width:24px;"></th></tr></thead><tbody>' +
+  list.innerHTML = '<table><thead><tr><th style="width:18px;"></th><th style="width:52px;">預覽</th><th style="width:22px;">#</th><th style="width:28px;">形</th>'+headerCols+'<th style="width:24px;"></th></tr></thead><tbody>' +
     batchCrops.map((c, i) => {
       const cols = isRect
         ? `<td><input type="number" value="${Math.round(c.cx - c.hw)}" oninput="updateBatchCrop(${i},'x1',this.value)"/></td>
@@ -1875,11 +1929,18 @@ function renderBatchList(){
            <td><input type="number" value="${Math.round(c.hh*2)}" oninput="updateBatchCrop(${i},'h',this.value)"/></td>`;
       const isSel = _batchSelectedSet.has(i);
       const rowStyle = isSel ? 'background:rgba(249,115,22,0.2);' : '';
-      const rowClick = _batchSelectMode ? `onclick="toggleBatchSelectionAt(${i})" style="cursor:pointer;${rowStyle}"` : `style="${rowStyle}"`;
+      const rowClick = _batchSelectMode ? `onclick="handleBatchSelectionClick(${i}, event.shiftKey)" style="cursor:pointer;${rowStyle}"` : `style="${rowStyle}"`;
       return `
       <tr class="${i === batchSelectedIdx ? 'selected' : ''}" ${rowClick}
+        draggable="true" data-row-idx="${i}"
+        ondragstart="onBatchRowDragStart(event, ${i})"
+        ondragover="onBatchRowDragOver(event, ${i})"
+        ondragleave="onBatchRowDragLeave(event)"
+        ondrop="onBatchRowDrop(event, ${i})"
+        ondragend="onBatchRowDragEnd(event)"
         onmouseenter="batchSelectedIdx=${i};renderBatchCanvas();showBatchHoverPreview(${i},event)"
         onmouseleave="batchSelectedIdx=-1;renderBatchCanvas();hideBatchHoverPreview()">
+        <td class="drag-handle" title="拖曳排序" onmousedown="event.stopPropagation()">≡</td>
         <td><canvas class="batch-row-thumb" data-idx="${i}" width="48" height="48"></canvas></td>
         <td>${i+1}${isSel ? ' ●' : ''}</td>
         <td title="${c.shape||'circle'}">${batchShapeSymbol(c.shape)}</td>
@@ -2062,6 +2123,106 @@ function updateBatchCrop(idx, field, value){
         linkedInput.value = (field === 'w') ? Math.round(c.hh*2) : Math.round(c.hw*2);
       }
     }
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 拖曳排序 batch 清單(HTML5 drag-and-drop)
+// 規則:拖到列 N 上(整列當 drop zone)→ dragged item 就變成那一列
+//      原本在列 N 的項目讓位給 dragged(往拉動的反方向推開)
+// 額外:拖曳靠近清單上/下緣時自動 scroll
+// ═══════════════════════════════════════════════════
+let _batchDragSrcIdx = -1;
+function onBatchRowDragStart(e, idx){
+  _batchDragSrcIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  try{ e.dataTransfer.setData('text/plain', String(idx)); }catch(err){}
+  e.currentTarget.classList.add('dragging');
+}
+function onBatchRowDragOver(e, idx){
+  if(_batchDragSrcIdx < 0 || _batchDragSrcIdx === idx) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  // 清掉所有 drag-over 指標,只標當前列
+  document.querySelectorAll('.batch-list tr.drag-over').forEach(tr => tr.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+  // 自動 scroll:cursor 靠近 list 邊緣時滾動
+  _batchDragAutoScroll(e);
+}
+function onBatchRowDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function onBatchRowDrop(e, idx){
+  e.preventDefault();
+  if(_batchDragSrcIdx < 0 || _batchDragSrcIdx === idx){
+    _batchDragSrcIdx = -1;
+    renderBatchList();
+    return;
+  }
+  const src = _batchDragSrcIdx;
+  const target = idx;
+  // 抽出 → 插回 target 位置(splice 自動處理 idx 偏移)
+  const [moved] = batchCrops.splice(src, 1);
+  batchCrops.splice(target, 0, moved);
+  // 同步 _batchSelectedSet:重新映射 index
+  const newSet = new Set();
+  for(const i of _batchSelectedSet){
+    let ni;
+    if(i === src){
+      ni = target;
+    } else if(i < src){
+      // 不受 splice(src,1) 影響;但若 i >= target,要 +1
+      ni = (i < target) ? i : i + 1;
+    } else {
+      // i > src: splice(src,1) 後變 i-1
+      const ar = i - 1;
+      ni = (ar < target) ? ar : ar + 1;
+    }
+    newSet.add(ni);
+  }
+  _batchSelectedSet = newSet;
+  _batchDragSrcIdx = -1;
+  // 停掉 auto-scroll
+  if(_batchAutoScrollRAF){ cancelAnimationFrame(_batchAutoScrollRAF); _batchAutoScrollRAF = null; }
+  renderBatchCanvas();
+  renderBatchList();
+}
+function onBatchRowDragEnd(e){
+  _batchDragSrcIdx = -1;
+  if(_batchAutoScrollRAF){ cancelAnimationFrame(_batchAutoScrollRAF); _batchAutoScrollRAF = null; }
+  document.querySelectorAll('.batch-list tr.drag-over, .batch-list tr.dragging')
+    .forEach(tr => tr.classList.remove('drag-over', 'dragging'));
+}
+// 拖曳時自動 scroll list 上下緣
+let _batchAutoScrollRAF = null;
+let _batchAutoScrollDy = 0;
+function _batchDragAutoScroll(e){
+  const listEl = document.getElementById('batch-list');
+  if(!listEl) return;
+  const rect = listEl.getBoundingClientRect();
+  const margin = 50;  // 多遠就觸發
+  const topDist = e.clientY - rect.top;
+  const botDist = rect.bottom - e.clientY;
+  if(topDist < margin && topDist >= 0){
+    // 越靠邊速度越快(線性)
+    _batchAutoScrollDy = -Math.round((margin - topDist) / margin * 16);
+  } else if(botDist < margin && botDist >= 0){
+    _batchAutoScrollDy = Math.round((margin - botDist) / margin * 16);
+  } else {
+    _batchAutoScrollDy = 0;
+  }
+  // 啟動 RAF loop(只啟動一次,直到 dy 變 0 或 drag 結束)
+  if(_batchAutoScrollDy !== 0 && !_batchAutoScrollRAF){
+    const step = () => {
+      const el = document.getElementById('batch-list');
+      if(!el || _batchAutoScrollDy === 0 || _batchDragSrcIdx < 0){
+        _batchAutoScrollRAF = null;
+        return;
+      }
+      el.scrollTop += _batchAutoScrollDy;
+      _batchAutoScrollRAF = requestAnimationFrame(step);
+    };
+    _batchAutoScrollRAF = requestAnimationFrame(step);
   }
 }
 
@@ -2275,14 +2436,17 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
     const b = Math.min(histBins-1, Math.floor(magArr[i] / maxMag * (histBins-1)));
     hist[b]++;
   }
-  // 取前 12% 強的當邊緣(折衷:Q 版需要 15%、photo 需要 8%,12% 兩邊都能照顧)
+  // 取前 12% 強的當邊緣
   const targetCount = Math.floor(magArr.length * 0.12);
   let cum = 0, threshBin = histBins - 1;
   for(let b = histBins - 1; b >= 0; b--){
     cum += hist[b];
     if(cum >= targetCount){ threshBin = b; break; }
   }
-  const edgeThresh = Math.max(20, threshBin * maxMag / (histBins-1));
+  // 上限 cap = 80:閃片/光柵風背景的 12% 閾值會非常高(整個畫面雜訊都強),
+  //              cap 讓真實徽章邊框(對比可能較弱)還能過 vote 篩選
+  // 下限 = 20:保證最起碼的邊緣強度,避免在純色低對比區域亂投
+  const edgeThresh = Math.min(80, Math.max(20, threshBin * maxMag / (histBins-1)));
 
   // 4. Hough 投票:每個邊緣沿 gradient 法線投票到 ±[rMin..rMax] 範圍的候選中心
   onProgress && onProgress('Hough 投票中...');
@@ -2332,9 +2496,9 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
   await new Promise(r => setTimeout(r, 0));
   let maxVote = 0;
   for(let i = 0; i < smooth.length; i++) if(smooth[i] > maxVote) maxVote = smooth[i];
-  // 投票閾值:用 max 的比例 + 預期周長下限的較大者
-  // 比較寬鬆(讓真人照片版的弱邊緣也能過 vote),靠後續 verification 把假陽性篩掉
-  const voteThresh = Math.max(maxVote * 0.10, 2 * Math.PI * sR * 0.08);
+  // 投票閾值:再放寬一些(閃片背景會讓 maxVote 偏高 → 10% 也排除掉真圓)
+  // 靠後續 verification 的徑向對齊把假陽性篩掉
+  const voteThresh = Math.max(maxVote * 0.06, 2 * Math.PI * sR * 0.06);
 
   const candidates = [];
   const peakWin = 3;
@@ -2359,9 +2523,10 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
   onProgress && onProgress(`驗證 ${candidates.length} 個候選...`);
   await new Promise(r => setTimeout(r, 0));
   const N_SAMPLES = 48;  // 7.5° steps
-  const MIN_CONSENSUS = 0.40;  // 真圓通常 0.45+,文字假陽性 ~0.10-0.20,中間留 buffer
+  const MIN_CONSENSUS = 0.50;  // 真圓通常 0.55+,banner/ribbon 等 ~0.35-0.45,提高門檻精準
   candidates.sort((a, b) => b.score - a.score);
-  const toVerify = candidates.slice(0, Math.min(200, candidates.length));
+  // 上限 500:閃片/光柵風背景會產生大量 noise candidate,真圓可能被排到 200 之外
+  const toVerify = candidates.slice(0, Math.min(500, candidates.length));
   const verified = [];
   // 預先算好 cos/sin 查表(避免重複算)
   const cosT = new Float32Array(N_SAMPLES);
@@ -2394,10 +2559,10 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
           const align = Math.abs((gx[idx] * ct + gy[idx] * st) / m);
           if(m > bestMag){ bestMag = m; bestAlign = align; }
         }
-        // 要同時 edge 強 + 徑向對齊 ≥ 0.8(37° 內偏離角)才算「真實 perimeter point」
-        // 真圓的 perimeter:gradient 沿半徑,align ≈ 0.85-0.95;
-        // 文字、photo 內部隨機 gradient 平均 0.4-0.6,過不了 0.8 — 強力濾掉假陽性
-        if(bestMag >= edgeThresh && bestAlign >= 0.8) strong++;
+        // 要同時 edge 強 + 徑向對齊 ≥ 0.85(32° 內偏離角)才算「真實 perimeter point」
+        // 真圓的 perimeter:gradient 沿半徑,align ≈ 0.9+;
+        // 文字、photo 內部、徽章內裝飾(小臉/小頭髮邊緣)隨機 gradient 平均 0.5-0.7,過不了 0.85
+        if(bestMag >= edgeThresh && bestAlign >= 0.85) strong++;
       }
       const consensus = strong / N_SAMPLES;
       if(consensus > bestConsensus){ bestConsensus = consensus; bestR = r; }
@@ -2407,16 +2572,16 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
     }
   }
 
-  // 8. NMS:按 consensus × score 降序(合併兩個品質指標),dedupe 同一徽章內的多峰
-  //    NMS 距離 0.8 × r:夠涵蓋同一徽章內部分散峰值(裝飾邊框 / 內部圖樣導致),
-  //    但仍 < 2×r(相鄰 grid 徽章中心距 ≥ 2r 時不會誤殺)
+  // 8. NMS:按 consensus × score 降序(合併兩個品質指標),精準合併同一徽章內的多餘峰值
+  //    NMS 距離 1.2 × r:涵蓋同一徽章內角色臉/裝飾/內部小圓造成的重複偵測,
+  //    仍 < 2×r(相鄰 grid 徽章中心距 ≥ 2r 時不會誤殺)
   verified.sort((a, b) => (b.consensus * b.score) - (a.consensus * a.score));
   const peaks = [];
   for(const v of verified){
     let tooClose = false;
     for(const p of peaks){
       const dx = v.x - p.x, dy = v.y - p.y;
-      const useDist = Math.max(25, Math.max(v.r, p.r) * 0.8);
+      const useDist = Math.max(30, Math.max(v.r, p.r) * 1.2);
       if(dx*dx + dy*dy < useDist * useDist){ tooClose = true; break; }
     }
     if(!tooClose) peaks.push(v);
