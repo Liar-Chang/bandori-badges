@@ -2572,19 +2572,41 @@ async function detectCirclesInImage(imgEl, targetR, tolerance, onProgress){
     }
   }
 
-  // 8. NMS:按 consensus × score 降序(合併兩個品質指標),精準合併同一徽章內的多餘峰值
-  //    NMS 距離 1.2 × r:涵蓋同一徽章內角色臉/裝飾/內部小圓造成的重複偵測,
-  //    仍 < 2×r(相鄰 grid 徽章中心距 ≥ 2r 時不會誤殺)
+  // 8. NMS:按 consensus × score 降序,合併同一徽章內的多餘峰值
+  //    NMS 距離 1.8 × r:涵蓋同一徽章內角色臉/球/手套/偏心裝飾造成的重複偵測,
+  //    (這些假圓中心偏移可達 1~1.5r,1.2r 合併不掉,需要 1.8r)
+  //    仍 < 2×r(相鄰相切徽章中心距 ≥ 2r 時不會誤殺)
   verified.sort((a, b) => (b.consensus * b.score) - (a.consensus * a.score));
-  const peaks = [];
+  let peaks = [];
   for(const v of verified){
     let tooClose = false;
     for(const p of peaks){
       const dx = v.x - p.x, dy = v.y - p.y;
-      const useDist = Math.max(30, Math.max(v.r, p.r) * 1.2);
+      const useDist = Math.max(30, Math.max(v.r, p.r) * 1.8);
       if(dx*dx + dy*dy < useDist * useDist){ tooClose = true; break; }
     }
     if(!tooClose) peaks.push(v);
+  }
+
+  // 8.5 同尺寸主群過濾:商品圖的徽章「一定」是同尺寸。
+  //     找出最密集的半徑群(= 真徽章尺寸),砍掉半徑明顯離群的假圓——
+  //     內部元素(角色頭/球/手套)半徑通常 < 0.6×徽章,
+  //     偶有把整排框起來的超大假圓 > 1.6×徽章。
+  //     對「全部同尺寸」的正常情況是 no-op(全落在範圍內),不影響準確案例。
+  if(peaks.length >= 5){
+    const radii = peaks.map(p => p.r);
+    // 找眾數半徑群:半徑 ±15% 內圓最多的那個
+    let modeR = radii[0], modeCount = 0;
+    for(const r0 of radii){
+      let cnt = 0;
+      for(const r of radii) if(r >= r0*0.85 && r <= r0*1.15) cnt++;
+      if(cnt > modeCount){ modeCount = cnt; modeR = r0; }
+    }
+    const groupRadii = radii.filter(r => r >= modeR*0.85 && r <= modeR*1.15).sort((a,b)=>a-b);
+    const medR = groupRadii[Math.floor(groupRadii.length/2)];
+    const filtered = peaks.filter(p => p.r >= medR*0.6 && p.r <= medR*1.6);
+    // 安全網:過濾後不可少於主群數量(避免在多尺寸圖上過度刪除)
+    if(filtered.length >= modeCount) peaks = filtered;
   }
 
   // 9. 映射回原圖座標(返回每個圓的 DETECTED 半徑,非固定 targetR)

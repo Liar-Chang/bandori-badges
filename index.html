@@ -907,7 +907,7 @@ async function init(){
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
 
 const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
-  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
+  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
 function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
@@ -995,25 +995,28 @@ function buildSidebar(){
     }
   }
   // 尺寸：分類篩選
-  // 56-58mm圓形常駐;其他圓形/方形/橢圓形/心形/撥片分類;其他歸到「其他」
+  // 56-58mm圓形常駐;其他圓形/方形/橢圓形/心形/撥片分類;布製(布偶+刺繡)合併群組;其他歸到「其他」
   const SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
-  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形'];
+  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形'];
   const SIZE_NAMED = ['橢圓形','方形','心形','撥片'];
-  const SIZE_OTHER_VALS = new Set(['名牌','金屬','約80mm布偶胸章','未確定']);
+  const SIZE_FABRIC_VALS = new Set(['約80mm布偶胸章','刺繡布章']);   // 布製:立體布偶 + 平面刺繡
+  const SIZE_OTHER_VALS = new Set(['名牌','金屬','未確定']);
 
   const allSizesRaw = [...new Set(source.map(b=>b.size).filter(Boolean))];
   const has56 = allSizesRaw.some(s=>SIZE_56_VALS.has(s));
   const roundOthers = SIZE_ROUND_OTHERS.filter(s=>allSizesRaw.includes(s));
   const namedSizes = SIZE_NAMED.filter(s=>allSizesRaw.includes(s));
-  const otherSizes = allSizesRaw.filter(s=>!SIZE_56_VALS.has(s)&&!SIZE_ROUND_OTHERS.includes(s)&&!SIZE_NAMED.includes(s)&&!SIZE_OTHER_VALS.has(s));
+  const hasFabric = allSizesRaw.some(s=>SIZE_FABRIC_VALS.has(s));
+  const otherSizes = allSizesRaw.filter(s=>!SIZE_56_VALS.has(s)&&!SIZE_ROUND_OTHERS.includes(s)&&!SIZE_NAMED.includes(s)&&!SIZE_FABRIC_VALS.has(s)&&!SIZE_OTHER_VALS.has(s));
   const hasOther = allSizesRaw.some(s=>SIZE_OTHER_VALS.has(s));
 
-  // 建立最終篩選項目清單（含特殊 __other__ 項目）
+  // 建立最終篩選項目清單（含特殊 __fabric__ / __other__ 群組項目）
   const sizeFilterItems = [];
   if(has56) sizeFilterItems.push({value:'__56__', label:getSizeName('56-58mm圓形',currentLang)});
   roundOthers.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
   otherSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
   namedSizes.forEach(s=>sizeFilterItems.push({value:s, label:getSizeName(s,currentLang)}));
+  if(hasFabric) sizeFilterItems.push({value:'__fabric__', label:({'zh-TW':'布製','ja':'布製','en':'Fabric','ko':'천 소재'})[currentLang]||'布製'});
   if(hasOther) sizeFilterItems.push({value:'__other__', label:({'zh-TW':'其他','ja':'その他','en':'Other','ko':'기타'})[currentLang]||'其他'});
 
   const sizeSec = document.getElementById('size-section');
@@ -1025,6 +1028,8 @@ function buildSidebar(){
       sizeListEl.innerHTML = sizeFilterItems.map(item => {
         const checked = item.value==='__56__'
           ? [...SIZE_56_VALS].some(v=>selSizes.has(v))
+          : item.value==='__fabric__'
+            ? [...SIZE_FABRIC_VALS].some(v=>selSizes.has(v))
           : item.value==='__other__'
             ? [...SIZE_OTHER_VALS].some(v=>selSizes.has(v))
             : selSizes.has(item.value);
@@ -1144,12 +1149,17 @@ function toggleSize(s){selSizes.has(s)?selSizes.delete(s):selSizes.add(s);applyF
 function toggleCountry(c){selCountries.has(c)?selCountries.delete(c):selCountries.add(c);applyFilters();}
 
 const _SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
-const _SIZE_OTHER_VALS = new Set(['名牌','金屬','約80mm布偶胸章','未確定']);
+const _SIZE_FABRIC_VALS = new Set(['約80mm布偶胸章','刺繡布章']);
+const _SIZE_OTHER_VALS = new Set(['名牌','金屬','未確定']);
 function toggleSizeGroup(val){
   if(val==='__56__'){
     const allSelected = [..._SIZE_56_VALS].every(v=>selSizes.has(v));
     if(allSelected){ _SIZE_56_VALS.forEach(v=>selSizes.delete(v)); }
     else { _SIZE_56_VALS.forEach(v=>selSizes.add(v)); }
+  } else if(val==='__fabric__'){
+    const allSelected = [..._SIZE_FABRIC_VALS].every(v=>selSizes.has(v));
+    if(allSelected){ _SIZE_FABRIC_VALS.forEach(v=>selSizes.delete(v)); }
+    else { _SIZE_FABRIC_VALS.forEach(v=>selSizes.add(v)); }
   } else if(val==='__other__'){
     const allSelected = [..._SIZE_OTHER_VALS].every(v=>selSizes.has(v));
     if(allSelected){ _SIZE_OTHER_VALS.forEach(v=>selSizes.delete(v)); }
@@ -1586,6 +1596,7 @@ const SIZE_TRANS = {
   '54mm圓形':        {'ja':'54mmサークル','en':'54mm Circle','ko':'54mm 원형'},
   '50mm圓形':        {'ja':'50mmサークル','en':'50mm Circle','ko':'50mm 원형'},
   '44mm圓形':        {'ja':'44mmサークル','en':'44mm Circle','ko':'44mm 원형'},
+  '32mm圓形':        {'ja':'32mmサークル','en':'32mm Circle','ko':'32mm 원형'},
   '30mm圓形':        {'ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
   '25mm圓形':        {'ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
   '橢圓形':          {'ja':'楕円形','en':'Oval','ko':'타원형'},
@@ -1595,6 +1606,7 @@ const SIZE_TRANS = {
   '名牌':            {'ja':'ネームプレート','en':'Name Plate','ko':'명찰'},
   '金屬':            {'ja':'金属','en':'Metal','ko':'금속'},
   '約80mm布偶胸章':  {'ja':'約80mmぬいぐるみバッジ','en':'~80mm Plush Badge','ko':'약80mm 봉제 배지'},
+  '刺繡布章':        {'ja':'ワッペンバッジ','en':'Embroidered Patch','ko':'와펜 뱃지'},
   '未確定':          {'ja':'未確定','en':'Unknown','ko':'미확인'},
 };
 
@@ -2850,14 +2862,14 @@ async function doExport(){
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
-    '54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形',
-    '橢圓形','方形','心形','撥片','名牌','金屬','約80mm布偶胸章','未確定',
+    '54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形',
+    '橢圓形','方形','心形','撥片','名牌','金屬','約80mm布偶胸章','刺繡布章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '100mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形',
-    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','30mm圓形','25mm圓形']);
+    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
 

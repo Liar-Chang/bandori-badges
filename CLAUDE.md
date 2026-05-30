@@ -115,12 +115,14 @@ millsage / 一家Dumb Rock! / 其他
 **尺寸(size)** — 圓形類:
 ```
 56mm / 57mm / 58mm / 56-58mm(混合) / 100mm / 76mm / 75mm / 65mm / 60mm / 55mm
-54mm / 50mm / 30mm / 25mm / 15.2cm / 15cm
+54mm / 50mm / 44mm / 32mm / 30mm / 25mm / 15.2cm / 15cm
 ```
 **尺寸 — 非圓形**:
 ```
-橢圓形 / 方形 / 心形 / 撥片 / 名牌 / 金屬 / 約80mm布偶胸章 / 未確定
+橢圓形 / 方形 / 心形 / 撥片 / 名牌 / 金屬 / 約80mm布偶胸章 / 刺繡布章 / 未確定
 ```
+- **「布製」前台篩選群組**(2026-05-30):前台側欄把「約80mm布偶胸章」(立體毛絨 ぬいぐるみ)+「刺繡布章」(平面刺繡 ワッペン)合併成「布製」群組顯示(像「56-58mm圓形」群組那樣)。後台建檔時選具體值。`刺繡布章` 多語言 = ワッペンバッジ / Embroidered Patch / 와펜 뱃지
+- 改動位置:index.html(SIZE_FABRIC_VALS / _SIZE_FABRIC_VALS / toggleSizeGroup `__fabric__` / SIZE_TRANS / SIZE_ORDER)、admin.html(9 處 size 選單與陣列 + EXP_SIZE_TRANS)
 
 **販售/活動地(country)**:日本 / 台灣 / 韓國 / 中國 / 新加坡 / 其他
 
