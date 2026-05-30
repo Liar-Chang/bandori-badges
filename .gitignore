@@ -3,6 +3,10 @@
 # 後台 admin 已用 GitHub API 直接推 images/ 到 origin,
 # 本機這份只是備份。手動丟新檔進來不該被 commit,
 # 避免跟 admin 推的內容衝突。
-images/
-images/363.jpg
-images/363.jpg
+# 注意:用 images/* (忽略內容) 而非 images/ (忽略資料夾本身),
+#       這樣下面的 ! 例外才會生效。
+images/*
+
+# 例外:部落格配圖 blog-*.jpg 是純本機管理(不經 admin 後台),
+# 放行讓 GitHub Desktop 可以正常 commit/push。
+!images/blog-*.jpg
