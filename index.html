@@ -864,7 +864,9 @@ const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
   // 重要背景樂團(會被 BACKGROUND_BANDS 抽到獨立 section)
   "Glitter*Green","CRYCHIC","Sumimi",
   // 獨立計畫(會被 INDEPENDENT_BANDS 抽到獨立 section)
-  "夢ノ結唱"];
+  "夢ノ結唱",
+  // meta 分類固定排在最後(順序明羽指定:跨團合照 → 跨企劃合照 → 其他)
+  "跨團合照","跨企劃合照","其他"];
 // 重要背景樂團:在 sidebar 跟一般樂團分開呈現的副樂團
 const BACKGROUND_BANDS = new Set(["Glitter*Green","CRYCHIC","Sumimi"]);
 // 獨立計畫:資料層仍是 band 欄位,UI 層獨立
