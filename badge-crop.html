@@ -165,6 +165,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
   <h1>BADGE CROP</h1>
   <span>徽章裁圖工具</span>
   <button id="btn-open-batch" onclick="openBatchMode()" style="margin-left:auto;background:linear-gradient(135deg,#c084fc,#818cf8);color:#fff;border:none;padding:0.4rem 0.9rem;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">🎁 批次模式</button>
+  <button id="croplog-fab" onclick="openCropLog()" title="查看 / 匯出裁剪記錄資料集(自動偵測提議框 vs 你採用的框)" style="margin-left:0.5rem;background:#fff;color:#7c3aed;border:1.5px solid #c084fc;padding:0.4rem 0.8rem;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit;">🗂 裁剪記錄 <span id="croplog-count" style="display:inline-block;min-width:1.1em;padding:0 .25em;background:#7c3aed;color:#fff;border-radius:8px;font-size:.72rem;">0</span></button>
 </header>
 
 <div class="layout">
@@ -491,6 +492,8 @@ function selectFile(idx){
   currentIdx=idx;
   const item=fileItems[idx];
   img=item.imgEl;
+  // 換圖:清掉舊的自動偵測快照,避免把上一張的提議框記到這張
+  _singleDetectCircles=null; _singleDetectIdx=-1; _batchAutoSnapshot=[];
   resetCurrent();
   initCanvas();
   renderFileList();
@@ -1158,6 +1161,19 @@ function doCrop(){
     const a=document.createElement('a');a.href=url;a.download=filename;a.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   },mime,0.95);
+  // ── 記錄這次裁剪:來源縮圖 + 自動偵測提議框 + 你採用的框 ──
+  try {
+    const finalBox = isCenterR
+      ? {shape, cx, cy, hw:r, hh:r}
+      : {shape, cx:(rx1+rx2)/2, cy:(ry1+ry2)/2, hw:(rx2-rx1)/2, hh:(ry2-ry1)/2};
+    let autoBoxes = null;
+    if(_singleDetectCircles && _singleDetectCircles[_singleDetectIdx]){
+      const a = _singleDetectCircles[_singleDetectIdx];
+      autoBoxes = [{shape:'circle', cx:a.cx, cy:a.cy, hw:a.r, hh:a.r}];
+    }
+    const sName = (currentIdx>=0 && fileItems[currentIdx] && fileItems[currentIdx].file) ? fileItems[currentIdx].file.name : '';
+    cropLogRecord('single', img, sName, [finalBox], autoBoxes);
+  } catch(e){ console.warn('[cropLog single]', e); }
   if(currentIdx>=0)fileItems[currentIdx].done=true;
   document.getElementById('start-num').value=num+1;
   renderFileList();updateNumPreview();
@@ -1327,6 +1343,7 @@ updateNumPreview();
 // 批次裁切:全域狀態
 // ═══════════════════════════════════════════════════
 let batchCrops = [];      // [{shape, cx, cy, hw, hh}, ...] 圖片像素座標,每筆獨立形狀
+let _batchAutoSnapshot = []; // 自動偵測「原始提議框」快照(供裁剪記錄比對:自動 vs 你手調後)
 let batchSelectedIdx = -1; // 視覺高亮哪一筆 (hover)
 let batchShape = 'circle'; // 當前選的「新增時用的形狀」(circle/square/rect/pick)
 let batchRectCreate = null; // 任意方形拖曳建立中:{x1,y1,x2,y2} or null
@@ -2243,6 +2260,7 @@ function removeBatchCrop(idx){
 function clearAllBatchCrops(){
   if(batchCrops.length && !confirm('確定清除所有裁切點?')) return;
   batchCrops = [];
+  _batchAutoSnapshot = [];
   _batchSelectedSet.clear();
   updateBatchBulkBar();
   renderBatchCanvas();
@@ -2310,6 +2328,7 @@ async function runBatchAutoDetect(){
       });
       fresh.forEach(c => {
         batchCrops.push({ shape:'circle', cx: c.cx, cy: c.cy, hw: c.r, hh: c.r });
+        _batchAutoSnapshot.push({ shape:'circle', cx: c.cx, cy: c.cy, hw: c.r, hh: c.r });
       });
       renderBatchCanvas();
       renderBatchList();
@@ -2681,11 +2700,211 @@ async function cropBatchAll(){
   a.download = `badge-crop-${Date.now()}.zip`;
   a.click();
   URL.revokeObjectURL(url);
+  // ── 記錄這批裁剪:來源縮圖 + 自動偵測快照(全部提議) + 你採用的所有框 ──
+  try {
+    const finals = batchCrops.map(c => ({shape:c.shape||'circle', cx:c.cx, cy:c.cy, hw:c.hw, hh:c.hh}));
+    const autos = (_batchAutoSnapshot && _batchAutoSnapshot.length)
+      ? _batchAutoSnapshot.map(c => ({shape:c.shape||'circle', cx:c.cx, cy:c.cy, hw:c.hw, hh:c.hh}))
+      : null;
+    const bItem = fileItems[currentIdx];
+    const bName = (bItem && bItem.file) ? bItem.file.name : '';
+    cropLogRecord('batch', img, bName, finals, autos);
+  } catch(e){ console.warn('[cropLog batch]', e); }
 
   btn.textContent = `✓ 已下載 ${batchCrops.length} 張`;
   setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 1800);
 }
+
+// ═══════════════════════════════════════════════════════════════
+// 裁剪記錄系統 — human-in-the-loop 資料收集
+//   每次裁切(單張 doCrop / 批次 cropBatchAll)記一筆:
+//     · 來源圖縮圖(JPEG,長邊 ≤ 1280)
+//     · 自動偵測「原始提議框」(有跑自動偵測才有)
+//     · 你最後採用的框(ground truth)
+//   存 IndexedDB,可匯出 ZIP(manifest.json + thumbs/)供未來重調參 / 訓練。
+//   座標一律「原圖像素」;用 thumbW / source.w 可換算到縮圖空間。
+// ═══════════════════════════════════════════════════════════════
+const CROPLOG_DB='badgeCropLog', CROPLOG_STORE='records';
+let _cropLogDB=null, _cropLogUrls=[];
+
+function cropLogOpen(){
+  return new Promise((resolve,reject)=>{
+    if(_cropLogDB) return resolve(_cropLogDB);
+    const req=indexedDB.open(CROPLOG_DB,1);
+    req.onupgradeneeded=e=>{ const db=e.target.result;
+      if(!db.objectStoreNames.contains(CROPLOG_STORE)) db.createObjectStore(CROPLOG_STORE,{keyPath:'id',autoIncrement:true}); };
+    req.onsuccess=e=>{ _cropLogDB=e.target.result; resolve(_cropLogDB); };
+    req.onerror=e=>reject(e.target.error);
+  });
+}
+function _cropLogStore(mode){ return cropLogOpen().then(db=>db.transaction(CROPLOG_STORE,mode).objectStore(CROPLOG_STORE)); }
+async function cropLogAdd(rec){ const st=await _cropLogStore('readwrite'); return new Promise((res,rej)=>{ const q=st.add(rec); q.onsuccess=()=>res(); q.onerror=e=>rej(e.target.error); }); }
+async function cropLogGetAll(){ const st=await _cropLogStore('readonly'); return new Promise((res,rej)=>{ const q=st.getAll(); q.onsuccess=()=>res(q.result||[]); q.onerror=e=>rej(e.target.error); }); }
+async function cropLogCount(){ const st=await _cropLogStore('readonly'); return new Promise((res,rej)=>{ const q=st.count(); q.onsuccess=()=>res(q.result||0); q.onerror=e=>rej(e.target.error); }); }
+async function cropLogClear(){ const st=await _cropLogStore('readwrite'); return new Promise((res,rej)=>{ const q=st.clear(); q.onsuccess=()=>res(); q.onerror=e=>rej(e.target.error); }); }
+
+// 來源圖 → 長邊 ≤ cap 的 JPEG blob(同時回傳縮圖尺寸,供座標換算)
+function cropLogMakeThumb(srcImg,cap=1280){
+  const w=srcImg.naturalWidth,h=srcImg.naturalHeight;
+  const s=Math.min(1,cap/Math.max(w,h));
+  const tw=Math.max(1,Math.round(w*s)),th=Math.max(1,Math.round(h*s));
+  const cv=document.createElement('canvas'); cv.width=tw; cv.height=th;
+  cv.getContext('2d').drawImage(srcImg,0,0,tw,th);
+  return new Promise(res=>cv.toBlob(b=>res({blob:b,w:tw,h:th}),'image/jpeg',0.82));
+}
+
+// 記一筆。finals / autos 均為 [{shape,cx,cy,hw,hh}, ...] 原圖像素座標(autos 可為 null)
+async function cropLogRecord(mode,srcImg,srcName,finals,autos){
+  try{
+    if(!srcImg||!finals||!finals.length) return;
+    const t=await cropLogMakeThumb(srcImg);
+    await cropLogAdd({
+      ts:Date.now(), mode,
+      source:{name:srcName||'', w:srcImg.naturalWidth, h:srcImg.naturalHeight},
+      thumbW:t.w, thumbH:t.h, thumb:t.blob,
+      finals, autos:(autos&&autos.length)?autos:null,
+    });
+    updateCropLogBadge();
+  }catch(e){ console.warn('[cropLog] 記錄失敗',e); }
+}
+
+async function updateCropLogBadge(){
+  try{
+    const n=await cropLogCount();
+    const el=document.getElementById('croplog-count'); if(el) el.textContent=n;
+    const m=document.getElementById('croplog-modal-count'); if(m) m.textContent=n+' 筆';
+  }catch(e){}
+}
+
+function _cropLogRevokeUrls(){ _cropLogUrls.forEach(u=>URL.revokeObjectURL(u)); _cropLogUrls=[]; }
+
+async function openCropLog(){
+  document.getElementById('croplog-modal').style.display='flex';
+  await renderCropLogList();
+  updateCropLogBadge();
+}
+function closeCropLog(){
+  document.getElementById('croplog-modal').style.display='none';
+  _cropLogRevokeUrls();
+}
+
+function _cropLogFmtDate(ts){
+  const d=new Date(ts), p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+async function renderCropLogList(){
+  const wrap=document.getElementById('croplog-list');
+  _cropLogRevokeUrls();
+  let recs;
+  try{ recs=await cropLogGetAll(); }catch(e){ wrap.innerHTML='<p style="color:#ef4444;">讀取失敗:'+e.message+'</p>'; return; }
+  if(!recs.length){ wrap.innerHTML='<p style="color:#94a3b8;text-align:center;padding:2rem 0;">還沒有任何裁剪記錄。<br>去裁幾張徽章,這裡就會自動累積。</p>'; return; }
+  recs.sort((a,b)=>b.ts-a.ts);
+  wrap.innerHTML='';
+  for(const r of recs){
+    const url=URL.createObjectURL(r.thumb); _cropLogUrls.push(url);
+    let adj;
+    if(r.autos && r.autos.length===1 && r.finals.length===1){
+      const a=r.autos[0], f=r.finals[0];
+      adj=`位移 ${Math.round(Math.hypot(f.cx-a.cx,f.cy-a.cy))}px · 半徑差 ${Math.round(Math.abs(f.hw-a.hw))}px`;
+    } else if(r.autos){ adj=`自動 ${r.autos.length} → 採用 ${r.finals.length}`; }
+    else { adj='手動框(無自動偵測)'; }
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;gap:.7rem;align-items:center;padding:.5rem 0;border-bottom:1px solid #f1f5f9;';
+    row.innerHTML=
+      '<img src="'+url+'" style="width:64px;height:64px;object-fit:contain;background:#f8fafc;border:1px solid #eee;border-radius:6px;flex:none;">'
+      +'<div style="flex:1;min-width:0;font-size:.82rem;line-height:1.5;">'
+      +'<div><span style="display:inline-block;padding:.05rem .4rem;border-radius:4px;font-size:.72rem;font-weight:600;color:#fff;background:'+(r.mode==='batch'?'#818cf8':'#34d399')+';">'+(r.mode==='batch'?'批次':'單張')+'</span>'
+      +'<strong style="margin-left:.3rem;">'+r.finals.length+' 個框</strong>'
+      +'<span style="color:#94a3b8;"> · '+r.source.w+'×'+r.source.h+'</span></div>'
+      +'<div style="color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(r.source.name||'(未命名)')+' · '+adj+'</div>'
+      +'<div style="color:#cbd5e1;font-size:.72rem;">'+_cropLogFmtDate(r.ts)+'</div>'
+      +'</div>';
+    wrap.appendChild(row);
+  }
+}
+
+async function exportCropLog(){
+  const st=document.getElementById('croplog-status');
+  let recs;
+  try{ recs=await cropLogGetAll(); }catch(e){ alert('讀取失敗:'+e.message); return; }
+  if(!recs.length){ alert('沒有記錄可匯出'); return; }
+  st.textContent='打包中...';
+  try{
+    const zip=new JSZip();
+    const manifest=recs.map(r=>({
+      id:r.id, ts:r.ts, iso:new Date(r.ts).toISOString(), mode:r.mode,
+      source:r.source, thumb:'thumbs/'+r.id+'.jpg', thumbW:r.thumbW, thumbH:r.thumbH,
+      finals:r.finals, autos:r.autos,
+    }));
+    zip.file('manifest.json', JSON.stringify(manifest,null,2));
+    zip.file('README.txt', CROPLOG_README);
+    for(const r of recs){ if(r.thumb) zip.file('thumbs/'+r.id+'.jpg', r.thumb); }
+    const blob=await zip.generateAsync({type:'blob'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='crop-dataset-'+recs.length+'-'+Date.now()+'.zip'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    st.textContent='✓ 已匯出 '+recs.length+' 筆';
+  }catch(e){ console.error(e); st.textContent='匯出失敗:'+e.message; }
+}
+
+async function clearCropLogConfirm(){
+  const n=await cropLogCount();
+  if(!n){ alert('目前沒有記錄'); return; }
+  if(!confirm('確定清空全部 '+n+' 筆裁剪記錄?\n建議先「匯出 ZIP」備份,清空後無法復原。')) return;
+  await cropLogClear();
+  await renderCropLogList();
+  updateCropLogBadge();
+  document.getElementById('croplog-status').textContent='已清空';
+}
+
+const CROPLOG_README=
+'徽章裁剪資料集 (badge crop dataset)\n'+
+'=====================================\n'+
+'由 badge-crop.html 自動收集。每次裁切(單張 / 批次)記一筆。\n\n'+
+'檔案結構:\n'+
+'  manifest.json   — 所有記錄的中繼資料(陣列)\n'+
+'  thumbs/<id>.jpg — 各筆的來源圖縮圖(長邊 ≤ 1280)\n\n'+
+'每筆記錄欄位:\n'+
+'  id        記錄編號\n'+
+'  iso / ts  時間\n'+
+'  mode      single(單張)或 batch(批次)\n'+
+'  source    { name 原始檔名, w/h 原圖像素尺寸 }\n'+
+'  thumb     對應 thumbs/<id>.jpg\n'+
+'  thumbW/H  縮圖像素尺寸\n'+
+'  finals    你最後採用的框(ground truth),陣列\n'+
+'  autos     自動偵測「原始提議框」,陣列;沒跑自動偵測則為 null\n\n'+
+'框格式(全部以「原圖像素」為座標):\n'+
+'  { shape, cx, cy, hw, hh }\n'+
+'    shape  circle / square / rect / ellipse / pick ...\n'+
+'    cx,cy  中心\n'+
+'    hw,hh  半寬、半高(圓形 / 正方形時 hw=hh=半徑 r)\n\n'+
+'座標換算到縮圖:  x_thumb = x_orig * (thumbW / source.w)\n\n'+
+'用途:\n'+
+'  · finals = 人工標註的正確答案,可拿來評估 / 重調偵測參數,或訓練偵測模型。\n'+
+'  · autos vs finals 的差距 = 演算法誤差。批次因可拖曳排序 / 增刪,兩者「未一一配對」,\n'+
+'    需以中心距離或 IoU 自行配對。單張則為 1:1。\n';
+
+// 啟動時更新角落數字
+updateCropLogBadge();
 </script>
+
+<!-- ═══ 裁剪記錄資料集面板 ═══ -->
+<div id="croplog-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.55);align-items:center;justify-content:center;">
+  <div style="background:#fff;width:min(720px,94vw);max-height:88vh;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35);font-family:inherit;">
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.9rem 1.1rem;border-bottom:1px solid #eee;">
+      <strong style="font-size:1rem;color:#7c3aed;">🗂 裁剪記錄資料集</strong>
+      <span id="croplog-modal-count" style="color:#94a3b8;font-size:.85rem;">0 筆</span>
+      <button onclick="closeCropLog()" style="margin-left:auto;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#64748b;line-height:1;">✕</button>
+    </div>
+    <div style="padding:.7rem 1.1rem;border-bottom:1px solid #f1f5f9;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+      <button onclick="exportCropLog()" style="background:linear-gradient(135deg,#c084fc,#818cf8);color:#fff;border:none;padding:.45rem .9rem;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;font-size:.85rem;">⬇ 匯出 ZIP 資料集</button>
+      <button onclick="clearCropLogConfirm()" style="background:#fff;color:#ef4444;border:1.5px solid #fecaca;padding:.45rem .9rem;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;font-size:.85rem;">🗑 清空</button>
+      <span id="croplog-status" style="color:#64748b;font-size:.8rem;"></span>
+    </div>
+    <div id="croplog-list" style="overflow-y:auto;padding:.4rem 1.1rem 1rem;flex:1;"></div>
+  </div>
+</div>
 
 </body>
 </html>

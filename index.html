@@ -822,6 +822,7 @@ const BAND_COLORS={
   "CRYCHIC":"#8cb3d4",
   "Sumimi":"#BBFF77",
   "跨團合照":"#9e9e9e",
+  "跨企劃合照":"#78909c",
   "其他":"#888"
 };
 const CHAR_COLORS={
@@ -1204,8 +1205,8 @@ const CHAR_TO_BAND = {
 function badgeBands(b){
   const bands = new Set();
   if(b.band) bands.add(b.band);
-  // 跨團合照:不展開 character 衍生的樂團,只歸在「跨團合照」這個 section
-  if(b.band === '跨團合照') return bands;
+  // 跨團合照 / 跨企劃合照:不展開 character 衍生的樂團,只歸在自己的 section
+  if(b.band === '跨團合照' || b.band === '跨企劃合照') return bands;
   if(b.character){
     b.character.split('x').forEach(c=>{
       const ct = c.trim();
@@ -1256,8 +1257,8 @@ function applyFilters(){
     // 回傳這個徽章相關的所有樂團
     const bands = new Set();
     if(b.band) bands.add(b.band);
-    // 跨團合照:不展開 character 衍生的樂團,只歸在「跨團合照」這個 section
-    if(b.band === '跨團合照') return bands;
+    // 跨團合照 / 跨企劃合照:不展開 character 衍生的樂團,只歸在自己的 section
+    if(b.band === '跨團合照' || b.band === '跨企劃合照') return bands;
     if(b.character){
       b.character.split('x').forEach(c=>{
         const ct = c.trim();
@@ -1675,6 +1676,7 @@ function formatDate(dateStr, lang){
 const BAND_NAME_MAP = {
   '夢限大MewType': {'zh-TW':'夢限大MewType','ja':'夢限大みゅーたいぷ','en':'Mugendai Mewtype','ko':'무겐다이 뮤타입'},
   '跨團合照':       {'zh-TW':'跨團合照','ja':'合同フォト','en':'Cross-Band Photo','ko':'합동 사진'},
+  '跨企劃合照':     {'zh-TW':'跨企劃合照','ja':'コラボフォト','en':'Cross-Project Photo','ko':'콜라보 사진'},
   '其他':           {'zh-TW':'其他','ja':'その他','en':'Other','ko':'기타'},
   // 其他樂團各語言相同，不需特別處理
 };
@@ -1818,7 +1820,7 @@ const LANGS = {
     // 批次操作
     batchSelected:'已選 {n} 張', batchCancel:'取消', batchAddToList:'加入清單', batchAddCollect:'加入蒐集記錄', batchDelCollect:'刪除蒐集', batchSelectAll:'全選目前顯示', batchEnter:'☑ 批次',
     // 收藏到清單 modal
-    favTitle:'⭐ 收藏到清單', favEmpty:'還沒有清單，建立第一個吧！', favPlaceholderFirst:'如 我的最愛、想要的徽章', favCreateAndAdd:'建立清單並收藏', favSelectList:'選擇清單：', favOrCreate:'或新增清單：', favPlaceholderNew:'新清單名稱', favCreateBtn:'+ 新增', favCancel:'取消', favSave:'儲存',
+    favTitle:'⭐ 收藏到清單', favEmpty:'還沒有清單，建立第一個吧！', myListsEmpty:'尚無清單，按徽章上的 ☆ 開始收藏', favPlaceholderFirst:'如 我的最愛、想要的徽章', favCreateAndAdd:'建立清單並收藏', favSelectList:'選擇清單：', favOrCreate:'或新增清單：', favPlaceholderNew:'新清單名稱', favCreateBtn:'+ 新增', favCancel:'取消', favSave:'儲存',
     // 表格模式蒐集欄位
     tblColQty:'蒐集數量', tblColDate:'最近購買', tblColSource:'購買來源',
     // 蒐集記錄區塊
@@ -1860,7 +1862,7 @@ const LANGS = {
     // 批次操作
     batchSelected:'{n} 件選択', batchCancel:'キャンセル', batchAddToList:'リストに追加', batchAddCollect:'収集記録に追加', batchDelCollect:'収集削除', batchSelectAll:'表示中をすべて選択', batchEnter:'☑ 一括',
     // 收藏到清單 modal
-    favTitle:'⭐ リストに追加', favEmpty:'リストがまだありません、最初の一つを作りましょう！', favPlaceholderFirst:'例：お気に入り、欲しいバッジ', favCreateAndAdd:'リストを作成して追加', favSelectList:'リストを選択：', favOrCreate:'または新規リスト：', favPlaceholderNew:'新しいリスト名', favCreateBtn:'+ 追加', favCancel:'キャンセル', favSave:'保存',
+    favTitle:'⭐ リストに追加', favEmpty:'リストがまだありません、最初の一つを作りましょう！', myListsEmpty:'リストがまだありません。バッジの ☆ を押して集めましょう', favPlaceholderFirst:'例：お気に入り、欲しいバッジ', favCreateAndAdd:'リストを作成して追加', favSelectList:'リストを選択：', favOrCreate:'または新規リスト：', favPlaceholderNew:'新しいリスト名', favCreateBtn:'+ 追加', favCancel:'キャンセル', favSave:'保存',
     // 表格模式蒐集欄位
     tblColQty:'収集数', tblColDate:'最終購入', tblColSource:'購入元',
     // 蒐集記錄區塊
@@ -1902,7 +1904,7 @@ const LANGS = {
     // 批次操作
     batchSelected:'{n} selected', batchCancel:'Cancel', batchAddToList:'Add to List', batchAddCollect:'Add to Collection', batchDelCollect:'Delete Collection', batchSelectAll:'Select All Visible', batchEnter:'☑ Batch',
     // 收藏到清單 modal
-    favTitle:'⭐ Add to List', favEmpty:'No lists yet, create your first one!', favPlaceholderFirst:'e.g., Favorites, Wishlist', favCreateAndAdd:'Create List & Add', favSelectList:'Select list(s):', favOrCreate:'Or create new list:', favPlaceholderNew:'New list name', favCreateBtn:'+ Add', favCancel:'Cancel', favSave:'Save',
+    favTitle:'⭐ Add to List', favEmpty:'No lists yet, create your first one!', myListsEmpty:'No lists yet — tap the ☆ on a badge to start collecting', favPlaceholderFirst:'e.g., Favorites, Wishlist', favCreateAndAdd:'Create List & Add', favSelectList:'Select list(s):', favOrCreate:'Or create new list:', favPlaceholderNew:'New list name', favCreateBtn:'+ Add', favCancel:'Cancel', favSave:'Save',
     // 表格模式蒐集欄位
     tblColQty:'Qty', tblColDate:'Last Purchase', tblColSource:'Source',
     // 蒐集記錄區塊
@@ -1944,7 +1946,7 @@ const LANGS = {
     // 批次操作
     batchSelected:'{n}개 선택', batchCancel:'취소', batchAddToList:'리스트에 추가', batchAddCollect:'수집 기록에 추가', batchDelCollect:'수집 삭제', batchSelectAll:'표시 중 모두 선택', batchEnter:'☑ 일괄',
     // 收藏到清單 modal
-    favTitle:'⭐ 리스트에 추가', favEmpty:'리스트가 없습니다. 첫 번째 리스트를 만들어보세요!', favPlaceholderFirst:'예: 즐겨찾기, 원하는 배지', favCreateAndAdd:'리스트 생성 및 추가', favSelectList:'리스트 선택:', favOrCreate:'또는 새 리스트:', favPlaceholderNew:'새 리스트 이름', favCreateBtn:'+ 추가', favCancel:'취소', favSave:'저장',
+    favTitle:'⭐ 리스트에 추가', favEmpty:'리스트가 없습니다. 첫 번째 리스트를 만들어보세요!', myListsEmpty:'아직 리스트가 없어요. 배지의 ☆ 를 눌러 모아보세요', favPlaceholderFirst:'예: 즐겨찾기, 원하는 배지', favCreateAndAdd:'리스트 생성 및 추가', favSelectList:'리스트 선택:', favOrCreate:'또는 새 리스트:', favPlaceholderNew:'새 리스트 이름', favCreateBtn:'+ 추가', favCancel:'취소', favSave:'저장',
     // 表格模式蒐集欄位
     tblColQty:'수집 수', tblColDate:'최근 구매', tblColSource:'구매처',
     // 蒐集記錄區塊
@@ -2093,6 +2095,7 @@ function applyLang(){
   updateEventBtnLabel();
   // 切換語言時，重建新版功能的所有 sidebar / 按鈕
   if(typeof buildCollectionSidebar === 'function') buildCollectionSidebar();
+  if(typeof buildMyListsSidebar === 'function') buildMyListsSidebar();
   if(typeof buildSmartListsSidebar === 'function') buildSmartListsSidebar();
   if(typeof updateSaveSmartListButton === 'function') updateSaveSmartListButton();
   if(typeof updateBatchBar === 'function') updateBatchBar();
@@ -3813,8 +3816,9 @@ function buildMyListsSidebar(){
     return;
   }
   sec.style.display = '';
+  const L = LANGS[currentLang] || LANGS['zh-TW'];
   if(!myLists.length){
-    document.getElementById('my-lists-content').innerHTML = '<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;">尚無清單，按徽章上的 ☆ 開始收藏</div>';
+    document.getElementById('my-lists-content').innerHTML = `<div style="font-size:0.72rem;color:var(--muted);padding:0.4rem 0;">${L.myListsEmpty}</div>`;
     return;
   }
   document.getElementById('my-lists-content').innerHTML = myLists.map(l=>{

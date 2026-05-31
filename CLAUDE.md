@@ -23,7 +23,7 @@
 ├── blog.html               # 開發日誌(時間軸式,純 HTML 文章,共用圖鑑的深色模式)
 ├── admin.html              # 後台管理工具 ~3140 行
 ├── announcement-tool.html  # 公告產生器
-├── badge-crop.html         # 徽章截圖/裁切工具(支援單張+批次裁切,批次有 🔍 Hough 自動偵測)
+├── badge-crop.html         # 徽章截圖/裁切工具(單張+批次,🔍 Hough 自動偵測,🗂 裁剪記錄資料集)
 ├── badges.json             # 徽章主資料(2700+ 筆)
 ├── manifest.json           # PWA 設定
 ├── favicon-*.png           # 各尺寸 icon(180, 192, 512;16/32 走 favicon.ico 內含尺寸)
@@ -42,7 +42,27 @@
   1. 2026.05.24「開站兩個月——關於這個徽章圖鑑的開發心得」→ 配圖 `images/blog-001.jpg`(妃那白底閉眼托腮圖)
   2. 2026.04.21「一切的起點——這個徽章圖鑑是怎麼來的」(起源故事:從蒐集愛音徽章→Google 試算表→VPN 切 9 國轉檔→抽到 TAIPEI LIVE 門票祭品文→Claude Pro 三天架站) → 配圖 `images/blog-002.jpg`(羊寶藍光舞台圖)
 - 所有文末 `<img>` 都有 `onerror` 自動隱藏保護,圖未上傳不會破版
-- **🔖 待辦(明羽起床後)**:① 存妃那圖→`images/blog-001.jpg` ② 存羊寶藍光圖→`images/blog-002.jpg` ③ 連同 og 標籤、Threads 連結等一起 push
+- **圖片管理**:blog 配圖命名 `blog-XXX.jpg`,走 GitHub Desktop 推(`.gitignore` 已放行 `!images/blog-*.jpg`);徽章圖仍走 admin 後台。兩套流程互不干擾
+- **✅ 已上線(2026-05-30 push)**:兩篇文 + 兩張配圖 + footer 入口 + og 標籤多語言 + Threads 連結換新帳號,全部已推上 GitHub Pages
+
+---
+
+### badge-crop.html 裁剪記錄資料集(2026-05-31 起)
+
+**緣由**:明羽問「能不能透過多次訓練增強裁剪/搜尋工具的準確度」。釐清:現有工具是**傳統演算法(Hough / pHash),不會自學**,重複使用不會變準;真正能讓它變準的是**累積「正確答案」**(human-in-the-loop),之後拿去重調參數或訓練模型。這個功能就是在攢那份 ground truth 資料。
+
+- **掛載點**:單張 `doCrop()`、批次 `cropBatchAll()` —— 每次裁切自動記一筆(fire-and-forget,失敗只 `console.warn`,絕不擋裁切流程)
+- **存哪**:IndexedDB(DB `badgeCropLog` / store `records`,自增 id)
+- **每筆內容**(座標一律**原圖像素**):
+  - `source`:`{name 原始檔名, w/h 原圖尺寸}`
+  - `thumb`:來源圖縮圖 JPEG blob(長邊 ≤ 1280,品質 0.82)+ `thumbW/thumbH`
+  - `finals`:你最後採用的框(ground truth),`[{shape,cx,cy,hw,hh}]`(圓/方時 hw=hh=r)
+  - `autos`:自動偵測「**原始提議框**」,沒跑自動偵測則 `null`。單張取自 `_singleDetectCircles[_singleDetectIdx]`;批次取自 `_batchAutoSnapshot`(在 `runBatchAutoDetect` 推 `batchCrops` 時同步快照,`selectFile`/`clearAllBatchCrops` 時清空)
+- **UI**:header「🗂 裁剪記錄」按鈕(單張+批次都看得到)→ 面板可**預覽縮圖 / 匯出 ZIP / 清空**。單張會顯示「位移 Xpx · 半徑差 Xpx」= 自動 vs 你手調的差距
+- **匯出 ZIP**(複用已載入的 JSZip):`manifest.json`(全部中繼資料,含原圖座標)+ `thumbs/<id>.jpg` + `README.txt`(欄位/座標換算說明)。檔名 `crop-dataset-<筆數>-<ts>.zip`
+- **關鍵函式**:`cropLogRecord()`(記一筆)、`cropLogOpen/Add/GetAll/Count/Clear()`(IndexedDB)、`openCropLog/renderCropLogList/exportCropLog/clearCropLogConfirm()`(UI)、`updateCropLogBadge()`(角落數字)
+- **未來可接**:拿匯出的資料集做離線①評估命中率 ②系統化重調 Hough 參數(解決「合成測試測不出真實失敗」的老問題)③訓練偵測模型(YOLO-tiny / fine-tune)。以圖搜圖功能未來若做,同一份資料也用得上
+- ⚠️ 這是**維護工具功能,不寫進公告**(訪客看不到)
 
 ---
 
@@ -337,10 +357,39 @@ Threads / Bluesky 用 grapheme 計數(`text.length`),上限分別 500 / 300。
   - 韓文:`(N장 추가)`
 - `(無)` `(なし)` `(None)` `(없음)` **即使空也保留標題**
 - 額外輸出 X 用日文 hashtag 區塊
-- **匯出工具偶爾會把已公告過的徽章再列出來**(明羽說是同步沒成功造成),Claude 應主動跟前幾天公告比對,有重複就刪除
+- 🚫 **跨日去重(鐵則,明羽 2026-05-31 交代)**:【新增】**絕對不能含已公告過的徽章編號**。匯出工具會因同步問題把昨天已發的徽章再列一次。**每次寫公告前必做去重**:
+  - ① 比對下方「**已公告徽章 ID 帳本**」+ 前一兩天的 `changelog.json` / 已發社群貼文的產品名
+  - ② 交叉驗:查 `badges.json` 的 `created_at`,若落在已公告日期 → 已發過
+  - **除非是「更新資料 / 更新圖檔」**,否則【新增】出現重複編號**一律排除**
+  - ③ 寫完公告後,**務必把這次新公告的 ID 範圍補進帳本**(否則下次又會漏抓)
+  - 實例:5/31 匯出把 5/30 已發的 Poppin'Party Fan Meeting Tour 2019!(#3626–3655,created_at 2026-05-30)又列一次 → 已排除
 - **後台/維護工具的功能調整不寫進公告**:`admin.html` 內部按鈕、`badge-crop.html` 批次裁切、`announcement-tool.html` 介面等都是給明羽自己用的,**不寫在面向使用者的【功能調整】內**。判斷準則:**改的東西使用者(訪客)會看到/用到嗎?** 看不到的就不寫。
   - ✅ 該寫:前台篩選邏輯、側欄分類、樂團名翻譯、卡片行為、尺寸選單、隱藏抽獎徽章 toggle
   - ❌ 不寫:badge-crop.html 任何改動、admin.html 編輯 UI / 批次上傳 / 同步流程、announcement-tool.html 任何改動、CLAUDE.md 改動
+  - ⚠️ **新增尺寸/分類「即使這批還沒對應徽章資料」也要寫進【功能調整】**——它是告知性的(讓使用者知道以後有這類就歸這)。前例:5/15 寫了「尺寸新增『44mm 圓形』」、5/30 該寫 32mm 卻一度漏掉。凡 size 選單 / 樂團分類 / 篩選群組有新增,一律寫。
+
+### 已公告徽章 ID 帳本(去重用,2026-05-31 起記錄)
+
+寫公告前查這張表;新清單的 ID 已在表內 → 從【新增】排除(更新類不在此限)。**每寫完一篇,就把新範圍補到表底。** 新徽章一般都拿新的(較大)ID,所以「最高已公告 ID 以下」原則上都發過;但後台有跳號補洞功能,偶爾會有小 ID 的新徽章,故仍以實際範圍 + `created_at` 為準。
+
+| 公告日期 | 已公告 ID 範圍 | 張數 |
+|---|---|---|
+| 2026/05/30 | #3579–3655(RAS アーティスト ライブver. 3579–3598、其餘 5/30 產品 3599–3625、Poppin'Party Fan Meeting Tour 2019! ×2 3626–3655) | 77 |
+| 2026/05/31 | #3656–3742(劇場版 FILM LIVE 3656–3665、ナゾトキ 3666–3675、Roselia vol.3 3676–3695、RAS vol.3 3696–3715、Roselia×RAS 合同ライブ 3716–3735、記念ワッペン 3736–3737、SHOW BY ROCK 3738–3742) | 87 |
+
+**目前最高已公告 ID = #3742(截至 2026/05/31)。** 下次新清單若出現 **≤ #3742** 的編號,先當重複嫌疑、逐一查證再決定排除。
+
+### 每月一號:推薦歌曲更新通知(明羽既定)
+
+明羽每月 1 號會換 `song.json` 的推薦曲(前台右下角浮動播放器,欄位 `ytId` / `title` / `artist` / `spotify`)。**每月 1 號的公告要多加一行「本月推薦歌曲已更新」**:
+- 這是**內容更新通知**,不歸【新增資料】也不歸【功能調整】
+- 放在公告**最上面**(header 之下、【新增】之上),四語並列,一行帶過
+- 想更吸睛可帶出當月曲名 / 歌手(問明羽當月選曲),否則用通用版「本月推薦歌曲已更新」
+- 範例(六月、通用版):
+  - 繁中:`🎵 六月推薦歌曲已更新!點右下角播放器聽聽看~`
+  - 日文:`🎵 6月のおすすめ曲を更新しました!右下のプレイヤーからどうぞ~`
+  - 英文:`🎵 June's featured song is now live — tap the player at the bottom-right to listen!`
+  - 韓文:`🎵 6월 추천곡이 업데이트됐어요! 오른쪽 아래 플레이어에서 들어보세요~`
 
 ### 輸出版型(明羽指定,以下是預設格式,不要簡化)
 
@@ -511,6 +560,13 @@ PWA 安裝到主畫面/全螢幕/icon/theme_color 等不靠 SW 的功能已具�
 - 顏色 `#9e9e9e` 灰色
 - **不算進** character 衍生樂團(`badgeBands()` 短路) — 例如 band=跨團合照 + character=CRYCHIC全團 的徽章**只**會出現在「跨團合照」section,不會跑進 CRYCHIC section
 - 理由:跨團合照已有獨立分類,再灌進每個相關樂團會造成 sidebar 計數失準 + 重複出現
+
+**跨企劃合照(`band="跨企劃合照"`,2026-05-31 起):**
+- 用於 **BanG Dream 角色 × 其他企畫(他作品 / IP)角色**的合照徽章。跟「跨團合照」(BanG Dream 內部跨樂團)刻意分開
+- 顏色 `#78909c` 藍灰;四語 `跨企劃合照 / コラボフォト / Cross-Project Photo / 콜라보 사진`
+- **行為完全比照跨團合照**:`badgeBands()` 一併短路(`b.band === '跨團合照' || b.band === '跨企劃合照'`),只出現在自己的 section、不展開 character 衍生樂團;sidebar 由 buildSidebar 的 catch-all 自動帶出;admin 自動預設複數角色模式
+- **合作(非 BanG Dream)人物怎麼存**(明羽既定:跨企劃極少見,能搜尋就好):**只記名稱當純文字**,直接寫進 `character` 欄(例 `戶山香澄 × 初音ミク`),搜尋找得到即可。**後台輸入方式(2026-05-31 起)**:在**複數角色模式**下,BanG Dream 角色照常勾選,合作人物打進新增的「**其他企劃人物**」自由輸入欄(`#f-char-multi-extra`,用 `、` 或 `x` 分隔,如 `シアン、雪平宇宙`);存檔時自動合併進 `character`(實際分隔符是小寫 `x`,例 `戶山香澄xシアンx雪平宇宙`),編輯回填時勾不到的名字會自動回到自由輸入欄、不會被吃掉(`updateMultiCharValue` 合併 + `openModal` 回填)。⚠️**絕對不要**把合作人物加進 `CHAR_TO_BAND`(index)/ `CHAR_MAP`(admin)/ `CHAR_COLORS` —— 否則會冒出幽靈角色 chip、空樂團 section。BanG Dream 角色才是建檔範圍,合作角色只是可搜尋的附帶文字
+- **新增同類「特殊 band」的鏡像清單**:index.html = `BAND_COLORS` + 兩份 `badgeBands` 短路 + `BAND_NAME_MAP`;admin.html = `BAND_COLORS` + `BAND_LIST` + `CHAR_MAP`(填 `[]`)+ 複數模式條件 + 兩份 `BAND_ORDER_LIST` + `BULK_SELECT_OPTIONS.band` + `EXP_BAND_COLORS` + 3 個 `<option>` 下拉
 
 **badgeBands() 函式:** 集中決定「一個徽章該歸在哪些樂團 section」,index.html 的 buildSidebar 計數、applyFilters、buildCharList 都用同一個邏輯,確保 sidebar 數字和點擊後篩出來的結果一致。
 
