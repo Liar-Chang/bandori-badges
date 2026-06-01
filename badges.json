@@ -62810,5 +62810,25 @@
     "created_at": "2026-06-01T13:23:54.861Z",
     "updated_at": "2026-06-01T13:23:54.861Z",
     "image_updated_at": "2026-06-01T13:23:54.861Z"
+  },
+  {
+    "id": "3760",
+    "ext": "png",
+    "band": "跨團合照",
+    "character": "戶山香澄x美竹蘭x丸山彩x湊友希那x弦卷心",
+    "series": "",
+    "year": "2020年2月7日",
+    "event": "バンドリ！ ガールズバンドパーティ！　エポスカードデビュー記念イベント",
+    "short_event": "エポスカードデビュー記念イベント",
+    "type": "角色合影",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/events/epos-bd-marui/",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "created_at": "2026-06-01T13:41:39.903Z",
+    "updated_at": "2026-06-01T13:42:15.179Z",
+    "image_updated_at": "2026-06-01T13:41:39.903Z"
   }
 ]
