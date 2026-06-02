@@ -308,6 +308,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 
     <div class="ps" style="margin-top:auto;border-bottom:none;">
       <button class="btn btn-g" id="btn-crop" onclick="doCrop()" disabled>⬇ 裁切並下載</button>
+      <button class="btn btn-g" id="btn-crop-all" onclick="doCropAllSamePosition()" disabled title="把目前這個裁剪框,套用到所有載入的圖、打包 ZIP(多張同格式、同位置用)">⬇ 同框套用全部 (ZIP)</button>
       <button class="btn btn-s" onclick="resetCurrent()">↺ 重設</button>
     </div>
 
@@ -499,6 +500,7 @@ function selectFile(idx){
   renderFileList();
   updateNumPreview();
   document.getElementById('btn-crop').disabled=false;
+  if(document.getElementById('btn-crop-all')) document.getElementById('btn-crop-all').disabled=false;
 }
 
 function initCanvas(){
@@ -1180,6 +1182,62 @@ function doCrop(){
   const next=fileItems.findIndex((item,i)=>i>currentIdx&&!item.done);
   if(next>=0)setTimeout(()=>selectFile(next),350);
   else{const first=fileItems.findIndex((item,i)=>i!==currentIdx&&!item.done);if(first>=0)setTimeout(()=>selectFile(first),350);}
+}
+
+// ── 同框套用全部:把目前的裁剪框,套到所有載入的圖(多張同格式、同位置) → ZIP ──
+async function doCropAllSamePosition(){
+  if(!img){ alert('請先選一張圖、把裁剪框定好(手動或🔍自動偵測)'); return; }
+  const isCenterR = shape==='circle'||shape==='square';
+  const hasValid = isCenterR ? (r>0) : ((rx2-rx1)>0 && (ry2-ry1)>0);
+  if(!hasValid){ alert('裁剪框還沒設定好'); return; }
+  if(!fileItems.length){ alert('沒有載入任何圖片'); return; }
+  if(typeof JSZip === 'undefined'){ alert('ZIP 套件未載入'); return; }
+
+  const ext = document.getElementById('ext-sel').value;
+  const mime = ext==='jpg'?'image/jpeg':ext==='webp'?'image/webp':'image/png';
+  // 同一個框的裁切參數(在當前圖的像素座標上;假設所有圖同尺寸)
+  let ow,oh,srcX,srcY,srcW,srcH;
+  if(isCenterR){ ow=oh=Math.round(r*2); srcX=cx-r; srcY=cy-r; srcW=srcH=r*2; }
+  else { srcX=rx1; srcY=ry1; srcW=rx2-rx1; srcH=ry2-ry1; ow=Math.round(srcW); oh=Math.round(srcH); }
+
+  const btn = document.getElementById('btn-crop-all');
+  const origText = btn ? btn.textContent : '';
+  if(btn) btn.disabled=true;
+
+  const startNum = getCurrentNum();
+  const zip = new JSZip();
+  let sizeMismatch = 0;
+  for(let i=0;i<fileItems.length;i++){
+    const im = fileItems[i].imgEl;
+    if(!im) continue;
+    if(btn) btn.textContent = `裁切中... (${i+1}/${fileItems.length})`;
+    await new Promise(resolve=>setTimeout(resolve,0)); // 讓 UI 有機會更新
+    if(im.naturalWidth!==img.naturalWidth || im.naturalHeight!==img.naturalHeight) sizeMismatch++;
+    const off=document.createElement('canvas'); off.width=ow; off.height=oh;
+    const oc=off.getContext('2d');
+    if(shape==='circle'){oc.beginPath();oc.arc(ow/2,oh/2,ow/2,0,Math.PI*2);oc.clip();}
+    else if(shape==='ellipse'){oc.beginPath();oc.ellipse(ow/2,oh/2,ow/2,oh/2,0,0,Math.PI*2);oc.clip();}
+    else if(shape==='heart'){drawHeartPath(oc,ow/2,0,ow/2,oh);oc.clip();}
+    else if(shape==='pick'){drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
+    oc.drawImage(im,srcX,srcY,srcW,srcH,0,0,ow,oh);
+    const blob = await new Promise(res=>off.toBlob(res,mime,0.95));
+    if(blob) zip.file(String(startNum+i).padStart(3,'0')+'.'+ext, blob);
+  }
+  if(btn) btn.textContent='打包 ZIP 中...';
+  const zipBlob = await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(zipBlob);
+  const a=document.createElement('a'); a.href=url; a.download=`badge-samepos-${Date.now()}.zip`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  // 起始編號接續、全部標記已處理
+  document.getElementById('start-num').value = startNum + fileItems.length;
+  fileItems.forEach(it=>it.done=true);
+  renderFileList(); updateNumPreview();
+  if(btn){
+    btn.textContent = sizeMismatch
+      ? `✓ 已下載 ${fileItems.length} 張(⚠ ${sizeMismatch} 張尺寸不同,位置可能跑掉)`
+      : `✓ 已下載 ${fileItems.length} 張`;
+    setTimeout(()=>{ btn.textContent=origText; btn.disabled=false; }, 2600);
+  }
 }
 
 function resetCurrent(){
