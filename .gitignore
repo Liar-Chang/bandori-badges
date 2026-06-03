@@ -10,3 +10,7 @@ images/*
 # 例外:部落格配圖 blog-*.jpg 是純本機管理(不經 admin 後台),
 # 放行讓 GitHub Desktop 可以正常 commit/push。
 !images/blog-*.jpg
+
+# 裁剪紀錄資料集(badge-crop.html 🗂 匯出的 ZIP + 解壓內容)。
+# 純本機分析用,不上線、不進 repo。明羽把 ZIP 丟這裡,Claude 直接讀。
+crop-dataset/
