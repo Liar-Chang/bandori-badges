@@ -552,6 +552,7 @@ tr.selected td{background:#f0effd !important;}
         <input type="text" id="bulk-value" placeholder="新的值..." style="width:100%;"/>
         <select id="bulk-value-select" style="display:none;width:100%;font-family:inherit;font-size:0.82rem;padding:0.4rem;border:1.5px solid #c0bef0;border-radius:6px;"></select>
       </div>
+      <label style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;font-size:0.78rem;font-weight:700;color:#c0392b;white-space:nowrap;" title="勾選後,套用會把此欄位設為空白(會跳確認)"><input type="checkbox" id="bulk-clear" onchange="onBulkClearToggle()"/> 🗑 清空此欄</label>
       <button class="btn btn-sm btn-primary" onclick="applyBulkEdit()">✓ 套用到勾選筆數</button>
       <button class="btn btn-sm btn-secondary" onclick="toggleBulkEdit()">取消</button>
     </div>
@@ -1717,6 +1718,17 @@ function updateBulkValueInput(){
     input.value = '';
     input.placeholder = '新的值...';
   }
+  if(typeof onBulkClearToggle==='function') onBulkClearToggle(); // 維持「清空」勾選的禁用狀態
+}
+
+// 🗑 清空此欄位:勾選後,套用會把欄位設空白(applyBulkEdit 內會二次確認)
+function onBulkClearToggle(){
+  const cc=document.getElementById('bulk-clear');
+  const clear = !!(cc && cc.checked);
+  const input=document.getElementById('bulk-value');
+  const select=document.getElementById('bulk-value-select');
+  [input,select].forEach(el=>{ if(el){ el.disabled=clear; el.style.opacity=clear?'0.4':'1'; } });
+  if(input) input.placeholder = clear ? '(清空模式:此欄將被設為空白)' : '新的值...';
 }
 
 function toggleBulkEdit(){
@@ -1729,21 +1741,32 @@ function toggleBulkEdit(){
 }
 function applyBulkEdit(){
   if(!selectedIds.size){showToast('請先勾選要修改的資料');return;}
-  const field=document.getElementById('bulk-field').value;
-  const select = document.getElementById('bulk-value-select');
-  const input = document.getElementById('bulk-value');
-  const val = select.style.display !== 'none' ? select.value : input.value.trim();
-  if(!val){showToast('請輸入新的值');return;}
-  // is_lottery 是 boolean,把字串「是/否」轉成 true/false
-  const finalVal = (field === 'is_lottery') ? (val === '是') : val;
+  const fieldSel=document.getElementById('bulk-field');
+  const field=fieldSel.value;
+  const fieldLabel=fieldSel.options[fieldSel.selectedIndex].text;
+  const clearMode=!!(document.getElementById('bulk-clear') && document.getElementById('bulk-clear').checked);
+  let finalVal;
+  if(clearMode){
+    // 🗑 清空模式:破壞性,需明確二次確認
+    if(!confirm(`確定要把勾選的 ${selectedIds.size} 筆的「${fieldLabel}」清空嗎?\n原本記載的值會被刪掉,無法復原。`)) return;
+    finalVal = (field === 'is_lottery') ? false : '';
+  } else {
+    const select=document.getElementById('bulk-value-select');
+    const input=document.getElementById('bulk-value');
+    const val = select.style.display !== 'none' ? select.value : input.value.trim();
+    if(!val){showToast('請輸入新的值(或勾「🗑 清空此欄」來清空)');return;}
+    // is_lottery 是 boolean,把字串「是/否」轉成 true/false
+    finalVal = (field === 'is_lottery') ? (val === '是') : val;
+  }
   let count=0;
   badges.forEach(b=>{
     if(selectedIds.has(b.id)){b[field]=finalVal;count++;}
   });
   persist();renderList();
-  showToast(`✓ 已修改 ${count} 筆的「${document.getElementById('bulk-field').options[document.getElementById('bulk-field').selectedIndex].text}」`);
+  showToast(clearMode ? `🗑 已清空 ${count} 筆的「${fieldLabel}」` : `✓ 已修改 ${count} 筆的「${fieldLabel}」`);
   document.getElementById('bulk-edit-bar').classList.remove('show');
   document.getElementById('bulk-value').value='';
+  const cc=document.getElementById('bulk-clear'); if(cc) cc.checked=false;
   updateBulkValueInput();
 }
 
