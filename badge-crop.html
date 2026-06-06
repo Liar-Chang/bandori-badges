@@ -1455,7 +1455,23 @@ function updateBatchBulkBar(){
   const cnt = document.getElementById('batch-bulk-count');
   if(!bar || !cnt) return;
   cnt.textContent = _batchSelectedSet.size;
+  updateBatchBulkFieldOptions(); // 讓欄位下拉跟著目前形狀走(方形→補上 X1/Y1/X2/Y2)
   bar.style.display = (_batchSelectMode && _batchSelectedSet.size > 0) ? 'flex' : 'none';
+}
+// 批次修改的「欄位」下拉跟著形狀走:方形 → 角座標 X1/Y1/X2/Y2(跟表格一致)+ 中心/寬高;其他 → 中心/寬高/半徑
+let _batchBulkFieldMode = null; // 'rect' | 'other':目前下拉是為哪種形狀建的(避免每次點選都重建、洗掉選擇)
+function updateBatchBulkFieldOptions(){
+  const sel = document.getElementById('batch-bulk-field');
+  if(!sel) return;
+  const mode = (batchShape === 'rect') ? 'rect' : 'other';
+  if(mode === _batchBulkFieldMode) return; // 形狀沒變就不重建,保留使用者當前選擇與焦點
+  _batchBulkFieldMode = mode;
+  const prev = sel.value;
+  const opts = (mode === 'rect')
+    ? [['x1','左 X1'],['y1','上 Y1'],['x2','右 X2'],['y2','下 Y2'],['cx','中心 X'],['cy','中心 Y'],['w','寬 W'],['h','高 H']]
+    : [['cx','中心 X'],['cy','中心 Y'],['w','寬 W'],['h','高 H'],['r','半徑 (W=H)']];
+  sel.innerHTML = opts.map(o => '<option value="'+o[0]+'">'+o[1]+'</option>').join('');
+  if(opts.some(o => o[0] === prev)) sel.value = prev; // 盡量沿用先前欄位
 }
 function toggleBatchSelectionAt(idx){
   if(idx < 0 || idx >= batchCrops.length) return;
@@ -1534,6 +1550,10 @@ function applyBatchBulkEdit(){
     else if(field === 'w') value = first.hw * 2;
     else if(field === 'h') value = first.hh * 2;
     else if(field === 'r') value = first.hw;
+    else if(field === 'x1') value = first.cx - first.hw;
+    else if(field === 'y1') value = first.cy - first.hh;
+    else if(field === 'x2') value = first.cx + first.hw;
+    else if(field === 'y2') value = first.cy + first.hh;
   } else {
     value = parseFloat(valStr);
     if(!isFinite(value)){ alert('請輸入有效數值'); return; }
@@ -1561,6 +1581,26 @@ function applyBatchBulkEdit(){
       if(newR <= 0) continue;
       c.hw = newR;
       c.hh = newR;
+    } else if(field === 'x1'){          // 左邊:右邊(X2)固定 → 重算中心與寬
+      const x2 = c.cx + c.hw;
+      const nx1 = (op === 'add') ? (c.cx - c.hw) + value : value;
+      if(nx1 >= x2) continue;           // 會讓寬度≤0,跳過該筆
+      c.cx = (nx1 + x2) / 2; c.hw = (x2 - nx1) / 2;
+    } else if(field === 'x2'){          // 右邊:左邊(X1)固定
+      const x1 = c.cx - c.hw;
+      const nx2 = (op === 'add') ? (c.cx + c.hw) + value : value;
+      if(nx2 <= x1) continue;
+      c.cx = (x1 + nx2) / 2; c.hw = (nx2 - x1) / 2;
+    } else if(field === 'y1'){          // 上邊:下邊(Y2)固定
+      const y2 = c.cy + c.hh;
+      const ny1 = (op === 'add') ? (c.cy - c.hh) + value : value;
+      if(ny1 >= y2) continue;
+      c.cy = (ny1 + y2) / 2; c.hh = (y2 - ny1) / 2;
+    } else if(field === 'y2'){          // 下邊:上邊(Y1)固定
+      const y1 = c.cy - c.hh;
+      const ny2 = (op === 'add') ? (c.cy + c.hh) + value : value;
+      if(ny2 <= y1) continue;
+      c.cy = (y1 + ny2) / 2; c.hh = (ny2 - y1) / 2;
     }
   }
   renderBatchCanvas();
@@ -1569,6 +1609,7 @@ function applyBatchBulkEdit(){
 
 function onBatchShapeChange(){
   batchShape = document.getElementById('batch-shape').value;
+  updateBatchBulkFieldOptions(); // 形狀換了 → 批次修改欄位下拉跟著換(方形補上角座標)
   // 同步更新所有現有 crop 為新形狀(對齊使用者直覺)
   batchCrops.forEach(c => {
     c.shape = batchShape;
