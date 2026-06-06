@@ -38,7 +38,7 @@ function doExportHtml(list, title, btn, progWrap, prog){
   const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const c = bandColor;
   const rows = list.map(b=>{
-    const imgSrc = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    const imgSrc = imgUrl(b);
     const cells = fields.map(f=>{
       let val = b[f.key]||'—';
       if(f.key==='event') val = b.short_event||getEventShortName(val)||val;
@@ -875,6 +875,11 @@ const INDEPENDENT_BANDS = new Set(["夢ノ結唱"]);
 let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
 const _noImgIds = new Set(); // 記錄圖片載入失敗的 badge id
+// Type 2「找不到圖檔」:noimg 旗標 → 卡片顯示「募集中」佔位圖,且視同無圖(被「隱藏無圖」排除/搜尋/下載)
+const SEEKING_IMG = 'https://liar-chang.github.io/bandori-badges/seeking-badge.png';
+function isNoImgFlag(b){ return !!b && (b.noimg===true || b.noimg===1 || b.noimg==='1'); }
+function imgUrl(b){ return isNoImgFlag(b) ? SEEKING_IMG : (IMG_BASE_URL + (b.id) + '.' + (b.ext || 'jpg')); }
+function isNoImg(b){ return _noImgIds.has(b.id) || isNoImgFlag(b); }
 // 當 onerror 持續觸發時，若「隱藏無圖徽章」為勾選，debounce 重新套用篩選
 let _noImgRefreshTimer = null;
 function _maybeRefreshHideNoImg(){
@@ -1298,7 +1303,7 @@ function applyFilters(){
     if(selSizes.size&&!selSizes.has(b.size)) return false;
     if(selCountries.size&&!selCountries.has(b.country)) return false;
     if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
-    if(document.getElementById('hide-no-image')?.checked && _noImgIds.has(b.id)) return false;
+    if(document.getElementById('hide-no-image')?.checked && isNoImg(b)) return false;
     if(document.getElementById('hide-lottery')?.checked && b.is_lottery === true) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
     return true;
@@ -1433,7 +1438,7 @@ function renderGrid(list){
   }
   g.innerHTML=list.map(b=>{
     const c=bandColor(b.band);
-    const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    const src = imgUrl(b);
     const idx=all.indexOf(b);
     const shortEvent = b.short_event || getEventShortName(b.event);
     const eventHtml = b.url
@@ -1493,7 +1498,7 @@ function openDetail(idx){
   const c=bandColor(b.band);
   _detailBadgeId = b.id;
   const dImg = document.getElementById('d-img');
-  dImg.src=IMG_BASE_URL+b.id+'.'+(b.ext||'jpg');
+  dImg.src=imgUrl(b);
   dImg.onerror=function(){this.style.display='none';};
   dImg.style.display='block';
   dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
@@ -2600,7 +2605,7 @@ function renderTable(list){
   if(!list.length){ tbody.innerHTML=`<tr><td colspan="${colspan}" style="text-align:center;padding:2rem;color:var(--muted)">${L.noData||'無符合資料'}</td></tr>`; return; }
   tbody.innerHTML = list.map((b,i)=>{
     const c = bandColor(b.band);
-    const src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    const src = imgUrl(b);
     const idx = all.indexOf(b);
     const eventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:underline;">${b.event||'—'}</a>`
@@ -2833,7 +2838,7 @@ async function doExport(){
 
   const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
   const _expOnlyImg = document.getElementById('exp-only-with-image')?.checked;
-  const list = _expOnlyImg ? currentFiltered.filter(b=>!_noImgIds.has(b.id)) : currentFiltered;
+  const list = _expOnlyImg ? currentFiltered.filter(b=>!isNoImg(b)) : currentFiltered;
 
   // Excel 輸出
   if(exportFmt === 'xlsx'){
@@ -2944,7 +2949,7 @@ async function doExport(){
     img.crossOrigin = 'anonymous';
     img.onload = ()=>{ imgMap[b.id]=img; res(); };
     img.onerror = ()=>res();
-    img.src = IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+    img.src = imgUrl(b);
   })));
   prog.style.width = '50%';
 
@@ -3152,7 +3157,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
   const imgs = await Promise.all(list.map(b=>new Promise(res=>{
     const img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>res(img); img.onerror=()=>res(null);
-    img.src=IMG_BASE_URL+b.id+'.'+(b.ext||'jpg');
+    img.src=imgUrl(b);
   })));
   prog.style.width='60%';
 
@@ -4110,7 +4115,7 @@ function buildSmartListsSidebar(){
     const cond = l.filter_conditions || {};
     let matched = filteredAll.filter(b=>matchesSmartListCondition(b, cond));
     if(hideNoImg && typeof _noImgIds !== 'undefined'){
-      matched = matched.filter(b=>!_noImgIds.has(b.id));
+      matched = matched.filter(b=>!isNoImg(b));
     }
     const total = matched.length;
     const collected = matched.filter(b=>isCollected(b.id)).length;
@@ -5234,7 +5239,7 @@ function renderBatchCollectionModal(){
   const date = existing.date ?? today;
   const qty = existing.qty ?? 1;
   const note = existing.note ?? '';
-  const imgSrc = IMG_BASE_URL + curId + '.' + (badgeObj.ext || 'jpg');
+  const imgSrc = imgUrl(badgeObj);
 
   title.textContent = `✓ 逐張填寫（${idx+1} / ${total}）`;
   content.innerHTML = `
