@@ -547,6 +547,7 @@ tr.selected td{background:#f0effd !important;}
         <option value="note">備註</option>
         <option value="admin_note">🔒 後台備註</option>
         <option value="is_lottery">🎲 抽獎標記</option>
+        <option value="noimg">🔍 無圖徵集（募集中）</option>
       </select>
       <div id="bulk-value-wrap" style="flex:1;min-width:140px;">
         <input type="text" id="bulk-value" placeholder="新的值..." style="width:100%;"/>
@@ -725,6 +726,12 @@ tr.selected td{background:#f0effd !important;}
         <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
           <input type="checkbox" id="f-is-lottery" style="accent-color:#3d3d8f;cursor:pointer;width:16px;height:16px;"/>
           🎲 抽獎取得 <span style="font-weight:400;color:#888;font-size:0.78rem;">（蒐集者可選擇排除這類徽章）</span>
+        </label>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-weight:500;">
+          <input type="checkbox" id="f-noimg" style="accent-color:#3d3d8f;cursor:pointer;width:16px;height:16px;"/>
+          🔍 無圖徵集（募集中）<span style="font-weight:400;color:#888;font-size:0.78rem;">（找不到圖、公開徵集；前台顯示「募集中」佔位圖，並比照無圖被隱藏/排除）</span>
         </label>
       </div>
     </div>
@@ -1469,7 +1476,7 @@ function renderList(){
           <div class="thumb-overlay">點擊或<br>拖入換圖</div>
         </div>
       </td>
-      <td>${b.band==='夢ノ結唱'?'<span title="夢ノ結唱(獨立計畫)" style="margin-right:0.2rem;">✨</span>':''}<strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}${b.is_lottery?' <span title="抽獎取得" style="font-size:0.85rem;">🎲</span>':''}</td>
+      <td>${b.band==='夢ノ結唱'?'<span title="夢ノ結唱(獨立計畫)" style="margin-right:0.2rem;">✨</span>':''}<strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}${b.is_lottery?' <span title="抽獎取得" style="font-size:0.85rem;">🎲</span>':''}${b.noimg?' <span title="無圖徵集中（募集中）" style="font-size:0.85rem;">🔍</span>':''}</td>
       <td><span class="band-pill" style="background:${c}22;color:${c}">${b.band||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td onclick="event.stopPropagation()" style="min-width:140px;">
@@ -1702,6 +1709,7 @@ const BULK_SELECT_OPTIONS = {
   size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","100mm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","44mm圓形","32mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","金屬","約80mm布偶胸章","刺繡布章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
   is_lottery: ["是","否"],
+  noimg: ["是","否"],
 };
 
 function updateBulkValueInput(){
@@ -1749,14 +1757,14 @@ function applyBulkEdit(){
   if(clearMode){
     // 🗑 清空模式:破壞性,需明確二次確認
     if(!confirm(`確定要把勾選的 ${selectedIds.size} 筆的「${fieldLabel}」清空嗎?\n原本記載的值會被刪掉,無法復原。`)) return;
-    finalVal = (field === 'is_lottery') ? false : '';
+    finalVal = (field === 'is_lottery' || field === 'noimg') ? false : '';
   } else {
     const select=document.getElementById('bulk-value-select');
     const input=document.getElementById('bulk-value');
     const val = select.style.display !== 'none' ? select.value : input.value.trim();
     if(!val){showToast('請輸入新的值(或勾「🗑 清空此欄」來清空)');return;}
     // is_lottery 是 boolean,把字串「是/否」轉成 true/false
-    finalVal = (field === 'is_lottery') ? (val === '是') : val;
+    finalVal = (field === 'is_lottery' || field === 'noimg') ? (val === '是') : val;
   }
   let count=0;
   badges.forEach(b=>{
@@ -1867,6 +1875,7 @@ function openModal(idx=-1){
   document.getElementById('f-note').value=b.note||'';
   document.getElementById('f-admin-note').value=b.admin_note||'';
   document.getElementById('f-is-lottery').checked=!!b.is_lottery;
+  document.getElementById('f-noimg').checked=!!b.noimg;
   updateModalPath();
   document.getElementById('modal').classList.add('active');
   // 開啟 modal 後檢查 URL 是否已存在（編輯模式或新增帶值時）
@@ -2216,7 +2225,8 @@ async function saveSingle(){
     url:document.getElementById('f-url').value.trim(),
     note:document.getElementById('f-note').value.trim(),
     admin_note:document.getElementById('f-admin-note').value.trim(),
-    is_lottery:document.getElementById('f-is-lottery').checked};
+    is_lottery:document.getElementById('f-is-lottery').checked,
+    noimg:document.getElementById('f-noimg').checked};
   // 夢ノ結唱角色自動填衍生來源(admin_note 為空時)
   autoFillYumeAdminNote(badge);
   // 六欄位強警告(編輯模式排除自己)
