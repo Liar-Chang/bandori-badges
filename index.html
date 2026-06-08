@@ -876,7 +876,7 @@ let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
 const _noImgIds = new Set(); // 記錄圖片載入失敗的 badge id
 // Type 2「找不到圖檔」:noimg 旗標 → 卡片顯示「募集中」佔位圖,且視同無圖(被「隱藏無圖」排除/搜尋/下載)
-const SEEKING_IMG = 'https://liar-chang.github.io/bandori-badges/seeking-badge.png';
+const SEEKING_IMG = 'seeking-badge.png';
 function isNoImgFlag(b){ return !!b && (b.noimg===true || b.noimg===1 || b.noimg==='1'); }
 function imgUrl(b){ return isNoImgFlag(b) ? SEEKING_IMG : (IMG_BASE_URL + (b.id) + '.' + (b.ext || 'jpg')); }
 function isNoImg(b){ return _noImgIds.has(b.id) || isNoImgFlag(b); }
