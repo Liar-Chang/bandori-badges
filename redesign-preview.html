@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>改版原型 - BanG Dream! 徽章圖鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ════ 設計 tokens(正式版改版時,index.html 的硬編碼顏色全部收進這裡)════ */
+:root{
+  --bg:#faf9f5; --surface:#fff; --surface-glass:rgba(255,255,255,.78);
+  --border:#ece9e0; --text:#1a1a1a; --muted:#777;
+  --accent:#5a4fcf;            /* 選定單一樂團時由 JS 換成團色 */
+  --radius:14px;
+  --pink1:#ff6eb4; --pink2:#ff2d78; --pink3:#c0005a;
+  --shadow:0 4px 20px rgba(90,79,207,.10);
+}
+[data-theme="dark"]{
+  --bg:#141414; --surface:#1e1e1e; --surface-glass:rgba(26,26,30,.80);
+  --border:#2e2e2e; --text:#f0f0f0; --muted:#999;
+  --shadow:0 4px 20px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);
+  background-image:url('https://liar-chang.github.io/bandori-badges/images/bg.png');
+  background-size:cover;background-attachment:fixed;background-position:center;
+}
+[data-theme="dark"] body{background-blend-mode:multiply;background-color:#3a3a44}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+
+/* ════ Header(瘦身:單列)════ */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 16px;color:#fff;
+  background:linear-gradient(135deg,var(--pink1) 0%,var(--pink2) 40%,var(--pink3) 100%);
+}
+.logo{font-size:1.15rem;font-weight:900;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.logo .en{font-family:'Boogaloo',cursive;font-weight:400;font-size:1.3rem;letter-spacing:.5px}
+.proto-tag{font-size:.62rem;font-weight:500;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:99px;vertical-align:middle}
+.hdr-right{display:flex;gap:6px}
+.hdr-right button{
+  background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;
+  padding:6px 10px;font-size:.85rem;white-space:nowrap;
+}
+.lang-wrap{position:relative}
+#lang-menu{
+  display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:450;min-width:132px;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--shadow);overflow:hidden;
+}
+#lang-menu.open{display:block}
+#lang-menu button{
+  display:block;width:100%;text-align:left;padding:11px 14px;border:none;background:none;
+  color:var(--text);font-size:.9rem;border-radius:0;
+}
+#lang-menu button.cur{font-weight:700;color:var(--accent)}
+#lang-menu button:hover{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+
+/* ════ 指令列(sticky)════ */
+.cmdbar{
+  position:sticky;top:0;z-index:400;
+  display:flex;gap:8px;align-items:center;padding:8px 16px;
+  background:var(--surface-glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.cmdbar input[type=search]{
+  flex:1;min-width:0;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:16px; /* iOS 防自動縮放 */
+  background:var(--surface);color:var(--text);outline:none;
+}
+.cmdbar input[type=search]:focus{border-color:var(--accent)}
+.cmdbar select{
+  padding:9px 8px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);
+  color:var(--text);font-size:.85rem;
+}
+.btn-ghost{
+  padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);
+  color:var(--text);font-size:.85rem;white-space:nowrap;
+}
+
+/* ════ 樂團/角色軌道 ════ */
+.rail{
+  display:flex;gap:8px;align-items:center;padding:10px 16px 4px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.rail::-webkit-scrollbar{display:none}
+.rail-label{font-size:.75rem;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;flex-shrink:0;
+  padding:8px 14px;border-radius:99px;border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-size:.85rem;line-height:1;
+  transition:border-color .15s, box-shadow .15s;
+}
+.chip .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.chip .cnt{font-size:.72rem;color:var(--muted)}
+.chip.on{border-color:var(--chip-c,#5a4fcf);box-shadow:0 0 0 1px var(--chip-c,#5a4fcf) inset;font-weight:700}
+.chip.on .cnt{color:var(--chip-c)}
+.chip-more{border-style:dashed;color:var(--muted)}
+.char-rail .chip{padding:7px 12px;font-size:.82rem}
+
+/* ════ 已套用 chips 列 ════ */
+.active-chips{
+  display:flex;gap:6px;align-items:center;padding:6px 16px;overflow-x:auto;scrollbar-width:none;
+}
+.active-chips::-webkit-scrollbar{display:none}
+.achip{
+  display:inline-flex;align-items:center;gap:5px;flex-shrink:0;
+  padding:5px 10px;border-radius:99px;font-size:.78rem;line-height:1;
+  background:color-mix(in srgb,var(--accent) 12%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);color:var(--text);
+}
+.achip b{font-weight:500;color:var(--muted);font-size:.72rem}
+.achip .x{border:none;background:none;color:var(--muted);font-size:.85rem;padding:0 0 0 2px;line-height:1}
+.aclear{border:none;background:none;color:var(--accent);font-size:.78rem;white-space:nowrap;text-decoration:underline}
+
+/* ════ 主版面:精簡側欄 + 內容 ════ */
+.layout{display:flex;gap:14px;padding:10px 16px 90px;max-width:1500px;margin:0 auto}
+main{flex:1;min-width:0}
+
+/* 側欄(桌面)= 抽屜(手機):同一個節點 */
+#filter-panel{
+  width:212px;flex-shrink:0;align-self:flex-start;position:sticky;top:64px;
+  max-height:calc(100dvh - 80px);overflow-y:auto;
+  background:var(--surface-glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;
+}
+#filter-panel details{border-bottom:1px solid var(--border)}
+#filter-panel details:last-of-type{border-bottom:none}
+#filter-panel summary{
+  list-style:none;display:flex;justify-content:space-between;align-items:center;
+  padding:11px 4px;font-size:.85rem;font-weight:500;cursor:pointer;user-select:none;
+}
+#filter-panel summary::-webkit-details-marker{display:none}
+#filter-panel summary .sum-r{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:400}
+#filter-panel summary .badge{
+  background:var(--accent);color:#fff;border-radius:99px;font-size:.68rem;
+  padding:1px 7px;font-weight:700;
+}
+#filter-panel summary .arr{transition:transform .2s;font-size:.7rem}
+#filter-panel details[open] summary .arr{transform:rotate(180deg)}
+.acc-body{padding:0 4px 10px;max-height:240px;overflow-y:auto}
+.acc-body label{
+  display:flex;align-items:center;gap:7px;padding:7px 2px;font-size:.82rem;cursor:pointer;
+}
+.acc-body input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0}
+.acc-body .c{color:var(--muted);font-size:.72rem;margin-left:auto}
+.acc-search{
+  width:100%;padding:7px 9px;margin:2px 0 6px;border:1.5px solid var(--border);
+  border-radius:8px;font-size:.8rem;background:var(--surface);color:var(--text);outline:none;
+}
+.sheet-handle,.sheet-head,.sheet-footer{display:none}
+
+/* ════ 章節標題 + 結果列 ════ */
+.chapter{
+  border-left:5px solid var(--accent);padding:4px 0 6px 12px;margin:4px 0 10px;
+}
+.chapter h2{font-size:1.15rem;font-weight:900}
+.chapter .sub{font-size:.8rem;color:var(--muted);margin-top:2px}
+.chapter .pbar{height:6px;background:var(--border);border-radius:3px;max-width:260px;margin-top:6px;overflow:hidden}
+.chapter .pbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+.result-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:.8rem;color:var(--muted);padding:2px 0 10px}
+.rb-actions{margin-left:auto;display:flex;gap:6px}
+.rb-btn{border:1.5px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:5px 10px;font-size:.76rem;white-space:nowrap}
+
+/* ════ 圖鑑網格 ════ */
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:12px}
+.divider{
+  grid-column:1/-1;display:flex;align-items:center;gap:12px;color:var(--muted);
+  font-size:.8rem;padding:8px 0 0;
+}
+.divider::before,.divider::after{content:'';flex:1;border-top:1px solid var(--border)}
+.divider b{font-family:'Boogaloo',cursive;font-size:1.05rem;font-weight:400;color:var(--text)}
+.card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:10px;cursor:pointer;transition:transform .15s, box-shadow .15s, border-color .15s;
+  display:flex;flex-direction:column;gap:6px;position:relative;
+}
+@media(hover:hover){
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+}
+.imgwrap{position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:10px}
+.imgwrap.round{border-radius:50%}
+.imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.imgwrap:not(.round) img{object-fit:contain} /* 方形/異形不裁切 */
+.imgwrap.round::after{ /* 金屬胸章內圈 */
+  content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:inset 0 0 10px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.4);
+}
+.imgwrap .noimg{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  background:var(--border);font-size:2rem;
+}
+.tag-new{
+  position:absolute;top:6px;right:6px;z-index:2;background:var(--pink2);color:#fff;
+  font-size:.62rem;font-weight:700;border-radius:6px;padding:2px 6px;letter-spacing:.5px;
+}
+.tag-lot{position:absolute;bottom:6px;right:6px;z-index:2;font-size:.8rem}
+.plate{
+  font-family:ui-monospace,Consolas,monospace;font-size:.68rem;color:var(--muted);
+  letter-spacing:.5px;
+}
+.card .nm{font-size:.85rem;font-weight:700;line-height:1.3}
+.card .bd{
+  align-self:flex-start;font-size:.66rem;color:#fff;border-radius:6px;padding:2px 7px;font-weight:500;
+}
+.card .sr{font-size:.72rem;color:var(--muted);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* ════ 封面目錄頁(空狀態)════ */
+.toc{padding:6px 0}
+.toc h2{font-size:1.05rem;font-weight:900;margin:8px 0 10px}
+.toc h2 small{font-weight:400;font-size:.75rem;color:var(--muted);margin-left:8px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:12px}
+.toc-tile{
+  background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--bc,#888);
+  border-radius:var(--radius);padding:14px 14px 12px;cursor:pointer;text-align:left;
+  transition:transform .15s, box-shadow .15s;
+}
+@media(hover:hover){.toc-tile:hover{transform:translateY(-3px);box-shadow:var(--shadow)}}
+.toc-tile .t-name{font-weight:900;font-size:.95rem;line-height:1.25;color:var(--text)}
+.toc-tile .t-cnt{font-size:.78rem;color:var(--muted);margin-top:3px}
+.toc-tile .pbar{height:4px;background:var(--border);border-radius:2px;margin-top:9px;overflow:hidden}
+.toc-tile .pbar i{display:block;height:100%;background:var(--bc,#888);border-radius:2px}
+.toc-small{display:flex;flex-wrap:wrap;gap:8px}
+.toc-note{font-size:.72rem;color:var(--muted);margin-top:14px}
+
+/* ════ 詳細頁 overlay(含 ←→ 翻頁)════ */
+#detail{
+  position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.55);
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+#detail.open{display:flex}
+.d-card{
+  background:var(--surface);border-radius:18px;max-width:430px;width:100%;
+  max-height:90dvh;overflow-y:auto;padding:18px;position:relative;
+}
+.d-card .d-close{position:absolute;top:10px;right:12px;border:none;background:none;font-size:1.3rem;color:var(--muted)}
+.d-imgwrap{width:min(240px,60vw);margin:6px auto 12px;position:relative;aspect-ratio:1/1;overflow:hidden}
+.d-imgwrap.round{border-radius:50%}
+.d-imgwrap.round::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 14px rgba(0,0,0,.22), inset 0 0 0 1px rgba(255,255,255,.4);pointer-events:none}
+.d-imgwrap img{width:100%;height:100%;object-fit:cover}
+.d-imgwrap:not(.round) img{object-fit:contain}
+.d-rows{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.85rem}
+.d-rows dt{color:var(--muted);white-space:nowrap}
+.d-rows dd{word-break:break-word}
+.d-rows a{color:var(--accent)}
+.d-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.d-nav button{
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text);
+  border-radius:10px;padding:8px 16px;font-size:.9rem;
+}
+.d-nav button:disabled{opacity:.35}
+.d-nav .d-pos{font-size:.75rem;color:var(--muted)}
+
+/* ════ 浮動鈕(公告/歌曲)+ 面板 ════ */
+.fab-stack{
+  position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:10px;z-index:480;
+}
+.fab{
+  width:46px;height:46px;border-radius:50%;border:none;color:#fff;font-size:1.15rem;
+  background:linear-gradient(135deg,var(--pink1),var(--pink3));
+  box-shadow:0 4px 14px rgba(192,0,90,.32);
+}
+.fab-panel{
+  position:fixed;right:12px;bottom:calc(124px + env(safe-area-inset-bottom));
+  width:min(370px,calc(100vw - 24px));max-height:58vh;display:none;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:485;overflow:hidden;
+}
+.fab-panel.open{display:flex}
+.fab-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.fab-tab{flex:1;padding:10px;border:none;background:none;color:var(--muted);font-size:.85rem;border-bottom:2px solid transparent}
+.fab-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.fab-panel-body{overflow-y:auto;padding:10px 14px}
+.news-item{padding:8px 0;border-bottom:1px solid var(--border)}
+.news-item:last-child{border-bottom:none}
+.news-date{font-size:.75rem;font-weight:700;color:var(--accent)}
+.news-body{font-size:.78rem;white-space:pre-line;color:var(--text);margin-top:2px;line-height:1.5}
+.news-empty{font-size:.8rem;color:var(--muted);padding:14px;text-align:center}
+.song-card{display:flex;gap:10px;padding:12px;align-items:center}
+.song-card img{width:96px;height:54px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.song-meta{min-width:0}
+.song-label{font-size:.68rem;color:var(--muted)}
+.song-title{font-size:.88rem;font-weight:700}
+.song-artist{font-size:.75rem;color:var(--muted)}
+.song-links{display:flex;gap:12px;margin-top:4px;font-size:.78rem}
+.song-links a{color:var(--accent);text-decoration:none;font-weight:500}
+
+/* ════ Toast ════ */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(16px);
+  bottom:calc(76px + env(safe-area-inset-bottom));z-index:800;
+  background:rgba(20,20,20,.92);color:#fff;padding:10px 18px;border-radius:99px;
+  font-size:.85rem;opacity:0;pointer-events:none;transition:.25s;max-width:88vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ════ 頁尾 ════ */
+.site-footer{
+  text-align:center;padding:1.2rem 1rem 1.4rem;font-size:.76rem;color:var(--muted);
+  background:var(--surface-glass);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-top:1px solid var(--border);
+}
+.f-copy{font-size:.68rem;margin:.3rem 0 .7rem}
+.f-btns{display:flex;justify-content:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
+.f-pill{
+  font-size:.76rem;padding:.4rem 1rem;border-radius:99px;border:1.5px solid var(--accent);
+  background:transparent;color:var(--accent);text-decoration:none;
+  display:inline-flex;align-items:center;gap:.3rem;cursor:pointer;
+}
+.f-contact-label{font-size:.7rem;margin-bottom:.4rem}
+.f-links{display:flex;justify-content:center;gap:1.1rem;flex-wrap:wrap}
+.f-links a,.f-links span{color:var(--muted);text-decoration:none;cursor:pointer}
+
+/* ════ 手機:篩選 pill + 底部抽屜 ════ */
+#pill{
+  display:none;position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(14px + env(safe-area-inset-bottom));z-index:500;
+  border:none;border-radius:99px;padding:12px 22px;font-size:.9rem;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--pink1),var(--pink3));
+  box-shadow:0 6px 18px rgba(192,0,90,.35);white-space:nowrap;
+}
+#scrim{position:fixed;inset:0;z-index:590;background:rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:opacity .22s}
+body.sheet-open #scrim{opacity:1;pointer-events:auto}
+
+@media(max-width:800px){
+  .layout{padding:8px 12px 90px;gap:0}
+  .rail{padding:8px 12px 2px}
+  .active-chips{padding:6px 12px}
+  .cmdbar{padding:8px 12px}
+  #grid{grid-template-columns:repeat(auto-fill,minmax(106px,1fr));gap:9px}
+  .card{padding:7px;gap:4px}
+  .card .nm{font-size:.78rem}
+  .toc-grid{grid-template-columns:1fr 1fr}
+  #pill{display:block}
+  /* 手機:FAB 疊在 pill 右側上方,頁尾留出 pill 空間 */
+  .fab-stack{bottom:calc(14px + env(safe-area-inset-bottom))}
+  .site-footer{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  body.sheet-open{overflow:hidden}
+  /* 同一個 #filter-panel 變成底部抽屜 */
+  #filter-panel{
+    position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;z-index:600;
+    max-height:82dvh;border-radius:18px 18px 0 0;border-bottom:none;
+    transform:translateY(105%);transition:transform .26s ease;
+    padding:0 16px calc(0px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;
+  }
+  body.sheet-open #filter-panel{transform:translateY(0)}
+  .sheet-handle{
+    display:block;width:42px;height:5px;border-radius:3px;background:var(--border);
+    margin:10px auto 2px;flex-shrink:0;
+  }
+  .sheet-head{
+    display:flex;justify-content:space-between;align-items:center;padding:6px 2px 8px;flex-shrink:0;
+    font-size:.95rem;font-weight:700;
+  }
+  .sheet-head button{border:none;background:none;font-size:1.15rem;color:var(--muted);padding:4px 8px}
+  .panel-scroll{overflow-y:auto;flex:1;min-height:0}
+  .sheet-footer{
+    display:flex;gap:10px;padding:10px 2px calc(10px + env(safe-area-inset-bottom));flex-shrink:0;
+    border-top:1px solid var(--border);background:var(--surface-glass);
+  }
+  .sheet-footer .apply{
+    flex:1;border:none;border-radius:12px;padding:13px 0;font-size:.95rem;font-weight:700;color:#fff;
+    background:linear-gradient(135deg,var(--pink1),var(--pink3));
+  }
+  .sheet-footer .rst{
+    border:1.5px solid var(--border);background:var(--surface);color:var(--text);
+    border-radius:12px;padding:13px 18px;font-size:.9rem;
+  }
+}
+@media(min-width:801px){
+  .panel-scroll{overflow:visible}
+}
+@media(max-width:480px){
+  #grid{grid-template-columns:repeat(3,1fr)}
+  .logo{font-size:1rem}.logo .en{font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo"><span class="en">BanG Dream!</span> 徽章圖鑑 <span class="proto-tag">改版原型</span></div>
+  <div class="hdr-right">
+    <div class="lang-wrap">
+      <button id="btn-lang" onclick="toggleLangMenu()" aria-label="切換語言">🌐 繁中 ▾</button>
+      <div id="lang-menu">
+        <button data-lang="zh-TW" onclick="setLang('zh-TW')">繁體中文</button>
+        <button data-lang="ja" onclick="setLang('ja')">日本語</button>
+        <button data-lang="en" onclick="setLang('en')">English</button>
+        <button data-lang="ko" onclick="setLang('ko')">한국어</button>
+      </div>
+    </div>
+    <button id="btn-theme" onclick="toggleTheme()" aria-label="切換主題">🌙</button>
+  </div>
+</header>
+
+<div class="cmdbar">
+  <input type="search" id="search" placeholder="🔍 角色、版本、活動…" oninput="state.q=this.value.trim().toLowerCase();applyFilters()">
+  <select id="sort" onchange="state.sort=this.value;applyFilters()">
+    <option value="year-desc">發售日 新→舊</option>
+    <option value="year-asc">發售日 舊→新</option>
+    <option value="char">角色順序</option>
+  </select>
+  <button class="btn-ghost" id="btn-reset" onclick="resetAll()">重置</button>
+</div>
+
+<nav class="rail" id="band-rail" aria-label="樂團"></nav>
+<nav class="rail char-rail" id="char-rail" aria-label="角色" style="display:none"></nav>
+<div class="active-chips" id="active-chips" style="display:none"></div>
+
+<div class="layout">
+  <aside id="filter-panel" aria-label="進階篩選">
+    <div class="sheet-handle" onclick="closeSheet()"></div>
+    <div class="sheet-head"><span id="sheet-title">進階篩選</span><button onclick="closeSheet()" aria-label="關閉">✕</button></div>
+    <div class="panel-scroll" id="panel-scroll"></div>
+    <div class="sheet-footer">
+      <button class="apply" id="sheet-apply" onclick="closeSheet()">顯示結果</button>
+      <button class="rst" id="sheet-rst" onclick="resetAll()">重置</button>
+    </div>
+  </aside>
+  <main>
+    <div id="content"></div>
+  </main>
+</div>
+
+<button id="pill" onclick="openSheet()">篩選</button>
+<div id="scrim" onclick="closeSheet()"></div>
+
+<div class="fab-stack">
+  <button class="fab" onclick="toggleSongPanel()" aria-label="推薦歌曲" title="推薦歌曲">🎵</button>
+  <button class="fab" onclick="toggleNewsPanel()" aria-label="公告與更新日誌" title="公告/更新日誌">📋</button>
+</div>
+<div class="fab-panel" id="song-panel"></div>
+<div class="fab-panel" id="news-panel">
+  <div class="fab-tabs">
+    <button class="fab-tab active" id="tab-pin" onclick="switchNewsTab('pin')">📌 公告</button>
+    <button class="fab-tab" id="tab-log" onclick="switchNewsTab('log')">📢 更新日誌</button>
+  </div>
+  <div class="fab-panel-body" id="news-pin"></div>
+  <div class="fab-panel-body" id="news-log" style="display:none"></div>
+</div>
+<div id="toast"></div>
+
+<div id="detail" onclick="if(event.target===this)closeDetail()">
+  <div class="d-card">
+    <button class="d-close" onclick="closeDetail()" aria-label="關閉">✕</button>
+    <div id="d-body"></div>
+    <div class="d-nav">
+      <button id="d-prev" onclick="navDetail(-1)">‹ 上一個</button>
+      <span class="d-pos" id="d-pos"></span>
+      <button id="d-next" onclick="navDetail(1)">下一個 ›</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div id="f-author">作者：千早愛音的暴躁柯基</div>
+  <div class="f-copy">© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。</div>
+  <div class="f-btns">
+    <button class="f-pill" onclick="shareSite()" id="f-share">🔗 分享此網站</button>
+    <a class="f-pill" href="blog.html" id="f-blog">📝 開發日誌</a>
+  </div>
+  <div class="f-contact-label" id="f-contact">聯絡方式</div>
+  <div class="f-links">
+    <a href="https://www.threads.com/@liarforbarexamination" target="_blank" rel="noopener">Threads</a>
+    <a href="https://x.com/AnonsCorgi" target="_blank" rel="noopener">Twitter/X</a>
+    <span onclick="copyEmail()">📧 Email</span>
+    <a href="https://forms.gle/jgUJyQj4ob7Lx8LC7" target="_blank" rel="noopener" id="f-report">⚠ 錯誤回報</a>
+  </div>
+</footer>
+
+<script>
+/* ════ 與 index.html 相同的常數 ════ */
+const IMG_BASE_URL='https://liar-chang.github.io/bandori-badges/images/';
+const SEEKING_IMG='seeking-badge.png';
+const BAND_COLORS={"Poppin'Party":"#ff69b4","Roselia":"#1a2a6c","Afterglow":"#cc2222","Pastel*Palettes":"#7cc96e","Hello, Happy World!":"#f5c800","RAISE A SUILEN":"#88c020","Morfonica":"#42aadd","MyGO!!!!!":"#4488cc","Ave Mujica":"#991111","夢限大MewType":"#e060aa","millsage":"#b8d44a","一家Dumb Rock!":"#e85030","夢ノ結唱":"#a0c8bc","Glitter*Green":"#01DFA5","CRYCHIC":"#8cb3d4","Sumimi":"#BBFF77","跨團合照":"#9e9e9e","跨企劃合照":"#78909c","其他":"#888"};
+/* CHAR_COLORS:index.html 既有 25 位 + 經典七團 35 位官方印象色
+   (ガルパ遊戲資料 colorCode,Bestdori × Bandori Wiki 雙來源核對,2026/06/10) */
+const CHAR_COLORS={
+  /* MyGO!!!!! / Ave Mujica / 夢限大 / millsage / 一家DR / 夢ノ結唱(與 index.html 相同) */
+  "高松燈":"#77BBDD","千早愛音":"#FF8899","要樂奈":"#77DD77","長崎爽世":"#FFDD88","椎名立希":"#7777AA",
+  "三角初華":"#BB9955","若葉睦":"#779977","八幡海鈴":"#335566","祐天寺若麥":"#AA4477","豐川祥子":"#7799CC",
+  "仲町阿拉蕾":"#FFEE55","宮永野乃花":"#FFBBCC","峰月律":"#4477CC","藤都子":"#9977CC","千石由乃":"#EE5577",
+  "汐見螢":"#99FF99","伊澤棗":"#FF4444","琴平凪":"#5555FF","濱崎茉幌":"#77FFFF","和泉朋花":"#EE99EE",
+  "須賀蕾葉":"#FF7700","馬橋心玖":"#22CCFF","矢倉蓬咲":"#448888","梅里千櫻梨":"#FF55AA","四宮寧月":"#9999FF",
+  "POPY":"#88c8b8","ROSE":"#b8a0d4","Pastel":"#f5b8c8","Halo":"#e0d088","Aver":"#c87878",
+  /* Poppin'Party */
+  "戶山香澄":"#FF5522","花園多惠":"#0077DD","牛込里美":"#FF55BB","山吹紗綾":"#FFCC11","市谷有咲":"#AA66DD",
+  /* Afterglow */
+  "美竹蘭":"#EE0022","青葉摩卡":"#00CCAA","上原緋瑪麗":"#FF9999","宇田川巴":"#BB0033","羽澤鶇":"#FFEE88",
+  /* Pastel*Palettes */
+  "丸山彩":"#FF88BB","冰川日菜":"#55DDEE","白鷺千聖":"#FFEEAA","大和麻彌":"#99DD88","若宮伊芙":"#DDBBFF",
+  /* Roselia */
+  "湊友希那":"#881188","冰川紗夜":"#00AABB","今井莉莎":"#DD2200","宇田川亞子":"#DD0088","白金燐子":"#BBBBBB",
+  /* Hello, Happy World! */
+  "弦卷心":"#FFEE22","瀨田薰":"#AA33CC","北澤育美":"#FF9922","松原花音":"#44DDFF","奧澤美咲":"#006699",
+  /* Morfonica */
+  "倉田真白":"#6677CC","桐谷透子":"#EE6666","廣町七深":"#EE7744","二葉筑紫":"#EE7788","八潮瑠唯":"#669988",
+  /* RAISE A SUILEN */
+  "和奏瑞依(LAYER)":"#CC0000","朝日六花(ROCK)":"#AAEE22","佐藤益木(MASKING)":"#EEBB44","鳰原令王那(PAREO)":"#FF99BB","珠手知由(CHU2)":"#00BBFF",
+  "default":"#c0bef0"
+};
+/* 色碼解析鏈:精確 → 去括號(Doloris/LAYER 形態繼承本體)→ 全團=團色 → 所屬樂團色 → default */
+function charColor(c){
+  if(CHAR_COLORS[c])return CHAR_COLORS[c];
+  const base=c.replace(/\(.+?\)$/,'');
+  if(CHAR_COLORS[base])return CHAR_COLORS[base];
+  if(c.endsWith('全團'))return bandColor(c.slice(0,-2));
+  const b=CHAR_TO_BAND[c]||CHAR_TO_BAND[base];
+  if(b)return bandColor(b);
+  return CHAR_COLORS.default;
+}
+const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes","Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","Glitter*Green","CRYCHIC","Sumimi","夢ノ結唱","跨團合照","跨企劃合照","其他"];
+const BACKGROUND_BANDS=new Set(["Glitter*Green","CRYCHIC","Sumimi"]);
+const INDEPENDENT_BANDS=new Set(["夢ノ結唱"]);
+const MAIN_BANDS=BAND_ORDER.filter(b=>!BACKGROUND_BANDS.has(b)&&!INDEPENDENT_BANDS.has(b)&&!["跨團合照","跨企劃合照","其他"].includes(b));
+const CHAR_ORDER=["Poppin'Party全團","Afterglow全團","Pastel*Palettes全團","Roselia全團","Hello, Happy World!全團","Morfonica全團","RAISE A SUILEN全團","MyGO!!!!!全團","Ave Mujica全團","夢限大MewType全團","millsage全團","一家Dumb Rock!全團","Glitter*Green全團","CRYCHIC全團","Sumimi全團","POPY","ROSE","Pastel","Halo","Aver","戶山香澄","花園多惠","牛込里美","山吹紗綾","市谷有咲","美竹蘭","青葉摩卡","上原緋瑪麗","宇田川巴","羽澤鶇","丸山彩","冰川日菜","白鷺千聖","大和麻彌","若宮伊芙","湊友希那","冰川紗夜","今井莉莎","宇田川亞子","白金燐子","弦卷心","瀨田薰","北澤育美","松原花音","奧澤美咲","倉田真白","桐谷透子","廣町七深","二葉筑紫","八潮瑠唯","和奏瑞依(LAYER)","朝日六花(ROCK)","佐藤益木(MASKING)","鳰原令王那(PAREO)","珠手知由(CHU2)","高松燈","千早愛音","要樂奈","長崎爽世","椎名立希","三角初華","若葉睦","八幡海鈴","祐天寺若麥","豐川祥子","三角初華(Doloris)","若葉睦(Mortis)","八幡海鈴(Timoris)","祐天寺若麥(Amoris)","豐川祥子(Oblivionis)","仲町阿拉蕾","宮永野乃花","峰月律","藤都子","千石由乃","汐見螢","琴平凪","濱崎茉幌","伊澤棗","和泉朋花","須賀蕾葉","馬橋心玖","矢倉蓬咲","梅里千櫻梨","四宮寧月"];
+const ROUND_SIZES_SET=new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形','15.2cm圓形','15cm圓形']);
+function isBadgeRound(size){return !size||ROUND_SIZES_SET.has(size)}
+function bandColor(b){return BAND_COLORS[b]||'#888'}
+function getYear(y){if(!y)return'';const m=y.match(/(\d{4})年/);return m?m[1]:y}
+function isNoImgFlag(b){return !!b&&(b.noimg===true||b.noimg===1||b.noimg==='1')}
+function imgUrl(b){return isNoImgFlag(b)?SEEKING_IMG:(IMG_BASE_URL+b.id+'.'+(b.ext||'jpg'))}
+const _noImgIds=new Set();
+function isNoImg(b){return _noImgIds.has(b.id)||isNoImgFlag(b)}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+/* ════ 狀態 ════ */
+let all=[],filtered=[];
+const CHAR_TO_BAND={};
+const state={bands:new Set(),chars:new Set(),years:new Set(),series:new Set(),events:new Set(),
+  types:new Set(),sizes:new Set(),countries:new Set(),q:'',hideNoImg:false,hideLottery:false,
+  sort:'year-desc',moreBands:false};
+/* ════ 多語言(原型只翻介面字串;資料值的翻譯正式版沿用 index.html 的 LANGS)════ */
+const L10N={
+'zh-TW':{langName:'繁中',searchPh:'🔍 角色、版本、活動…',sortNew:'發售日 新→舊',sortOld:'發售日 舊→新',sortChar:'角色順序',reset:'重置',adv:'進階篩選',more:'更多 ▾',clearAll:'清除全部',
+ bands:'樂團',chars:'角色',years:'年份',series:'版本・工藝',events:'活動',types:'類型',sizes:'尺寸',countries:'販售/活動地',q:'搜尋',opts:'顯示選項',
+ hideNoimg:'隱藏無圖徽章',hideLot:'隱藏抽選徽章',accSearch:'搜尋{d}…',applyN:'顯示 {n} 枚',applyToc:'顯示目錄',pill:'篩選',unit:'枚',
+ tocTitle:'📖 圖鑑目錄',tocSub:'共收錄 {n} 枚 · 點選樂團開始',tocOthers:'其他章節',tocCollect:'蒐集',tocNote:'※ 蒐集進度為示意數據,正式版串接登入後的蒐集記錄。',
+ chapterSub:'全 {t} 枚 · 已蒐集 {c}({p}%)',demo:'(示意)',resultBar:'顯示 {a} / {b} 枚',
+ dSeries:'版本',dDate:'發售日',dType:'類型',dSize:'尺寸',dCountry:'販售地',dEvent:'活動',dNote:'備註',dLottery:'抽選',dYes:'🎲 是',prev:'上一個',next:'下一個',unknownYear:'未知',
+ dl:'下載',share:'分享',shareCopied:'已複製網址!(正式版會含篩選條件+QR code)',dlStub:'原型未實作下載,正式版沿用現有匯出功能',noPinned:'目前沒有置頂公告',songLabel:'推薦歌曲',emailCopied:'已複製 Email!',tabPin:'📌 公告',tabLog:'📢 更新日誌',fShare:'🔗 分享此網站',fBlog:'📝 開發日誌',fContact:'聯絡方式',fReport:'⚠ 錯誤回報',fAuthor:'作者:千早愛音的暴躁柯基'},
+'ja':{langName:'日本語',searchPh:'🔍 キャラ、バージョン、イベント…',sortNew:'発売日 新→旧',sortOld:'発売日 旧→新',sortChar:'キャラ順',reset:'リセット',adv:'詳細フィルター',more:'もっと ▾',clearAll:'すべて解除',
+ bands:'バンド',chars:'キャラ',years:'年',series:'バージョン・加工',events:'イベント',types:'タイプ',sizes:'サイズ',countries:'販売地',q:'検索',opts:'表示オプション',
+ hideNoimg:'画像なしを隠す',hideLot:'抽選品を隠す',accSearch:'{d}を検索…',applyN:'{n}件を表示',applyToc:'目次を表示',pill:'絞り込み',unit:'件',
+ tocTitle:'📖 図鑑もくじ',tocSub:'全{n}件収録 · バンドを選んでスタート',tocOthers:'その他の章',tocCollect:'収集',tocNote:'※ 収集進捗はサンプル数値。正式版はログイン後の記録と連動します。',
+ chapterSub:'全{t}件 · 収集済み {c}({p}%)',demo:'(サンプル)',resultBar:'{a} / {b}件を表示',
+ dSeries:'バージョン',dDate:'発売日',dType:'タイプ',dSize:'サイズ',dCountry:'販売地',dEvent:'イベント',dNote:'メモ',dLottery:'抽選',dYes:'🎲 あり',prev:'前へ',next:'次へ',unknownYear:'不明',
+ dl:'保存',share:'共有',shareCopied:'URLをコピーしました!(正式版はフィルター+QR対応)',dlStub:'プロトタイプ未実装。正式版は既存のエクスポート機能を継承',noPinned:'固定お知らせはありません',songLabel:'おすすめ楽曲',emailCopied:'Emailをコピーしました!',tabPin:'📌 お知らせ',tabLog:'📢 更新履歴',fShare:'🔗 このサイトを共有',fBlog:'📝 開発日誌',fContact:'お問い合わせ',fReport:'⚠ 不具合報告',fAuthor:'作者:千早愛音的暴躁柯基'},
+'en':{langName:'EN',searchPh:'🔍 Character, version, event…',sortNew:'Release new→old',sortOld:'Release old→new',sortChar:'Character order',reset:'Reset',adv:'Filters',more:'More ▾',clearAll:'Clear all',
+ bands:'Band',chars:'Character',years:'Year',series:'Version',events:'Event',types:'Type',sizes:'Size',countries:'Region',q:'Search',opts:'Display options',
+ hideNoimg:'Hide badges without images',hideLot:'Hide lottery badges',accSearch:'Search {d}…',applyN:'Show {n} badges',applyToc:'Show contents',pill:'Filter',unit:'',
+ tocTitle:'📖 Contents',tocSub:'{n} badges · pick a band to start',tocOthers:'Other chapters',tocCollect:'collected',tocNote:'※ Progress bars are demo data; the real version syncs your collection records after login.',
+ chapterSub:'{t} badges · {c} collected ({p}%)',demo:'(demo)',resultBar:'Showing {a} / {b}',
+ dSeries:'Version',dDate:'Release date',dType:'Type',dSize:'Size',dCountry:'Region',dEvent:'Event',dNote:'Note',dLottery:'Lottery',dYes:'🎲 Yes',prev:'Prev',next:'Next',unknownYear:'Unknown',
+ dl:'Download',share:'Share',shareCopied:'URL copied! (Full version adds filter params + QR)',dlStub:'Not in the prototype — the full version keeps the existing export',noPinned:'No pinned announcements',songLabel:'Featured song',emailCopied:'Email copied!',tabPin:'📌 News',tabLog:'📢 Changelog',fShare:'🔗 Share this site',fBlog:'📝 Dev log',fContact:'Contact',fReport:'⚠ Report an issue',fAuthor:'Author: 千早愛音的暴躁柯基'},
+'ko':{langName:'한국어',searchPh:'🔍 캐릭터, 버전, 이벤트…',sortNew:'발매일 신→구',sortOld:'발매일 구→신',sortChar:'캐릭터 순',reset:'초기화',adv:'상세 필터',more:'더 보기 ▾',clearAll:'모두 해제',
+ bands:'밴드',chars:'캐릭터',years:'연도',series:'버전·가공',events:'이벤트',types:'타입',sizes:'사이즈',countries:'판매지',q:'검색',opts:'표시 옵션',
+ hideNoimg:'이미지 없는 배지 숨기기',hideLot:'추첨 배지 숨기기',accSearch:'{d} 검색…',applyN:'{n}개 표시',applyToc:'목차 표시',pill:'필터',unit:'개',
+ tocTitle:'📖 도감 목차',tocSub:'총 {n}개 수록 · 밴드를 선택하세요',tocOthers:'기타 챕터',tocCollect:'수집',tocNote:'※ 수집 진행도는 데모 데이터입니다. 정식 버전은 로그인 후 기록과 연동됩니다.',
+ chapterSub:'총 {t}개 · 수집 {c}({p}%)',demo:'(데모)',resultBar:'{a} / {b}개 표시',
+ dSeries:'버전',dDate:'발매일',dType:'타입',dSize:'사이즈',dCountry:'판매지',dEvent:'이벤트',dNote:'메모',dLottery:'추첨',dYes:'🎲 예',prev:'이전',next:'다음',unknownYear:'미상',
+ dl:'다운로드',share:'공유',shareCopied:'URL 복사 완료! (정식판은 필터+QR 지원)',dlStub:'프로토타입 미구현 — 정식판은 기존 내보내기 유지',noPinned:'고정 공지가 없습니다',songLabel:'추천 곡',emailCopied:'Email 복사 완료!',tabPin:'📌 공지',tabLog:'📢 업데이트',fShare:'🔗 사이트 공유',fBlog:'📝 개발 일지',fContact:'연락처',fReport:'⚠ 오류 신고',fAuthor:'작성자: 千早愛音的暴躁柯基'}
+};
+let curLang=localStorage.getItem('proto-lang')||'zh-TW';
+if(!L10N[curLang])curLang='zh-TW';
+function t(k){return (L10N[curLang]&&L10N[curLang][k])??L10N['zh-TW'][k]??k}
+function fmt(k,vars){let s=t(k);for(const v in vars)s=s.replace('{'+v+'}',vars[v]);return s}
+function dimLabel(d){return t(d)}
+function toggleLangMenu(){document.getElementById('lang-menu').classList.toggle('open')}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.lang-wrap'))document.getElementById('lang-menu').classList.remove('open');
+});
+function setLang(l){
+  curLang=l;localStorage.setItem('proto-lang',l);
+  document.getElementById('lang-menu').classList.remove('open');
+  document.documentElement.lang=l==='zh-TW'?'zh-Hant':l;
+  applyL10N();
+}
+function applyL10N(){
+  document.getElementById('search').placeholder=t('searchPh');
+  const s=document.getElementById('sort');
+  s.innerHTML=`<option value="year-desc">${t('sortNew')}</option><option value="year-asc">${t('sortOld')}</option><option value="char">${t('sortChar')}</option>`;
+  s.value=state.sort;
+  document.getElementById('btn-reset').textContent=t('reset');
+  document.getElementById('sheet-title').textContent=t('adv');
+  document.getElementById('sheet-rst').textContent=t('reset');
+  document.getElementById('d-prev').textContent='‹ '+t('prev');
+  document.getElementById('d-next').textContent=t('next')+' ›';
+  document.getElementById('btn-lang').textContent='🌐 '+t('langName')+' ▾';
+  document.querySelectorAll('#lang-menu button').forEach(b=>b.classList.toggle('cur',b.dataset.lang===curLang));
+  /* 頁尾 + FAB 面板 */
+  document.getElementById('f-author').textContent=t('fAuthor');
+  document.getElementById('f-share').textContent=t('fShare');
+  document.getElementById('f-blog').textContent=t('fBlog');
+  document.getElementById('f-contact').textContent=t('fContact');
+  document.getElementById('f-report').textContent=t('fReport');
+  document.getElementById('tab-pin').textContent=t('tabPin');
+  document.getElementById('tab-log').textContent=t('tabLog');
+  if(newsData)renderNews();
+  closePanel('song-panel'); /* 歌曲面板每次打開都重渲染,關掉即可 */
+  buildPanel();
+  applyFilters();
+  if(document.getElementById('detail').classList.contains('open'))renderDetail();
+}
+
+/* 蒐集進度 = 示意數據(deterministic,正式版接 Supabase 蒐集記錄) */
+function mockCollected(id){return (parseInt(id,10)*2654435761>>>0)%100<23}
+
+/* ════ 初始化 ════ */
+async function init(){
+  /* 本機 file:// 直接開檔時 fetch 會被擋 → 改抓線上版資料 */
+  try{
+    const r=await fetch('badges.json');
+    if(!r.ok)throw 0;
+    all=await r.json();
+  }catch{
+    try{
+      const r2=await fetch('https://liar-chang.github.io/bandori-badges/badges.json');
+      if(!r2.ok)throw 0;
+      all=await r2.json();
+    }catch{
+      document.getElementById('content').innerHTML=
+        '<div style="padding:40px 16px;text-align:center;color:var(--muted)">⚠️ 載入資料失敗(本機與線上都讀不到 badges.json)。<br>請檢查網路,或用本機伺服器開啟。</div>';
+      return;
+    }
+  }
+  all.forEach(b=>{
+    if(b.character&&!b.character.includes('x')&&!b.character.endsWith('全團')&&!CHAR_TO_BAND[b.character])
+      CHAR_TO_BAND[b.character]=b.band;
+  });
+  applyL10N(); /* 內含 buildPanel + applyFilters */
+}
+const _saved=localStorage.getItem('proto-theme');
+if(_saved==='dark')document.documentElement.setAttribute('data-theme','dark');
+function toggleTheme(){
+  const h=document.documentElement;
+  const d=h.getAttribute('data-theme')==='dark';
+  if(d)h.removeAttribute('data-theme');else h.setAttribute('data-theme','dark');
+  localStorage.setItem('proto-theme',d?'light':'dark');
+  document.getElementById('btn-theme').textContent=d?'🌙':'☀️';
+}
+
+/* ════ 篩選 ════ */
+function charMatch(b,c){
+  if(b.character===c)return true;
+  return (b.character||'').includes('x')&&b.character.split('x').map(s=>s.trim()).includes(c);
+}
+function matches(b){
+  if(state.q){
+    const hay=((b.id||'')+' '+(b.character||'')+' '+(b.series||'')+' '+(b.event||'')+' '+(b.band||'')+' '+(b.note||'')).toLowerCase();
+    if(!hay.includes(state.q))return false;
+  }
+  if(state.bands.size&&!state.bands.has(b.band))return false;
+  if(state.chars.size&&![...state.chars].some(c=>charMatch(b,c)))return false;
+  if(state.years.size&&!state.years.has(getYear(b.year)))return false;
+  if(state.series.size&&!state.series.has(b.series))return false;
+  if(state.events.size&&!state.events.has(b.event))return false;
+  if(state.types.size&&!state.types.has(b.type))return false;
+  if(state.sizes.size&&!state.sizes.has(b.size))return false;
+  if(state.countries.size&&!state.countries.has(b.country))return false;
+  if(state.hideNoImg&&isNoImg(b))return false;
+  if(state.hideLottery&&b.is_lottery)return false;
+  return true;
+}
+function hasAnyFilter(){
+  return state.q||state.bands.size||state.chars.size||state.years.size||state.series.size||
+    state.events.size||state.types.size||state.sizes.size||state.countries.size;
+}
+function sortList(res){
+  return res.slice().sort((a,b)=>{
+    if(state.sort==='char'){
+      const ai=CHAR_ORDER.indexOf(a.character||''),bi=CHAR_ORDER.indexOf(b.character||'');
+      const A=ai===-1?9999:ai,B=bi===-1?9999:bi;
+      if(A!==B)return A-B;
+      return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
+    }
+    const aL=!a.year?1:0,bL=!b.year?1:0;
+    if(aL!==bL)return aL-bL;
+    const ad=new Date((a.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'')||0);
+    const bd=new Date((b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'')||0);
+    const d=state.sort==='year-asc'?ad-bd:bd-ad;
+    if(d)return d;
+    return (a.id||'').localeCompare(b.id||'',undefined,{numeric:true});
+  });
+}
+function applyFilters(){
+  filtered=hasAnyFilter()?sortList(all.filter(matches)):[];
+  renderBandRail();renderCharRail();renderActiveChips();updateAccent();
+  renderContent();updatePanelBadges();updatePill();
+}
+function resetAll(){
+  ['bands','chars','years','series','events','types','sizes','countries'].forEach(k=>state[k].clear());
+  state.q='';document.getElementById('search').value='';
+  state.hideNoImg=false;state.hideLottery=false;
+  document.querySelectorAll('#filter-panel input[type=checkbox]').forEach(c=>c.checked=false);
+  applyFilters();
+}
+
+/* ════ 樂團/角色軌道 ════ */
+function toggleSel(dim,v){
+  const s=state[dim];
+  s.has(v)?s.delete(v):s.add(v);
+  if(dim==='bands'){ /* 換團時清掉不屬於所選團的角色 */
+    [...state.chars].forEach(c=>{
+      const cb=CHAR_TO_BAND[c]||(c.endsWith('全團')?c.slice(0,-2):null);
+      if(state.bands.size&&cb&&!state.bands.has(cb))state.chars.delete(c);
+    });
+    if(!state.bands.size)state.chars.clear();
+  }
+  applyFilters();
+}
+function renderBandRail(){
+  const counts={};all.forEach(b=>counts[b.band]=(counts[b.band]||0)+1);
+  const mk=b=>{
+    const c=bandColor(b),on=state.bands.has(b);
+    return `<button class="chip${on?' on':''}" style="--chip-c:${c}" onclick="toggleSel('bands','${esc(b).replace(/'/g,"\\'")}')">
+      <span class="dot" style="background:${c}"></span>${esc(b)}<span class="cnt">${counts[b]||0}</span></button>`;
+  };
+  const extra=BAND_ORDER.filter(b=>!MAIN_BANDS.includes(b)&&counts[b]);
+  const showExtra=state.moreBands||extra.some(b=>state.bands.has(b));
+  document.getElementById('band-rail').innerHTML=
+    MAIN_BANDS.filter(b=>counts[b]).map(mk).join('')+
+    (showExtra?extra.map(mk).join(''):
+      `<button class="chip chip-more" onclick="state.moreBands=true;renderBandRail()">${t('more')}</button>`);
+}
+function renderCharRail(){
+  const el=document.getElementById('char-rail');
+  if(!state.bands.size){el.style.display='none';return;}
+  const pool=all.filter(b=>state.bands.has(b.band));
+  const set=new Set();
+  pool.forEach(b=>{
+    if(!b.character)return;
+    if(b.character.includes('x')){
+      b.character.split('x').forEach(c=>{
+        const t=c.trim();
+        if(t&&CHAR_TO_BAND[t]&&state.bands.has(CHAR_TO_BAND[t]))set.add(t);
+      });
+    }else set.add(b.character);
+  });
+  const chars=[...CHAR_ORDER.filter(c=>set.has(c)),...[...set].filter(c=>!CHAR_ORDER.includes(c)).sort((a,b)=>a.localeCompare(b))];
+  if(!chars.length){el.style.display='none';return;}
+  el.style.display='flex';
+  el.innerHTML=`<span class="rail-label">${t('chars')}</span>`+chars.map(c=>{
+    const col=charColor(c),on=state.chars.has(c);
+    return `<button class="chip${on?' on':''}" style="--chip-c:${col}" onclick="toggleSel('chars','${esc(c).replace(/'/g,"\\'")}')">
+      <span class="dot" style="background:${col}"></span>${esc(c)}</button>`;
+  }).join('');
+}
+
+/* ════ 已套用 chips ════ */
+function renderActiveChips(){
+  const el=document.getElementById('active-chips');
+  const chips=[];
+  for(const dim of ['bands','chars','years','series','events','types','sizes','countries']){
+    state[dim].forEach(v=>{
+      const label=v.length>14?v.slice(0,14)+'…':v;
+      chips.push(`<span class="achip"><b>${dimLabel(dim)}</b>${esc(label)}<button class="x" onclick="toggleSel('${dim}','${esc(v).replace(/'/g,"\\'")}')" aria-label="移除">✕</button></span>`);
+    });
+  }
+  if(state.q)chips.push(`<span class="achip"><b>${t('q')}</b>${esc(state.q)}<button class="x" onclick="state.q='';document.getElementById('search').value='';applyFilters()">✕</button></span>`);
+  if(!chips.length){el.style.display='none';return;}
+  el.style.display='flex';
+  el.innerHTML=chips.join('')+`<button class="aclear" onclick="resetAll()">${t('clearAll')}</button>`;
+}
+
+/* ════ 動態主題色:單一樂團 = 該團色 ════ */
+function updateAccent(){
+  const c=state.bands.size===1?bandColor([...state.bands][0]):'#5a4fcf';
+  document.documentElement.style.setProperty('--accent',c);
+}
+
+/* ════ 內容:封面目錄 or 圖鑑網格 ════ */
+function renderContent(){
+  const el=document.getElementById('content');
+  if(!hasAnyFilter()){renderTOC(el);return;}
+  let html='';
+  /* 章節標題 */
+  if(state.bands.size===1){
+    const band=[...state.bands][0];
+    const pool=all.filter(b=>b.band===band);
+    const col=mockCount(pool);
+    const sub=state.chars.size===1?[...state.chars][0]+' · ':'';
+    const pct=Math.round(col/pool.length*100);
+    html+=`<div class="chapter"><h2>${esc(band)}</h2>
+      <div class="sub">${sub}${fmt('chapterSub',{t:pool.length,c:col,p:pct})}<span style="opacity:.6">${t('demo')}</span></div>
+      <div class="pbar"><i style="width:${pct}%"></i></div></div>`;
+  }
+  html+=`<div class="result-bar"><span>${fmt('resultBar',{a:filtered.length,b:all.length})}</span>
+    <span class="rb-actions">
+      <button class="rb-btn" onclick="dlStub()">⬇ ${t('dl')}</button>
+      <button class="rb-btn" onclick="shareSite()">🔗 ${t('share')}</button>
+    </span></div>`;
+  /* 網格 + 年份章節分隔線 */
+  let prevY=null;
+  const useDiv=state.sort.startsWith('year');
+  const yearCnt={};
+  if(useDiv)filtered.forEach(b=>{const y=getYear(b.year)||t('unknownYear');yearCnt[y]=(yearCnt[y]||0)+1});
+  html+='<div id="grid">'+filtered.map((b,i)=>{
+    let div='';
+    if(useDiv){
+      const y=getYear(b.year)||t('unknownYear');
+      if(y!==prevY){div=`<div class="divider"><b>${esc(y)}</b>${yearCnt[y]} ${t('unit')}</div>`;prevY=y;}
+    }
+    return div+card(b,i);
+  }).join('')+'</div>';
+  el.innerHTML=html;
+}
+function mockCount(pool){return pool.filter(b=>mockCollected(b.id)).length}
+const NOW=Date.now(),NEW_MS=14*86400*1000;
+function isNew(b){return b.created_at&&(NOW-new Date(b.created_at).getTime())<NEW_MS}
+function card(b,i){
+  const round=isBadgeRound(b.size);
+  return `<div class="card" onclick="openDetail(${i})">
+    ${isNew(b)?'<span class="tag-new">NEW</span>':''}
+    ${b.is_lottery?'<span class="tag-lot" title="抽選">🎲</span>':''}
+    <div class="imgwrap${round?' round':''}">
+      <img loading="lazy" src="${imgUrl(b)}" alt="" onerror="this.parentNode.innerHTML='&lt;div class=noimg&gt;🎵&lt;/div&gt;';_noImgIds.add('${esc(b.id)}')">
+    </div>
+    <span class="plate">No.${String(b.id).padStart(4,'0')}</span>
+    <span class="nm">${esc(b.character||'—')}</span>
+    <span class="bd" style="background:${bandColor(b.band)}">${esc(b.band)}</span>
+    ${b.series?`<span class="sr">${esc(b.series)}</span>`:''}
+  </div>`;
+}
+
+/* ════ 封面目錄頁 ════ */
+function renderTOC(el){
+  const counts={};all.forEach(b=>counts[b.band]=(counts[b.band]||0)+1);
+  const tile=b=>{
+    const n=counts[b]||0,pool=all.filter(x=>x.band===b),c=mockCount(pool);
+    return `<button class="toc-tile" style="--bc:${bandColor(b)}" onclick="toggleSel('bands','${esc(b).replace(/'/g,"\\'")}')">
+      <div class="t-name">${esc(b)}</div><div class="t-cnt">${n} ${t('unit')} · ${t('tocCollect')} ${n?Math.round(c/n*100):0}%</div>
+      <div class="pbar"><i style="width:${n?Math.round(c/n*100):0}%"></i></div></button>`;
+  };
+  const small=b=>`<button class="chip" style="--chip-c:${bandColor(b)}" onclick="toggleSel('bands','${esc(b).replace(/'/g,"\\'")}')">
+    <span class="dot" style="background:${bandColor(b)}"></span>${esc(b)}<span class="cnt">${counts[b]||0}</span></button>`;
+  const others=BAND_ORDER.filter(b=>!MAIN_BANDS.includes(b)&&counts[b]);
+  el.innerHTML=`<div class="toc">
+    <h2>${t('tocTitle')} <small>${fmt('tocSub',{n:all.length})}</small></h2>
+    <div class="toc-grid">${MAIN_BANDS.filter(b=>counts[b]).map(tile).join('')}</div>
+    <h2 style="margin-top:18px">${t('tocOthers')}</h2>
+    <div class="toc-small">${others.map(small).join('')}</div>
+    <div class="toc-note">${t('tocNote')}</div>
+  </div>`;
+}
+
+/* ════ 進階篩選面板(桌面側欄 = 手機抽屜)════ */
+function buildPanel(){
+  const scroll=document.getElementById('panel-scroll');
+  /* 換語言重建時保留手風琴展開狀態 */
+  const first=!scroll.children.length;
+  const wasOpen=new Set([...scroll.querySelectorAll('details[open]')].map(d=>d.dataset.dim));
+  const dims=[
+    {key:'years',vals:vc(b=>getYear(b.year)),sortDesc:true,open:true},
+    {key:'series',vals:vc(b=>b.series),search:true},
+    {key:'events',vals:vc(b=>b.event),search:true},
+    {key:'types',vals:vc(b=>b.type)},
+    {key:'sizes',vals:vc(b=>b.size)},
+    {key:'countries',vals:vc(b=>b.country)},
+  ];
+  const isOpen=d=>first?!!d.open:wasOpen.has(d.key);
+  let html=dims.map(d=>{
+    const label=t(d.key);
+    const list=d.sortDesc?d.vals.sort((a,b)=>b[0].localeCompare(a[0])):d.vals.sort((a,b)=>b[1]-a[1]);
+    return `<details${isOpen(d)?' open':''} data-dim="${d.key}">
+      <summary>${label}<span class="sum-r"><span class="badge" style="display:none"></span><span class="arr">▼</span></span></summary>
+      <div class="acc-body">
+        ${d.search?`<input class="acc-search" placeholder="${fmt('accSearch',{d:label})}" oninput="filterAcc(this)">`:''}
+        ${list.map(([v,n])=>`<label data-t="${esc(v.toLowerCase())}"><input type="checkbox" onchange="toggleSel('${d.key}','${esc(v).replace(/'/g,"\\'")}')" data-v="${esc(v)}">${esc(v)}<span class="c">${n}</span></label>`).join('')}
+      </div></details>`;
+  }).join('');
+  html+=`<details${!first&&wasOpen.has('opts')?' open':''} data-dim="opts">
+    <summary>${t('opts')}<span class="sum-r"><span class="badge" style="display:none"></span><span class="arr">▼</span></span></summary>
+    <div class="acc-body">
+      <label><input type="checkbox"${state.hideNoImg?' checked':''} onchange="state.hideNoImg=this.checked;applyFilters()">${t('hideNoimg')}</label>
+      <label><input type="checkbox"${state.hideLottery?' checked':''} onchange="state.hideLottery=this.checked;applyFilters()">${t('hideLot')}</label>
+    </div></details>`;
+  scroll.innerHTML=html;
+}
+function vc(fn){ /* value counts */
+  const m=new Map();
+  all.forEach(b=>{const v=fn(b);if(v)m.set(v,(m.get(v)||0)+1)});
+  return [...m.entries()];
+}
+function filterAcc(inp){
+  const q=inp.value.trim().toLowerCase();
+  inp.parentNode.querySelectorAll('label').forEach(l=>{
+    l.style.display=!q||l.dataset.t.includes(q)?'':'none';
+  });
+}
+function updatePanelBadges(){
+  document.querySelectorAll('#filter-panel details').forEach(d=>{
+    const k=d.dataset.dim,badge=d.querySelector('.badge');
+    let n=0;
+    if(k==='opts')n=(state.hideNoImg?1:0)+(state.hideLottery?1:0);
+    else n=state[k]?state[k].size:0;
+    badge.style.display=n?'':'none';badge.textContent=n;
+    /* 同步 checkbox 勾選狀態(被 active chips ✕ 移除時) */
+    if(k!=='opts')d.querySelectorAll('input[data-v]').forEach(c=>c.checked=state[k].has(c.dataset.v));
+  });
+}
+
+/* ════ 手機抽屜 ════ */
+function nActiveDims(){
+  let n=0;
+  ['bands','chars','years','series','events','types','sizes','countries'].forEach(k=>{if(state[k].size)n++});
+  if(state.q)n++;if(state.hideNoImg)n++;if(state.hideLottery)n++;
+  return n;
+}
+function updatePill(){
+  const n=nActiveDims();
+  const cnt=hasAnyFilter()?filtered.length:all.length;
+  document.getElementById('pill').textContent=`⚙ ${t('pill')}${n?`(${n})`:''} · ${cnt.toLocaleString()} ${t('unit')}`.trim();
+  document.getElementById('sheet-apply').textContent=hasAnyFilter()?fmt('applyN',{n:filtered.length.toLocaleString()}):t('applyToc');
+}
+let _sheetT=0; /* 防誤觸:開抽屜瞬間「顯示結果」鈕正好滑到 pill 位置,連點會秒關 */
+function openSheet(){
+  _sheetT=Date.now();
+  closePanel('news-panel');closePanel('song-panel');
+  document.body.classList.add('sheet-open');
+  document.getElementById('pill').style.display='none';
+}
+function closeSheet(){
+  if(Date.now()-_sheetT<350)return;
+  document.body.classList.remove('sheet-open');
+  if(window.innerWidth<=800)document.getElementById('pill').style.display='block';
+}
+
+/* ════ Toast ════ */
+let _toastT;
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(_toastT);_toastT=setTimeout(()=>el.classList.remove('show'),2600);
+}
+function dlStub(){showToast(t('dlStub'))}
+function _copy(text,okMsg){
+  (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject())
+    .then(()=>showToast(okMsg)).catch(()=>showToast(text));
+}
+function shareSite(){_copy(location.href,t('shareCopied'))}
+function copyEmail(){_copy('liarfortwfgo@gmail.com',t('emailCopied'))}
+
+/* ════ 公告/更新日誌 + 推薦歌曲(資料同 index.html:changelog.json / song.json)════ */
+async function loadJsonWithFallback(name){
+  try{const r=await fetch(name);if(!r.ok)throw 0;return await r.json()}
+  catch{const r2=await fetch('https://liar-chang.github.io/bandori-badges/'+name);if(!r2.ok)throw 0;return await r2.json()}
+}
+function closePanel(id){document.getElementById(id).classList.remove('open')}
+let newsData=null;
+function newsLangKey(){return curLang==='zh-TW'?'zh':curLang}
+async function toggleNewsPanel(){
+  closePanel('song-panel');
+  const p=document.getElementById('news-panel');
+  if(p.classList.contains('open')){p.classList.remove('open');return}
+  if(!newsData){
+    try{newsData=await loadJsonWithFallback('changelog.json')}
+    catch{showToast('⚠ changelog.json 讀取失敗');return}
+  }
+  renderNews();p.classList.add('open');
+}
+function renderNews(){
+  if(!newsData)return;
+  const L=newsLangKey();
+  const fmtE=e=>`<div class="news-item"><div class="news-date">${esc(e.date||'')}</div><div class="news-body">${esc((e.content&&(e.content[L]||e.content.zh))||'')}</div></div>`;
+  const pinned=newsData.filter(e=>e.pinned);
+  document.getElementById('news-pin').innerHTML=pinned.length?pinned.map(fmtE).join(''):`<div class="news-empty">${t('noPinned')}</div>`;
+  document.getElementById('news-log').innerHTML=newsData.slice(0,30).map(fmtE).join('');
+}
+function switchNewsTab(k){
+  document.getElementById('news-pin').style.display=k==='pin'?'':'none';
+  document.getElementById('news-log').style.display=k==='log'?'':'none';
+  document.getElementById('tab-pin').classList.toggle('active',k==='pin');
+  document.getElementById('tab-log').classList.toggle('active',k==='log');
+}
+let songData=null;
+async function toggleSongPanel(){
+  closePanel('news-panel');
+  const p=document.getElementById('song-panel');
+  if(p.classList.contains('open')){p.classList.remove('open');return}
+  if(!songData){
+    try{songData=await loadJsonWithFallback('song.json')}
+    catch{showToast('⚠ song.json 讀取失敗');return}
+  }
+  p.innerHTML=`<div class="song-card">
+    <img src="https://i.ytimg.com/vi/${esc(songData.ytId)}/mqdefault.jpg" alt="">
+    <div class="song-meta">
+      <div class="song-label">${t('songLabel')}</div>
+      <div class="song-title">${esc(songData.title)}</div>
+      <div class="song-artist">${esc(songData.artist)}</div>
+      <div class="song-links">
+        <a href="https://youtu.be/${esc(songData.ytId)}" target="_blank" rel="noopener">▶ YouTube</a>
+        ${songData.spotify?`<a href="${esc(songData.spotify)}" target="_blank" rel="noopener">♫ Spotify</a>`:''}
+      </div>
+    </div></div>`;
+  p.classList.add('open');
+}
+
+/* ════ 詳細頁(含 ←→ 翻頁)════ */
+let dIdx=-1;
+function openDetail(i){
+  dIdx=i;renderDetail();
+  document.getElementById('detail').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(){
+  document.getElementById('detail').classList.remove('open');
+  document.body.style.overflow='';
+}
+function navDetail(d){const n=dIdx+d;if(n<0||n>=filtered.length)return;dIdx=n;renderDetail()}
+function renderDetail(){
+  const b=filtered[dIdx];if(!b)return;
+  const round=isBadgeRound(b.size);
+  document.getElementById('d-body').innerHTML=`
+    <div class="d-imgwrap${round?' round':''}"><img src="${imgUrl(b)}" alt="" onerror="this.parentNode.innerHTML='&lt;div class=noimg style=&quot;font-size:3rem;display:flex;align-items:center;justify-content:center;height:100%&quot;&gt;🎵&lt;/div&gt;'"></div>
+    <div style="text-align:center;margin-bottom:12px">
+      <span class="plate">No.${String(b.id).padStart(4,'0')}</span>
+      <div style="font-size:1.1rem;font-weight:900;margin:2px 0">${esc(b.character||'—')}</div>
+      <span class="bd" style="background:${bandColor(b.band)};color:#fff;font-size:.7rem;border-radius:6px;padding:2px 8px">${esc(b.band)}</span>
+    </div>
+    <dl class="d-rows">
+      ${b.series?`<dt>${t('dSeries')}</dt><dd>${esc(b.series)}</dd>`:''}
+      ${b.year?`<dt>${t('dDate')}</dt><dd>${esc(b.year)}</dd>`:''}
+      ${b.type?`<dt>${t('dType')}</dt><dd>${esc(b.type)}</dd>`:''}
+      ${b.size?`<dt>${t('dSize')}</dt><dd>${esc(b.size)}</dd>`:''}
+      ${b.country?`<dt>${t('dCountry')}</dt><dd>${esc(b.country)}</dd>`:''}
+      ${b.event?`<dt>${t('dEvent')}</dt><dd>${b.url?`<a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.event)}</a>`:esc(b.event)}</dd>`:''}
+      ${b.note?`<dt>${t('dNote')}</dt><dd>${esc(b.note)}</dd>`:''}
+      ${b.is_lottery?`<dt>${t('dLottery')}</dt><dd>${t('dYes')}</dd>`:''}
+    </dl>`;
+  document.getElementById('d-pos').textContent=`${dIdx+1} / ${filtered.length}`;
+  document.getElementById('d-prev').disabled=dIdx<=0;
+  document.getElementById('d-next').disabled=dIdx>=filtered.length-1;
+}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('detail').classList.contains('open'))return;
+  if(e.key==='ArrowLeft')navDetail(-1);
+  if(e.key==='ArrowRight')navDetail(1);
+  if(e.key==='Escape')closeDetail();
+});
+
+init();
+</script>
+</body>
+</html>
