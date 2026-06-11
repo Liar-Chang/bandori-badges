@@ -279,6 +279,21 @@ body{
 .main{padding:1.5rem;}
 .result-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
 .result-count{font-size:0.875rem;color:var(--muted);}
+/* ── 改版 Step 2:指令列(result-bar sticky 化,搜尋框進駐)── */
+.result-bar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,0.78);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:0.55rem 0.6rem;border-radius:12px;}
+[data-theme="dark"] .result-bar{background:rgba(26,26,30,0.82);}
+.result-bar .search-box{flex:1 1 160px;min-width:140px;max-width:360px;width:auto;padding:0.45rem 0.8rem;}
+/* ── 改版 Step 2:側欄手風琴 ── */
+details.sidebar-section{margin-bottom:0.35rem;border-bottom:1px solid var(--border);padding-bottom:0.45rem;}
+details.sidebar-section summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0;user-select:none;}
+details.sidebar-section summary::-webkit-details-marker{display:none;}
+details.sidebar-section summary h3{margin-bottom:0;flex:1;}
+.acc-count{background:var(--accent);color:#fff;border-radius:99px;font-size:0.62rem;padding:0.05rem 0.45rem;font-weight:700;line-height:1.5;}
+.acc-arrow{font-size:0.55rem;color:var(--muted);transition:transform 0.2s;}
+details.sidebar-section[open] .acc-arrow{transform:rotate(180deg);}
+details.sidebar-section .filter-group{margin-top:0.35rem;}
 .sort-select{font-family:inherit;font-size:0.85rem;padding:0.4rem 0.75rem;border:1px solid var(--border);
   border-radius:7px;background:#fff;outline:none;cursor:pointer;}
 
@@ -483,10 +498,7 @@ body{
   .site-header{padding:1.25rem 1rem 1rem;}
   .resize-handle{display:none;}
 }
-@media(max-width:800px){
-  #header-controls{display:none !important;}
-  #mobile-controls{display:flex !important;}
-}
+/* 改版 Step 2:#mobile-controls 重複塊已刪除,header 控制列直接在手機顯示(自動換行) */
 @media(max-width:480px){
   .badge-grid{grid-template-columns:repeat(3,1fr);gap:0.5rem;}
   .badge-info{padding:0.4rem 0.5rem 0.5rem;}
@@ -628,30 +640,9 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
 
 <div class="layout" id="layout">
   <aside class="sidebar" id="sidebar">
-    <!-- 手機版語言/夜間模式控制列 -->
-    <div id="mobile-controls" style="display:none;justify-content:flex-end;align-items:center;gap:0.35rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);flex-wrap:wrap;">
-      <button onclick="toggleBatchMode()" id="btn-batch-toggle-mobile" class="btn-batch-toggle" title="批次選取" style="display:none;font-size:0.72rem;padding:0.25rem 0.55rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">☑ 批次</button>
-      <button onclick="setLang('zh-TW')" id="mlang-zh" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">繁中</button>
-      <button onclick="setLang('ja')" id="mlang-ja" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">日本語</button>
-      <button onclick="setLang('en')" id="mlang-en" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">EN</button>
-      <button onclick="setLang('ko')" id="mlang-ko" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">한국어</button>
-      <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
-      <!-- 手機版登入/登出 -->
-      <button id="btn-login-mobile" onclick="signInGoogle()" style="font-size:0.72rem;padding:0.25rem 0.7rem;border-radius:5px;background:var(--accent);border:none;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;display:none;align-items:center;gap:0.3rem;">
-        <svg width="11" height="11" viewBox="0 0 48 48"><path fill="#fff" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/></svg>
-        登入
-      </button>
-      <div id="user-info-mobile" style="display:none;align-items:center;gap:0.4rem;">
-        <img id="user-avatar-mobile" src="" alt="" style="width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);"/>
-        <span id="user-name-mobile" style="font-size:0.7rem;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-        <button onclick="signOut()" id="btn-logout-mobile" style="font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-family:inherit;">登出</button>
-      </div>
-    </div>
-
     <div class="sidebar-section" id="search-section">
-      <h3>搜尋</h3>
-      <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
-      <button class="btn-reset" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
+      <!-- 搜尋框已移至指令列(result-bar);此區保留重置+顯示選項 -->
+      <button class="btn-reset" onclick="resetFilters()" style="width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
       <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
         <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:var(--accent);cursor:pointer;"/>
         <span id="hide-no-image-label">隱藏無圖徽章</span>
@@ -689,43 +680,44 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       <h3>角色</h3>
       <div class="filter-group" id="char-list"></div>
     </div>
-    <div class="sidebar-section" id="year-section">
-      <h3>發售年份</h3>
+    <details class="sidebar-section" id="year-section" open>
+      <summary><h3>發售年份</h3><span class="acc-count" id="acc-count-years" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <div class="filter-group" id="year-list"></div>
-    </div>
-    <div class="sidebar-section" id="series-section">
-      <h3>版本/工藝</h3>
-      <button id="series-modal-btn" onclick="openSeriesModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;">
+    </details>
+    <details class="sidebar-section" id="series-section">
+      <summary><h3>版本/工藝</h3><span class="acc-count" id="acc-count-series" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
+      <button id="series-modal-btn" onclick="openSeriesModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;margin-top:0.35rem;">
         <span id="series-btn-label">選擇版本/工藝...</span>
         <span style="font-size:0.75rem;opacity:0.5;">▾</span>
       </button>
-    </div>
-    <div class="sidebar-section" id="event-section">
-      <h3>活動</h3>
-      <button id="event-modal-btn" onclick="openEventModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;">
+    </details>
+    <details class="sidebar-section" id="event-section">
+      <summary><h3>活動</h3><span class="acc-count" id="acc-count-events" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
+      <button id="event-modal-btn" onclick="openEventModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;margin-top:0.35rem;">
         <span id="event-btn-label">選擇活動...</span>
         <span style="font-size:0.75rem;opacity:0.5;">▾</span>
       </button>
-    </div>
-    <div class="sidebar-section" id="type-section">
-      <h3>類型</h3>
+    </details>
+    <details class="sidebar-section" id="type-section">
+      <summary><h3>類型</h3><span class="acc-count" id="acc-count-types" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <div class="filter-group" id="type-list"></div>
-    </div>
-    <div class="sidebar-section" id="size-section">
-      <h3>尺寸</h3>
+    </details>
+    <details class="sidebar-section" id="size-section">
+      <summary><h3>尺寸</h3><span class="acc-count" id="acc-count-sizes" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <div class="filter-group" id="size-list"></div>
-    </div>
-    <div class="sidebar-section" id="country-section">
-      <h3>販售/活動地</h3>
+    </details>
+    <details class="sidebar-section" id="country-section">
+      <summary><h3>販售/活動地</h3><span class="acc-count" id="acc-count-countries" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <div class="filter-group" id="country-list"></div>
-    </div>
+    </details>
     <button class="btn-reset" onclick="resetFilters()">重置所有篩選</button>
   </aside>
   <div class="resize-handle" id="resize-handle"></div>
   <div class="main-wrap">
   <main class="main">
     <div class="result-bar">
-      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;flex:1;min-width:0;">
+        <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
         <div class="result-count" id="result-count"></div>
         <button id="save-smart-list-btn" onclick="saveCurrentFiltersAsSmartList()" style="display:none;font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;background:#0ea5e911;border:1.5px solid #0ea5e9;color:#0ea5e9;cursor:pointer;white-space:nowrap;" title="把目前的篩選條件存為智慧清單">💾 儲存為智慧清單</button>
       </div>
@@ -1239,9 +1231,23 @@ try{
   });
 }catch(e){}
 
+/* 改版 Step 2:手風琴標題上的已選數量小徽章 */
+function updateAccBadges(){
+  const m={'acc-count-years':selYears,'acc-count-series':selSeries,'acc-count-events':selEvents,
+    'acc-count-types':selTypes,'acc-count-sizes':selSizes,'acc-count-countries':selCountries};
+  for(const id in m){
+    const el=document.getElementById(id);
+    if(!el) continue;
+    const n=m[id].size;
+    el.style.display=n?'':'none';
+    el.textContent=n;
+  }
+}
+
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
+  updateAccBadges();
   // 角色→樂團對照（用於跨樂團合照篩選）
   const CHAR_TO_BAND = {
     "戶山香澄":"Poppin'Party","花園多惠":"Poppin'Party","牛込里美":"Poppin'Party","山吹紗綾":"Poppin'Party","市谷有咲":"Poppin'Party","Poppin'Party全團":"Poppin'Party",
@@ -1987,8 +1993,6 @@ function applyLang(){
   ['zh-TW','ja','en','ko'].forEach(l=>{
     const btn = document.getElementById('lang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
     if(btn){ btn.style.background = l===currentLang?'#ffffff55':'#ffffff22'; btn.style.fontWeight = l===currentLang?'700':'400'; }
-    const mbtn = document.getElementById('mlang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
-    if(mbtn){ mbtn.style.background=l===currentLang?'var(--accent)':'var(--bg)'; mbtn.style.color=l===currentLang?'#fff':'var(--text)'; mbtn.style.borderColor=l===currentLang?'var(--accent)':'var(--border)'; }
   });
   // 標題
   document.title = L.title;
@@ -2112,8 +2116,6 @@ function applyLang(){
   const L_b = LANGS[currentLang] || LANGS['zh-TW'];
   const bbt = document.getElementById('btn-batch-toggle');
   if(bbt) bbt.textContent = L_b.batchEnter;
-  const bbtm = document.getElementById('btn-batch-toggle-mobile');
-  if(bbtm) bbtm.textContent = L_b.batchEnter;
   // 分享模組（header/footer 按鈕 + modal 內部元素）
   const btnShare = document.getElementById('btn-share');
   if(btnShare) btnShare.textContent = L.shareBtn;
@@ -3716,21 +3718,15 @@ async function signOut(){
 }
 
 function updateAuthUI(){
+  /* 改版 Step 2:#mobile-controls 已刪,header 控制列桌機手機共用,不再雙軌同步 */
   const btnLogin = document.getElementById('btn-login');
   const userInfo = document.getElementById('user-info');
   const btnBatch = document.getElementById('btn-batch-toggle');
-  const btnBatchMobile = document.getElementById('btn-batch-toggle-mobile');
-  // 手機版的登入相關元件
-  const btnLoginMobile = document.getElementById('btn-login-mobile');
-  const userInfoMobile = document.getElementById('user-info-mobile');
 
   if(currentUser){
     btnLogin.style.display = 'none';
     userInfo.style.display = 'flex';
     if(btnBatch) btnBatch.style.display = 'inline-flex';
-    if(btnBatchMobile) btnBatchMobile.style.display = 'inline-flex';
-    if(btnLoginMobile) btnLoginMobile.style.display = 'none';
-    if(userInfoMobile) userInfoMobile.style.display = 'flex';
 
     const meta = currentUser.user_metadata || {};
     const name = meta.full_name || meta.name || currentUser.email || '用戶';
@@ -3738,21 +3734,10 @@ function updateAuthUI(){
     document.getElementById('user-name').textContent = name;
     if(avatar) document.getElementById('user-avatar').src = avatar;
     else document.getElementById('user-avatar').style.display = 'none';
-    // 同步手機版
-    const nameMobile = document.getElementById('user-name-mobile');
-    const avatarMobile = document.getElementById('user-avatar-mobile');
-    if(nameMobile) nameMobile.textContent = name;
-    if(avatarMobile){
-      if(avatar) avatarMobile.src = avatar;
-      else avatarMobile.style.display = 'none';
-    }
   } else {
     btnLogin.style.display = 'inline-flex';
     userInfo.style.display = 'none';
     if(btnBatch) btnBatch.style.display = 'none';
-    if(btnBatchMobile) btnBatchMobile.style.display = 'none';
-    if(btnLoginMobile) btnLoginMobile.style.display = 'inline-flex';
-    if(userInfoMobile) userInfoMobile.style.display = 'none';
   }
 }
 
