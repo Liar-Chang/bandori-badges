@@ -616,6 +616,8 @@ details.sidebar-section .filter-group{margin-top:0.35rem;}
   .cmdbar{padding:0.5rem 0.75rem;}
   .rails-wrap{padding:0 0.75rem;}
   #active-chips{padding:0 0.75rem;}
+  /* 改版補:手機版 footer 墊高,讓出底部篩選 pill 的空間(對齊原型) */
+  footer{padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important;}
 }
 /* 改版 Step 2:#mobile-controls 重複塊已刪除,header 控制列直接在手機顯示(自動換行) */
 @media(max-width:480px){
@@ -1528,10 +1530,10 @@ function buildTocHTML(){
       prog=`<div class="toc-cnt">${L.tocCollected||'已蒐集'} ${col}(${pct}%)</div><div class="toc-pbar"><i style="width:${pct}%"></i></div>`;
     }
     return `<button class="toc-tile" style="--bc:${bandColor(b)}" onclick="toggleBand('${_chipJsEsc(b)}')">
-      <div class="toc-name">${_chipEsc(b)}</div><div class="toc-cnt">${n} 枚</div>${prog}</button>`;
+      <div class="toc-name">${_chipEsc(getBandName(b,currentLang))}</div><div class="toc-cnt">${n} 枚</div>${prog}</button>`;
   };
   const chip=b=>`<button class="toc-other-chip" onclick="if(BACKGROUND_BANDS.has('${_chipJsEsc(b)}')||INDEPENDENT_BANDS.has('${_chipJsEsc(b)}')){_moreBandsOpen=true;}toggleBand('${_chipJsEsc(b)}')">
-    <span class="band-dot" style="background:${bandColor(b)}"></span>${_chipEsc(b)}<span style="opacity:.5;font-size:0.7rem">${counts[b]}</span></button>`;
+    <span class="band-dot" style="background:${bandColor(b)}"></span>${_chipEsc(getBandName(b,currentLang))}<span style="opacity:.5;font-size:0.7rem">${counts[b]}</span></button>`;
   return `<div class="toc-wrap">
     <div class="toc-head"><div class="t1">📖 ${_chipEsc(L.filterTip)}</div><div class="t2">${_chipEsc(L.filterSub||'')}</div></div>
     <div class="toc-grid">${mains.map(tile).join('')}</div>
