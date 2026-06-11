@@ -241,11 +241,49 @@ body{
 [data-theme="dark"] .layout{
   background:rgba(20,20,28,0.60);        /* 深色模式也只 60% 透，跟淺色一樣讓底圖透出 */
 }
-@media(max-width:800px){.layout{flex-direction:column;}}
+@media(max-width:800px){.layout{
+  flex-direction:column;
+  /* 改版 Step 5:backdrop-filter 會把 position:fixed 的抽屜變成相對 .layout 定位
+     (containing block),手機版必須關掉,否則抽屜固定不到視窗底部 */
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}}
 
 .sidebar{background:#fff;border-right:1px solid var(--border);padding:1.5rem 1.25rem;
   position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0;width:320px;min-width:240px;max-width:600px;}
-@media(max-width:800px){.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);width:100%!important;}}
+/* ── 改版 Step 5:手機=底部抽屜(同一個 #sidebar 節點換位置) ── */
+#filter-pill{display:none;}
+#sheet-scrim{display:none;}
+.sheet-head,.sheet-footer{display:none;}
+@media(max-width:800px){
+  .sidebar{
+    position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;z-index:580;
+    width:auto !important;min-width:0;max-width:none;max-height:82dvh;margin:0;
+    border:1px solid var(--border);border-bottom:none;border-radius:18px 18px 0 0;
+    transform:translateY(105%);transition:transform 0.26s ease;
+    display:flex;flex-direction:column;overflow:hidden;
+    padding:0 1.1rem calc(0.4rem + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 30px rgba(0,0,0,0.18);
+  }
+  body.sheet-open .sidebar{transform:translateY(0);}
+  body.sheet-open{overflow:hidden;}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0.1rem 0.45rem;flex-shrink:0;font-weight:700;font-size:0.95rem;}
+  .sheet-head button{border:none;background:none;font-size:1.15rem;color:var(--muted);cursor:pointer;padding:0.2rem 0.5rem;font-family:inherit;}
+  .sheet-body{overflow-y:auto;flex:1;min-height:0;}
+  .sheet-footer{display:flex;gap:0.6rem;padding:0.6rem 0.1rem;border-top:1px solid var(--border);flex-shrink:0;}
+  .sheet-apply{flex:1;border:none;border-radius:12px;padding:0.85rem 0;font-size:0.95rem;font-weight:700;color:#fff;font-family:inherit;cursor:pointer;
+    background:linear-gradient(135deg,#ff6eb4,#c0005a);}
+  #filter-pill{
+    display:block;position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(14px + env(safe-area-inset-bottom));z-index:490;
+    border:none;border-radius:99px;padding:0.8rem 1.4rem;font-size:0.9rem;font-weight:700;
+    color:#fff;font-family:inherit;cursor:pointer;white-space:nowrap;
+    background:linear-gradient(135deg,#ff6eb4,#c0005a);box-shadow:0 6px 18px rgba(192,0,90,0.35);
+  }
+  body.batch-mode #filter-pill,body.sheet-open #filter-pill{display:none;}
+  #sheet-scrim{display:block;position:fixed;inset:0;z-index:570;background:rgba(0,0,0,0.38);opacity:0;pointer-events:none;transition:opacity 0.22s;}
+  body.sheet-open #sheet-scrim{opacity:1;pointer-events:auto;}
+  body.sheet-open .changelog-fab,body.sheet-open .song-fab{display:none;}
+}
 
 .resize-handle{width:5px;background:transparent;cursor:col-resize;flex-shrink:0;transition:background 0.15s;position:relative;z-index:10;}
 .resize-handle:hover,.resize-handle.dragging{background:#c0bef0;}
@@ -457,7 +495,7 @@ details.sidebar-section .filter-group{margin-top:0.35rem;}
 
 
 /* 活動選擇 Modal */
-.event-modal-overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:250;}
+.event-modal-overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:590;} /* 改版 Step 5:需壓過抽屜(580) */
 .event-modal{background:var(--surface);border-radius:16px;width:min(520px,96vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px #0003;}
 .event-modal-header{padding:1.25rem 1.5rem 0.75rem;border-bottom:1px solid var(--border);flex-shrink:0;}
 .event-modal-header h3{font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--text);}
@@ -544,7 +582,6 @@ details.sidebar-section .filter-group{margin-top:0.35rem;}
 
 
 @media(max-width:800px){
-  .sidebar{max-height:60vh;overflow-y:auto;}
   .badge-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:0.6rem;}
   .main{padding:0.75rem;}
   .result-bar{flex-direction:column;align-items:flex-start;}
@@ -693,6 +730,8 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
 
 <div class="layout" id="layout">
   <aside class="sidebar" id="sidebar">
+    <div class="sheet-head"><span data-l-key="sheetTitle">進階篩選</span><button onclick="closeSheet()" aria-label="關閉">✕</button></div>
+    <div class="sheet-body">
     <div class="sidebar-section" id="search-section">
       <!-- 搜尋框已移至指令列(result-bar);此區保留重置+顯示選項 -->
       <button class="btn-reset" onclick="resetFilters()" style="width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
@@ -748,6 +787,8 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       <div class="filter-group" id="country-list"></div>
     </details>
     <button class="btn-reset" onclick="resetFilters()">重置所有篩選</button>
+    </div><!-- /.sheet-body -->
+    <div class="sheet-footer"><button class="sheet-apply" id="sheet-apply" onclick="closeSheet()">顯示</button></div>
   </aside>
   <div class="resize-handle" id="resize-handle"></div>
   <div class="main-wrap">
@@ -813,6 +854,10 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
   </main>
   </div>
 </div>
+
+<!-- 改版 Step 5:手機篩選 pill + 抽屜遮罩 -->
+<button id="filter-pill" onclick="openSheet()">⚙ 篩選</button>
+<div id="sheet-scrim" onclick="closeSheet()"></div>
 
 <div class="detail-overlay" id="detail-overlay" onclick="maybeClose(event)">
   <div class="detail-modal" id="detail-modal">
@@ -1335,6 +1380,30 @@ function renderActiveChips(){
   host.innerHTML=chips.join('')+`<button class="achip-clear" onclick="resetFilters()">${L.reset||'清除全部'}</button>`;
 }
 
+/* 改版 Step 5:手機篩選抽屜(同一個 #sidebar,CSS 換位)+ pill */
+let _sheetT=0; /* 防誤觸:開抽屜瞬間「顯示」鈕滑到 pill 原位,連點會秒關 */
+function openSheet(){
+  if(window.innerWidth>800) return;
+  _sheetT=Date.now();
+  document.body.classList.add('sheet-open');
+}
+function closeSheet(){
+  if(Date.now()-_sheetT<350) return;
+  document.body.classList.remove('sheet-open');
+}
+function updateFilterPill(resCount){
+  const p=document.getElementById('filter-pill');
+  if(!p) return;
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  let n=0;
+  [selBands,selChars,selYears,selSeries,selEvents,selTypes,selSizes,selCountries].forEach(s=>{if(s.size)n++;});
+  const sEl=document.getElementById('search');
+  if(sEl&&sEl.value.trim())n++;
+  p.textContent=`⚙ ${L.pillFilter||'篩選'}${n?`(${n})`:''} · ${resCount.toLocaleString()} ${L.pillUnit??'枚'}`;
+  const a=document.getElementById('sheet-apply');
+  if(a) a.textContent=(L.sheetApply||'顯示 {n} 枚').replace('{n}',resCount.toLocaleString());
+}
+
 /* 改版 Step 4:背景團/獨立計畫收在「更多」後面;選了就自動展開 */
 let _moreBandsOpen=false;
 function toggleMoreBands(){_moreBandsOpen=!_moreBandsOpen;updateMoreBands();}
@@ -1546,11 +1615,13 @@ function applyFilters(){
     renderGrid([]);
     /* 改版 Step 4:空狀態 = 封面目錄頁(點樂團磚直接進章節) */
     document.getElementById('badge-grid').innerHTML=buildTocHTML();
+    updateFilterPill(all.length);
     if(currentUser) buildCollectionSidebar();
     if(currentUser) buildSmartListsSidebar();
     return;
   }
   document.getElementById('result-count').textContent=`顯示 ${res.length} / ${all.length} 枚`;
+  updateFilterPill(res.length);
   renderGrid(res);
   if(currentUser) buildCollectionSidebar();
   if(currentUser) buildSmartListsSidebar();
@@ -1938,6 +2009,7 @@ const LANGS = {
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
     filterTip:'點選樂團,開始翻閱圖鑑', filterSub:'也可以用上方搜尋或左側進階篩選', moreBands:'更多 ▾', lessBands:'收合 ▴', tocCollected:'已蒐集',
+    pillFilter:'篩選', pillUnit:'枚', sheetTitle:'進階篩選', sheetApply:'顯示 {n} 枚',
     reset:'重置所有篩選',
     dlSeries:'版本/工藝', dlYear:'發售日期', dlEvent:'活動',
     thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
@@ -1980,6 +2052,7 @@ const LANGS = {
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
     filterTip:'バンドを選んで図鑑をめくろう', filterSub:'上の検索や左の詳細フィルターも使えます', moreBands:'もっと ▾', lessBands:'たたむ ▴', tocCollected:'収集済み',
+    pillFilter:'絞り込み', pillUnit:'件', sheetTitle:'詳細フィルター', sheetApply:'{n}件を表示',
     reset:'フィルターをリセット',
     dlSeries:'バージョン/工芸', dlYear:'発売日', dlEvent:'イベント',
     thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
@@ -2022,6 +2095,7 @@ const LANGS = {
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
     noFilter:'Please select a filter', noResult:'No badges found',
     filterTip:'Pick a band to start browsing', filterSub:'Or use the search box and side filters', moreBands:'More ▾', lessBands:'Less ▴', tocCollected:'collected',
+    pillFilter:'Filter', pillUnit:'', sheetTitle:'Filters', sheetApply:'Show {n} badges',
     reset:'Reset All Filters',
     dlSeries:'Version/Craft', dlYear:'Release Date', dlEvent:'Event',
     thBand:'Band', thChar:'Character', thEvent:'Event', thYear:'Release Date', thSeries:'Version/Craft',
@@ -2064,6 +2138,7 @@ const LANGS = {
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
     noFilter:'필터를 선택해 주세요', noResult:'해당하는 뱃지가 없습니다',
     filterTip:'밴드를 선택해 도감을 펼쳐보세요', filterSub:'상단 검색이나 좌측 상세 필터도 사용 가능', moreBands:'더 보기 ▾', lessBands:'접기 ▴', tocCollected:'수집',
+    pillFilter:'필터', pillUnit:'개', sheetTitle:'상세 필터', sheetApply:'{n}개 표시',
     reset:'전체 필터 초기화',
     dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트',
     thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트', thYear:'발매일', thSeries:'버전/공예',
