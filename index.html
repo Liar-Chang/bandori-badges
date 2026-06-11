@@ -355,7 +355,9 @@ body{
 .badge-id-tag{letter-spacing:0.5px;}
 /* ── 改版 Step 4:樂團/角色軌道 + 封面目錄 ── */
 .rails-wrap{margin-bottom:0.6rem;}
-.rails-wrap .rail-section{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.45rem;}
+.rails-wrap .rail-section{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem;}
+.band-rail-row{margin-bottom:0.2rem;}
+.char-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;display:inline-block;}
 .rails-wrap .rail-section h3{margin:0.5rem 0 0;flex-shrink:0;}
 .rails-wrap .band-list{flex-direction:row;flex-wrap:wrap;gap:0.35rem;flex:1;min-width:0;}
 .rails-wrap .band-chip{padding:0.35rem 0.7rem;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);}
@@ -368,7 +370,7 @@ body{
 .rails-wrap #char-list{flex-direction:row;flex-wrap:wrap;gap:0.35rem;max-height:none;overflow:visible;flex:1;min-width:0;}
 .rails-wrap #char-list .filter-item{border:1.5px solid var(--border);border-radius:99px;padding:0.3rem 0.75rem;background:var(--surface);font-size:0.8rem;transition:all .15s;}
 .rails-wrap #char-list .filter-item input{display:none;}
-.rails-wrap #char-list .filter-item:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));font-weight:700;color:var(--accent);}
+.rails-wrap #char-list .filter-item:has(input:checked){border-color:var(--chip-c,var(--accent));background:color-mix(in srgb,var(--chip-c,var(--accent)) 14%,var(--surface));font-weight:700;}
 @media(max-width:800px){
   .rails-wrap .band-list,.rails-wrap #char-list{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:0.15rem;}
   .rails-wrap .band-list::-webkit-scrollbar,.rails-wrap #char-list::-webkit-scrollbar{display:none;}
@@ -809,7 +811,27 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
   <div class="resize-handle" id="resize-handle"></div>
   <div class="main-wrap">
   <main class="main">
-    <!-- 改版 Step 4:樂團/角色軌道(原側欄區塊整段搬移,ID 不變,JS 渲染照舊) -->
+    <div class="result-bar">
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;flex:1;min-width:0;">
+        <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
+        <div class="result-count" id="result-count"></div>
+        <button id="save-smart-list-btn" onclick="saveCurrentFiltersAsSmartList()" style="display:none;font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;background:#0ea5e911;border:1.5px solid #0ea5e9;color:#0ea5e9;cursor:pointer;white-space:nowrap;" title="把目前的篩選條件存為智慧清單">💾 儲存為智慧清單</button>
+      </div>
+      <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
+        <select class="sort-select" id="sort" onchange="applyFilters()">
+  <option value="year-desc">發售日期（新→舊）</option>
+          <option value="year-asc">發售日期（舊→新）</option>
+          <option value="char">角色名稱</option>
+        </select>
+        <div class="view-toggle">
+          <button class="btn-view active" id="btn-grid" onclick="setView('grid')">⊞ 圖鑑</button>
+          <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
+        </div>
+        <button class="btn-view" onclick="openExport()" style="border-color:var(--accent);color:var(--accent);font-weight:600;">⬇ 下載圖檔</button>
+        <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
+      </div>
+    </div>
+    <!-- 改版 Step 4:樂團/角色軌道(原側欄區塊整段搬移,ID 不變,JS 渲染照舊;位置依設計案=指令列之下) -->
     <div class="rails-wrap" id="rails-wrap">
       <div class="band-rail-row">
         <div class="sidebar-section rail-section" id="band-section">
@@ -831,26 +853,6 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       <div class="sidebar-section rail-section" id="char-section" style="display:none;">
         <h3>角色</h3>
         <div class="filter-group" id="char-list"></div>
-      </div>
-    </div>
-    <div class="result-bar">
-      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;flex:1;min-width:0;">
-        <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
-        <div class="result-count" id="result-count"></div>
-        <button id="save-smart-list-btn" onclick="saveCurrentFiltersAsSmartList()" style="display:none;font-family:inherit;font-size:0.72rem;padding:0.3rem 0.6rem;border-radius:6px;background:#0ea5e911;border:1.5px solid #0ea5e9;color:#0ea5e9;cursor:pointer;white-space:nowrap;" title="把目前的篩選條件存為智慧清單">💾 儲存為智慧清單</button>
-      </div>
-      <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
-        <select class="sort-select" id="sort" onchange="applyFilters()">
-  <option value="year-desc">發售日期（新→舊）</option>
-          <option value="year-asc">發售日期（舊→新）</option>
-          <option value="char">角色名稱</option>
-        </select>
-        <div class="view-toggle">
-          <button class="btn-view active" id="btn-grid" onclick="setView('grid')">⊞ 圖鑑</button>
-          <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
-        </div>
-        <button class="btn-view" onclick="openExport()" style="border-color:var(--accent);color:var(--accent);font-weight:600;">⬇ 下載圖檔</button>
-        <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
       </div>
     </div>
     <div id="active-chips"></div>
@@ -974,8 +976,27 @@ const CHAR_COLORS={
   "Pastel":"#f5b8c8",
   "Halo":"#e0d088",
   "Aver":"#c87878",
+  /* ── 改版補:經典七團官方印象色(ガルパ遊戲資料 colorCode,Bestdori × Bandori Wiki 雙來源核對 2026/06)── */
+  "戶山香澄":"#FF5522","花園多惠":"#0077DD","牛込里美":"#FF55BB","山吹紗綾":"#FFCC11","市谷有咲":"#AA66DD",
+  "美竹蘭":"#EE0022","青葉摩卡":"#00CCAA","上原緋瑪麗":"#FF9999","宇田川巴":"#BB0033","羽澤鶇":"#FFEE88",
+  "丸山彩":"#FF88BB","冰川日菜":"#55DDEE","白鷺千聖":"#FFEEAA","大和麻彌":"#99DD88","若宮伊芙":"#DDBBFF",
+  "湊友希那":"#881188","冰川紗夜":"#00AABB","今井莉莎":"#DD2200","宇田川亞子":"#DD0088","白金燐子":"#BBBBBB",
+  "弦卷心":"#FFEE22","瀨田薰":"#AA33CC","北澤育美":"#FF9922","松原花音":"#44DDFF","奧澤美咲":"#006699",
+  "倉田真白":"#6677CC","桐谷透子":"#EE6666","廣町七深":"#EE7744","二葉筑紫":"#EE7788","八潮瑠唯":"#669988",
+  "和奏瑞依(LAYER)":"#CC0000","朝日六花(ROCK)":"#AAEE22","佐藤益木(MASKING)":"#EEBB44","鳰原令王那(PAREO)":"#FF99BB","珠手知由(CHU2)":"#00BBFF",
   "default":"#c0bef0"
 };
+/* 改版補:角色色碼解析鏈 — 精確 → 去括號(Doloris/LAYER 形態繼承本體)→ 全團=團色 → 所屬樂團色 → default */
+function charColor(c){
+  if(!c) return CHAR_COLORS.default;
+  if(CHAR_COLORS[c]) return CHAR_COLORS[c];
+  const base=c.replace(/\(.+?\)$/,'');
+  if(CHAR_COLORS[base]) return CHAR_COLORS[base];
+  if(c.endsWith('全團')) return bandColor(c.slice(0,-2));
+  const b=CHAR_TO_BAND[c]||CHAR_TO_BAND[base];
+  if(b) return bandColor(b);
+  return CHAR_COLORS.default;
+}
 const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
   "Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica",
   "夢限大MewType","millsage","一家Dumb Rock!",
@@ -1259,11 +1280,14 @@ function buildCharList(){
   ];
   if(!chars.length){sec.style.display='none';return;}
   sec.style.display='';
-  document.getElementById('char-list').innerHTML=chars.map(v=>`
-    <label class="filter-item">
+  document.getElementById('char-list').innerHTML=chars.map(v=>{
+    const cc=charColor(v); /* 改版補:角色印象色點 + 勾選時邊框用角色色 */
+    return `
+    <label class="filter-item" style="--chip-c:${cc}">
       <input type="checkbox" ${selChars.has(v)?'checked':''} onchange="toggleChar(this.value)" value="${v.replace(/"/g,'&quot;')}"/>
+      <span class="char-dot" style="background:${cc}"></span>
       <span>${getCharName(v, currentLang)}</span>
-    </label>`).join('');
+    </label>`;}).join('');
 }
 
 function toggleChar(c){selChars.has(c)?selChars.delete(c):selChars.add(c);applyFilters();}
@@ -1383,7 +1407,7 @@ function renderActiveChips(){
     chips.push(`<span class="achip"${color?` style="--chip-accent:${color}"`:''}><b>${_chipEsc(dim)}</b>${_chipEsc(display)}<button class="achip-x" onclick="${removeJs}" aria-label="remove">✕</button></span>`);
   };
   selBands.forEach(v=>push(L.band,v,`toggleBand('${_chipJsEsc(v)}')`,bandColor(v)));
-  selChars.forEach(v=>push(L.char,getCharName(v,currentLang),`toggleChar('${_chipJsEsc(v)}')`));
+  selChars.forEach(v=>push(L.char,getCharName(v,currentLang),`toggleChar('${_chipJsEsc(v)}')`,charColor(v)));
   selYears.forEach(v=>push(L.year,v,`toggleYear('${_chipJsEsc(v)}')`));
   selSeries.forEach(v=>push(L.series,trim(v),`removeSeriesChip('${_chipJsEsc(v)}')`));
   selEvents.forEach(v=>push(L.event,trim(v),`removeEventChip('${_chipJsEsc(v)}')`));
