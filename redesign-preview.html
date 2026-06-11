@@ -318,6 +318,49 @@ main{flex:1;min-width:0}
 .f-links{display:flex;justify-content:center;gap:1.1rem;flex-wrap:wrap}
 .f-links a,.f-links span{color:var(--muted);text-decoration:none;cursor:pointer}
 
+/* ════ 匯出 modal(桌面置中,手機=底部抽屜)════ */
+#export-overlay{
+  position:fixed;inset:0;z-index:650;background:rgba(0,0,0,.5);
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+#export-overlay.active{display:flex}
+.exp-modal{
+  background:var(--surface);border-radius:18px;max-width:460px;width:100%;
+  max-height:88dvh;overflow-y:auto;padding:18px;
+}
+.exp-modal h2{font-size:1.05rem;font-weight:900;margin-bottom:4px}
+.exp-desc{font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.exp-h3{font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px}
+.exp-opts{display:flex;gap:8px}
+.exp-opt{flex:1;border:1.5px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;transition:border-color .15s}
+.exp-opt.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+.exp-opt-title{font-size:.85rem;font-weight:700}
+.exp-opt-desc{font-size:.7rem;color:var(--muted);margin-top:2px}
+.exp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.exp-chip{
+  display:inline-flex;align-items:center;padding:7px 14px;border-radius:99px;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text);
+  font-size:.8rem;cursor:pointer;user-select:none;
+}
+.exp-chip.on{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:700}
+.exp-title-input{
+  width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:16px;background:var(--surface);color:var(--text);outline:none;
+}
+.exp-title-input:focus{border-color:var(--accent)}
+.exp-check{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);margin:12px 0 0;cursor:pointer}
+.exp-check input{width:16px;height:16px;accent-color:var(--accent)}
+.exp-prog-wrap{display:none;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:12px 0 0}
+.exp-prog{height:100%;width:0;background:var(--accent);border-radius:3px;transition:width .3s}
+.exp-actions{display:flex;gap:10px;margin-top:16px}
+.exp-cancel{border:1.5px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px;padding:11px 18px;font-size:.9rem}
+.exp-dl{flex:1;border:none;border-radius:12px;padding:11px 0;font-size:.95rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--pink1),var(--pink3))}
+.exp-dl:disabled{opacity:.55}
+@media(max-width:800px){
+  #export-overlay{align-items:flex-end;padding:0}
+  .exp-modal{max-width:none;border-radius:18px 18px 0 0;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+}
+
 /* ════ 手機:篩選 pill + 底部抽屜 ════ */
 #pill{
   display:none;position:fixed;left:50%;transform:translateX(-50%);
@@ -461,6 +504,53 @@ body.sheet-open #scrim{opacity:1;pointer-events:auto}
   </div>
 </div>
 
+<div id="export-overlay" onclick="if(event.target===this)closeExport()">
+  <div class="exp-modal">
+    <h2 id="exp-h2">⬇ 下載徽章表格圖檔</h2>
+    <div class="exp-desc" id="exp-desc"></div>
+    <div class="exp-h3" id="exp-h3-layout">版面配置</div>
+    <div class="exp-opts">
+      <div class="exp-opt selected" id="layout-grid" onclick="selectLayout('grid')">
+        <div class="exp-opt-title" id="exp-grid-t">⊞ 圖片網格</div>
+        <div class="exp-opt-desc" id="exp-grid-d">每列顯示多枚徽章圖片</div>
+      </div>
+      <div class="exp-opt" id="layout-table" onclick="selectLayout('table')">
+        <div class="exp-opt-title" id="exp-table-t">☰ 清單表格</div>
+        <div class="exp-opt-desc" id="exp-table-d">含文字資訊的表格形式</div>
+      </div>
+    </div>
+    <div id="grid-cols-section">
+      <div class="exp-h3" id="exp-h3-cols">每列欄數</div>
+      <div class="exp-chips">
+        <span class="exp-chip on" id="col-4" onclick="selectCols(4)">4</span>
+        <span class="exp-chip" id="col-6" onclick="selectCols(6)">6</span>
+        <span class="exp-chip" id="col-8" onclick="selectCols(8)">8</span>
+        <span class="exp-chip" id="col-10" onclick="selectCols(10)">10</span>
+      </div>
+    </div>
+    <div id="table-fields-section" style="display:none">
+      <div class="exp-h3" id="exp-h3-fields">顯示欄位</div>
+      <div class="exp-chips" id="field-chips"></div>
+    </div>
+    <div class="exp-h3" id="exp-h3-fmt">輸出格式</div>
+    <div class="exp-chips">
+      <span class="exp-chip on" id="fmt-png" onclick="selectFmt('png')">PNG</span>
+      <span class="exp-chip" id="fmt-jpg" onclick="selectFmt('jpg')">JPG</span>
+      <span class="exp-chip" id="fmt-pdf" onclick="selectFmt('pdf')">PDF</span>
+      <span class="exp-chip" id="fmt-html" onclick="selectFmt('html')">HTML</span>
+      <span class="exp-chip" id="fmt-xlsx" onclick="selectFmt('xlsx')">Excel</span>
+    </div>
+    <div class="exp-h3" id="exp-h3-ttl">標題文字</div>
+    <input type="text" class="exp-title-input" id="export-title" placeholder="BanG Dream! 徽章圖鑑">
+    <label class="exp-check"><input type="checkbox" id="exp-only-img"><span id="exp-only-img-label">只輸出有圖的徽章</span></label>
+    <div class="exp-prog-wrap" id="prog-wrap"><div class="exp-prog" id="prog-bar"></div></div>
+    <div class="exp-actions">
+      <button class="exp-cancel" id="exp-cancel" onclick="closeExport()">取消</button>
+      <button class="exp-dl" id="btn-dl" onclick="doExport()">⬇ 下載</button>
+    </div>
+  </div>
+</div>
+
 <footer class="site-footer">
   <div id="f-author">作者：千早愛音的暴躁柯基</div>
   <div class="f-copy">© Bushiroad All Rights Reserved. 本站為非營利粉絲資料庫，圖片版權歸 Bushiroad 所有。</div>
@@ -547,28 +637,32 @@ const L10N={
  tocTitle:'📖 圖鑑目錄',tocSub:'共收錄 {n} 枚 · 點選樂團開始',tocOthers:'其他章節',tocCollect:'蒐集',tocNote:'※ 蒐集進度為示意數據,正式版串接登入後的蒐集記錄。',
  chapterSub:'全 {t} 枚 · 已蒐集 {c}({p}%)',demo:'(示意)',resultBar:'顯示 {a} / {b} 枚',
  dSeries:'版本',dDate:'發售日',dType:'類型',dSize:'尺寸',dCountry:'販售地',dEvent:'活動',dNote:'備註',dLottery:'抽選',dYes:'🎲 是',prev:'上一個',next:'下一個',unknownYear:'未知',
- dl:'下載',share:'分享',shareCopied:'已複製網址!(正式版會含篩選條件+QR code)',dlStub:'原型未實作下載,正式版沿用現有匯出功能',noPinned:'目前沒有置頂公告',songLabel:'推薦歌曲',emailCopied:'已複製 Email!',tabPin:'📌 公告',tabLog:'📢 更新日誌',fShare:'🔗 分享此網站',fBlog:'📝 開發日誌',fContact:'聯絡方式',fReport:'⚠ 錯誤回報',fAuthor:'作者:千早愛音的暴躁柯基'},
+ dl:'下載',share:'分享',shareCopied:'已複製網址!(正式版會含篩選條件+QR code)',noPinned:'目前沒有置頂公告',songLabel:'推薦歌曲',emailCopied:'已複製 Email!',tabPin:'📌 公告',tabLog:'📢 更新日誌',fShare:'🔗 分享此網站',fBlog:'📝 開發日誌',fContact:'聯絡方式',fReport:'⚠ 錯誤回報',fAuthor:'作者:千早愛音的暴躁柯基',
+ expTitle:'⬇ 下載徽章表格圖檔',expDesc:'將目前篩選的 {n} 枚徽章輸出',expLayout:'版面配置',expGrid:'⊞ 圖片網格',expGridDesc:'每列顯示多枚徽章圖片',expTable:'☰ 清單表格',expTableDesc:'含文字資訊的表格形式',expCols:'每列欄數',expFields:'顯示欄位',expFmt:'輸出格式',expTitleLabel:'標題文字',expOnlyImg:'只輸出有圖的徽章',expCancel:'取消',expDownload:'⬇ 下載',expGenerating:'產生中...',thBand:'樂團',thChar:'角色',thEvent:'活動',thYear:'發售日期',thSeries:'版本/工藝'},
 'ja':{langName:'日本語',searchPh:'🔍 キャラ、バージョン、イベント…',sortNew:'発売日 新→旧',sortOld:'発売日 旧→新',sortChar:'キャラ順',reset:'リセット',adv:'詳細フィルター',more:'もっと ▾',clearAll:'すべて解除',
  bands:'バンド',chars:'キャラ',years:'年',series:'バージョン・加工',events:'イベント',types:'タイプ',sizes:'サイズ',countries:'販売地',q:'検索',opts:'表示オプション',
  hideNoimg:'画像なしを隠す',hideLot:'抽選品を隠す',accSearch:'{d}を検索…',applyN:'{n}件を表示',applyToc:'目次を表示',pill:'絞り込み',unit:'件',
  tocTitle:'📖 図鑑もくじ',tocSub:'全{n}件収録 · バンドを選んでスタート',tocOthers:'その他の章',tocCollect:'収集',tocNote:'※ 収集進捗はサンプル数値。正式版はログイン後の記録と連動します。',
  chapterSub:'全{t}件 · 収集済み {c}({p}%)',demo:'(サンプル)',resultBar:'{a} / {b}件を表示',
  dSeries:'バージョン',dDate:'発売日',dType:'タイプ',dSize:'サイズ',dCountry:'販売地',dEvent:'イベント',dNote:'メモ',dLottery:'抽選',dYes:'🎲 あり',prev:'前へ',next:'次へ',unknownYear:'不明',
- dl:'保存',share:'共有',shareCopied:'URLをコピーしました!(正式版はフィルター+QR対応)',dlStub:'プロトタイプ未実装。正式版は既存のエクスポート機能を継承',noPinned:'固定お知らせはありません',songLabel:'おすすめ楽曲',emailCopied:'Emailをコピーしました!',tabPin:'📌 お知らせ',tabLog:'📢 更新履歴',fShare:'🔗 このサイトを共有',fBlog:'📝 開発日誌',fContact:'お問い合わせ',fReport:'⚠ 不具合報告',fAuthor:'作者:千早愛音的暴躁柯基'},
+ dl:'保存',share:'共有',shareCopied:'URLをコピーしました!(正式版はフィルター+QR対応)',noPinned:'固定お知らせはありません',songLabel:'おすすめ楽曲',emailCopied:'Emailをコピーしました!',tabPin:'📌 お知らせ',tabLog:'📢 更新履歴',fShare:'🔗 このサイトを共有',fBlog:'📝 開発日誌',fContact:'お問い合わせ',fReport:'⚠ 不具合報告',fAuthor:'作者:千早愛音的暴躁柯基',
+ expTitle:'⬇ バッジ一覧の画像を保存',expDesc:'現在の絞り込み {n} 件を出力',expLayout:'レイアウト',expGrid:'⊞ 画像グリッド',expGridDesc:'1行に複数バッジを表示',expTable:'☰ リスト表',expTableDesc:'テキスト情報付きの表形式',expCols:'1行の列数',expFields:'表示項目',expFmt:'出力形式',expTitleLabel:'タイトル',expOnlyImg:'画像ありのみ出力',expCancel:'キャンセル',expDownload:'⬇ 保存',expGenerating:'生成中...',thBand:'バンド',thChar:'キャラ',thEvent:'イベント',thYear:'発売日',thSeries:'バージョン'},
 'en':{langName:'EN',searchPh:'🔍 Character, version, event…',sortNew:'Release new→old',sortOld:'Release old→new',sortChar:'Character order',reset:'Reset',adv:'Filters',more:'More ▾',clearAll:'Clear all',
  bands:'Band',chars:'Character',years:'Year',series:'Version',events:'Event',types:'Type',sizes:'Size',countries:'Region',q:'Search',opts:'Display options',
  hideNoimg:'Hide badges without images',hideLot:'Hide lottery badges',accSearch:'Search {d}…',applyN:'Show {n} badges',applyToc:'Show contents',pill:'Filter',unit:'',
  tocTitle:'📖 Contents',tocSub:'{n} badges · pick a band to start',tocOthers:'Other chapters',tocCollect:'collected',tocNote:'※ Progress bars are demo data; the real version syncs your collection records after login.',
  chapterSub:'{t} badges · {c} collected ({p}%)',demo:'(demo)',resultBar:'Showing {a} / {b}',
  dSeries:'Version',dDate:'Release date',dType:'Type',dSize:'Size',dCountry:'Region',dEvent:'Event',dNote:'Note',dLottery:'Lottery',dYes:'🎲 Yes',prev:'Prev',next:'Next',unknownYear:'Unknown',
- dl:'Download',share:'Share',shareCopied:'URL copied! (Full version adds filter params + QR)',dlStub:'Not in the prototype — the full version keeps the existing export',noPinned:'No pinned announcements',songLabel:'Featured song',emailCopied:'Email copied!',tabPin:'📌 News',tabLog:'📢 Changelog',fShare:'🔗 Share this site',fBlog:'📝 Dev log',fContact:'Contact',fReport:'⚠ Report an issue',fAuthor:'Author: 千早愛音的暴躁柯基'},
+ dl:'Download',share:'Share',shareCopied:'URL copied! (Full version adds filter params + QR)',noPinned:'No pinned announcements',songLabel:'Featured song',emailCopied:'Email copied!',tabPin:'📌 News',tabLog:'📢 Changelog',fShare:'🔗 Share this site',fBlog:'📝 Dev log',fContact:'Contact',fReport:'⚠ Report an issue',fAuthor:'Author: 千早愛音的暴躁柯基',
+ expTitle:'⬇ Download badge sheet',expDesc:'Export the {n} filtered badges',expLayout:'Layout',expGrid:'⊞ Image grid',expGridDesc:'Multiple badges per row',expTable:'☰ List table',expTableDesc:'Table with text details',expCols:'Columns per row',expFields:'Fields',expFmt:'Format',expTitleLabel:'Title',expOnlyImg:'Only badges with images',expCancel:'Cancel',expDownload:'⬇ Download',expGenerating:'Generating...',thBand:'Band',thChar:'Character',thEvent:'Event',thYear:'Release date',thSeries:'Version'},
 'ko':{langName:'한국어',searchPh:'🔍 캐릭터, 버전, 이벤트…',sortNew:'발매일 신→구',sortOld:'발매일 구→신',sortChar:'캐릭터 순',reset:'초기화',adv:'상세 필터',more:'더 보기 ▾',clearAll:'모두 해제',
  bands:'밴드',chars:'캐릭터',years:'연도',series:'버전·가공',events:'이벤트',types:'타입',sizes:'사이즈',countries:'판매지',q:'검색',opts:'표시 옵션',
  hideNoimg:'이미지 없는 배지 숨기기',hideLot:'추첨 배지 숨기기',accSearch:'{d} 검색…',applyN:'{n}개 표시',applyToc:'목차 표시',pill:'필터',unit:'개',
  tocTitle:'📖 도감 목차',tocSub:'총 {n}개 수록 · 밴드를 선택하세요',tocOthers:'기타 챕터',tocCollect:'수집',tocNote:'※ 수집 진행도는 데모 데이터입니다. 정식 버전은 로그인 후 기록과 연동됩니다.',
  chapterSub:'총 {t}개 · 수집 {c}({p}%)',demo:'(데모)',resultBar:'{a} / {b}개 표시',
  dSeries:'버전',dDate:'발매일',dType:'타입',dSize:'사이즈',dCountry:'판매지',dEvent:'이벤트',dNote:'메모',dLottery:'추첨',dYes:'🎲 예',prev:'이전',next:'다음',unknownYear:'미상',
- dl:'다운로드',share:'공유',shareCopied:'URL 복사 완료! (정식판은 필터+QR 지원)',dlStub:'프로토타입 미구현 — 정식판은 기존 내보내기 유지',noPinned:'고정 공지가 없습니다',songLabel:'추천 곡',emailCopied:'Email 복사 완료!',tabPin:'📌 공지',tabLog:'📢 업데이트',fShare:'🔗 사이트 공유',fBlog:'📝 개발 일지',fContact:'연락처',fReport:'⚠ 오류 신고',fAuthor:'작성자: 千早愛音的暴躁柯基'}
+ dl:'다운로드',share:'공유',shareCopied:'URL 복사 완료! (정식판은 필터+QR 지원)',noPinned:'고정 공지가 없습니다',songLabel:'추천 곡',emailCopied:'Email 복사 완료!',tabPin:'📌 공지',tabLog:'📢 업데이트',fShare:'🔗 사이트 공유',fBlog:'📝 개발 일지',fContact:'연락처',fReport:'⚠ 오류 신고',fAuthor:'작성자: 千早愛音的暴躁柯基',
+ expTitle:'⬇ 배지 시트 이미지 저장',expDesc:'현재 필터된 {n}개 내보내기',expLayout:'레이아웃',expGrid:'⊞ 이미지 그리드',expGridDesc:'한 줄에 여러 배지 표시',expTable:'☰ 리스트 표',expTableDesc:'텍스트 정보 포함 표 형식',expCols:'줄당 열 수',expFields:'표시 항목',expFmt:'출력 형식',expTitleLabel:'제목',expOnlyImg:'이미지 있는 것만 출력',expCancel:'취소',expDownload:'⬇ 다운로드',expGenerating:'생성 중...',thBand:'밴드',thChar:'캐릭터',thEvent:'이벤트',thYear:'발매일',thSeries:'버전'}
 };
 let curLang=localStorage.getItem('proto-lang')||'zh-TW';
 if(!L10N[curLang])curLang='zh-TW';
@@ -796,7 +890,7 @@ function renderContent(){
   }
   html+=`<div class="result-bar"><span>${fmt('resultBar',{a:filtered.length,b:all.length})}</span>
     <span class="rb-actions">
-      <button class="rb-btn" onclick="dlStub()">⬇ ${t('dl')}</button>
+      <button class="rb-btn" onclick="openExport()">⬇ ${t('dl')}</button>
       <button class="rb-btn" onclick="shareSite()">🔗 ${t('share')}</button>
     </span></div>`;
   /* 網格 + 年份章節分隔線 */
@@ -942,7 +1036,6 @@ function showToast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(_toastT);_toastT=setTimeout(()=>el.classList.remove('show'),2600);
 }
-function dlStub(){showToast(t('dlStub'))}
 function _copy(text,okMsg){
   (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject())
     .then(()=>showToast(okMsg)).catch(()=>showToast(text));
@@ -1003,6 +1096,457 @@ async function toggleSongPanel(){
       </div>
     </div></div>`;
   p.classList.add('open');
+}
+
+/* ════ 匯出(完整移植自 index.html,輸出檔與正式站一致)════ */
+function getEventShortName(event){
+  if(!event) return '';
+  return event.length > 10 ? event.slice(0, 10) + '…' : event;
+}
+let exportLayout='grid', exportFmt='png', exportCols=4;
+let selectedFields=new Set(['id','band','character','series','year','event']);
+function getExportFields(){
+  return [
+    {key:'band',label:t('thBand')},{key:'character',label:t('thChar')},
+    {key:'event',label:t('thEvent')},{key:'year',label:t('thYear')},{key:'series',label:t('thSeries')},
+  ];
+}
+/* jsPDF / XLSX 按需載入(原型不預載,省手機流量) */
+const _libCache={};
+function loadLib(url,check){
+  if(check())return Promise.resolve();
+  if(!_libCache[url]){
+    _libCache[url]=new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src=url;s.onload=res;s.onerror=()=>rej(new Error('lib load fail: '+url));
+      document.head.appendChild(s);
+    });
+  }
+  return _libCache[url];
+}
+function openExport(){
+  /* 套用目前語言到 modal 標籤 */
+  document.getElementById('exp-h2').textContent=t('expTitle');
+  document.getElementById('exp-desc').textContent=fmt('expDesc',{n:filtered.length});
+  document.getElementById('exp-h3-layout').textContent=t('expLayout');
+  document.getElementById('exp-grid-t').textContent=t('expGrid');
+  document.getElementById('exp-grid-d').textContent=t('expGridDesc');
+  document.getElementById('exp-table-t').textContent=t('expTable');
+  document.getElementById('exp-table-d').textContent=t('expTableDesc');
+  document.getElementById('exp-h3-cols').textContent=t('expCols');
+  document.getElementById('exp-h3-fields').textContent=t('expFields');
+  document.getElementById('exp-h3-fmt').textContent=t('expFmt');
+  document.getElementById('exp-h3-ttl').textContent=t('expTitleLabel');
+  document.getElementById('exp-only-img-label').textContent=t('expOnlyImg');
+  document.getElementById('exp-cancel').textContent=t('expCancel');
+  document.getElementById('btn-dl').textContent=t('expDownload');
+  buildFieldChips();
+  document.getElementById('export-overlay').classList.add('active');
+}
+function closeExport(){document.getElementById('export-overlay').classList.remove('active')}
+function selectLayout(l){
+  exportLayout=l;
+  document.getElementById('layout-grid').classList.toggle('selected',l==='grid');
+  document.getElementById('layout-table').classList.toggle('selected',l==='table');
+  document.getElementById('grid-cols-section').style.display=l==='grid'?'':'none';
+  document.getElementById('table-fields-section').style.display=l==='table'?'':'none';
+}
+function selectCols(n){
+  exportCols=n;
+  [4,6,8,10].forEach(c=>document.getElementById('col-'+c).classList.toggle('on',c===n));
+}
+function selectFmt(fm){
+  exportFmt=fm;
+  ['png','jpg','pdf','html','xlsx'].forEach(f=>document.getElementById('fmt-'+f).classList.toggle('on',f===fm));
+  /* PDF/HTML/Excel 只支援表格模式(與正式站相同) */
+  const tableOnly=['pdf','html','xlsx'].includes(fm);
+  if(tableOnly&&exportLayout!=='table')selectLayout('table');
+  document.getElementById('layout-grid').style.opacity=tableOnly?'0.4':'1';
+  document.getElementById('layout-grid').style.pointerEvents=tableOnly?'none':'';
+}
+function buildFieldChips(){
+  document.getElementById('field-chips').innerHTML=getExportFields().map(f=>
+    `<span class="exp-chip ${selectedFields.has(f.key)?'on':''}" onclick="toggleField('${f.key}',this)">${f.label}</span>`).join('');
+}
+function toggleField(k,el){
+  selectedFields.has(k)?selectedFields.delete(k):selectedFields.add(k);
+  el.classList.toggle('on',selectedFields.has(k));
+}
+function drawWatermark(ctx,W,H){
+  const text='千早愛音的暴躁柯基製作';
+  const PAD=16;
+  ctx.save();
+  ctx.font='bold 13px "Noto Sans TC",sans-serif';
+  ctx.textAlign='right';ctx.textBaseline='bottom';
+  const tw=ctx.measureText(text).width+10, th=20;
+  ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.fillRect(W-PAD-tw,H-PAD-th,tw,th);
+  ctx.fillStyle='rgba(0,0,0,0.6)';
+  ctx.fillText(text,W-PAD,H-PAD);
+  ctx.restore();
+}
+function drawCountryLegend(ctx,W,H,list){
+  const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+  const used=Object.keys(COUNTRY_COLORS).filter(c=>list.some(b=>b.country===c));
+  if(!used.length)return;
+  const PAD=16,DOT_R=6,ITEM_H=18;
+  ctx.save();
+  ctx.font='11px "Noto Sans TC",sans-serif';
+  const maxTextW=Math.max(...used.map(c=>ctx.measureText(c).width));
+  const legendW=DOT_R*2+6+maxTextW+16, legendH=used.length*ITEM_H+10;
+  const lx=PAD, ly=H-PAD-legendH;
+  ctx.fillStyle='rgba(255,255,255,0.75)';
+  ctx.beginPath();ctx.roundRect(lx,ly,legendW,legendH,6);ctx.fill();
+  used.forEach((country,i)=>{
+    const iy=ly+8+i*ITEM_H, cx=lx+8+DOT_R, cy=iy+DOT_R-1;
+    ctx.beginPath();ctx.arc(cx,cy,DOT_R,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,DOT_R-1.5,0,Math.PI*2);ctx.fillStyle=COUNTRY_COLORS[country];ctx.fill();
+    ctx.fillStyle='#333';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(country,cx+DOT_R+5,cy);
+  });
+  ctx.restore();
+}
+function _expReset(btn,progWrap,prog){
+  setTimeout(()=>{btn.disabled=false;btn.textContent=t('expDownload');progWrap.style.display='none';prog.style.width='0%';},600);
+}
+function doExportXlsx(list,title,btn,progWrap,prog){
+  const fields=getExportFields().filter(f=>selectedFields.has(f.key));
+  const headers=fields.map(f=>f.label);
+  const rows=list.map(b=>fields.map(f=>{
+    let val=b[f.key]||'';
+    if(f.key==='event')val=b.short_event||getEventShortName(val)||val;
+    return val;
+  }));
+  const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+  ws['!cols']=fields.map(f=>({wch:f.key==='event'?40:f.key==='band'?15:20}));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,title.slice(0,30));
+  XLSX.writeFile(wb,`bandori-badges-${Date.now()}.xlsx`);
+  prog.style.width='100%';
+  _expReset(btn,progWrap,prog);
+}
+function doExportHtml(list,title,btn,progWrap,prog){
+  const fields=getExportFields().filter(f=>selectedFields.has(f.key));
+  const rows=list.map(b=>{
+    const cells=fields.map(f=>{
+      let val=b[f.key]||'—';
+      if(f.key==='event')val=b.short_event||getEventShortName(val)||val;
+      if(f.key==='band'){
+        const bc=bandColor(b.band);
+        return `<td><span style="background:${bc}22;color:${bc};padding:2px 8px;border-radius:8px;font-size:0.85em;">${val}</span></td>`;
+      }
+      return `<td>${val}</td>`;
+    }).join('');
+    return `<tr><td><img src="${imgUrl(b)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'"/></td>${cells}</tr>`;
+  }).join('');
+  const htmlContent=`<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"/><title>${title}</title>
+<style>
+body{font-family:'Noto Sans TC',sans-serif;background:#faf9f5;padding:2rem;}
+h1{color:#13122b;margin-bottom:1rem;}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px #0001;}
+th{background:#f0eff9;color:#3d3d8f;padding:10px 14px;text-align:left;font-size:0.85rem;}
+td{padding:8px 14px;border-top:1px solid #ece9e0;vertical-align:middle;font-size:0.9rem;}
+tr:hover td{background:#fafaf8;}
+footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
+</style></head><body>
+<h1>${title}（共 ${list.length} 枚）</h1>
+<table><thead><tr><th>圖片</th>${fields.map(f=>`<th>${f.label}</th>`).join('')}</tr></thead>
+<tbody>${rows}</tbody></table>
+<footer>作者：千早愛音的暴躁柯基</footer>
+</body></html>`;
+  const blob=new Blob([htmlContent],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`bandori-badges-${Date.now()}.html`;
+  a.click();URL.revokeObjectURL(url);
+  prog.style.width='100%';
+  _expReset(btn,progWrap,prog);
+}
+async function doExport(){
+  const btn=document.getElementById('btn-dl');
+  const progWrap=document.getElementById('prog-wrap');
+  const prog=document.getElementById('prog-bar');
+  btn.disabled=true;btn.textContent=t('expGenerating');
+  progWrap.style.display='block';prog.style.width='0%';
+  const title=document.getElementById('export-title').value||'BanG Dream! 徽章圖鑑';
+  const onlyImg=document.getElementById('exp-only-img').checked;
+  const list=onlyImg?filtered.filter(b=>!isNoImg(b)):filtered;
+  try{
+    if(exportFmt==='xlsx')await loadLib('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',()=>window.XLSX);
+    if(exportFmt==='pdf')await loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>window.jspdf);
+  }catch(e){
+    showToast('⚠ '+e.message);
+    _expReset(btn,progWrap,prog);
+    return;
+  }
+  if(exportFmt==='xlsx'){doExportXlsx(list,title,btn,progWrap,prog);return}
+  if(exportFmt==='html'){doExportHtml(list,title,btn,progWrap,prog);return}
+  if(exportLayout==='table'){await doExportTable(list,title,btn,progWrap,prog);return}
+
+  /* ── 網格模式:類型+尺寸分組(與正式站輸出一致) ── */
+  const CELL=110, COLS=exportCols, PAD=28, GAP=10;
+  const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=88;
+  const ITEM_H=CELL+LABEL_H+GAP;
+  const W=COLS*(CELL+GAP)+PAD*2;
+  const TYPE_ORDER=['角色本身','角色相關','角色聲優',''];
+  const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','名牌','金屬','約80mm布偶胸章','刺繡布章','未確定'];
+  const SIZE_56_GROUP=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
+  const isRound=s=>ROUND_SIZES_SET.has(s||'');
+  function groupBadges(badges){
+    const groups=[];
+    const types=[...new Set(badges.map(b=>b.type||''))].sort((a,b)=>{
+      const ai=TYPE_ORDER.indexOf(a||''),bi=TYPE_ORDER.indexOf(b||'');
+      return (ai===-1?99:ai)-(bi===-1?99:bi);
+    });
+    for(const type of types){
+      const byType=badges.filter(b=>(b.type||'')===type);
+      const sizeSet=[...new Set(byType.map(b=>b.size||'其他'))];
+      const has56=sizeSet.some(s=>SIZE_56_GROUP.has(s));
+      const others=sizeSet.filter(s=>!SIZE_56_GROUP.has(s));
+      const sorted=[];
+      if(has56)sorted.push('__56group__');
+      others.sort((a,b)=>{
+        const ai=SIZE_ORDER.indexOf(a),bi=SIZE_ORDER.indexOf(b);
+        return (ai===-1?99:ai)-(bi===-1?99:bi);
+      }).forEach(s=>sorted.push(s));
+      for(const size of sorted){
+        let items,sizeLabel;
+        if(size==='__56group__'){items=byType.filter(b=>SIZE_56_GROUP.has(b.size||''));sizeLabel='56-58mm圓形';}
+        else{items=byType.filter(b=>(b.size||'其他')===size);sizeLabel=size||'其他';}
+        if(items.length){
+          items.sort((a,b)=>(!a.year?1:0)-(!b.year?1:0));
+          groups.push({type,sizeLabel,items});
+        }
+      }
+    }
+    return groups;
+  }
+  function calcHeight(groups){
+    let h=HEADER_H+PAD, prevT=null;
+    for(const g of groups){
+      if(g.type!==prevT){h+=TYPE_H+6;prevT=g.type;}
+      h+=SIZE_H+8;
+      h+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;
+    }
+    return h+PAD;
+  }
+  const groups=groupBadges(list);
+  const H=calcHeight(groups);
+  const imgMap={};
+  await Promise.all(list.map(b=>new Promise(res=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{imgMap[b.id]=img;res();};
+    img.onerror=()=>res();
+    img.src=imgUrl(b);
+  })));
+  prog.style.width='50%';
+  for(const g of groups){
+    g.items.sort((a,b)=>{
+      const ai=!imgMap[a.id]?1:0,bi=!imgMap[b.id]?1:0;
+      if(ai!==bi)return ai-bi;
+      return (!a.year?1:0)-(!b.year?1:0);
+    });
+  }
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#faf9f5';ctx.fillRect(0,0,W,H);
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#ff6eb4');grad.addColorStop(1,'#c0005a');
+  ctx.fillStyle=grad;
+  ctx.beginPath();ctx.roundRect(PAD/2,PAD/2,W-PAD,HEADER_H-8,12);ctx.fill();
+  ctx.fillStyle='#fff';
+  ctx.font='bold 24px "Noto Sans TC",sans-serif';ctx.textAlign='left';
+  ctx.fillText(title,PAD*1.5,PAD/2+36);
+  ctx.font='13px sans-serif';ctx.fillStyle='#ffffff99';
+  ctx.fillText(`共 ${list.length} 枚`,PAD*1.5,PAD/2+56);
+  let curY=HEADER_H+PAD, prevType=null;
+  for(const g of groups){
+    if(g.type!==prevType){
+      ctx.fillStyle='#1a1a2e';
+      ctx.beginPath();ctx.roundRect(PAD,curY,W-PAD*2,TYPE_H,8);ctx.fill();
+      ctx.fillStyle='#fff';
+      ctx.font='bold 16px "Noto Sans TC",sans-serif';ctx.textAlign='left';
+      ctx.fillText('▌ '+(g.type||'未分類'),PAD+12,curY+24);
+      curY+=TYPE_H+6;
+      prevType=g.type;
+    }
+    ctx.fillStyle='#e8e5f5';
+    ctx.beginPath();ctx.roundRect(PAD,curY,W-PAD*2,SIZE_H,6);ctx.fill();
+    ctx.fillStyle='#3d3d8f';
+    ctx.font='bold 13px "Noto Sans TC",sans-serif';ctx.textAlign='left';
+    ctx.fillText(g.sizeLabel,PAD+10,curY+19);
+    curY+=SIZE_H+8;
+    g.items.forEach((b,i)=>{
+      const col=i%COLS, row=Math.floor(i/COLS);
+      const x=PAD+col*(CELL+GAP), y=curY+row*ITEM_H;
+      const c=bandColor(b.band);
+      const r=isRound(b.size||'');
+      ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.roundRect(x,y,CELL,CELL,r?CELL/2:8);ctx.fill();
+      ctx.strokeStyle=c+'44';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.roundRect(x,y,CELL,CELL,r?CELL/2:8);ctx.stroke();
+      const img=imgMap[b.id];
+      if(img){
+        ctx.save();
+        if(r){
+          ctx.beginPath();ctx.arc(x+CELL/2,y+CELL/2,CELL/2-3,0,Math.PI*2);ctx.clip();
+          ctx.drawImage(img,x+3,y+3,CELL-6,CELL-6);
+        }else{
+          const iw=img.naturalWidth,ih=img.naturalHeight;
+          const scale=Math.min((CELL-8)/iw,(CELL-8)/ih);
+          const dw=iw*scale,dh=ih*scale;
+          ctx.beginPath();ctx.roundRect(x+3,y+3,CELL-6,CELL-6,6);ctx.clip();
+          ctx.drawImage(img,x+(CELL-dw)/2,y+(CELL-dh)/2,dw,dh);
+        }
+        ctx.restore();
+      }else{
+        const cc=charColor(b.character||'');
+        ctx.fillStyle=cc+'33';
+        ctx.beginPath();ctx.roundRect(x+3,y+3,CELL-6,CELL-6,r?CELL/2:6);ctx.fill();
+        ctx.fillStyle=cc;ctx.font='22px sans-serif';ctx.textAlign='center';
+        ctx.fillText('🎵',x+CELL/2,y+CELL/2+8);
+      }
+      const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+      const countryColor=COUNTRY_COLORS[b.country];
+      if(countryColor){
+        const dotR=7,dotX=x+CELL-dotR-4,dotY=y+dotR+4;
+        ctx.beginPath();ctx.arc(dotX,dotY,dotR,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+        ctx.beginPath();ctx.arc(dotX,dotY,dotR-1.5,0,Math.PI*2);ctx.fillStyle=countryColor;ctx.fill();
+      }
+      const shortName=b.short_event||getEventShortName(b.event||'');
+      ctx.fillStyle='#333';
+      ctx.font='10px "Noto Sans TC",sans-serif';ctx.textAlign='center';
+      let line='',lines=[];
+      for(const ch of shortName.split('')){
+        if(ctx.measureText(line+ch).width>CELL-4){lines.push(line);line=ch;}
+        else line+=ch;
+      }
+      if(line)lines.push(line);
+      lines=lines.slice(0,3);
+      lines.forEach((l,li)=>ctx.fillText(l,x+CELL/2,y+CELL+14+li*14));
+      if(b.series){
+        ctx.fillStyle='#888';
+        ctx.font='9px "Noto Sans TC",sans-serif';ctx.textAlign='center';
+        const sy=y+CELL+14+lines.length*14+4;
+        let sLine='',sLines=[];
+        for(const ch of b.series.split('')){
+          if(ctx.measureText(sLine+ch).width>CELL-4){sLines.push(sLine);sLine=ch;}
+          else sLine+=ch;
+        }
+        if(sLine)sLines.push(sLine);
+        sLines=sLines.slice(0,2);
+        sLines.forEach((l,li)=>ctx.fillText(l,x+CELL/2,sy+li*12));
+      }
+    });
+    curY+=Math.ceil(g.items.length/COLS)*ITEM_H+PAD;
+  }
+  drawWatermark(ctx,W,H);
+  drawCountryLegend(ctx,W,H,list);
+  prog.style.width='95%';
+  if(exportFmt==='pdf'){
+    const {jsPDF}=window.jspdf;
+    const imgData=canvas.toDataURL('image/png');
+    const pdf=new jsPDF({orientation:canvas.width>canvas.height?'landscape':'portrait',unit:'px',format:[canvas.width,canvas.height]});
+    pdf.addImage(imgData,'PNG',0,0,canvas.width,canvas.height);
+    pdf.save(`bandori-badges-${Date.now()}.pdf`);
+    prog.style.width='100%';
+    _expReset(btn,progWrap,prog);
+  }else{
+    const mimeType=exportFmt==='jpg'?'image/jpeg':'image/png';
+    const ext=exportFmt==='jpg'?'jpg':'png';
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download=`bandori-badges-${Date.now()}.${ext}`;
+      a.click();URL.revokeObjectURL(url);
+      prog.style.width='100%';
+      _expReset(btn,progWrap,prog);
+    },mimeType,0.92);
+  }
+}
+async function doExportTable(list,title,btn,progWrap,prog){
+  const fields=getExportFields().filter(f=>selectedFields.has(f.key));
+  const PAD=32,TH=40,ROW_H=52,THUMB=40,HEADER_H=64;
+  const FIELD_WIDTHS={band:120,character:100,event:320,year:130,series:150};
+  const DEFAULT_W=150;
+  const totalFieldW=fields.reduce((s,f)=>s+(FIELD_WIDTHS[f.key]||DEFAULT_W),0);
+  const W=60+totalFieldW+PAD*2;
+  const H=HEADER_H+TH+list.length*ROW_H+PAD*2+30;
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#faf9f5';ctx.fillRect(0,0,W,H);
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#13122b');grad.addColorStop(1,'#2d1b4e');
+  ctx.fillStyle=grad;
+  ctx.beginPath();ctx.roundRect(PAD/2,PAD/2,W-PAD,HEADER_H,12);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 22px "Noto Sans TC",sans-serif';ctx.textAlign='left';
+  ctx.fillText(title,PAD*1.5,PAD/2+38);
+  const imgs=await Promise.all(list.map(b=>new Promise(res=>{
+    const img=new Image();img.crossOrigin='anonymous';
+    img.onload=()=>res(img);img.onerror=()=>res(null);
+    img.src=imgUrl(b);
+  })));
+  prog.style.width='60%';
+  const TX=PAD,TY=HEADER_H+PAD;
+  const fieldXMap={};
+  let fieldX=TX+60;
+  fields.forEach(f=>{fieldXMap[f.key]=fieldX;fieldX+=(FIELD_WIDTHS[f.key]||DEFAULT_W);});
+  ctx.fillStyle='#f0eff9';ctx.fillRect(TX,TY,W-PAD*2,TH);
+  ctx.fillStyle='#3d3d8f';ctx.font='bold 11px sans-serif';ctx.textAlign='left';
+  ctx.fillText('圖',TX+10,TY+23);
+  fields.forEach(f=>ctx.fillText(f.label,fieldXMap[f.key],TY+23));
+  list.forEach((b,i)=>{
+    const ry=TY+TH+i*ROW_H;
+    ctx.fillStyle=i%2===0?'#fff':'#faf9f5';ctx.fillRect(TX,ry,W-PAD*2,ROW_H);
+    ctx.strokeStyle='#ece9e0';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(TX,ry);ctx.lineTo(TX+W-PAD*2,ry);ctx.stroke();
+    if(imgs[i]){
+      ctx.save();
+      ctx.beginPath();ctx.arc(TX+8+THUMB/2,ry+ROW_H/2,THUMB/2,0,Math.PI*2);ctx.clip();
+      ctx.drawImage(imgs[i],TX+8,ry+(ROW_H-THUMB)/2,THUMB,THUMB);
+      ctx.restore();
+    }
+    const c=bandColor(b.band);
+    ctx.font='12px "Noto Sans TC",sans-serif';ctx.textAlign='left';
+    fields.forEach(f=>{
+      let val=b[f.key]||'—';
+      if(f.key==='event')val=b.short_event||getEventShortName(val);
+      const fw=FIELD_WIDTHS[f.key]||DEFAULT_W;
+      const fx=fieldXMap[f.key];
+      if(f.key==='band'){
+        ctx.fillStyle=c+'22';
+        ctx.beginPath();ctx.roundRect(fx-4,ry+ROW_H/2-10,Math.min(val.length*8+16,fw-8),20,10);ctx.fill();
+        ctx.fillStyle=c;
+      }else{ctx.fillStyle='#333';}
+      const maxChars=Math.floor(fw/8);
+      if(val.length>maxChars)val=val.slice(0,maxChars-1)+'…';
+      ctx.fillText(val,fx,ry+ROW_H/2+5);
+    });
+  });
+  drawWatermark(ctx,W,H);
+  prog.style.width='95%';
+  if(exportFmt==='pdf'){
+    const {jsPDF}=window.jspdf;
+    const imgData=canvas.toDataURL('image/png');
+    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width,canvas.height]});
+    pdf.addImage(imgData,'PNG',0,0,canvas.width,canvas.height);
+    pdf.save(`bandori-badges-${Date.now()}.pdf`);
+  }else{
+    const mimeType=exportFmt==='jpg'?'image/jpeg':'image/png';
+    const ext=exportFmt==='jpg'?'jpg':'png';
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download=`bandori-badges-${Date.now()}.${ext}`;
+      a.click();URL.revokeObjectURL(url);
+    },mimeType,0.92);
+  }
+  prog.style.width='100%';
+  _expReset(btn,progWrap,prog);
 }
 
 /* ════ 詳細頁(含 ←→ 翻頁)════ */
