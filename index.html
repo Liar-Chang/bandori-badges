@@ -134,6 +134,8 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 :root{
   --bg:#faf9f5;--surface:#fff;--border:#ece9e0;--text:#1a1a1a;--muted:#777;
   --radius:14px;
+  /* 主題強調色:改版後由 JS 依所選樂團動態切換(BAND_COLORS),預設紫 */
+  --accent:#5a4fcf;
 }
 [data-theme="dark"]{
   --bg:#141414;--surface:#1e1e1e;--border:#2e2e2e;--text:#f0f0f0;--muted:#888;
@@ -147,7 +149,7 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 }
 [data-theme="dark"] .sidebar{background:#1a1a1a;border-color:#2e2e2e;}
 [data-theme="dark"] .badge-card{background:#1e1e1e;border-color:#2e2e2e;}
-[data-theme="dark"] .badge-card:hover{border-color:#7c6fcd;box-shadow:0 4px 20px #5a4fcf30;}
+[data-theme="dark"] .badge-card:hover{border-color:#7c6fcd;box-shadow:0 4px 20px color-mix(in srgb, var(--accent) 19%, transparent);}
 [data-theme="dark"] .badge-img-wrap{background:#2a2a2a;}
 [data-theme="dark"] .band-chip:hover{background:#252525;}
 [data-theme="dark"] .search-box{background:#252525;color:#f0f0f0;border-color:#3a3a3a;}
@@ -155,7 +157,7 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 [data-theme="dark"] .detail-modal{background:#1e1e1e;}
 [data-theme="dark"] .detail-note{background:#2a2a2a;color:#aaa;}
 [data-theme="dark"] .btn-reset{background:#252525;color:#888;border-color:#3a3a3a;}
-[data-theme="dark"] .btn-reset:hover{border-color:#5a4fcf;color:#a09aff;}
+[data-theme="dark"] .btn-reset:hover{border-color:var(--accent);color:#a09aff;}
 [data-theme="dark"] .filter-item{color:var(--text);}
 [data-theme="dark"] .badge-series{color:#888;}
 [data-theme="dark"] .table-view-wrap .badge-table{background:#1e1e1e;}
@@ -256,7 +258,7 @@ body{
 
 .search-box{width:100%;padding:0.6rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;
   font-family:inherit;font-size:0.875rem;background:var(--bg);outline:none;transition:border 0.15s;}
-.search-box:focus{border-color:#5a4fcf;}
+.search-box:focus{border-color:var(--accent);}
 
 .band-list{display:flex;flex-direction:column;gap:0.35rem;}
 .band-chip{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;border-radius:8px;
@@ -268,11 +270,11 @@ body{
 
 .filter-group{display:flex;flex-direction:column;gap:0.3rem;max-height:160px;overflow-y:auto;}
 .filter-item{display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-size:0.83rem;padding:0.2rem 0;}
-.filter-item input{width:15px;height:15px;accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;}
+.filter-item input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
 
 .btn-reset{font-family:inherit;font-size:0.8rem;padding:0.45rem 1rem;border-radius:7px;
   background:var(--bg);border:1px solid var(--border);cursor:pointer;color:var(--muted);transition:all 0.15s;width:100%;}
-.btn-reset:hover{border-color:#5a4fcf;color:#5a4fcf;}
+.btn-reset:hover{border-color:var(--accent);color:var(--accent);}
 
 .main{padding:1.5rem;}
 .result-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
@@ -284,7 +286,7 @@ body{
 
 .badge-card{background:#fff;border-radius:var(--radius);border:1.5px solid var(--border);
   overflow:hidden;cursor:pointer;transition:all 0.2s;}
-.badge-card:hover{border-color:#b8b0e8;box-shadow:0 4px 20px #5a4fcf15;transform:translateY(-2px);}
+.badge-card:hover{border-color:#b8b0e8;box-shadow:0 4px 20px color-mix(in srgb, var(--accent) 8%, transparent);transform:translateY(-2px);}
 
 /* 蒐集狀態視覺 */
 .badge-card.is-collected{border-color:#22c55e;box-shadow:0 0 0 1.5px #22c55e44;}
@@ -329,7 +331,7 @@ body{
 .empty-main{grid-column:1/-1;text-align:center;padding:5rem 2rem;color:var(--muted);}
 
 /* 展開卡片 */
-.badge-card.expanded{grid-column:span 2;border-color:#b8b0e8;box-shadow:0 4px 20px #5a4fcf20;}
+.badge-card.expanded{grid-column:span 2;border-color:#b8b0e8;box-shadow:0 4px 20px color-mix(in srgb, var(--accent) 13%, transparent);}
 .badge-card-expand{display:none;padding:0.75rem 0.85rem 0.85rem;border-top:1px solid var(--border);animation:fadeIn 0.2s ease;}
 .badge-card.expanded .badge-card-expand{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
@@ -337,7 +339,7 @@ body{
 .expand-field:last-child{margin-bottom:0;}
 .expand-label{font-size:0.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;}
 .expand-value{font-size:0.82rem;color:var(--text);line-height:1.4;}
-.expand-link{color:#5a4fcf;text-decoration:none;font-size:0.82rem;}
+.expand-link{color:var(--accent);text-decoration:none;font-size:0.82rem;}
 .expand-link:hover{text-decoration:underline;}
 [data-theme="dark"] .badge-card-expand{border-color:#2e2e2e;}
 [data-theme="dark"] .expand-value{color:var(--text);}
@@ -347,7 +349,7 @@ body{
 .btn-view{font-family:inherit;font-size:0.82rem;padding:0.4rem 0.9rem;border-radius:7px;
   border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);transition:all 0.15s;display:flex;align-items:center;gap:0.4rem;}
 .btn-view.active{background:#13122b;color:#fff;border-color:#13122b;}
-.btn-view:not(.active):hover{border-color:#5a4fcf;color:#5a4fcf;}
+.btn-view:not(.active):hover{border-color:var(--accent);color:var(--accent);}
 
 /* Table view */
 .table-view-wrap{overflow-x:auto;}
@@ -367,7 +369,7 @@ body{
 .export-modal h2{font-size:1.05rem;font-weight:700;margin-bottom:1.25rem;color:#13122b;}
 .export-options{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1.25rem;}
 .export-opt{border:1.5px solid var(--border);border-radius:10px;padding:0.85rem 1rem;cursor:pointer;transition:all 0.15s;}
-.export-opt:hover,.export-opt.selected{border-color:#5a4fcf;background:#f0effd;}
+.export-opt:hover,.export-opt.selected{border-color:var(--accent);background:#f0effd;}
 .export-opt-title{font-size:0.875rem;font-weight:600;margin-bottom:0.2rem;}
 .export-opt-desc{font-size:0.75rem;color:var(--muted);}
 .export-field-row{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.25rem;}
@@ -392,7 +394,7 @@ body{
 .event-modal-header{padding:1.25rem 1.5rem 0.75rem;border-bottom:1px solid var(--border);flex-shrink:0;}
 .event-modal-header h3{font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--text);}
 .event-modal-search{width:100%;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.875rem;background:var(--bg);color:var(--text);outline:none;transition:border 0.15s;}
-.event-modal-search:focus{border-color:#5a4fcf;}
+.event-modal-search:focus{border-color:var(--accent);}
 .event-modal-body{flex:1;overflow-y:auto;padding:0.75rem 1.5rem;}
 .event-modal-footer{padding:0.85rem 1.5rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:0.75rem;}
 .event-selected-count{font-size:0.82rem;color:var(--muted);}
@@ -407,7 +409,7 @@ body{
 .changelog-fab-modal.open{display:flex;}
 .changelog-fab-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
 .changelog-fab-tab{flex:1;font-family:inherit;font-size:0.82rem;font-weight:600;padding:0.65rem;border:none;background:transparent;cursor:pointer;color:var(--muted);transition:all 0.15s;border-bottom:2px solid transparent;}
-.changelog-fab-tab.active{color:#5a4fcf;border-bottom-color:#5a4fcf;background:var(--bg);}
+.changelog-fab-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--bg);}
 .changelog-fab-content{flex:1;overflow-y:auto;padding:0.85rem 1.1rem;}
 [data-theme="dark"] .changelog-fab-modal{background:#1e1e1e;}
 [data-theme="dark"] .changelog-fab-tab.active{background:#141414;}
@@ -505,8 +507,8 @@ body{
 body.batch-mode .badge-batch-cb{display:flex;}
 body.batch-mode .fav-btn,
 body.batch-mode .col-btn{pointer-events:none;opacity:0.4;}
-.badge-card.batch-selected{outline:3px solid #5a4fcf;outline-offset:-3px;}
-.badge-card.batch-selected .badge-batch-cb{background:#5a4fcf;border-color:#5a4fcf;}
+.badge-card.batch-selected{outline:3px solid var(--accent);outline-offset:-3px;}
+.badge-card.batch-selected .badge-batch-cb{background:var(--accent);border-color:var(--accent);}
 body.batch-mode .badge-card{cursor:pointer;}
 
 /* 批次模式下隱藏推薦歌曲浮動播放器，避免重疊 action bar */
@@ -544,14 +546,14 @@ body.batch-mode .batch-action-bar{display:flex;}
   font-size:0.82rem;font-weight:700;color:var(--text,#222);
   padding:0 0.4rem;white-space:nowrap;
 }
-.batch-action-bar .count b{color:#5a4fcf;font-size:1rem;margin:0 0.15rem;}
+.batch-action-bar .count b{color:var(--accent);font-size:1rem;margin:0 0.15rem;}
 .batch-action-bar button{
   font-family:inherit;font-size:0.78rem;font-weight:600;
   padding:0.45rem 0.85rem;border-radius:8px;border:none;cursor:pointer;
   transition:opacity 0.12s;white-space:nowrap;
 }
 .batch-action-bar button:disabled{opacity:0.4;cursor:not-allowed;}
-.batch-action-bar .btn-list{background:#5a4fcf;color:#fff;}
+.batch-action-bar .btn-list{background:var(--accent);color:#fff;}
 .batch-action-bar .btn-col{background:#22c55e;color:#fff;}
 .batch-action-bar .btn-col-del{background:#ef4444;color:#fff;}
 .batch-action-bar .btn-select-all{background:transparent;color:var(--muted,#888);border:1.5px solid var(--border,#e4e4e4);}
@@ -578,8 +580,8 @@ body.batch-mode .batch-action-bar{display:flex;}
   background:transparent;color:var(--muted,#888);cursor:pointer;
   transition:all 0.12s;
 }
-.btn-batch-toggle:hover{border-color:#5a4fcf;color:#5a4fcf;}
-body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a4fcf;}
+.btn-batch-toggle:hover{border-color:var(--accent);color:var(--accent);}
+body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-color:var(--accent);}
 
 /* Toast */
 #_toast{
@@ -635,7 +637,7 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
       <button onclick="setLang('ko')" id="mlang-ko" style="font-size:0.72rem;padding:0.25rem 0.5rem;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--text);cursor:pointer;font-family:inherit;">한국어</button>
       <button onclick="toggleTheme()" style="background:transparent;border:none;font-size:1.1rem;cursor:pointer;padding:0.1rem;">🌙</button>
       <!-- 手機版登入/登出 -->
-      <button id="btn-login-mobile" onclick="signInGoogle()" style="font-size:0.72rem;padding:0.25rem 0.7rem;border-radius:5px;background:#5a4fcf;border:none;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;display:none;align-items:center;gap:0.3rem;">
+      <button id="btn-login-mobile" onclick="signInGoogle()" style="font-size:0.72rem;padding:0.25rem 0.7rem;border-radius:5px;background:var(--accent);border:none;color:#fff;cursor:pointer;font-family:inherit;font-weight:600;display:none;align-items:center;gap:0.3rem;">
         <svg width="11" height="11" viewBox="0 0 48 48"><path fill="#fff" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/></svg>
         登入
       </button>
@@ -651,11 +653,11 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
       <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
       <button class="btn-reset" onclick="resetFilters()" style="margin-top:0.5rem;width:100%;font-size:0.75rem;padding:0.35rem 0.75rem;">重置所有篩選</button>
       <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
-        <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <input type="checkbox" id="hide-no-image" onchange="applyFilters()" style="accent-color:var(--accent);cursor:pointer;"/>
         <span id="hide-no-image-label">隱藏無圖徽章</span>
       </label>
       <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.4rem;cursor:pointer;font-size:0.75rem;color:var(--muted);">
-        <input type="checkbox" id="hide-lottery" onchange="applyFiltersAndSaveHideLottery()" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <input type="checkbox" id="hide-lottery" onchange="applyFiltersAndSaveHideLottery()" style="accent-color:var(--accent);cursor:pointer;"/>
         <span id="hide-lottery-label">隱藏抽獎徽章</span>
       </label>
     </div>
@@ -737,7 +739,7 @@ body.batch-mode .btn-batch-toggle{background:#5a4fcf;color:#fff;border-color:#5a
           <button class="btn-view active" id="btn-grid" onclick="setView('grid')">⊞ 圖鑑</button>
           <button class="btn-view" id="btn-table" onclick="setView('table')">☰ 表格</button>
         </div>
-        <button class="btn-view" onclick="openExport()" style="border-color:#5a4fcf;color:#5a4fcf;font-weight:600;">⬇ 下載圖檔</button>
+        <button class="btn-view" onclick="openExport()" style="border-color:var(--accent);color:var(--accent);font-weight:600;">⬇ 下載圖檔</button>
         <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
       </div>
     </div>
@@ -1445,7 +1447,7 @@ function renderGrid(list){
       ? `<a href="${b.url}" target="_blank" rel="noopener" class="expand-link" onclick="event.stopPropagation()">${b.event||'—'}</a>`
       : (b.event||'—');
     const shortEventHtml = b.url
-      ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:none;">${shortEvent}</a>`
+      ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none;">${shortEvent}</a>`
       : shortEvent;
     // 蒐集狀態 class：只標示「已蒐集」加綠框；未蒐集保持原樣（避免全部變灰）
     const colState = (currentUser && isCollected(b.id)) ? ' is-collected' : '';
@@ -1512,7 +1514,7 @@ function openDetail(idx){
   document.getElementById('d-year').textContent=b.year||'—';
   const dEvent = document.getElementById('d-event');
   if(b.url){
-    dEvent.innerHTML=`<a href="${b.url}" target="_blank" rel="noopener" style="color:#5a4fcf;text-decoration:underline;">${b.event||'—'}</a>`;
+    dEvent.innerHTML=`<a href="${b.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;">${b.event||'—'}</a>`;
   } else {
     dEvent.textContent=b.event||'—';
   }
@@ -1986,7 +1988,7 @@ function applyLang(){
     const btn = document.getElementById('lang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
     if(btn){ btn.style.background = l===currentLang?'#ffffff55':'#ffffff22'; btn.style.fontWeight = l===currentLang?'700':'400'; }
     const mbtn = document.getElementById('mlang-'+l.replace('-TW','zh').replace('-CN','cn').replace('-',''));
-    if(mbtn){ mbtn.style.background=l===currentLang?'#5a4fcf':'var(--bg)'; mbtn.style.color=l===currentLang?'#fff':'var(--text)'; mbtn.style.borderColor=l===currentLang?'#5a4fcf':'var(--border)'; }
+    if(mbtn){ mbtn.style.background=l===currentLang?'var(--accent)':'var(--bg)'; mbtn.style.color=l===currentLang?'#fff':'var(--text)'; mbtn.style.borderColor=l===currentLang?'var(--accent)':'var(--border)'; }
   });
   // 標題
   document.title = L.title;
@@ -2165,7 +2167,7 @@ function updateEventBtnLabel(){
   } else {
     const countLabel = ({'zh-TW':`已選 ${selEvents.size} 個活動`,'ja':`${selEvents.size} 件選択済み`,'en':`${selEvents.size} selected`,'ko':`${selEvents.size}개 선택됨`})[currentLang]||`已選 ${selEvents.size} 個`;
     btn.textContent = countLabel;
-    document.getElementById('event-modal-btn').style.borderColor = '#5a4fcf';
+    document.getElementById('event-modal-btn').style.borderColor = 'var(--accent)';
   }
   if(selEvents.size===0) document.getElementById('event-modal-btn').style.borderColor = '';
 }
@@ -2239,7 +2241,7 @@ function updateSeriesBtnLabel(){
   if(selSeries.size > 0){
     const countLabel=({'zh-TW':`已選 ${selSeries.size} 個版本/工藝`,'ja':`${selSeries.size} 件選択済み`,'en':`${selSeries.size} selected`,'ko':`${selSeries.size}개 선택됨`})[currentLang]||`已選 ${selSeries.size} 個`;
     label.textContent = countLabel;
-    btn.style.borderColor = '#5a4fcf';
+    btn.style.borderColor = 'var(--accent)';
   } else {
     label.textContent=({'zh-TW':'選擇版本/工藝...','ja':'バージョン/工芸を選択...','en':'Select Version/Craft...','ko':'버전/공예 선택...'})[currentLang]||'選擇版本/工藝...';
     btn.style.borderColor = '';
@@ -2608,12 +2610,12 @@ function renderTable(list){
     const src = imgUrl(b);
     const idx = all.indexOf(b);
     const eventHtml = b.url
-      ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:#5a4fcf;text-decoration:underline;">${b.event||'—'}</a>`
+      ? `<a href="${b.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:underline;">${b.event||'—'}</a>`
       : (b.event||'—');
     // 登入狀態下的操作 icon
     const actionsHtml = currentUser ? `
       <div style="display:flex;gap:0.35rem;align-items:center;" onclick="event.stopPropagation()">
-        ${_batchMode ? `<input type="checkbox" class="tbl-batch-cb" ${_batchSelected.has(b.id)?'checked':''} onchange="toggleBadgeSelection('${b.id}')" style="width:18px;height:18px;accent-color:#5a4fcf;cursor:pointer;"/>` : ''}
+        ${_batchMode ? `<input type="checkbox" class="tbl-batch-cb" ${_batchSelected.has(b.id)?'checked':''} onchange="toggleBadgeSelection('${b.id}')" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;"/>` : ''}
         <button onclick="openFavModal('${b.id}')" title="加入清單"
           style="background:${isInAnyList(b.id)?'#ffd70033':'transparent'};border:1.5px solid ${isInAnyList(b.id)?'#ffd700':'var(--border)'};border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.95rem;color:${isInAnyList(b.id)?'#b78900':'var(--muted)'};display:flex;align-items:center;justify-content:center;padding:0;">${isInAnyList(b.id)?'★':'☆'}</button>
         <button onclick="openCollectionModal('${b.id}')" title="蒐集記錄"
@@ -3357,7 +3359,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
 
     <div class="sidebar-section" style="margin-bottom:1rem;">
       <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8rem;color:var(--muted);">
-        <input type="checkbox" id="exp-only-with-image" style="accent-color:#5a4fcf;cursor:pointer;"/>
+        <input type="checkbox" id="exp-only-with-image" style="accent-color:var(--accent);cursor:pointer;"/>
         <span id="exp-only-img-label">只輸出有圖的徽章</span>
       </label>
     </div>
@@ -3427,7 +3429,7 @@ async function doExportTable(list, title, btn, progWrap, prog){
     </div>
     <div style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.55rem 0.75rem;font-family:monospace;font-size:0.75rem;color:var(--text);word-break:break-all;margin-bottom:0.85rem;" id="wv-url"></div>
     <div style="display:flex;flex-direction:column;gap:0.5rem;">
-      <button onclick="_webviewCopyUrl()" id="wv-btn-copy" style="padding:0.6rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">
+      <button onclick="_webviewCopyUrl()" id="wv-btn-copy" style="padding:0.6rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">
         📋 <span id="wv-btn-copy-label">複製網址</span>
       </button>
       <button onclick="_webviewOpenExternal()" id="wv-btn-open" style="padding:0.6rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--text);cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">
@@ -3831,7 +3833,7 @@ function buildMyListsSidebar(){
   document.getElementById('my-lists-content').innerHTML = myLists.map(l=>{
     const count = Object.values(myListItems).filter(ids=>ids.includes(l.id)).length;
     const isActive = selectedList === l.id;
-    return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'#5a4fcf22':'transparent'};border:1.5px solid ${isActive?'#5a4fcf':'transparent'};margin-bottom:0.25rem;" onclick="filterByList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedList}')this.style.background='transparent'">
+    return `<div class="my-list-item" style="display:flex;align-items:center;justify-content:space-between;padding:0.4rem 0.5rem;border-radius:6px;cursor:pointer;background:${isActive?'color-mix(in srgb, var(--accent) 13%, transparent)':'transparent'};border:1.5px solid ${isActive?'var(--accent)':'transparent'};margin-bottom:0.25rem;" onclick="filterByList('${l.id}')" onmouseover="if('${l.id}'!=='${selectedList}')this.style.background='#80808015'" onmouseout="if('${l.id}'!=='${selectedList}')this.style.background='transparent'">
       <span style="font-size:0.78rem;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">⭐ ${l.name}</span>
       <span style="font-size:0.7rem;color:var(--muted);margin:0 0.4rem;">${count}</span>
       <button class="my-list-action-btn" onclick="event.stopPropagation();renameList('${l.id}','${l.name.replace(/'/g,'&#39;')}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.1rem 0.25rem;" title="改名">✏</button>
@@ -3910,7 +3912,7 @@ function renderFavModal(){
         <div style="font-size:0.85rem;color:var(--text);margin-bottom:0.85rem;">${L.favEmpty}</div>
         <input type="text" id="fav-new-list-name" placeholder="${L.favPlaceholderFirst}"
           style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;margin-bottom:0.75rem;"/>
-        <button onclick="createListAndAdd()" style="width:100%;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">${L.favCreateAndAdd}</button>
+        <button onclick="createListAndAdd()" style="width:100%;padding:0.55rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;">${L.favCreateAndAdd}</button>
       </div>`;
     setTimeout(()=>document.getElementById('fav-new-list-name')?.focus(), 50);
     return;
@@ -3922,7 +3924,7 @@ function renderFavModal(){
         <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);"
           onmouseover="this.style.background='#80808015'" onmouseout="this.style.background='transparent'">
           <input type="checkbox" class="fav-list-cb" value="${l.id}" ${inLists.includes(l.id)?'checked':''}
-            style="accent-color:#5a4fcf;cursor:pointer;width:16px;height:16px;"/>
+            style="accent-color:var(--accent);cursor:pointer;width:16px;height:16px;"/>
           <span>${l.name}</span>
         </label>
       `).join('')}
@@ -3937,7 +3939,7 @@ function renderFavModal(){
     </div>
     <div style="display:flex;gap:0.5rem;margin-top:0.85rem;">
       <button onclick="closeFavModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">${L.favCancel}</button>
-      <button onclick="saveFavSelections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">${L.favSave}</button>
+      <button onclick="saveFavSelections()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">${L.favSave}</button>
     </div>`;
 }
 
@@ -5031,27 +5033,27 @@ function renderBatchListModal(){
   if(!myLists.length){
     content.innerHTML = `
       <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.85rem;">
-        將把 <b style="color:#5a4fcf;">${n}</b> 張徽章加入新清單：
+        將把 <b style="color:var(--accent);">${n}</b> 張徽章加入新清單：
       </div>
       <input type="text" id="batch-new-list-name" placeholder="如 我的最愛、想要的徽章"
         style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-family:inherit;font-size:0.85rem;outline:none;margin-bottom:0.85rem;"/>
       <div style="display:flex;gap:0.5rem;">
         <button onclick="closeBatchListModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
-        <button onclick="batchCreateListAndAdd()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">建立並加入</button>
+        <button onclick="batchCreateListAndAdd()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">建立並加入</button>
       </div>`;
     setTimeout(()=>document.getElementById('batch-new-list-name')?.focus(), 50);
     return;
   }
   content.innerHTML = `
     <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.6rem;">
-      將把 <b style="color:#5a4fcf;">${n}</b> 張徽章加入以下清單（可複選）：
+      將把 <b style="color:var(--accent);">${n}</b> 張徽章加入以下清單（可複選）：
     </div>
     <div style="max-height:240px;overflow-y:auto;margin-bottom:0.85rem;">
       ${myLists.map(l=>`
         <label style="display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.5rem;border-radius:6px;cursor:pointer;font-size:0.83rem;color:var(--text);"
           onmouseover="this.style.background='#80808015'" onmouseout="this.style.background='transparent'">
           <input type="checkbox" class="batch-list-cb" value="${l.id}"
-            style="accent-color:#5a4fcf;cursor:pointer;width:16px;height:16px;"/>
+            style="accent-color:var(--accent);cursor:pointer;width:16px;height:16px;"/>
           <span>${l.name}</span>
         </label>
       `).join('')}
@@ -5066,7 +5068,7 @@ function renderBatchListModal(){
     </div>
     <div style="display:flex;gap:0.5rem;">
       <button onclick="closeBatchListModal()" style="flex:1;padding:0.55rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.83rem;">取消</button>
-      <button onclick="batchSaveToLists()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">加入選定清單</button>
+      <button onclick="batchSaveToLists()" style="flex:1;padding:0.55rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.83rem;font-weight:600;">加入選定清單</button>
     </div>`;
 }
 
@@ -5271,7 +5273,7 @@ function renderBatchCollectionModal(){
     <div style="display:flex;gap:0.4rem;margin-top:1rem;flex-wrap:wrap;">
       <button onclick="batchColEachPrev()" ${idx===0?'disabled':''} style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:${idx===0?'not-allowed':'pointer'};opacity:${idx===0?0.4:1};font-family:inherit;font-size:0.8rem;">← 上一張</button>
       ${idx < total - 1
-        ? `<button onclick="batchColEachNext()" style="flex:1;padding:0.5rem 0.75rem;border:none;border-radius:8px;background:#5a4fcf;color:#fff;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;">下一張 →</button>`
+        ? `<button onclick="batchColEachNext()" style="flex:1;padding:0.5rem 0.75rem;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;">下一張 →</button>`
         : `<button onclick="batchColEachFinish()" style="flex:1;padding:0.5rem 0.75rem;border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;">完成並儲存</button>`}
       <button onclick="closeBatchCollectionModal()" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-size:0.8rem;">取消</button>
     </div>`;
