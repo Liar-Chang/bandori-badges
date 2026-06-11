@@ -285,6 +285,20 @@ body{
   padding:0.55rem 0.6rem;border-radius:12px;}
 [data-theme="dark"] .result-bar{background:rgba(26,26,30,0.82);}
 .result-bar .search-box{flex:1 1 160px;min-width:140px;max-width:360px;width:auto;padding:0.45rem 0.8rem;}
+/* ── 改版 Step 3:已套用篩選 chips 列 ── */
+#active-chips{display:none;gap:0.4rem;align-items:center;flex-wrap:wrap;margin:0 0 1rem;}
+.achip{display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.4rem 0.25rem 0.6rem;
+  border-radius:99px;font-size:0.75rem;line-height:1.2;color:var(--text);
+  background:color-mix(in srgb,var(--chip-accent,var(--accent)) 12%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--chip-accent,var(--accent)) 35%,transparent);}
+.achip b{font-weight:500;color:var(--muted);font-size:0.68rem;}
+.achip-x{border:none;background:none;color:var(--muted);font-size:0.8rem;padding:0 0.15rem;cursor:pointer;line-height:1;font-family:inherit;}
+.achip-x:hover{color:var(--text);}
+.achip-clear{border:none;background:none;color:var(--accent);font-size:0.75rem;cursor:pointer;text-decoration:underline;white-space:nowrap;font-family:inherit;}
+@media(max-width:800px){
+  #active-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  #active-chips::-webkit-scrollbar{display:none;}
+}
 /* ── 改版 Step 2:側欄手風琴 ── */
 details.sidebar-section{margin-bottom:0.35rem;border-bottom:1px solid var(--border);padding-bottom:0.45rem;}
 details.sidebar-section summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0;user-select:none;}
@@ -735,6 +749,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
         <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
       </div>
     </div>
+    <div id="active-chips"></div>
     <div class="badge-grid" id="badge-grid"></div>
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
@@ -1244,10 +1259,40 @@ function updateAccBadges(){
   }
 }
 
+/* 改版 Step 3:已套用篩選 chips 列(每個條件一顆可移除的膠囊) */
+function _chipJsEsc(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function _chipEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function removeSeriesChip(v){selSeries.delete(v);if(typeof updateSeriesBtnLabel==='function')updateSeriesBtnLabel();applyFilters();}
+function removeEventChip(v){selEvents.delete(v);if(typeof updateEventBtnLabel==='function')updateEventBtnLabel();applyFilters();}
+function renderActiveChips(){
+  const host=document.getElementById('active-chips');
+  if(!host) return;
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  const chips=[];
+  const trim=s=>s.length>16?s.slice(0,16)+'…':s;
+  const push=(dim,display,removeJs,color)=>{
+    chips.push(`<span class="achip"${color?` style="--chip-accent:${color}"`:''}><b>${_chipEsc(dim)}</b>${_chipEsc(display)}<button class="achip-x" onclick="${removeJs}" aria-label="remove">✕</button></span>`);
+  };
+  selBands.forEach(v=>push(L.band,v,`toggleBand('${_chipJsEsc(v)}')`,bandColor(v)));
+  selChars.forEach(v=>push(L.char,getCharName(v,currentLang),`toggleChar('${_chipJsEsc(v)}')`));
+  selYears.forEach(v=>push(L.year,v,`toggleYear('${_chipJsEsc(v)}')`));
+  selSeries.forEach(v=>push(L.series,trim(v),`removeSeriesChip('${_chipJsEsc(v)}')`));
+  selEvents.forEach(v=>push(L.event,trim(v),`removeEventChip('${_chipJsEsc(v)}')`));
+  selTypes.forEach(v=>push(L.type,getTypeName(v,currentLang),`toggleType('${_chipJsEsc(v)}')`));
+  selSizes.forEach(v=>push(L.size,getSizeName(v,currentLang),`toggleSize('${_chipJsEsc(v)}')`));
+  selCountries.forEach(v=>push(L.country,getCountryName(v,currentLang),`toggleCountry('${_chipJsEsc(v)}')`));
+  const q=document.getElementById('search').value.trim();
+  if(q)push(L.search,trim(q),"document.getElementById('search').value='';applyFilters()");
+  if(!chips.length){host.style.display='none';host.innerHTML='';return;}
+  host.style.display='flex';
+  host.innerHTML=chips.join('')+`<button class="achip-clear" onclick="resetFilters()">${L.reset||'清除全部'}</button>`;
+}
+
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
   updateAccBadges();
+  renderActiveChips();
   // 角色→樂團對照（用於跨樂團合照篩選）
   const CHAR_TO_BAND = {
     "戶山香澄":"Poppin'Party","花園多惠":"Poppin'Party","牛込里美":"Poppin'Party","山吹紗綾":"Poppin'Party","市谷有咲":"Poppin'Party","Poppin'Party全團":"Poppin'Party",
