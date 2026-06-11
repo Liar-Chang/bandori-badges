@@ -337,6 +337,22 @@ body{
   #active-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   #active-chips::-webkit-scrollbar{display:none;}
 }
+/* ── 改版 Step 6:圖鑑感皮膚 ── */
+.new-tag{position:absolute;top:5px;right:5px;z-index:2;background:#ff2d78;color:#fff;
+  font-size:0.58rem;font-weight:700;padding:0.12rem 0.4rem;border-radius:6px;letter-spacing:0.5px;pointer-events:none;}
+.year-divider{grid-column:1/-1;display:flex;align-items:center;gap:0.75rem;color:var(--muted);font-size:0.78rem;padding:0.5rem 0 0;}
+.year-divider::before,.year-divider::after{content:'';flex:1;border-top:1px solid var(--border);}
+.year-divider b{font-family:'Boogaloo',sans-serif;font-size:1.2rem;font-weight:400;color:var(--text);letter-spacing:1px;}
+.chapter-head{border-left:5px solid var(--accent);padding:0.15rem 0 0.35rem 0.7rem;margin:0 0 0.75rem;
+  display:flex;align-items:baseline;gap:0.55rem;flex-wrap:wrap;}
+.ch-name{font-size:1.15rem;font-weight:900;color:var(--text);}
+.ch-sub{font-size:0.78rem;color:var(--muted);}
+.ch-pbar{flex-basis:100%;max-width:250px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.ch-pbar i{display:block;height:100%;border-radius:3px;}
+.badge-img-wrap.round::after{ /* 金屬胸章內圈 */
+  content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:1;
+  box-shadow:inset 0 0 10px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.35);}
+.badge-id-tag{letter-spacing:0.5px;}
 /* ── 改版 Step 4:樂團/角色軌道 + 封面目錄 ── */
 .rails-wrap{margin-bottom:0.6rem;}
 .rails-wrap .rail-section{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.45rem;}
@@ -838,6 +854,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       </div>
     </div>
     <div id="active-chips"></div>
+    <div id="chapter-head" style="display:none;"></div>
     <div class="badge-grid" id="badge-grid"></div>
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
@@ -1380,6 +1397,32 @@ function renderActiveChips(){
   host.innerHTML=chips.join('')+`<button class="achip-clear" onclick="resetFilters()">${L.reset||'清除全部'}</button>`;
 }
 
+/* 改版 Step 6:章節標題列(單一樂團時)+ 動態主題色 */
+function renderChapterHead(){
+  const el=document.getElementById('chapter-head');
+  if(!el) return;
+  if(selBands.size!==1){el.style.display='none';el.innerHTML='';return;}
+  const band=[...selBands][0];
+  const c=bandColor(band);
+  const pool=all.filter(b=>b.band===band);
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  let prog='';
+  if(currentUser&&typeof isCollected==='function'){
+    const col=pool.reduce((s,x)=>s+(isCollected(x.id)?1:0),0);
+    const pct=pool.length?Math.round(col/pool.length*100):0;
+    prog=`<span class="ch-sub">· ${L.tocCollected||'已蒐集'} ${col}(${pct}%)</span>
+      <div class="ch-pbar"><i style="width:${pct}%;background:${c}"></i></div>`;
+  }
+  el.style.display='';
+  el.innerHTML=`<div class="chapter-head" style="border-left-color:${c}">
+    <span class="ch-name">${_chipEsc(getBandName(band,currentLang)||band)}</span>
+    <span class="ch-sub">${pool.length} ${L.pillUnit??'枚'}</span>${prog}</div>`;
+}
+function updateDynamicAccent(){
+  if(selBands.size===1) document.documentElement.style.setProperty('--accent',bandColor([...selBands][0]));
+  else document.documentElement.style.removeProperty('--accent');
+}
+
 /* 改版 Step 5:手機篩選抽屜(同一個 #sidebar,CSS 換位)+ pill */
 let _sheetT=0; /* 防誤觸:開抽屜瞬間「顯示」鈕滑到 pill 原位,連點會秒關 */
 function openSheet(){
@@ -1450,6 +1493,8 @@ function applyFilters(){
   updateAccBadges();
   renderActiveChips();
   updateMoreBands();
+  updateDynamicAccent();
+  renderChapterHead();
   // 角色→樂團對照（用於跨樂團合照篩選）
   const CHAR_TO_BAND = {
     "戶山香澄":"Poppin'Party","花園多惠":"Poppin'Party","牛込里美":"Poppin'Party","山吹紗綾":"Poppin'Party","市谷有咲":"Poppin'Party","Poppin'Party全團":"Poppin'Party",
@@ -1644,10 +1689,23 @@ function renderGrid(list){
     g.innerHTML=`<div class="empty-main"><div style="font-size:3rem">🔍</div><div style="margin-top:0.75rem">${L.noResult}</div></div>`;
     return;
   }
+  /* 改版 Step 6:日期排序時插入年份章節分隔線 */
+  const _sortVal=document.getElementById('sort').value;
+  const _useDiv=_sortVal==='year-desc'||_sortVal==='year-asc';
+  const _yearCnt={};
+  if(_useDiv)list.forEach(b=>{const y=getYear(b.year)||'—';_yearCnt[y]=(_yearCnt[y]||0)+1;});
+  let _prevYear=null;
+  const _NEW_MS=14*86400*1000,_NOW=Date.now();
   g.innerHTML=list.map(b=>{
     const c=bandColor(b.band);
     const src = imgUrl(b);
     const idx=all.indexOf(b);
+    let _divider='';
+    if(_useDiv){
+      const _y=getYear(b.year)||'—';
+      if(_y!==_prevYear){_divider=`<div class="year-divider"><b>${_y}</b><span>${_yearCnt[_y]} ${(LANGS[currentLang]||LANGS['zh-TW']).pillUnit??'枚'}</span></div>`;_prevYear=_y;}
+    }
+    const _isNew=b.created_at&&(_NOW-new Date(b.created_at).getTime())<_NEW_MS;
     const shortEvent = b.short_event || getEventShortName(b.event);
     const eventHtml = b.url
       ? `<a href="${b.url}" target="_blank" rel="noopener" class="expand-link" onclick="event.stopPropagation()">${b.event||'—'}</a>`
@@ -1657,17 +1715,18 @@ function renderGrid(list){
       : shortEvent;
     // 蒐集狀態 class：只標示「已蒐集」加綠框；未蒐集保持原樣（避免全部變灰）
     const colState = (currentUser && isCollected(b.id)) ? ' is-collected' : '';
-    return `<div class="badge-card${colState}" data-badge-id="${b.id}" onclick="handleCardClick(event,this,${idx})" style="position:relative;">
+    return _divider+`<div class="badge-card${colState}" data-badge-id="${b.id}" onclick="handleCardClick(event,this,${idx})" style="position:relative;">
       <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
-      <div class="badge-img-wrap">
+      <div class="badge-img-wrap${isBadgeRound(b.size)?' round':''}">
         <img src="${src}" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}');_maybeRefreshHideNoImg()"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
-        <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">#${b.id}</div>${b.is_lottery?`<div class="lottery-tag" style="position:absolute;bottom:5px;right:5px;z-index:2;background:rgba(0,0,0,0.55);color:#ffd700;font-size:0.8rem;padding:0.1rem 0.3rem;border-radius:4px;pointer-events:none;" title="抽獎取得">🎲</div>`:''}
+        ${_isNew?'<div class="new-tag">NEW</div>':''}
+        <div class="badge-id-tag" style="position:absolute;bottom:5px;left:5px;z-index:2;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:monospace;padding:0.1rem 0.35rem;border-radius:4px;pointer-events:none;">No.${String(b.id).padStart(4,'0')}</div>${b.is_lottery?`<div class="lottery-tag" style="position:absolute;bottom:5px;right:5px;z-index:2;background:rgba(0,0,0,0.55);color:#ffd700;font-size:0.8rem;padding:0.1rem 0.3rem;border-radius:4px;pointer-events:none;" title="抽獎取得">🎲</div>`:''}
       </div>
       <div class="badge-info">
         <div class="badge-char">${getCharName(b.character,currentLang)||'—'}</div>
@@ -3410,7 +3469,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
     });
   });
 
-  // 浮水印已在 drawWatermark 處理
+  // 改版 Step 6:表格模式原本漏蓋浮水印(只有註解沒有呼叫),補上
+  drawWatermark(ctx, W, H);
 
   prog.style.width='95%';
   if(exportFmt==='pdf'){
