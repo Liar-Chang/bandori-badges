@@ -299,6 +299,45 @@ body{
   #active-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   #active-chips::-webkit-scrollbar{display:none;}
 }
+/* ── 改版 Step 4:樂團/角色軌道 + 封面目錄 ── */
+.rails-wrap{margin-bottom:0.6rem;}
+.rails-wrap .rail-section{display:flex;align-items:flex-start;gap:0.5rem;margin-bottom:0.45rem;}
+.rails-wrap .rail-section h3{margin:0.5rem 0 0;flex-shrink:0;}
+.rails-wrap .band-list{flex-direction:row;flex-wrap:wrap;gap:0.35rem;flex:1;min-width:0;}
+.rails-wrap .band-chip{padding:0.35rem 0.7rem;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);}
+.rails-wrap .band-chip-count{margin-left:0.15rem;}
+.band-rail-row{display:flex;align-items:flex-start;gap:0.5rem;}
+.band-rail-row #band-section{flex:1;min-width:0;margin-bottom:0;}
+.more-bands-btn{flex-shrink:0;margin-top:0.35rem;font-family:inherit;font-size:0.72rem;padding:0.35rem 0.75rem;
+  border-radius:99px;border:1.5px dashed var(--border);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.more-bands-btn:hover{color:var(--accent);border-color:var(--accent);}
+.rails-wrap #char-list{flex-direction:row;flex-wrap:wrap;gap:0.35rem;max-height:none;overflow:visible;flex:1;min-width:0;}
+.rails-wrap #char-list .filter-item{border:1.5px solid var(--border);border-radius:99px;padding:0.3rem 0.75rem;background:var(--surface);font-size:0.8rem;transition:all .15s;}
+.rails-wrap #char-list .filter-item input{display:none;}
+.rails-wrap #char-list .filter-item:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface));font-weight:700;color:var(--accent);}
+@media(max-width:800px){
+  .rails-wrap .band-list,.rails-wrap #char-list{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:0.15rem;}
+  .rails-wrap .band-list::-webkit-scrollbar,.rails-wrap #char-list::-webkit-scrollbar{display:none;}
+  .rails-wrap .rail-section h3{display:none;}
+}
+.toc-wrap{grid-column:1/-1;padding:1.5rem 0.5rem 2rem;}
+.toc-head{text-align:center;color:var(--muted);}
+.toc-head .t1{font-size:1.05rem;font-weight:700;color:var(--text);}
+.toc-head .t2{font-size:0.82rem;margin-top:0.3rem;}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:0.75rem;margin-top:1.2rem;}
+.toc-tile{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--bc,#888);
+  border-radius:var(--radius);padding:0.85rem 0.9rem;cursor:pointer;text-align:left;font-family:inherit;
+  transition:transform .15s,box-shadow .15s;}
+.toc-tile:hover{transform:translateY(-3px);box-shadow:0 4px 18px color-mix(in srgb,var(--bc,#888) 28%,transparent);}
+.toc-name{font-weight:900;font-size:0.93rem;color:var(--text);line-height:1.25;}
+.toc-cnt{font-size:0.74rem;color:var(--muted);margin-top:0.2rem;}
+.toc-pbar{height:4px;background:var(--border);border-radius:2px;margin-top:0.55rem;overflow:hidden;}
+.toc-pbar i{display:block;height:100%;background:var(--bc,#888);border-radius:2px;}
+.toc-others{display:flex;flex-wrap:wrap;gap:0.4rem;justify-content:center;margin-top:1.1rem;}
+.toc-other-chip{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.8rem;border-radius:99px;
+  border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:0.78rem;cursor:pointer;font-family:inherit;}
+.toc-other-chip .band-dot{width:8px;height:8px;}
+@media(max-width:480px){.toc-grid{grid-template-columns:1fr 1fr;gap:0.6rem;}}
 /* ── 改版 Step 2:側欄手風琴 ── */
 details.sidebar-section{margin-bottom:0.35rem;border-bottom:1px solid var(--border);padding-bottom:0.45rem;}
 details.sidebar-section summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0;user-select:none;}
@@ -678,22 +717,6 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       <h3 id="collection-title">✓ 蒐集記錄</h3>
       <div id="collection-content"></div>
     </div>
-    <div class="sidebar-section" id="band-section">
-      <h3>樂團</h3>
-      <div class="band-list" id="band-list"></div>
-    </div>
-    <div class="sidebar-section" id="background-section" style="display:none;">
-      <h3>🎬 重要背景樂團</h3>
-      <div class="band-list" id="background-list"></div>
-    </div>
-    <div class="sidebar-section" id="independent-section" style="display:none;">
-      <h3>✨ 獨立計畫</h3>
-      <div class="band-list" id="independent-list"></div>
-    </div>
-    <div class="sidebar-section" id="char-section" style="display:none;">
-      <h3>角色</h3>
-      <div class="filter-group" id="char-list"></div>
-    </div>
     <details class="sidebar-section" id="year-section" open>
       <summary><h3>發售年份</h3><span class="acc-count" id="acc-count-years" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <div class="filter-group" id="year-list"></div>
@@ -729,6 +752,30 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
   <div class="resize-handle" id="resize-handle"></div>
   <div class="main-wrap">
   <main class="main">
+    <!-- 改版 Step 4:樂團/角色軌道(原側欄區塊整段搬移,ID 不變,JS 渲染照舊) -->
+    <div class="rails-wrap" id="rails-wrap">
+      <div class="band-rail-row">
+        <div class="sidebar-section rail-section" id="band-section">
+          <h3>樂團</h3>
+          <div class="band-list" id="band-list"></div>
+        </div>
+        <button id="more-bands-btn" class="more-bands-btn" onclick="toggleMoreBands()">更多 ▾</button>
+      </div>
+      <div id="more-bands-wrap" style="display:none;">
+        <div class="sidebar-section rail-section" id="background-section" style="display:none;">
+          <h3>🎬 重要背景樂團</h3>
+          <div class="band-list" id="background-list"></div>
+        </div>
+        <div class="sidebar-section rail-section" id="independent-section" style="display:none;">
+          <h3>✨ 獨立計畫</h3>
+          <div class="band-list" id="independent-list"></div>
+        </div>
+      </div>
+      <div class="sidebar-section rail-section" id="char-section" style="display:none;">
+        <h3>角色</h3>
+        <div class="filter-group" id="char-list"></div>
+      </div>
+    </div>
     <div class="result-bar">
       <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;flex:1;min-width:0;">
         <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
@@ -1288,11 +1335,52 @@ function renderActiveChips(){
   host.innerHTML=chips.join('')+`<button class="achip-clear" onclick="resetFilters()">${L.reset||'清除全部'}</button>`;
 }
 
+/* 改版 Step 4:背景團/獨立計畫收在「更多」後面;選了就自動展開 */
+let _moreBandsOpen=false;
+function toggleMoreBands(){_moreBandsOpen=!_moreBandsOpen;updateMoreBands();}
+function updateMoreBands(){
+  const w=document.getElementById('more-bands-wrap');
+  const btn=document.getElementById('more-bands-btn');
+  if(!w) return;
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  const need=[...selBands].some(b=>BACKGROUND_BANDS.has(b)||INDEPENDENT_BANDS.has(b));
+  const open=_moreBandsOpen||need;
+  w.style.display=open?'':'none';
+  if(btn) btn.textContent=open?(L.lessBands||'收合 ▴'):(L.moreBands||'更多 ▾');
+}
+/* 改版 Step 4:封面目錄頁(無篩選時的入口) */
+function buildTocHTML(){
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  const counts={};all.forEach(b=>{counts[b.band]=(counts[b.band]||0)+1;});
+  const canProg=currentUser&&typeof isCollected==='function';
+  const mains=BAND_ORDER.filter(b=>counts[b]&&!BACKGROUND_BANDS.has(b)&&!INDEPENDENT_BANDS.has(b)&&!['跨團合照','跨企劃合照','其他'].includes(b));
+  const others=BAND_ORDER.filter(b=>counts[b]&&!mains.includes(b));
+  const tile=b=>{
+    const n=counts[b];
+    let prog='';
+    if(canProg){
+      const col=all.reduce((s,x)=>s+(x.band===b&&isCollected(x.id)?1:0),0);
+      const pct=n?Math.round(col/n*100):0;
+      prog=`<div class="toc-cnt">${L.tocCollected||'已蒐集'} ${col}(${pct}%)</div><div class="toc-pbar"><i style="width:${pct}%"></i></div>`;
+    }
+    return `<button class="toc-tile" style="--bc:${bandColor(b)}" onclick="toggleBand('${_chipJsEsc(b)}')">
+      <div class="toc-name">${_chipEsc(b)}</div><div class="toc-cnt">${n} 枚</div>${prog}</button>`;
+  };
+  const chip=b=>`<button class="toc-other-chip" onclick="if(BACKGROUND_BANDS.has('${_chipJsEsc(b)}')||INDEPENDENT_BANDS.has('${_chipJsEsc(b)}')){_moreBandsOpen=true;}toggleBand('${_chipJsEsc(b)}')">
+    <span class="band-dot" style="background:${bandColor(b)}"></span>${_chipEsc(b)}<span style="opacity:.5;font-size:0.7rem">${counts[b]}</span></button>`;
+  return `<div class="toc-wrap">
+    <div class="toc-head"><div class="t1">📖 ${_chipEsc(L.filterTip)}</div><div class="t2">${_chipEsc(L.filterSub||'')}</div></div>
+    <div class="toc-grid">${mains.map(tile).join('')}</div>
+    <div class="toc-others">${others.map(chip).join('')}</div>
+  </div>`;
+}
+
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
   updateAccBadges();
   renderActiveChips();
+  updateMoreBands();
   // 角色→樂團對照（用於跨樂團合照篩選）
   const CHAR_TO_BAND = {
     "戶山香澄":"Poppin'Party","花園多惠":"Poppin'Party","牛込里美":"Poppin'Party","山吹紗綾":"Poppin'Party","市谷有咲":"Poppin'Party","Poppin'Party全團":"Poppin'Party",
@@ -1456,12 +1544,8 @@ function applyFilters(){
     const L=LANGS[currentLang];
     document.getElementById('result-count').textContent=L.noFilter;
     renderGrid([]);
-    document.getElementById('badge-grid').innerHTML=`
-      <div class="empty-main">
-        <div style="font-size:3rem">🎵</div>
-        <div style="margin-top:0.75rem;font-size:1rem;font-weight:600;color:var(--text)">${L.filterTip}</div>
-        <div style="margin-top:0.5rem;font-size:0.85rem" id="filter-sub-text">${(LANGS[currentLang]||LANGS['zh-TW']).filterSub||'選擇樂團、角色、類型等條件來顯示徽章'}</div>
-      </div>`;
+    /* 改版 Step 4:空狀態 = 封面目錄頁(點樂團磚直接進章節) */
+    document.getElementById('badge-grid').innerHTML=buildTocHTML();
     if(currentUser) buildCollectionSidebar();
     if(currentUser) buildSmartListsSidebar();
     return;
@@ -1853,7 +1937,7 @@ const LANGS = {
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
-    filterTip:'請從左側選擇篩選條件', filterSub:'選擇樂團、角色、類型等條件來顯示徽章',
+    filterTip:'點選樂團,開始翻閱圖鑑', filterSub:'也可以用上方搜尋或左側進階篩選', moreBands:'更多 ▾', lessBands:'收合 ▴', tocCollected:'已蒐集',
     reset:'重置所有篩選',
     dlSeries:'版本/工藝', dlYear:'發售日期', dlEvent:'活動',
     thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
@@ -1895,7 +1979,7 @@ const LANGS = {
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
-    filterTip:'左側からフィルターを選択してください', filterSub:'バンド・キャラクター・タイプなどで絞り込む',
+    filterTip:'バンドを選んで図鑑をめくろう', filterSub:'上の検索や左の詳細フィルターも使えます', moreBands:'もっと ▾', lessBands:'たたむ ▴', tocCollected:'収集済み',
     reset:'フィルターをリセット',
     dlSeries:'バージョン/工芸', dlYear:'発売日', dlEvent:'イベント',
     thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
@@ -1937,7 +2021,7 @@ const LANGS = {
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
     noFilter:'Please select a filter', noResult:'No badges found',
-    filterTip:'Select filters from the left panel', filterSub:'Select Band, Character, Type and more',
+    filterTip:'Pick a band to start browsing', filterSub:'Or use the search box and side filters', moreBands:'More ▾', lessBands:'Less ▴', tocCollected:'collected',
     reset:'Reset All Filters',
     dlSeries:'Version/Craft', dlYear:'Release Date', dlEvent:'Event',
     thBand:'Band', thChar:'Character', thEvent:'Event', thYear:'Release Date', thSeries:'Version/Craft',
@@ -1979,7 +2063,7 @@ const LANGS = {
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
     noFilter:'필터를 선택해 주세요', noResult:'해당하는 뱃지가 없습니다',
-    filterTip:'왼쪽 패널에서 필터를 선택해 주세요', filterSub:'밴드, 캐릭터, 유형 등으로 필터링',
+    filterTip:'밴드를 선택해 도감을 펼쳐보세요', filterSub:'상단 검색이나 좌측 상세 필터도 사용 가능', moreBands:'더 보기 ▾', lessBands:'접기 ▴', tocCollected:'수집',
     reset:'전체 필터 초기화',
     dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트',
     thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트', thYear:'발매일', thSeries:'버전/공예',
