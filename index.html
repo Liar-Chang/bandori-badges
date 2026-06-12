@@ -1457,7 +1457,11 @@ function renderChapterHead(){
   if(selBands.size!==1){el.style.display='none';el.innerHTML='';return;}
   const band=[...selBands][0];
   const c=bandColor(band);
-  const pool=all.filter(b=>b.band===band);
+  /* 母數:有選角色時收斂成「該角色在本團」的數量(不受年份等其他篩選影響) */
+  let pool=all.filter(b=>b.band===band);
+  if(selChars.size){
+    pool=pool.filter(b=>[...selChars].some(ch=>b.character===ch||(b.character&&b.character.includes('x')&&b.character.split('x').map(s=>s.trim()).includes(ch))));
+  }
   const L=LANGS[currentLang]||LANGS['zh-TW'];
   let prog='';
   if(currentUser&&typeof isCollected==='function'){
@@ -1475,6 +1479,21 @@ function renderChapterHead(){
 function updateDynamicAccent(){
   if(selBands.size===1) document.documentElement.style.setProperty('--accent',bandColor([...selBands][0]));
   else document.documentElement.style.removeProperty('--accent');
+}
+/* 改版補:把側欄/軌道的 checkbox 勾選狀態同步回 sel* Set
+   (修:用 active chip 的 ✕ 移除後,checkbox/軌道 chip 仍亮著的不同步) */
+function syncFilterControls(){
+  document.querySelectorAll('#char-list input[type=checkbox]').forEach(cb=>{cb.checked=selChars.has(cb.value);});
+  document.querySelectorAll('#year-list input[type=checkbox]').forEach(cb=>{cb.checked=selYears.has(cb.value);});
+  document.querySelectorAll('#type-list input[type=checkbox]').forEach(cb=>{cb.checked=selTypes.has(cb.value);});
+  document.querySelectorAll('#country-list input[type=checkbox]').forEach(cb=>{cb.checked=selCountries.has(cb.value);});
+  document.querySelectorAll('#size-list input[type=checkbox]').forEach(cb=>{
+    const v=cb.value;
+    if(v==='__56__') cb.checked=[..._SIZE_56_VALS].every(x=>selSizes.has(x));
+    else if(v==='__fabric__') cb.checked=[..._SIZE_FABRIC_VALS].every(x=>selSizes.has(x));
+    else if(v==='__other__') cb.checked=[..._SIZE_OTHER_VALS].every(x=>selSizes.has(x));
+    else cb.checked=selSizes.has(v);
+  });
 }
 
 /* 改版 Step 5:手機篩選抽屜(同一個 #sidebar,CSS 換位)+ pill */
@@ -1547,6 +1566,7 @@ function applyFilters(){
   const sort=document.getElementById('sort').value;
   updateAccBadges();
   renderActiveChips();
+  syncFilterControls();
   updateMoreBands();
   updateDynamicAccent();
   renderChapterHead();
