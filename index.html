@@ -366,6 +366,8 @@ body{
 .rails-wrap .rail-section h3{margin:0.5rem 0 0;flex-shrink:0;}
 .rails-wrap .band-list{flex-direction:row;flex-wrap:wrap;gap:0.35rem;flex:1;min-width:0;}
 .rails-wrap .band-chip{padding:0.35rem 0.7rem;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);flex-shrink:0;white-space:nowrap;}
+/* 修:軌道版 band-chip 的 active 高亮被上一條的 border/background 蓋掉,補回團色(specificity 拉高) */
+.rails-wrap .band-chip.active{border-color:var(--chip-color);background:var(--chip-bg);box-shadow:0 0 0 1px var(--chip-color) inset;}
 .rails-wrap .band-chip-count{margin-left:0.15rem;}
 .band-rail-row{display:flex;align-items:flex-start;gap:0.5rem;}
 .band-rail-row #band-section{flex:1;min-width:0;margin-bottom:0;}
