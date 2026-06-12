@@ -14,3 +14,7 @@ images/*
 # 裁剪紀錄資料集(badge-crop.html 🗂 匯出的 ZIP + 解壓內容)。
 # 純本機分析用,不上線、不進 repo。明羽把 ZIP 丟這裡,Claude 直接讀。
 crop-dataset/
+
+# Claude 的工作筆記/進度:純本機、不公開,不上傳。
+CLAUDE.md
+PROGRESS.md
