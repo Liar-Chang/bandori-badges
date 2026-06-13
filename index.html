@@ -3165,7 +3165,7 @@ function drawWatermark(ctx, W, H){
 
 // ── 國家圖例 ──
 function drawCountryLegend(ctx, W, H, list){
-  const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+  const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22','美國':'#2980b9'};
   // 只顯示實際出現在 list 裡的國家
   const usedCountries = Object.keys(COUNTRY_COLORS).filter(c => list.some(b => b.country === c));
   if(!usedCountries.length) return;
@@ -3432,7 +3432,7 @@ async function doExport(){
       }
 
       // 國家顏色標記（日本不標）
-      const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+      const COUNTRY_COLORS = {'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22','美國':'#2980b9'};
       const countryColor = COUNTRY_COLORS[b.country];
       if(countryColor){
         const dotR = 7, dotX = x+CELL-dotR-4, dotY = y+dotR+4;

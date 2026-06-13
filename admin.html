@@ -346,6 +346,7 @@ tr.selected td{background:#f0effd !important;}
             <option>台灣</option>
             <option>韓國</option>
             <option>中國</option>
+            <option>美國</option>
             <option>其他</option>
           </select>
         </div>
@@ -431,7 +432,7 @@ tr.selected td{background:#f0effd !important;}
           <select id="t-country">
             <option value="">請選擇</option>
             <option>日本</option><option>台灣</option><option>韓國</option>
-            <option>中國</option><option>香港</option><option>新加坡</option><option>其他</option>
+            <option>中國</option><option>香港</option><option>新加坡</option><option>美國</option><option>其他</option>
           </select>
         </div>
         <div class="field">
@@ -698,6 +699,7 @@ tr.selected td{background:#f0effd !important;}
           <option>中國</option>
           <option>香港</option>
           <option>新加坡</option>
+          <option>美國</option>
           <option>其他</option>
         </select>
       </div>
@@ -923,6 +925,7 @@ function renderBatchGrid(){
             <option${item.country==='韓國'?' selected':''}>韓國</option>
             <option${item.country==='中國'?' selected':''}>中國</option>
             <option${item.country==='香港'?' selected':''}>香港</option>
+            <option${item.country==='美國'?' selected':''}>美國</option>
             <option${item.country==='其他'?' selected':''}>其他</option>
           </select>
         </div>
@@ -1707,7 +1710,7 @@ const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","Glitter*Green","CRYCHIC","Sumimi","跨團合照","跨企劃合照","其他"],
   type: ["角色本身","角色相關","角色聲優","角色合影","其他"],
   size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","100mm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","44mm圓形","32mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","名牌","金屬","約80mm布偶胸章","刺繡布章","未確定"],
-  country: ["日本","台灣","韓國","中國","香港","新加坡","其他"],
+  country: ["日本","台灣","韓國","中國","香港","新加坡","美國","其他"],
   is_lottery: ["是","否"],
   noimg: ["是","否"],
 };
@@ -3126,7 +3129,7 @@ async function downloadExpGrid(){
   ctx.fillText(`共 ${list.length} 枚`,PAD*1.5,PAD/2+56);
 
   let curY=HEADER_H+PAD, prevType=null;
-  const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22'};
+  const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22','美國':'#2980b9'};
   const TYPE_LABELS={'角色本身':'角色本身','角色相關':'角色相關','角色聲優':'角色聲優','角色合影':'角色合影','其他':'其他'};
 
   for(const g of groups){
