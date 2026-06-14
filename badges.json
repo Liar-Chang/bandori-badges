@@ -79063,8 +79063,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:01:06.946Z",
-    "updated_at": "2026-06-14T15:02:28.082Z",
-    "image_updated_at": "2026-06-14T15:01:06.946Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4571",
@@ -79084,8 +79084,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:01:06.946Z",
-    "updated_at": "2026-06-14T15:02:40.517Z",
-    "image_updated_at": "2026-06-14T15:01:06.946Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4572",
@@ -79105,8 +79105,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:01:06.946Z",
-    "updated_at": "2026-06-14T15:02:54.763Z",
-    "image_updated_at": "2026-06-14T15:01:06.946Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4573",
@@ -79126,8 +79126,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:01:06.946Z",
-    "updated_at": "2026-06-14T15:03:43.296Z",
-    "image_updated_at": "2026-06-14T15:01:06.946Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4574",
@@ -79147,8 +79147,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:01:06.946Z",
-    "updated_at": "2026-06-14T15:04:02.857Z",
-    "image_updated_at": "2026-06-14T15:01:06.946Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4575",
@@ -79168,8 +79168,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:06:06.342Z",
-    "updated_at": "2026-06-14T15:08:17.265Z",
-    "image_updated_at": "2026-06-14T15:06:06.342Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4576",
@@ -79189,8 +79189,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:06:06.342Z",
-    "updated_at": "2026-06-14T15:09:13.695Z",
-    "image_updated_at": "2026-06-14T15:06:06.342Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4577",
@@ -79210,8 +79210,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:06:06.342Z",
-    "updated_at": "2026-06-14T15:11:41.146Z",
-    "image_updated_at": "2026-06-14T15:06:06.342Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4578",
@@ -79231,8 +79231,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:06:06.342Z",
-    "updated_at": "2026-06-14T15:12:40.855Z",
-    "image_updated_at": "2026-06-14T15:06:06.342Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
   },
   {
     "id": "4579",
@@ -79252,7 +79252,107 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-14T15:06:06.342Z",
-    "updated_at": "2026-06-14T15:13:45.600Z",
-    "image_updated_at": "2026-06-14T15:06:06.342Z"
+    "updated_at": "2026-06-14T15:28:16.585Z",
+    "image_updated_at": "2026-06-14T15:28:16.585Z"
+  },
+  {
+    "id": "4580",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "",
+    "series": "",
+    "year": "2019年2月",
+    "event": "BanG Dream! ガールズバンドパーティ！ しかくい缶バッジ",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/items/983/",
+    "note": "サイズ\t約62×40mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "しかくい缶バッジ",
+    "created_at": "2026-06-14T15:14:31.193Z",
+    "updated_at": "2026-06-14T15:14:31.193Z",
+    "image_updated_at": "2026-06-14T15:14:31.193Z"
+  },
+  {
+    "id": "4581",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "",
+    "series": "",
+    "year": "2019年2月",
+    "event": "BanG Dream! ガールズバンドパーティ！ しかくい缶バッジ",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/items/983/",
+    "note": "サイズ\t約62×40mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "しかくい缶バッジ",
+    "created_at": "2026-06-14T15:14:31.193Z",
+    "updated_at": "2026-06-14T15:14:31.193Z",
+    "image_updated_at": "2026-06-14T15:14:31.193Z"
+  },
+  {
+    "id": "4582",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "",
+    "series": "",
+    "year": "2019年2月",
+    "event": "BanG Dream! ガールズバンドパーティ！ しかくい缶バッジ",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/items/983/",
+    "note": "サイズ\t約62×40mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "しかくい缶バッジ",
+    "created_at": "2026-06-14T15:14:31.193Z",
+    "updated_at": "2026-06-14T15:14:31.193Z",
+    "image_updated_at": "2026-06-14T15:14:31.193Z"
+  },
+  {
+    "id": "4583",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "",
+    "series": "",
+    "year": "2019年2月",
+    "event": "BanG Dream! ガールズバンドパーティ！ しかくい缶バッジ",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/items/983/",
+    "note": "サイズ\t約62×40mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "しかくい缶バッジ",
+    "created_at": "2026-06-14T15:14:31.193Z",
+    "updated_at": "2026-06-14T15:14:31.193Z",
+    "image_updated_at": "2026-06-14T15:14:31.193Z"
+  },
+  {
+    "id": "4584",
+    "ext": "png",
+    "band": "Pastel*Palettes",
+    "character": "",
+    "series": "",
+    "year": "2019年2月",
+    "event": "BanG Dream! ガールズバンドパーティ！ しかくい缶バッジ",
+    "type": "角色合影",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://bushiroad-creative.com/items/983/",
+    "note": "サイズ\t約62×40mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "しかくい缶バッジ",
+    "created_at": "2026-06-14T15:14:31.193Z",
+    "updated_at": "2026-06-14T15:14:31.193Z",
+    "image_updated_at": "2026-06-14T15:14:31.193Z"
   }
 ]
