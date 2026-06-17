@@ -16419,13 +16419,13 @@
     "type": "角色本身",
     "size": "75mm圓形",
     "country": "日本",
-    "url": "",
-    "note": "連結已失效",
+    "url": "https://bang-dream.com/mygo_tour2025_nagoya/",
+    "note": "",
     "admin_note": "",
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-06-09T15:24:05.475Z",
-    "updated_at": "2026-06-09T15:24:05.475Z",
+    "updated_at": "2026-06-17T14:27:58.418Z",
     "image_updated_at": null
   },
   {
@@ -83037,5 +83037,25 @@
     "created_at": "2026-06-17T14:19:28.275Z",
     "updated_at": "2026-06-17T14:19:28.275Z",
     "image_updated_at": null
+  },
+  {
+    "id": "1805",
+    "ext": "png",
+    "band": "Ave Mujica",
+    "character": "Ave Mujica全團",
+    "series": "新幹線乗車特典",
+    "year": "2025年4月26日",
+    "event": "TVアニメ「BanG Dream! Ave Mujica」× 推し旅",
+    "type": "角色合影",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://recommend.jr-central.co.jp/oshi-tabi/ave-mujica/?utm_source=oshitabi_twitter&utm_medium=social&utm_campaign=ave-mujica_cjr&utm_content=250418_ave-mujica_cjr#train-contents",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "TVアニメ「BanG Dream! Ave Mujica」× 推し旅",
+    "created_at": "2026-06-17T14:54:20.959Z",
+    "updated_at": "2026-06-17T14:54:20.959Z",
+    "image_updated_at": "2026-06-17T14:54:20.959Z"
   }
 ]
