@@ -515,7 +515,7 @@ tr.selected td{background:#f0effd !important;}
     </div>
 
     <div class="filter-bar">
-      <input type="text" id="search" placeholder="搜尋編號、角色、系列..." oninput="renderList()"/>
+      <input type="text" id="search" placeholder="搜尋編號、角色、系列..." oninput="onSearchInput()"/>
       <select id="filter-missing" onchange="renderList()" style="font-family:inherit;font-size:0.82rem;padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;">
         <option value="">全部顯示</option>
         <option value="no_url">缺少相關連結（且無備註）</option>
@@ -1437,6 +1437,9 @@ async function scanExistingImages(){
     renderList();
   }
 }
+
+let searchDebounce;
+function onSearchInput(){ clearTimeout(searchDebounce); searchDebounce = setTimeout(renderList, 200); }
 
 function renderList(){
   const q=document.getElementById('search').value.toLowerCase();
