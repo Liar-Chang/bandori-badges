@@ -521,6 +521,7 @@ tr.selected td{background:#f0effd !important;}
         <option value="no_url">缺少相關連結（且無備註）</option>
         <option value="no_short">缺少活動簡稱</option>
         <option value="no_url_and_short">同時缺少兩者</option>
+        <option value="no_img">🔍 無圖徵集（募集中）</option>
       </select>
     </div>
 
@@ -1419,6 +1420,7 @@ function renderList(){
     if(fm==='no_url') missingOk=!b.url&&!b.note;
     else if(fm==='no_short') missingOk=!b.short_event;
     else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
+    else if(fm==='no_img') missingOk=!!b.noimg;
     if(!mq || !missingOk) return false;
     // 欄位篩選(band/char/size/year)
     if(listColFilters.band.size){
