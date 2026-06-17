@@ -83016,5 +83016,26 @@
     "created_at": "2026-06-17T14:00:24.776Z",
     "updated_at": "2026-06-17T14:00:24.776Z",
     "image_updated_at": "2026-06-17T14:00:24.776Z"
+  },
+  {
+    "id": "1804",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "Poppin'Party全團",
+    "series": "特典－Amazon（ときめきエクスペリエンス！ver.）",
+    "year": "2017年2月1日",
+    "event": "Poppin'Party 4th Single「ときめきエクスペリエンス！」",
+    "short_event": "4th Single「ときめきエクスペリエンス！」",
+    "type": "角色合影",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://bang-dream.com/discographies/90/",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "noimg": true,
+    "created_at": "2026-06-17T14:19:28.275Z",
+    "updated_at": "2026-06-17T14:19:28.275Z",
+    "image_updated_at": null
   }
 ]
