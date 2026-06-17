@@ -522,6 +522,7 @@ tr.selected td{background:#f0effd !important;}
         <option value="no_short">缺少活動簡稱</option>
         <option value="no_url_and_short">同時缺少兩者</option>
         <option value="no_img">🔍 無圖徵集（募集中）</option>
+        <option value="no_img_real">🚨 沒圖檔（未標徵集）</option>
       </select>
     </div>
 
@@ -1409,11 +1410,40 @@ document.addEventListener('click', e=>{
   }
 });
 
+// 真實偵測圖檔:抓 GitHub images/ 清單,比對出「實際沒圖檔」的徽章(配合 !noimg 篩出未標徵集的)
+// ⚠ 圖庫若遷到 R2 後,這裡要改成查 R2(GitHub images/ 屆時會空)
+let existingImgIds = null;   // Set<string> 有圖檔的 id;null = 尚未掃描
+let imgScanning = false;
+async function scanExistingImages(){
+  if(imgScanning) return;
+  imgScanning = true;
+  showToast('🔍 偵測圖檔中…（抓 GitHub images/ 清單）');
+  try {
+    const headers = {'Accept':'application/vnd.github.v3+json'};
+    const tk = localStorage.getItem('gh_token');
+    if(tk) headers['Authorization'] = 'token '+tk;
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${GH_BRANCH}?recursive=1`, {headers});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    const ids = new Set();
+    (data.tree||[]).forEach(t=>{ const m=t.path&&t.path.match(/^images\/(\d+)\.\w+$/i); if(m) ids.add(m[1]); });
+    existingImgIds = ids;
+    showToast(data.truncated ? '⚠ 清單被 GitHub 截斷,結果可能不完整' : `✓ images/ 共 ${ids.size} 張圖檔`);
+  } catch(e){
+    existingImgIds = null;
+    showToast('✗ 偵測失敗:'+e.message);
+  } finally {
+    imgScanning = false;
+    renderList();
+  }
+}
+
 function renderList(){
   const q=document.getElementById('search').value.toLowerCase();
   const tbody=document.getElementById('badge-tbody');
   const empty=document.getElementById('list-empty');
   const fm=document.getElementById('filter-missing').value;
+  if(fm==='no_img_real' && existingImgIds===null && !imgScanning){ scanExistingImages(); }
   const filtered=badges.filter(b=>{
     const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.admin_note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
     let missingOk=true;
@@ -1421,6 +1451,7 @@ function renderList(){
     else if(fm==='no_short') missingOk=!b.short_event;
     else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
     else if(fm==='no_img') missingOk=!!b.noimg;
+    else if(fm==='no_img_real') missingOk = existingImgIds ? (!existingImgIds.has(String(b.id)) && !b.noimg) : false;
     if(!mq || !missingOk) return false;
     // 欄位篩選(band/char/size/year)
     if(listColFilters.band.size){
