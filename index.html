@@ -765,7 +765,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
 
 <!-- 改版:滿版指令列(搜尋+排序+重置),對齊 redesign-preview -->
 <div class="cmdbar" id="cmdbar">
-  <input class="search-box" type="text" id="search" placeholder="角色、版本、活動..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
+  <input class="search-box" type="text" id="search" placeholder="角色、版本、活動/商品..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
   <select class="sort-select" id="sort" onchange="applyFilters()">
     <option value="year-desc">發售日期（新→舊）</option>
     <option value="year-asc">發售日期（舊→新）</option>
@@ -828,9 +828,9 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
       </button>
     </details>
     <details class="sidebar-section" id="event-section">
-      <summary><h3>活動</h3><span class="acc-count" id="acc-count-events" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
+      <summary><h3>活動/商品</h3><span class="acc-count" id="acc-count-events" style="display:none;"></span><span class="acc-arrow">▼</span></summary>
       <button id="event-modal-btn" onclick="openEventModal()" style="width:100%;font-family:inherit;font-size:0.83rem;padding:0.5rem 0.85rem;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border 0.15s;margin-top:0.35rem;">
-        <span id="event-btn-label">選擇活動...</span>
+        <span id="event-btn-label">選擇活動/商品...</span>
         <span style="font-size:0.75rem;opacity:0.5;">▾</span>
       </button>
     </details>
@@ -881,7 +881,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
     <div class="table-view-wrap" id="table-view" style="display:none;">
       <table class="badge-table">
         <thead><tr>
-          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th>
+          <th>圖片</th><th id="th-band">樂團</th><th id="th-char">角色</th><th id="th-event">活動/商品</th><th id="th-year">發售日期</th><th id="th-series">版本/工藝</th>
           <th class="th-col-only" id="th-col-qty" style="display:none;">蒐集數量</th>
           <th class="th-col-only" id="th-col-date" style="display:none;">最近購買</th>
           <th class="th-col-only" id="th-col-source" style="display:none;">購買來源</th>
@@ -913,7 +913,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
         <div class="detail-field"><label data-l-key="type">類型</label><span id="d-type"></span></div>
         <div class="detail-field"><label data-l-key="size">尺寸</label><span id="d-size"></span></div>
         <div class="detail-field"><label data-l-key="country">販售/活動地</label><span id="d-country"></span></div>
-        <div class="detail-field" style="grid-column:1/-1"><label data-l-key="event">活動</label><span id="d-event"></span></div>
+        <div class="detail-field" style="grid-column:1/-1"><label data-l-key="event">活動/商品</label><span id="d-event"></span></div>
       </div>
       <div class="detail-note" id="d-note" style="display:none"></div>
       <!-- 改版補:在目前篩選結果內 ←→ 翻頁(原型驗收項) -->
@@ -2174,8 +2174,8 @@ function getCharName(charTW, lang) {
 const LANGS = {
   'zh-TW': {
     title:'BanG Dream! 徽章圖鑑', subtitle:' 徽章圖鑑',
-    search:'搜尋', searchPlaceholder:'角色、版本、活動...', band:'樂團', backgroundBands:'🎬 重要背景樂團', independentProject:'✨ 獨立計畫', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
-    event:'活動', type:'類型', size:'尺寸', country:'販售/活動地', note:'備註',
+    search:'搜尋', searchPlaceholder:'角色、版本、活動/商品...', band:'樂團', backgroundBands:'🎬 重要背景樂團', independentProject:'✨ 獨立計畫', char:'角色', series:'版本/工藝', year:'發售年份', yearFull:'發售日期',
+    event:'活動/商品', type:'類型', size:'尺寸', country:'販售/活動地', note:'備註',
     sortNew:'發售日期（新→舊）', sortOld:'發售日期（舊→新）', sortChar:'角色名稱',
     gridView:'圖鑑', tableView:'表格', download:'⬇ 下載圖檔',
     noFilter:'請選擇篩選條件', noResult:'找不到符合的徽章',
@@ -2183,8 +2183,8 @@ const LANGS = {
     pillFilter:'篩選', pillUnit:'枚', sheetTitle:'進階篩選', sheetApply:'顯示 {n} 枚',
     prevBadge:'上一個', nextBadge:'下一個', cmdReset:'重置', optionsTitle:'顯示選項', tocOthers:'其他章節',
     reset:'重置所有篩選',
-    dlSeries:'版本/工藝', dlYear:'發售日期', dlEvent:'活動',
-    thBand:'樂團', thChar:'角色', thEvent:'活動', thYear:'發售日期', thSeries:'版本/工藝',
+    dlSeries:'版本/工藝', dlYear:'發售日期', dlEvent:'活動/商品',
+    thBand:'樂團', thChar:'角色', thEvent:'活動/商品', thYear:'發售日期', thSeries:'版本/工藝',
     expTitle:'⬇ 下載徽章表格圖檔', expDescPre:'將目前篩選的', expDescPost:'枚徽章輸出為圖片',
     expLayout:'版面配置', expCols:'每列欄數', expFields:'顯示欄位', expFmt:'輸出格式', expTitleLabel:'標題文字',
     expGrid:'⊞ 圖片網格', expGridDesc:'每列顯示多枚徽章圖片',
@@ -2218,8 +2218,8 @@ const LANGS = {
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
-    search:'検索', searchPlaceholder:'キャラ、バージョン、イベント...', band:'バンド', backgroundBands:'🎬 重要な背景バンド', independentProject:'✨ 独立プロジェクト', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
-    event:'イベント', type:'タイプ', size:'サイズ', country:'販売/イベント地', note:'備考',
+    search:'検索', searchPlaceholder:'キャラ、バージョン、イベント/商品...', band:'バンド', backgroundBands:'🎬 重要な背景バンド', independentProject:'✨ 独立プロジェクト', char:'キャラクター', series:'バージョン/工芸', year:'発売年', yearFull:'発売日',
+    event:'イベント/商品', type:'タイプ', size:'サイズ', country:'販売/イベント地', note:'備考',
     sortNew:'発売日（新→旧）', sortOld:'発売日（旧→新）', sortChar:'キャラクター名',
     gridView:'図鑑', tableView:'リスト', download:'⬇ ダウンロード',
     noFilter:'フィルターを選択してください', noResult:'該当するバッジが見つかりません',
@@ -2227,8 +2227,8 @@ const LANGS = {
     pillFilter:'絞り込み', pillUnit:'件', sheetTitle:'詳細フィルター', sheetApply:'{n}件を表示',
     prevBadge:'前へ', nextBadge:'次へ', cmdReset:'リセット', optionsTitle:'表示オプション', tocOthers:'その他の章',
     reset:'フィルターをリセット',
-    dlSeries:'バージョン/工芸', dlYear:'発売日', dlEvent:'イベント',
-    thBand:'バンド', thChar:'キャラクター', thEvent:'イベント', thYear:'発売日', thSeries:'バージョン/工芸',
+    dlSeries:'バージョン/工芸', dlYear:'発売日', dlEvent:'イベント/商品',
+    thBand:'バンド', thChar:'キャラクター', thEvent:'イベント/商品', thYear:'発売日', thSeries:'バージョン/工芸',
     expTitle:'⬇ バッジ一覧をダウンロード', expDescPre:'現在フィルター中の', expDescPost:'枚のバッジを出力',
     expLayout:'レイアウト', expCols:'列数', expFields:'表示フィールド', expFmt:'出力形式', expTitleLabel:'タイトル',
     expGrid:'⊞ 画像グリッド', expGridDesc:'1行に複数のバッジ画像を表示',
@@ -2262,8 +2262,8 @@ const LANGS = {
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
-    search:'Search', searchPlaceholder:'Character, version, event...', band:'Band', backgroundBands:'🎬 Background Bands', independentProject:'✨ Independent Project', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
-    event:'Event', type:'Type', size:'Size', country:'Sales / Event Region', note:'Note',
+    search:'Search', searchPlaceholder:'Character, version, event/product...', band:'Band', backgroundBands:'🎬 Background Bands', independentProject:'✨ Independent Project', char:'Character', series:'Version/Craft', year:'Release Year', yearFull:'Release Date',
+    event:'Event/Product', type:'Type', size:'Size', country:'Sales / Event Region', note:'Note',
     sortNew:'Release Date (New→Old)', sortOld:'Release Date (Old→New)', sortChar:'Character Name',
     gridView:'Gallery', tableView:'List', download:'⬇ Download',
     noFilter:'Please select a filter', noResult:'No badges found',
@@ -2271,8 +2271,8 @@ const LANGS = {
     pillFilter:'Filter', pillUnit:'', sheetTitle:'Filters', sheetApply:'Show {n} badges',
     prevBadge:'Prev', nextBadge:'Next', cmdReset:'Reset', optionsTitle:'Display options', tocOthers:'Other chapters',
     reset:'Reset All Filters',
-    dlSeries:'Version/Craft', dlYear:'Release Date', dlEvent:'Event',
-    thBand:'Band', thChar:'Character', thEvent:'Event', thYear:'Release Date', thSeries:'Version/Craft',
+    dlSeries:'Version/Craft', dlYear:'Release Date', dlEvent:'Event/Product',
+    thBand:'Band', thChar:'Character', thEvent:'Event/Product', thYear:'Release Date', thSeries:'Version/Craft',
     expTitle:'⬇ Download Badge Sheet', expDescPre:'Export', expDescPost:'filtered badges as image',
     expLayout:'Layout', expCols:'Columns', expFields:'Fields', expFmt:'Format', expTitleLabel:'Title',
     expGrid:'⊞ Image Grid', expGridDesc:'Display multiple badges per row',
@@ -2306,8 +2306,8 @@ const LANGS = {
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
-    search:'검색', searchPlaceholder:'캐릭터, 버전, 이벤트...', band:'밴드', backgroundBands:'🎬 배경 밴드', independentProject:'✨ 독립 프로젝트', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
-    event:'이벤트', type:'유형', size:'크기', country:'판매/이벤트 지역', note:'비고',
+    search:'검색', searchPlaceholder:'캐릭터, 버전, 이벤트/상품...', band:'밴드', backgroundBands:'🎬 배경 밴드', independentProject:'✨ 독립 프로젝트', char:'캐릭터', series:'버전/공예', year:'발매 연도', yearFull:'발매일',
+    event:'이벤트/상품', type:'유형', size:'크기', country:'판매/이벤트 지역', note:'비고',
     sortNew:'발매일 (최신→오래됨)', sortOld:'발매일 (오래됨→최신)', sortChar:'캐릭터명',
     gridView:'도감', tableView:'목록', download:'⬇ 다운로드',
     noFilter:'필터를 선택해 주세요', noResult:'해당하는 뱃지가 없습니다',
@@ -2315,8 +2315,8 @@ const LANGS = {
     pillFilter:'필터', pillUnit:'개', sheetTitle:'상세 필터', sheetApply:'{n}개 표시',
     prevBadge:'이전', nextBadge:'다음', cmdReset:'초기화', optionsTitle:'표시 옵션', tocOthers:'기타 챕터',
     reset:'전체 필터 초기화',
-    dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트',
-    thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트', thYear:'발매일', thSeries:'버전/공예',
+    dlSeries:'버전/공예', dlYear:'발매일', dlEvent:'이벤트/상품',
+    thBand:'밴드', thChar:'캐릭터', thEvent:'이벤트/상품', thYear:'발매일', thSeries:'버전/공예',
     expTitle:'⬇ 뱃지 시트 다운로드', expDescPre:'필터된', expDescPost:'개의 뱃지를 이미지로 출력',
     expLayout:'레이아웃', expCols:'열 수', expFields:'표시 필드', expFmt:'출력 형식', expTitleLabel:'제목',
     expGrid:'⊞ 이미지 그리드', expGridDesc:'한 행에 여러 뱃지 표시',
@@ -2465,9 +2465,9 @@ function applyLang(){
   const mlt=document.getElementById('my-lists-title'); if(mlt&&L.myFavorites) mlt.textContent=L.myFavorites;
   // 活動 modal 標題、搜尋、按鈕
   const emt=document.getElementById('event-modal-title');
-  if(emt) emt.textContent=({'zh-TW':'選擇活動','ja':'イベントを選択','en':'Select Event','ko':'이벤트 선택'})[currentLang]||'選擇活動';
+  if(emt) emt.textContent=({'zh-TW':'選擇活動/商品','ja':'イベント/商品を選択','en':'Select Event/Product','ko':'이벤트/상품 선택'})[currentLang]||'選擇活動/商品';
   const es=document.getElementById('event-search');
-  if(es) es.placeholder=({'zh-TW':'搜尋活動...','ja':'イベントを検索...','en':'Search events...','ko':'이벤트 검색...'})[currentLang]||'搜尋活動...';
+  if(es) es.placeholder=({'zh-TW':'搜尋活動/商品...','ja':'イベント/商品を検索...','en':'Search events/products...','ko':'이벤트/상품 검색...'})[currentLang]||'搜尋活動/商品...';
   const ecb=document.getElementById('event-clear-btn');
   if(ecb) ecb.textContent=({'zh-TW':'清除','ja':'クリア','en':'Clear','ko':'초기화'})[currentLang]||'清除';
   const ecfb=document.getElementById('event-confirm-btn');
@@ -2544,9 +2544,9 @@ function updateEventBtnLabel(){
   if(!btn) return;
   const L = LANGS[currentLang]||LANGS['zh-TW'];
   if(selEvents.size===0){
-    btn.textContent = ({'zh-TW':'選擇活動...','ja':'イベントを選択...','en':'Select Event...','ko':'이벤트 선택...'})[currentLang]||'選擇活動...';
+    btn.textContent = ({'zh-TW':'選擇活動/商品...','ja':'イベント/商品を選択...','en':'Select Event/Product...','ko':'이벤트/상품 선택...'})[currentLang]||'選擇活動/商品...';
   } else {
-    const countLabel = ({'zh-TW':`已選 ${selEvents.size} 個活動`,'ja':`${selEvents.size} 件選択済み`,'en':`${selEvents.size} selected`,'ko':`${selEvents.size}개 선택됨`})[currentLang]||`已選 ${selEvents.size} 個`;
+    const countLabel = ({'zh-TW':`已選 ${selEvents.size} 個活動/商品`,'ja':`${selEvents.size} 件選択済み`,'en':`${selEvents.size} selected`,'ko':`${selEvents.size}개 선택됨`})[currentLang]||`已選 ${selEvents.size} 個`;
     btn.textContent = countLabel;
     document.getElementById('event-modal-btn').style.borderColor = 'var(--accent)';
   }
@@ -2647,7 +2647,7 @@ function buildEventList(){
   const items = q ? _eventAllItems.filter(e=>e.toLowerCase().includes(q)) : _eventAllItems;
   const el = document.getElementById('event-list-inner');
   if(!items.length){
-    el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的活動</div>`;
+    el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的活動/商品</div>`;
   } else {
     el.innerHTML = items.map(e=>`
       <label class="filter-item" style="padding:0.3rem 0;">
@@ -3090,7 +3090,7 @@ function getExportFields(){
   return [
     {key:'band',      label: L.thBand   || '樂團'},
     {key:'character', label: L.thChar   || '角色'},
-    {key:'event',     label: L.thEvent  || '活動'},
+    {key:'event',     label: L.thEvent  || '活動/商品'},
     {key:'year',      label: L.thYear   || '發售日期'},
     {key:'series',    label: L.thSeries || '版本/工藝'},
   ];
@@ -3616,8 +3616,8 @@ async function doExportTable(list, title, btn, progWrap, prog){
 <div id="event-modal-overlay" style="display:none;" class="event-modal-overlay" onclick="maybeCloseEventModal(event)">
   <div class="event-modal">
     <div class="event-modal-header">
-      <h3 id="event-modal-title">選擇活動</h3>
-      <input class="event-modal-search" type="text" id="event-search" placeholder="搜尋活動..." oninput="filterEventList()"/>
+      <h3 id="event-modal-title">選擇活動/商品</h3>
+      <input class="event-modal-search" type="text" id="event-search" placeholder="搜尋活動/商品..." oninput="filterEventList()"/>
     </div>
     <div class="event-modal-body">
       <div id="event-list-inner"></div>
