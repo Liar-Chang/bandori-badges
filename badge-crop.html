@@ -253,6 +253,21 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
     </div>
 
     <div class="ps">
+      <h3>旋轉</h3>
+      <div class="field">
+        <label>角度（°，精度 0.1）</label>
+        <input type="number" id="rot-deg" value="0" step="0.1" min="-180" max="180" oninput="onRotateInput()"/>
+      </div>
+      <input type="range" id="rot-slider" value="0" min="-180" max="180" step="0.1" oninput="onRotateSlider()" style="width:100%;accent-color:var(--accent);cursor:pointer;"/>
+      <div class="row2" style="margin-top:0.45rem;">
+        <button class="btn btn-s" style="margin:0;padding:0.32rem;" onclick="nudgeRotate(-0.1)">−0.1°</button>
+        <button class="btn btn-s" style="margin:0;padding:0.32rem;" onclick="nudgeRotate(0.1)">+0.1°</button>
+      </div>
+      <button class="btn btn-s" style="margin-top:0.32rem;" onclick="resetRotate()">↺ 歸零</button>
+      <p style="font-size:0.66rem;color:var(--muted);line-height:1.5;margin-top:0.4rem;">💡 先轉正、再框裁切;裁出來就是轉正後的圖。框會自動置中,轉大角度後可重設位置。</p>
+    </div>
+
+    <div class="ps">
       <h3>目前設定</h3>
       <div class="ibox" id="info-box">
         尚未設定
@@ -343,7 +358,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
 <div class="cursor-info" id="cursor-info"></div>
 
 <script>
-let img=null, scale=1, cx=0, cy=0, r=0;
+let img=null, origImg=null, rotationDeg=0, scale=1, cx=0, cy=0, r=0;
 let userZoom=1.0, baseScale=1.0; // 單張模式的使用者縮放(獨立於 fit-to-area 的 baseScale)
 let singlePan={active:false, startX:0, startY:0, startScrollLeft:0, startScrollTop:0};
 let singlePinch={active:false, initialDist:0, initialZoom:1};
@@ -468,7 +483,7 @@ function removeFile(idx){
     // 刪掉的是當前選中：讓下一張變成當前；如果刪的是最後一張，讓前一張變成當前
     if(fileItems.length===0){
       currentIdx=-1;
-      img=null;
+      img=null;origImg=null;
       mc.style.display='none';
       document.getElementById('canvas-hint').style.display='block';
       document.getElementById('preview-canvas').style.display='none';
@@ -492,7 +507,8 @@ function selectFile(idx){
   if(idx<0||idx>=fileItems.length)return;
   currentIdx=idx;
   const item=fileItems[idx];
-  img=item.imgEl;
+  origImg=item.imgEl; rotationDeg=0; rebuildWorkImage();
+  { const _di=document.getElementById('rot-deg'), _si=document.getElementById('rot-slider'); if(_di) _di.value=0; if(_si) _si.value=0; }
   // 換圖:清掉舊的自動偵測快照,避免把上一張的提議框記到這張
   _singleDetectCircles=null; _singleDetectIdx=-1; _batchAutoSnapshot=[];
   resetCurrent();
@@ -509,6 +525,40 @@ function initCanvas(){
   mc.style.display='block';
   draw();
 }
+
+// ── 旋轉:把原圖旋轉成一張 canvas 當「工作圖」(掛 expando naturalWidth/Height,既有 img.naturalWidth 全照常) ──
+function rotateImageEl(el, deg){
+  deg = ((deg % 360) + 360) % 360;
+  if(!deg) return el;
+  const rad = deg*Math.PI/180;
+  const ow0 = el.naturalWidth||el.width, oh0 = el.naturalHeight||el.height;
+  const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+  const nw = Math.max(1, Math.round(ow0*cos + oh0*sin));
+  const nh = Math.max(1, Math.round(ow0*sin + oh0*cos));
+  const c = document.createElement('canvas'); c.width=nw; c.height=nh;
+  const cc = c.getContext('2d');
+  cc.translate(nw/2, nh/2); cc.rotate(rad); cc.drawImage(el, -ow0/2, -oh0/2);
+  c.naturalWidth = nw; c.naturalHeight = nh;   // expando,讓 img.naturalWidth 照常運作
+  return c;
+}
+function rebuildWorkImage(){ img = origImg ? rotateImageEl(origImg, rotationDeg) : null; }
+function applyRotation(deg){
+  deg = Math.max(-180, Math.min(180, Math.round((deg||0)*10)/10));   // 精度 0.1
+  rotationDeg = deg;
+  const di=document.getElementById('rot-deg'), si=document.getElementById('rot-slider');
+  if(di) di.value=deg; if(si) si.value=deg;
+  if(!origImg) return;
+  rebuildWorkImage();
+  // 旋轉後把框重新置中(保持大小)→ 轉正置中徽章時,框跟著貼齊
+  const W=img.naturalWidth, H=img.naturalHeight;
+  if(shape==='circle'||shape==='square'){ cx=Math.round(W/2); cy=Math.round(H/2); }
+  else { const bw=rx2-rx1, bh=ry2-ry1; rx1=Math.round(W/2-bw/2); ry1=Math.round(H/2-bh/2); rx2=rx1+bw; ry2=ry1+bh; }
+  fitCanvasToArea(); syncInputs(); draw();
+}
+function onRotateInput(){ applyRotation(parseFloat(document.getElementById('rot-deg').value)); }
+function onRotateSlider(){ applyRotation(parseFloat(document.getElementById('rot-slider').value)); }
+function nudgeRotate(d){ applyRotation((rotationDeg||0)+d); }
+function resetRotate(){ applyRotation(0); }
 
 // 把畫布大小調整到符合容器 — 視窗縮放或上傳新圖時呼叫
 function fitCanvasToArea(){
@@ -1208,10 +1258,11 @@ async function doCropAllSamePosition(){
   const zip = new JSZip();
   let sizeMismatch = 0;
   for(let i=0;i<fileItems.length;i++){
-    const im = fileItems[i].imgEl;
-    if(!im) continue;
+    const im0 = fileItems[i].imgEl;
+    if(!im0) continue;
     if(btn) btn.textContent = `裁切中... (${i+1}/${fileItems.length})`;
     await new Promise(resolve=>setTimeout(resolve,0)); // 讓 UI 有機會更新
+    const im = rotationDeg ? rotateImageEl(im0, rotationDeg) : im0;   // 同步套用旋轉
     if(im.naturalWidth!==img.naturalWidth || im.naturalHeight!==img.naturalHeight) sizeMismatch++;
     const off=document.createElement('canvas'); off.width=ow; off.height=oh;
     const oc=off.getContext('2d');
@@ -1251,7 +1302,7 @@ function resetCurrent(){
 
 function clearAll(){
   if(fileItems.length&&!confirm('清除所有圖片？'))return;
-  fileItems=[];currentIdx=-1;img=null;
+  fileItems=[];currentIdx=-1;img=null;origImg=null;rotationDeg=0;
   mc.style.display='none';
   document.getElementById('canvas-hint').style.display='block';
   document.getElementById('btn-crop').disabled=true;
