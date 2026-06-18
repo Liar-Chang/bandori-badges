@@ -250,11 +250,11 @@ tr.selected td{background:#f0effd !important;}
           <input type="text" id="d-year" placeholder="如 2024年7月10日"/>
         </div>
         <div class="field" style="grid-column:span 2">
-          <label>活動名稱</label>
+          <label>活動/商品名稱</label>
           <input type="text" id="d-event" placeholder="如 BanG Dream! 10th Live"/>
         </div>
         <div class="field">
-          <label>活動簡稱</label>
+          <label>活動/商品簡稱</label>
           <input type="text" id="d-short_event" placeholder="如 10th Live"/>
         </div>
         <div class="field">
@@ -402,11 +402,11 @@ tr.selected td{background:#f0effd !important;}
           <input type="text" id="t-year" placeholder="如 2025年4月1日"/>
         </div>
         <div class="field" style="grid-column:1/-1">
-          <label>活動名稱</label>
+          <label>活動/商品名稱</label>
           <input type="text" id="t-event" placeholder="如 Ave Mujica 5th LIVE"/>
         </div>
         <div class="field">
-          <label>活動簡稱</label>
+          <label>活動/商品簡稱</label>
           <input type="text" id="t-short_event" placeholder="如 5th LIVE"/>
         </div>
         <div class="field">
@@ -519,7 +519,7 @@ tr.selected td{background:#f0effd !important;}
       <select id="filter-missing" onchange="renderList()" style="font-family:inherit;font-size:0.82rem;padding:0.4rem 0.75rem;border:1.5px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;">
         <option value="">全部顯示</option>
         <option value="no_url">缺少相關連結（且無備註）</option>
-        <option value="no_short">缺少活動簡稱</option>
+        <option value="no_short">缺少活動/商品簡稱</option>
         <option value="no_url_and_short">同時缺少兩者</option>
         <option value="no_img">🔍 無圖徵集（募集中）</option>
         <option value="no_img_real">🚨 沒圖檔（未標徵集）</option>
@@ -542,8 +542,8 @@ tr.selected td{background:#f0effd !important;}
         <option value="band">樂團</option>
         <option value="series">版本/工藝</option>
         <option value="year">發售日期</option>
-        <option value="event">活動名稱</option>
-        <option value="short_event">活動簡稱</option>
+        <option value="event">活動/商品名稱</option>
+        <option value="short_event">活動/商品簡稱</option>
         <option value="character">角色名稱</option>
         <option value="type">類型</option>
         <option value="size">尺寸</option>
@@ -575,7 +575,7 @@ tr.selected td{background:#f0effd !important;}
           <th data-col="char" class="th-sortable" onclick="toggleColSort('char',event)" title="點擊排序,點漏斗篩選">角色 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('char')">🔽</span><div class="col-filter-popup"></div></th>
           <th data-col="size" class="th-sortable" onclick="toggleColSort('size',event)" title="點擊排序,點漏斗篩選">尺寸 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('size')">🔽</span><div class="col-filter-popup"></div></th>
           <th data-col="year" class="th-sortable" onclick="toggleColSort('year',event)" title="點擊排序,點漏斗篩選">發售日期 <span class="th-sort-arrow">↕</span><span class="th-filter-icon" onclick="event.stopPropagation();toggleColFilter('year')">🔽</span><div class="col-filter-popup"></div></th>
-          <th>活動</th><th>活動簡稱</th><th>版本/工藝</th><th>操作</th>
+          <th>活動/商品</th><th>活動/商品簡稱</th><th>版本/工藝</th><th>操作</th>
         </tr></thead>
         <tbody id="badge-tbody"></tbody>
       </table>
@@ -651,8 +651,8 @@ tr.selected td{background:#f0effd !important;}
       </div>
       <div class="field"><label>版本/工藝</label><input type="text" id="f-series" placeholder="如 Ani-Art / 全息圖"/></div>
       <div class="field"><label>發售日期</label><input type="text" id="f-year" placeholder="如 2024年7月10日"/></div>
-      <div class="field" style="grid-column:1/-1"><label>活動名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
-      <div class="field"><label>活動簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
+      <div class="field" style="grid-column:1/-1"><label>活動/商品名稱</label><input type="text" id="f-event" placeholder="如 BanG Dream! 10th Live"/></div>
+      <div class="field"><label>活動/商品簡稱</label><input type="text" id="f-short_event" placeholder="如 10th Live"/></div>
       <div class="field"><label>類型</label>
         <select id="f-type">
           <option value="">請選擇</option>
@@ -877,8 +877,8 @@ function renderBatchGrid(){
         <div class="bf"><label>發售日期</label>
           <input type="text" value="${item.year}" placeholder="2024年7月10日" oninput="batchItems[${i}].year=this.value"/>
         </div>
-        <div class="bf"><label>活動</label>
-          <input type="text" value="${item.event}" placeholder="活動名稱" oninput="batchItems[${i}].event=this.value;updateBatchStatus(${i});"/>
+        <div class="bf"><label>活動/商品</label>
+          <input type="text" value="${item.event}" placeholder="活動/商品名稱" oninput="batchItems[${i}].event=this.value;updateBatchStatus(${i});"/>
         </div>
         <div class="bf"><label>類型</label>
           <select onchange="batchItems[${i}].type=this.value;updateBatchStatus(${i});">
