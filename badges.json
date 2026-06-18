@@ -84598,5 +84598,25 @@
     "created_at": "2026-06-18T16:28:01.760Z",
     "updated_at": "2026-06-18T16:28:01.760Z",
     "image_updated_at": "2026-06-18T16:28:01.760Z"
+  },
+  {
+    "id": "1807",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "山吹紗綾",
+    "series": "",
+    "year": "2026年7月1日",
+    "event": "BanG Dream! in R Baker コラボキャンペーン－やまぶきベーカリー エプロン ＆お名前缶バッジセット",
+    "type": "角色本身",
+    "size": "方形",
+    "country": "日本",
+    "url": "https://alcohol-inc.jp/media/cafe/bang-dream",
+    "note": "商品サイズ：四角い缶バッジ＝約 (W)78×(H)53mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "BanG Dream! in Baker コラボキャンペーン",
+    "created_at": "2026-06-18T17:04:12.074Z",
+    "updated_at": "2026-06-18T17:04:12.074Z",
+    "image_updated_at": "2026-06-18T17:04:12.074Z"
   }
 ]
