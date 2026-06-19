@@ -85063,5 +85063,25 @@
     "created_at": "2026-06-19T07:25:48.989Z",
     "updated_at": "2026-06-19T07:25:48.989Z",
     "image_updated_at": "2026-06-19T07:25:48.989Z"
+  },
+  {
+    "id": "1808",
+    "ext": "png",
+    "band": "Morfonica",
+    "character": "Morfonica全團",
+    "series": "BOX特典",
+    "year": "2026年6月18日",
+    "event": "PalVerse　BanG Dream! Morfonica【BOX】",
+    "type": "角色合影",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/palverse-morfonica/products/2000302868405",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "PalVerse Morfonica特典",
+    "created_at": "2026-06-19T11:58:35.744Z",
+    "updated_at": "2026-06-19T11:58:35.744Z",
+    "image_updated_at": "2026-06-19T11:58:35.744Z"
   }
 ]
