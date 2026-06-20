@@ -87422,5 +87422,25 @@
     "created_at": "2026-06-20T14:58:44.396Z",
     "updated_at": "2026-06-20T14:58:44.396Z",
     "image_updated_at": "2026-06-20T14:58:44.396Z"
+  },
+  {
+    "id": "4985",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "",
+    "series": "",
+    "year": " 2017年3月",
+    "event": "BanG Dream! デカ缶バッジ",
+    "type": "角色合影",
+    "size": "15cm圓形",
+    "country": "日本",
+    "url": "https://www.hobbystock.jp/item/view/hby-ccg-00076821",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "BanG Dream! デカ缶バッジ",
+    "created_at": "2026-06-20T15:48:08.057Z",
+    "updated_at": "2026-06-20T15:48:08.057Z",
+    "image_updated_at": "2026-06-20T15:48:08.057Z"
   }
 ]
