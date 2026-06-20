@@ -87427,10 +87427,11 @@
     "id": "4985",
     "ext": "png",
     "band": "Poppin'Party",
-    "character": "",
+    "character": "戶山香澄x花園多惠",
     "series": "",
     "year": " 2017年3月",
     "event": "BanG Dream! デカ缶バッジ",
+    "short_event": "BanG Dream! デカ缶バッジ",
     "type": "角色合影",
     "size": "15cm圓形",
     "country": "日本",
@@ -87438,9 +87439,9 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "BanG Dream! デカ缶バッジ",
+    "noimg": false,
     "created_at": "2026-06-20T15:48:08.057Z",
-    "updated_at": "2026-06-20T15:48:08.057Z",
+    "updated_at": "2026-06-20T15:49:14.013Z",
     "image_updated_at": "2026-06-20T15:48:08.057Z"
   }
 ]
