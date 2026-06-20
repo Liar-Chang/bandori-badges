@@ -2312,18 +2312,24 @@
   },
   {
     "id": "154",
-    "ext": "jpg",
+    "ext": "png",
     "band": "MyGO!!!!!",
     "character": "高松燈",
     "series": "",
     "year": "2024年3月30日",
     "event": "DECOTTO by animate cafe",
-    "short_event": "DECOTTOAnimate咖",
+    "short_event": "DECOTTO by animate cafe",
     "type": "角色本身",
     "size": "57mm圓形",
     "country": "日本",
     "url": "https://x.com/animate_cafe/status/1765905527954092438",
-    "note": ""
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "noimg": false,
+    "created_at": "2026-06-20T14:31:46.990Z",
+    "updated_at": "2026-06-20T14:34:08.158Z",
+    "image_updated_at": "2026-06-20T14:34:08.158Z"
   },
   {
     "id": "155",
