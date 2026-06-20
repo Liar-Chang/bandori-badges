@@ -1080,7 +1080,7 @@ async function init(){
 function bandColor(b){ return BAND_COLORS[b]||'#888'; }
 
 const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
-  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
+  '100mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
 function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
 
 function buildSidebar(){
@@ -1170,7 +1170,7 @@ function buildSidebar(){
   // 尺寸：分類篩選
   // 56-58mm圓形常駐;其他圓形/方形/橢圓形/心形/撥片分類;布製(布偶+刺繡)合併群組;其他歸到「其他」
   const SIZE_56_VALS = new Set(['56mm圓形','57mm圓形','58mm圓形']);
-  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形'];
+  const SIZE_ROUND_OTHERS = ['15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形'];
   const SIZE_NAMED = ['橢圓形','方形','心形','撥片'];
   const SIZE_FABRIC_VALS = new Set(['約80mm布偶胸章','刺繡布章']);   // 布製:立體布偶 + 平面刺繡
   const SIZE_OTHER_VALS = new Set(['名牌','金屬','未確定']);
@@ -1980,6 +1980,7 @@ const SIZE_TRANS = {
   '50mm圓形':        {'ja':'50mmサークル','en':'50mm Circle','ko':'50mm 원형'},
   '44mm圓形':        {'ja':'44mmサークル','en':'44mm Circle','ko':'44mm 원형'},
   '32mm圓形':        {'ja':'32mmサークル','en':'32mm Circle','ko':'32mm 원형'},
+  '31mm圓形':        {'ja':'31mmサークル','en':'31mm Circle','ko':'31mm 원형'},
   '30mm圓形':        {'ja':'30mmサークル','en':'30mm Circle','ko':'30mm 원형'},
   '25mm圓形':        {'ja':'25mmサークル','en':'25mm Circle','ko':'25mm 원형'},
   '橢圓形':          {'ja':'楕円形','en':'Oval','ko':'타원형'},
@@ -3255,14 +3256,14 @@ async function doExport(){
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
-    '54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形',
+    '54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形',
     '橢圓形','方形','心形','撥片','名牌','金屬','約80mm布偶胸章','刺繡布章','未確定',
   ];
   // 下載時合併為同一區塊的尺寸
   const SIZE_56_GROUP = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES = new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '100mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形',
-    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','30mm圓形','25mm圓形']);
+    '65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形']);
 
   function isRound(size){ return ROUND_SIZES.has(size||''); }
 

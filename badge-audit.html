@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>徽章圖鑑比對 / 盤點</title>
+<style>
+  :root{ --pink:#ff69b4; --bg:#fff; --line:#e3e3e3; --ok:#2e9b57; --warn:#d99a00; --miss:#d64545; --muted:#888; }
+  *{ box-sizing:border-box; }
+  body{ font-family:"Segoe UI","Microsoft JhengHei",sans-serif; margin:0; padding:16px; color:#222; background:#faf7f9; }
+  h1{ font-size:20px; margin:0 0 4px; }
+  .hint{ color:var(--muted); font-size:13px; margin:0 0 14px; }
+  .panel{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .panel label{ display:block; margin:6px 0; font-size:14px; }
+  .panel input[type=number]{ width:64px; }
+  select,button,input[type=file]{ font-size:14px; }
+  button{ background:var(--pink); color:#fff; border:0; border-radius:6px; padding:8px 16px; cursor:pointer; }
+  button:disabled{ background:#ccc; cursor:default; }
+  button.ghost{ background:#fff; color:#444; border:1px solid var(--line); }
+  .row{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  #summary{ display:flex; gap:18px; flex-wrap:wrap; font-size:15px; align-items:baseline; }
+  #summary b{ font-size:22px; }
+  .tag{ padding:2px 8px; border-radius:10px; font-size:12px; color:#fff; }
+  .t-ok{ background:var(--ok); } .t-warn{ background:var(--warn); } .t-miss{ background:var(--miss); }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+  .card{ border:2px solid var(--line); border-radius:10px; padding:10px; background:#fff; display:flex; gap:10px; }
+  .card.ok{ border-color:var(--ok); } .card.warn{ border-color:var(--warn); } .card.miss{ border-color:var(--miss); }
+  .card img{ width:84px; height:84px; object-fit:contain; background:#f3f3f3; border-radius:6px; flex:0 0 auto; }
+  .card .meta{ font-size:12px; line-height:1.5; overflow:hidden; }
+  .card .lab{ font-weight:bold; font-size:13px; }
+  .card .mid{ color:var(--muted); }
+  .card .acts{ margin-top:4px; display:flex; gap:6px; }
+  .card .acts button{ padding:3px 8px; font-size:11px; }
+  .pair{ display:flex; gap:6px; align-items:center; }
+  .progress{ font-size:13px; color:var(--muted); }
+  details{ margin-top:10px; }
+  code{ background:#f0f0f0; padding:1px 5px; border-radius:4px; }
+  .mini{ font-size:11px; color:var(--muted); }
+</style>
+</head>
+<body>
+<h1>🔍 徽章圖鑑比對 / 盤點 <span class="mini">(自用工具・對 badges.json 唯讀)</span></h1>
+<p class="hint">拿別人的單角色圖鑑當底稿,用 pHash 比對你 badges.json 已建了哪些、缺了哪些。pHash 自動配對僅供參考,請複核 ❓ ❌。</p>
+
+<div class="panel">
+  <div class="row">
+    <label>① 圖鑑資料夾<br><input type="file" id="refDir" webkitdirectory directory multiple></label>
+    <label>② badges.json<br><input type="file" id="badgesFile" accept=".json,application/json"></label>
+    <label>③ 角色<br><select id="charSel"><option value="">(先載入 badges.json)</option></select></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label style="margin:0">徽章圖來源:
+      <select id="imgSrc">
+        <option value="url">線上(GitHub Pages)</option>
+        <option value="local">本機 images 資料夾</option>
+      </select>
+    </label>
+    <label id="imgDirWrap" style="margin:0; display:none">images 資料夾:<input type="file" id="imgDir" webkitdirectory directory multiple></label>
+    <label style="margin:0">pHash 命中門檻 ≤ <input type="number" id="threshold" value="10" min="0" max="32"></label>
+    <button id="runBtn" disabled>開始比對</button>
+  </div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<div class="panel" id="summaryPanel" style="display:none">
+  <div id="summary"></div>
+  <div class="row" style="margin-top:10px">
+    <button class="ghost" id="exportMiss">📋 複製「缺漏 + 存疑」清單</button>
+    <span class="mini">勾選/標記會即時存進瀏覽器(IndexedDB),下次開同角色會記得。</span>
+  </div>
+</div>
+
+<div id="results"></div>
+
+<details class="panel" id="extraPanel" style="display:none">
+  <summary>你有、但圖鑑沒配到的徽章 (<span id="extraCount">0</span>) — 多半是圖鑑沒收，或 pHash 沒配準</summary>
+  <div class="grid" id="extraGrid" style="margin-top:10px"></div>
+</details>
+
+<script>
+// 用 raw.githubusercontent(CORS 穩定,可讀 canvas 像素;GitHub Pages 不一定給 CORS)
+// ⚠️ R2 圖片遷移後這個 URL 會失效,屆時改用本機資料夾模式或新圖床
+const SITE_IMG = 'https://raw.githubusercontent.com/Liar-Chang/bandori-badges/main/images/';
+const DN = 32;
+// ── pHash (DCT type-II, 32x32 → 左上 8x8 → 中位數 → 64 bit) ──
+const COS = [];
+for(let u=0;u<DN;u++){ COS[u]=new Float64Array(DN); for(let x=0;x<DN;x++) COS[u][x]=Math.cos(((2*x+1)*u*Math.PI)/(2*DN)); }
+function dct1d(vec,out){
+  for(let u=0;u<DN;u++){ let s=0; const c=COS[u]; for(let x=0;x<DN;x++) s+=vec[x]*c[x]; out[u]=s*(u===0?0.1767766952966369:0.25); }
+}
+const _cv=document.createElement('canvas'); _cv.width=DN; _cv.height=DN;
+const _ctx=_cv.getContext('2d',{willReadFrequently:true});
+function pHash(img){
+  _ctx.clearRect(0,0,DN,DN); _ctx.drawImage(img,0,0,DN,DN);
+  let data;
+  try{ data=_ctx.getImageData(0,0,DN,DN).data; }
+  catch(e){ throw Object.assign(new Error('TAINTED'),{tainted:true}); }
+  const g=new Float64Array(DN*DN);
+  for(let i=0;i<DN*DN;i++){ g[i]=0.299*data[i*4]+0.587*data[i*4+1]+0.114*data[i*4+2]; }
+  const rows=new Float64Array(DN*DN), tmp=new Float64Array(DN);
+  for(let y=0;y<DN;y++){ dct1d(g.subarray(y*DN,y*DN+DN),tmp); rows.set(tmp,y*DN); }
+  const col=new Float64Array(DN), out=new Float64Array(DN*DN);
+  for(let x=0;x<DN;x++){ for(let y=0;y<DN;y++) col[y]=rows[y*DN+x]; dct1d(col,tmp); for(let y=0;y<DN;y++) out[y*DN+x]=tmp[y]; }
+  const v=[]; for(let y=0;y<8;y++)for(let x=0;x<8;x++) v.push(out[y*DN+x]);
+  const s=v.slice(1).sort((a,b)=>a-b); const med=s[s.length>>1];
+  let h=0n; for(let i=0;i<64;i++) h=(h<<1n)|(v[i]>med?1n:0n);
+  return h;
+}
+function hamming(a,b){ let x=a^b,c=0; while(x){ c+=Number(x&1n); x>>=1n; } return c; }
+function loadImg(src){
+  return new Promise((res,rej)=>{ const im=new Image(); im.crossOrigin='anonymous'; im.onload=()=>res(im); im.onerror=()=>rej(new Error('load fail '+src)); im.src=src; });
+}
+
+// ── 解析圖鑑檔名 → {coord,label} ──
+function parseRef(name){
+  const stem=name.replace(/\.[^.]+$/,'');
+  let m=stem.match(/^([A-Za-z]*\d+)_(.+)$/);
+  if(m) return {coord:m[1], label:m[2]};
+  if(/^[A-Za-z]*\d+$/.test(stem)) return {coord:stem, label:'(無標籤)'};
+  return {coord:'', label:stem};
+}
+
+// ── IndexedDB(存使用者人工複核結果) ──
+let DB=null;
+function openDB(){ return new Promise(res=>{ const r=indexedDB.open('badgeAudit',1); r.onupgradeneeded=e=>{ e.target.result.createObjectStore('ov',{keyPath:'k'}); }; r.onsuccess=e=>{ DB=e.target.result; res(); }; r.onerror=()=>res(); }); }
+function ovKey(ch,r){ return ch+'|'+r.coord+'|'+r.label; }
+function ovGetAll(ch){ return new Promise(res=>{ if(!DB) return res({}); const out={}; const tx=DB.transaction('ov').objectStore('ov').openCursor(); tx.onsuccess=e=>{ const c=e.target.result; if(c){ if(c.value.k.startsWith(ch+'|')) out[c.value.k]=c.value.s; c.continue(); } else res(out); }; tx.onerror=()=>res(out); }); }
+function ovSet(k,s){ if(!DB) return; const st=DB.transaction('ov','readwrite').objectStore('ov'); if(s) st.put({k,s}); else st.delete(k); }
+
+// ── 狀態 ──
+let refList=[];      // {coord,label,name,url,hash}
+let badges=[];       // 全部
+let localImgs=new Map(); // 本機模式: 'id.ext' -> File
+let lastResult=null;
+const $=id=>document.getElementById(id);
+function setProg(t){ $('progress').textContent=t; }
+
+// ① 圖鑑資料夾
+$('refDir').addEventListener('change', async e=>{
+  const files=[...e.target.files].filter(f=>/\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name));
+  refList=files.map(f=>{ const p=parseRef(f.name); return {...p, name:f.name, url:URL.createObjectURL(f), hash:null}; });
+  refList.sort((a,b)=> a.coord.localeCompare(b.coord,'en',{numeric:true}) || a.label.localeCompare(b.label));
+  setProg('圖鑑載入 '+refList.length+' 張'); maybeReady();
+});
+
+// ② badges.json
+$('badgesFile').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{
+      badges=JSON.parse(rd.result);
+      const chars=[...new Set(badges.map(b=>b.character).filter(c=>c && !/[x×]/.test(c)))].sort();
+      const sel=$('charSel'); sel.innerHTML='<option value="">— 選角色 —</option>'+chars.map(c=>`<option>${c}</option>`).join('');
+      setProg('badges.json 載入 '+badges.length+' 筆,角色 '+chars.length+' 個'); maybeReady();
+    }catch(err){ alert('badges.json 解析失敗: '+err.message); } };
+  rd.readAsText(f);
+});
+
+// 圖來源切換
+$('imgSrc').addEventListener('change', e=>{ $('imgDirWrap').style.display = e.target.value==='local'?'':'none'; });
+$('imgDir').addEventListener('change', e=>{ localImgs=new Map([...e.target.files].map(f=>[f.name.toLowerCase(), f])); setProg('本機 images: '+localImgs.size+' 檔'); });
+
+$('charSel').addEventListener('change', maybeReady);
+function maybeReady(){ $('runBtn').disabled = !(refList.length && badges.length && $('charSel').value); }
+
+// ── 取某徽章圖的可載入來源 ──
+function badgeSrc(b){
+  if($('imgSrc').value==='local'){ const f=localImgs.get((b.id+'.'+b.ext).toLowerCase()); return f?URL.createObjectURL(f):null; }
+  return SITE_IMG+b.id+'.'+b.ext;
+}
+
+async function hashAll(items, srcOf, onProg){
+  let done=0, taintHit=false;
+  for(const it of items){
+    const src=srcOf(it);
+    if(!src){ it.hash=null; done++; onProg(done); continue; }
+    try{ const im=await loadImg(src); it.hash=pHash(im); }
+    catch(e){ if(e.tainted) taintHit=true; it.hash=null; }
+    done++; onProg(done);
+  }
+  return taintHit;
+}
+
+$('runBtn').addEventListener('click', async ()=>{
+  const ch=$('charSel').value; if(!ch) return;
+  $('runBtn').disabled=true; $('results').innerHTML='';
+  const thr=parseInt($('threshold').value)||10;
+  const cat=badges.filter(b=>b.character===ch).map(b=>({...b, hash:null}));
+  if(!cat.length){ alert('badges.json 裡沒有角色「'+ch+'」'); $('runBtn').disabled=false; return; }
+
+  // 1. 圖鑑 pHash
+  setProg('計算圖鑑 pHash… 0/'+refList.length);
+  await hashAll(refList, r=>r.url, n=>setProg('計算圖鑑 pHash… '+n+'/'+refList.length));
+  // 2. 已建徽章 pHash
+  setProg('載入並計算已建徽章 pHash… 0/'+cat.length+(($('imgSrc').value==='url')?'(線上抓圖,稍候)':''));
+  const taint=await hashAll(cat, badgeSrc, n=>setProg('已建徽章 pHash… '+n+'/'+cat.length));
+  if(taint){ alert('線上圖被 CORS 擋住、無法讀像素。請把「徽章圖來源」改成『本機 images 資料夾』再跑一次。'); $('runBtn').disabled=false; setProg(''); return; }
+
+  const catOk=cat.filter(b=>b.hash!==null);
+  const noImg=cat.length-catOk.length;
+  if($('imgSrc').value==='url' && catOk.length===0 && cat.length>0){
+    alert('線上徽章圖一張都讀不到(可能 CORS / 網路 / R2 遷移後失效)。請把「徽章圖來源」改成『本機 images 資料夾』再跑一次。');
+    $('runBtn').disabled=false; setProg(''); return;
+  }
+
+  // 3. 配對:每張圖鑑 → 最近的已建徽章
+  const ov=await ovGetAll(ch);
+  const usedBest={};
+  refList.forEach(r=>{
+    let best=null, bd=999;
+    for(const b of catOk){ const d=hamming(r.hash,b.hash); if(d<bd){ bd=d; best=b; } }
+    r.best=best; r.dist=bd;
+    let st = bd<=thr ? 'ok' : (bd<=thr*2 ? 'warn' : 'miss');
+    const o=ov[ovKey(ch,r)]; if(o) st=o;       // 人工複核覆蓋
+    r.status=st;
+    if(best && st==='ok'){ usedBest[best.id]=(usedBest[best.id]||0); usedBest[best.id]++; }
+  });
+  // 已建但沒被任何圖鑑「命中」的
+  const matchedIds=new Set(refList.filter(r=>r.status==='ok' && r.best).map(r=>r.best.id));
+  const extras=catOk.filter(b=>!matchedIds.has(b.id));
+
+  lastResult={ch,thr,refLen:refList.length,catLen:cat.length,noImg};
+  renderSummary(ch, noImg);
+  renderGrid(ch);
+  renderExtras(extras);
+  setProg('完成。圖鑑 '+refList.length+' 張 vs 已建 '+cat.length+' 筆'+(noImg?(' (其中 '+noImg+' 筆圖載入失敗)'):''));
+  $('runBtn').disabled=false;
+});
+
+function counts(){ const c={ok:0,warn:0,miss:0}; refList.forEach(r=>c[r.status]++); return c; }
+function renderSummary(ch, noImg){
+  const c=counts(); const tot=refList.length;
+  $('summaryPanel').style.display='';
+  $('summary').innerHTML =
+    `<span>角色 <b>${ch}</b></span>`+
+    `<span>完成度 <b>${c.ok}/${tot}</b> (${tot?Math.round(c.ok/tot*100):0}%)</span>`+
+    `<span><span class="tag t-ok">✅ 已建 ${c.ok}</span></span>`+
+    `<span><span class="tag t-warn">❓ 存疑 ${c.warn}</span></span>`+
+    `<span><span class="tag t-miss">❌ 疑似缺 ${c.miss}</span></span>`+
+    (noImg?`<span class="mini">(${noImg} 筆已建徽章圖載入失敗,未納入比對)</span>`:'');
+}
+function card(r, ch){
+  const cls=r.status; const tagTxt={ok:'✅ 已建',warn:'❓ 存疑',miss:'❌ 疑似缺'}[cls];
+  const tagCls={ok:'t-ok',warn:'t-warn',miss:'t-miss'}[cls];
+  const bestHtml = r.best
+    ? `<div class="pair"><img src="${badgeSrcDisp(r.best)}" style="width:48px;height:48px"><span>#${r.best.id} · 距離 ${r.dist}<br><span class="mid">${(r.best.short_event||r.best.event||'').slice(0,28)}</span></span></div>`
+    : `<span class="mid">(無對應)</span>`;
+  return `<div class="card ${cls}" data-k="${ovKey(ch,r)}">
+    <img src="${r.url}" title="${r.name}">
+    <div class="meta">
+      <div class="lab">${r.label} <span class="tag ${tagCls}">${tagTxt}</span></div>
+      <div class="mid">${r.coord||''}</div>
+      <div style="margin-top:4px">最像:${bestHtml}</div>
+      <div class="acts">
+        <button class="ghost" data-s="ok">標已建</button>
+        <button class="ghost" data-s="miss">標缺</button>
+        <button class="ghost" data-s="">清除</button>
+      </div>
+    </div></div>`;
+}
+function badgeSrcDisp(b){ // 顯示用(本機模式重新產 objectURL 較麻煩,顯示一律走線上;載不出就破圖)
+  return SITE_IMG+b.id+'.'+b.ext;
+}
+function renderGrid(ch){
+  const order={miss:0,warn:1,ok:2};
+  const sorted=[...refList].sort((a,b)=> order[a.status]-order[b.status] || a.coord.localeCompare(b.coord,'en',{numeric:true}));
+  $('results').innerHTML='<div class="grid">'+sorted.map(r=>card(r,ch)).join('')+'</div>';
+  $('results').querySelectorAll('.card').forEach(el=>{
+    el.querySelectorAll('button[data-s]').forEach(btn=>btn.addEventListener('click',()=>{
+      const k=el.dataset.k, s=btn.dataset.s;
+      const r=refList.find(x=>ovKey(ch,x)===k); if(!r) return;
+      if(s){ r.status=s; ovSet(k,s); } else { ovSet(k,null); r.status = r.dist<=(parseInt($('threshold').value)||10)?'ok':(r.dist<=2*(parseInt($('threshold').value)||10)?'warn':'miss'); }
+      renderSummary(ch, lastResult?lastResult.noImg:0); renderGrid(ch);
+    }));
+  });
+}
+function renderExtras(extras){
+  $('extraPanel').style.display = extras.length?'':'none';
+  $('extraCount').textContent=extras.length;
+  $('extraGrid').innerHTML=extras.map(b=>`<div class="card"><img src="${badgeSrcDisp(b)}"><div class="meta"><div class="lab">#${b.id}</div><div class="mid">${(b.short_event||b.event||'').slice(0,40)}</div></div></div>`).join('');
+}
+$('exportMiss').addEventListener('click',()=>{
+  const ch=$('charSel').value;
+  const lines=refList.filter(r=>r.status!=='ok').map(r=>`[${r.status==='miss'?'缺':'存疑'}] ${r.coord} ${r.label}`+(r.best?` (最像#${r.best.id} 距離${r.dist})`:''));
+  const txt=`【${ch} 缺漏/存疑清單】共 ${lines.length} 項\n`+lines.join('\n');
+  navigator.clipboard.writeText(txt).then(()=>alert('已複製 '+lines.length+' 項到剪貼簿'), ()=>{ prompt('手動複製:',txt); });
+});
+
+openDB();
+</script>
+</body>
+</html>
