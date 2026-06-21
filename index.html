@@ -1043,7 +1043,7 @@ const _noImgIds = new Set(); // 記錄圖片載入失敗的 badge id
 // Type 2「找不到圖檔」:noimg 旗標 → 卡片顯示「募集中」佔位圖,且視同無圖(被「隱藏無圖」排除/搜尋/下載)
 const SEEKING_IMG = 'seeking-badge.png';
 function isNoImgFlag(b){ return !!b && (b.noimg===true || b.noimg===1 || b.noimg==='1'); }
-function imgUrl(b){ return isNoImgFlag(b) ? SEEKING_IMG : (IMG_BASE_URL + (b.id) + '.' + (b.ext || 'jpg')); }
+function imgUrl(b){ return isNoImgFlag(b) ? SEEKING_IMG : (IMG_BASE_URL + (b.id) + '.' + (b.ext || 'jpg') + '?v=1'); }
 function isNoImg(b){ return _noImgIds.has(b.id) || isNoImgFlag(b); }
 // 當 onerror 持續觸發時，若「隱藏無圖徽章」為勾選，debounce 重新套用篩選
 let _noImgRefreshTimer = null;
@@ -1801,7 +1801,7 @@ function renderGrid(list){
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
       <div class="badge-img-wrap${isBadgeRound(b.size)?' round':''}">
-        <img src="${src}" alt="${b.character||b.id}" loading="lazy"
+        <img src="${src}" crossorigin="anonymous" alt="${b.character||b.id}" loading="lazy"
           class="${isBadgeRound(b.size)?'':'non-round'}"
           style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}');_maybeRefreshHideNoImg()"/>
@@ -1847,7 +1847,7 @@ function openDetail(idx){
   const c=bandColor(b.band);
   _detailBadgeId = b.id;
   const dImg = document.getElementById('d-img');
-  dImg.src=imgUrl(b);
+  dImg.crossOrigin='anonymous'; dImg.src=imgUrl(b);
   dImg.onerror=function(){this.style.display='none';};
   dImg.style.display='block';
   dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
@@ -3032,7 +3032,7 @@ function renderTable(list){
         <td style="font-size:0.8rem;color:var(--muted);">${escapeHtml(sourceText)}</td>`;
     }
     return `<tr data-badge-id="${b.id}" onclick="handleTableRowClick(event,'${b.id}',${idx})">
-      <td><img class="tbl-thumb" src="${src}" onerror="this.style.visibility='hidden'" alt=""/></td>
+      <td><img class="tbl-thumb" src="${src}" crossorigin="anonymous" onerror="this.style.visibility='hidden'" alt=""/></td>
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>

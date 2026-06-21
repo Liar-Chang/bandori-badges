@@ -19,6 +19,8 @@ crop-dataset/
 CLAUDE.md
 PROGRESS.md
 
-# R2 遷移用的一次性本機工具 + 密碼檔(絕不上傳)。
+# R2 遷移/備份用的本機工具 + 密碼檔(絕不上傳)。
 migrate-r2.mjs
 _r2key.txt
+backup-from-r2.mjs
+備份圖片.bat

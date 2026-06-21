@@ -186,7 +186,7 @@ tr.selected td{background:#f0effd !important;}
   <div class="header-actions">
     <button class="btn btn-secondary btn-sm" onclick="loadFromGitHub()">☁ 從 GitHub 載入</button>
     <button class="btn btn-success" onclick="exportJSON()">⬇ 匯出 badges.json</button>
-    <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步到 GitHub</button>
+    <button class="btn" style="background:#238636;color:#fff;border-color:#238636;" onclick="syncToGitHub()">🔄 同步(GitHub＋R2)</button>
     <button class="btn btn-secondary btn-sm" onclick="openChangelogModal()">📝 產生更新日誌</button>
     <button class="btn btn-secondary btn-sm" onclick="openSongModal()">🎵 推薦歌曲</button>
     <div class="header-dropdown" id="more-dropdown">
@@ -596,7 +596,7 @@ tr.selected td{background:#f0effd !important;}
     <div class="modal-img-row">
       <input type="file" id="modal-img-input" accept="image/*" style="display:none" onchange="onModalImgSelect(event)"/>
       <div class="modal-thumb-wrap" onclick="document.getElementById('modal-img-input').click()">
-        <img class="modal-thumb" id="modal-thumb" src="" alt="" style="display:none"/>
+        <img class="modal-thumb" id="modal-thumb" crossorigin="anonymous" src="" alt="" style="display:none"/>
         <div class="modal-no-img" id="modal-no-img">🖼️</div>
         <div class="modal-thumb-overlay">點擊<br>換圖</div>
       </div>
@@ -1517,7 +1517,7 @@ function renderList(){
         ondrop="onListThumbDrop(event,${ri},this)">
         <div class="badge-thumb-wrap" title="點擊或拖入圖片即可換圖"
           onclick="event.stopPropagation();triggerListImgUpload(${ri})">
-          <img class="badge-thumb" src="${imgUrl(b)}" onerror="this.style.visibility='hidden'" alt=""/>
+          <img class="badge-thumb" src="${imgUrl(b)}" crossorigin="anonymous" onerror="this.style.visibility='hidden'" alt=""/>
           <div class="thumb-overlay">點擊或<br>拖入換圖</div>
         </div>
       </td>
@@ -1602,7 +1602,7 @@ function updateSyncButtonLabel(){
   const btn = document.querySelector('[onclick="syncToGitHub()"]');
   if(!btn) return;
   const count = Object.keys(pendingImageUploads).length;
-  btn.textContent = count > 0 ? `🔄 同步到 GitHub (${count} 張圖待推)` : '🔄 同步到 GitHub';
+  btn.textContent = count > 0 ? `🔄 同步(GitHub＋R2)・${count} 張圖待推` : '🔄 同步(GitHub＋R2)';
 }
 
 function processListImgChange(file, ri){
@@ -3366,7 +3366,7 @@ function renderExpCheckList(){
     return `
     <label style="display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0.3rem;border-radius:5px;cursor:pointer;font-size:0.8rem;border-bottom:1px solid #eee;">
       <input type="checkbox" class="exp-item-cb" value="${i}" checked onchange="updateExpCheckedCount()" style="accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;"/>
-      <img src="${(window.IMG_BASE_URL||'https://pub-ab8b2262846e462d92eaa4afc2570a57.r2.dev/')}${b.id}.${b.ext||'jpg'}"
+      <img crossorigin="anonymous" src="${(window.IMG_BASE_URL||'https://pub-ab8b2262846e462d92eaa4afc2570a57.r2.dev/')}${b.id}.${b.ext||'jpg'}"
         style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#f0f0f0;"
         onerror="this.style.opacity='0.3'"/>
       ${tagHtml}
