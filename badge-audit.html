@@ -79,8 +79,8 @@
 
 <script>
 // 用 raw.githubusercontent(CORS 穩定,可讀 canvas 像素;GitHub Pages 不一定給 CORS)
-// ⚠️ R2 圖片遷移後這個 URL 會失效,屆時改用本機資料夾模式或新圖床
-const SITE_IMG = 'https://raw.githubusercontent.com/Liar-Chang/bandori-badges/main/images/';
+// 圖片來源:Cloudflare R2（公開讀取網域,CORS 已開放,canvas 讀圖 OK）
+const SITE_IMG = 'https://pub-ab8b2262846e462d92eaa4afc2570a57.r2.dev/';
 const DN = 32;
 // ── pHash (DCT type-II, 32x32 → 左上 8x8 → 中位數 → 64 bit) ──
 const COS = [];

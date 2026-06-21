@@ -18,3 +18,7 @@ crop-dataset/
 # Claude 的工作筆記/進度:純本機、不公開,不上傳。
 CLAUDE.md
 PROGRESS.md
+
+# R2 遷移用的一次性本機工具 + 密碼檔(絕不上傳)。
+migrate-r2.mjs
+_r2key.txt
