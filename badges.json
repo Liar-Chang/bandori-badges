@@ -12,7 +12,13 @@
     "size": "56mm圓形",
     "country": "日本",
     "url": "https://bang-dream.com/discographies/3107/",
-    "note": ""
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "noimg": false,
+    "created_at": "2026-06-21T13:41:32.748Z",
+    "updated_at": "2026-06-21T13:41:32.748Z",
+    "image_updated_at": "2026-06-21T13:41:32.748Z"
   },
   {
     "id": "002",
