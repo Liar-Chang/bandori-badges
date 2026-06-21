@@ -3366,7 +3366,7 @@ function renderExpCheckList(){
     return `
     <label style="display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0.3rem;border-radius:5px;cursor:pointer;font-size:0.8rem;border-bottom:1px solid #eee;">
       <input type="checkbox" class="exp-item-cb" value="${i}" checked onchange="updateExpCheckedCount()" style="accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;"/>
-      <img crossorigin="anonymous" src="${(window.IMG_BASE_URL||'https://pub-ab8b2262846e462d92eaa4afc2570a57.r2.dev/')}${b.id}.${b.ext||'jpg'}"
+      <img crossorigin="anonymous" src="${EXP_IMG_BASE}${b.id}.${b.ext||'jpg'}"
         style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#f0f0f0;"
         onerror="this.style.opacity='0.3'"/>
       ${tagHtml}
