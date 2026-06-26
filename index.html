@@ -13,32 +13,112 @@
 
 <script>
 /* ── Excel 輸出 ── */
-function doExportXlsx(list, title, btn, progWrap, prog){
-  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
-  const headers = fields.map(f=>f.label);
-  const rows = list.map(b=>{
-    return fields.map(f=>{
-      let val = b[f.key]||'';
-      if(f.key==='event') val = b.short_event||getEventShortName(val)||val;
-      return val;
-    });
+// ExcelJS 用到才載入(支援嵌圖;不讓一般訪客每次開網頁都被它拖慢)
+function _loadExcelJS(){
+  return new Promise((res, rej)=>{
+    if(window.ExcelJS) return res();
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+    s.onload = ()=>res(); s.onerror = ()=>rej(new Error('ExcelJS load failed'));
+    document.head.appendChild(s);
   });
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-  // 設定欄寬
-  ws['!cols'] = fields.map(f=>({wch: f.key==='event'?40:f.key==='band'?15:20}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, title.slice(0,30));
-  XLSX.writeFile(wb, `bandori-badges-${Date.now()}.xlsx`);
+}
+async function doExportXlsx(list, title, btn, progWrap, prog){
+  const fields = getExportFields().filter(f=>selectedFields.has(f.key));
+  // 立場:只嵌縮圖、不送原始檔。先把每張縮成 ~80px JPEG base64(同 HTML 匯出)
+  const THUMB = 80;
+  function toThumb(b){
+    return new Promise(res=>{
+      if(typeof isNoImg==='function' && isNoImg(b)) return res('');
+      const img = new Image(); img.crossOrigin = 'anonymous';
+      img.onload = ()=>{ try{
+        const sc = Math.min(THUMB/img.naturalWidth, THUMB/img.naturalHeight, 1);
+        const cv = document.createElement('canvas');
+        cv.width = Math.max(1, Math.round(img.naturalWidth*sc));
+        cv.height = Math.max(1, Math.round(img.naturalHeight*sc));
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+        ctx.drawImage(img,0,0,cv.width,cv.height);
+        res(cv.toDataURL('image/jpeg',0.72));
+      }catch(e){ res(''); } };
+      img.onerror = ()=>res(''); img.src = imgUrl(b);
+    });
+  }
+  const thumbs = new Array(list.length);
+  let done=0,_i=0;
+  async function _w(){ while(_i<list.length){ const i=_i++; thumbs[i]=await toThumb(list[i]); done++;
+    prog.style.width=Math.round(done/list.length*70)+'%'; btn.textContent=`產生縮圖中... (${done}/${list.length})`; } }
+  await Promise.all(Array.from({length: Math.min(8, list.length||1)}, _w));
+
+  btn.textContent='載入 Excel 引擎...';
+  try{ await _loadExcelJS(); }catch(e){ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; alert('Excel 引擎載入失敗,請檢查網路後再試一次'); return; }
+  prog.style.width='80%'; btn.textContent='產生 Excel...';
+
+  let sheetName = (title||'badges'); ['\\','/','?','*','[',']',':'].forEach(ch=>{ sheetName = sheetName.split(ch).join('_'); }); sheetName = sheetName.slice(0,31) || 'badges';
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet(sheetName);
+  ws.addRow(['圖片', ...fields.map(f=>f.label)]);
+  ws.getColumn(1).width = 8;
+  fields.forEach((f,idx)=>{ ws.getColumn(idx+2).width = f.key==='event'?40:f.key==='band'?15:20; });
+  for(let i=0;i<list.length;i++){
+    const b = list[i];
+    const vals = fields.map(f=>{ let val=b[f.key]||''; if(f.key==='event') val=b.short_event||getEventShortName(val)||val; return val; });
+    const row = ws.addRow(['', ...vals]);
+    row.height = 36;
+    if(thumbs[i]){
+      const b64 = thumbs[i].replace(/^data:[^;]+;base64,/,'');
+      const imgId = wb.addImage({ base64: b64, extension: 'jpeg' });
+      ws.addImage(imgId, { tl: { col: 0.15, row: row.number-1+0.1 }, ext: { width: 40, height: 40 } });
+    }
+  }
+  prog.style.width='95%';
+  const buffer = await wb.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`bandori-badges-${Date.now()}.xlsx`; a.click(); URL.revokeObjectURL(url);
   prog.style.width='100%';
   setTimeout(()=>{ btn.disabled=false; btn.textContent='⬇ 下載'; progWrap.style.display='none'; prog.style.width='0%'; },600);
 }
 
 /* ── HTML 輸出 ── */
-function doExportHtml(list, title, btn, progWrap, prog){
+async function doExportHtml(list, title, btn, progWrap, prog){
   const fields = getExportFields().filter(f=>selectedFields.has(f.key));
   const c = bandColor;
-  const rows = list.map(b=>{
-    const imgSrc = imgUrl(b);
+  // 立場:只嵌縮圖、不送原始檔。把每張圖縮成 ~80px JPEG base64 內嵌(自帶圖、離線可看、低解析)
+  const THUMB = 80;
+  function toThumb(b){
+    return new Promise(res=>{
+      if(typeof isNoImg==='function' && isNoImg(b)) return res('');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = ()=>{
+        try{
+          const sc = Math.min(THUMB/img.naturalWidth, THUMB/img.naturalHeight, 1);
+          const cv = document.createElement('canvas');
+          cv.width = Math.max(1, Math.round(img.naturalWidth*sc));
+          cv.height = Math.max(1, Math.round(img.naturalHeight*sc));
+          const ctx = cv.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0,0,cv.width,cv.height); // 白底,避免透明變黑
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          res(cv.toDataURL('image/jpeg', 0.72));
+        }catch(e){ res(''); }
+      };
+      img.onerror = ()=>res('');
+      img.src = imgUrl(b);
+    });
+  }
+  // 限制併發抓縮圖 + 進度(顯示過的圖會命中 crossOrigin 快取、不重抓)
+  const thumbs = new Array(list.length);
+  let done = 0, _i = 0;
+  async function _w(){
+    while(_i < list.length){ const i = _i++; thumbs[i] = await toThumb(list[i]); done++;
+      prog.style.width = Math.round(done/list.length*90)+'%';
+      btn.textContent = `產生縮圖中... (${done}/${list.length})`;
+    }
+  }
+  await Promise.all(Array.from({length: Math.min(8, list.length||1)}, _w));
+
+  const rows = list.map((b,i)=>{
     const cells = fields.map(f=>{
       let val = b[f.key]||'—';
       if(f.key==='event') val = b.short_event||getEventShortName(val)||val;
@@ -48,7 +128,8 @@ function doExportHtml(list, title, btn, progWrap, prog){
       }
       return `<td>${val}</td>`;
     }).join('');
-    return `<tr><td><img src="${imgSrc}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'"/></td>${cells}</tr>`;
+    const thumb = thumbs[i] ? `<img src="${thumbs[i]}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"/>` : '';
+    return `<tr><td>${thumb}</td>${cells}</tr>`;
   }).join('');
 
   const htmlContent = `<!DOCTYPE html>
@@ -124,7 +205,8 @@ footer{margin-top:1rem;font-size:0.75rem;color:#aaa;text-align:center;}
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- SheetJS(xlsx)已移除:Excel 匯出改用「用到才載入」的 ExcelJS(支援嵌縮圖)。 -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Boogaloo&family=Nunito:wght@700;900&family=Kaisei+Decol:wght@700&family=Jua&display=swap" rel="stylesheet"/>
 
