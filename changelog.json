@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/6/26",
+    "content": {
+      "zh": "【新增】\n・BanG Dream! Pastel＊Palettes Flower Garden ver.（新增 15 張）\n【功能調整】\n・清單匯出（HTML／Excel）新增徽章縮圖",
+      "ja": "【新規】\n・BanG Dream! Pastel＊Palettes Flower Garden ver.（15枚追加）\n【機能調整】\n・一覧の出力（HTML／Excel）にバッジのサムネイルを追加",
+      "en": "【New】\n・BanG Dream! Pastel＊Palettes Flower Garden ver. (15 added)\n【Feature Adjustments】\n・List export (HTML / Excel) now embeds badge thumbnails",
+      "ko": "【추가】\n・BanG Dream! Pastel＊Palettes Flower Garden ver. (15장 추가)\n【기능 조정】\n・목록 내보내기(HTML/Excel)에 뱃지 썸네일 추가"
+    }
+  },
+  {
     "date": "2026/6/25",
     "content": {
       "zh": "【新增】\n・BanG Dream! ガールズバンドパーティ！ GraffArt トレーディング缶バッジ vol.1（新增 20 張）\n・BanG Dream! ガールズバンドパーティ！ GraffArt トレーディング缶バッジ vol.2（新增 15 張）\n・BanG Dream! ガールズバンドパーティ！ トレーディング缶バッジコレクションSchool ver.（新增 35 張）\n【功能調整】\n（無）",
