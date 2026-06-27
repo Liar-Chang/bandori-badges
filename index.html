@@ -1647,6 +1647,15 @@ function buildTocHTML(){
   </div>`;
 }
 
+// 發售日期 → 可比較數字;缺「月」或「日」補 99,讓精度較低者(如只有月份)排在有完整日期者「之後」(同期間內)
+function dateSortKey(yearStr){
+  const s = String(yearStr||'');
+  const y = s.match(/(\d{4})/);
+  if(!y) return 0;
+  const mm = (s.match(/(\d{1,2})月/)||[])[1];
+  const dd = (s.match(/(\d{1,2})日/)||[])[1];
+  return (+y[1])*10000 + (mm?+mm:99)*100 + (dd?+dd:99);
+}
 function applyFilters(){
   const q=document.getElementById('search').value.toLowerCase();
   const sort=document.getElementById('sort').value;
@@ -1740,10 +1749,8 @@ function applyFilters(){
       const aLast = !a.year ? 1 : 0;
       const bLast = !b.year ? 1 : 0;
       if(aLast !== bLast) return aLast - bLast;
-      const ay = (a.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
-      const by2 = (b.year||'').replace(/[年月日]/g,'/').replace(/\/$/,'');
-      const ad = new Date(ay||0), bd = new Date(by2||0);
-      const dateDiff = sort==='year-desc' ? bd-ad : ad-bd;
+      const ak = dateSortKey(a.year), bk = dateSortKey(b.year);
+      const dateDiff = sort==='year-desc' ? bk-ak : ak-bk;
       if(dateDiff !== 0) return dateDiff;
       // 日期相同：先按活動名稱排序
       const evA = a.event||'', evB = b.event||'';
@@ -3167,6 +3174,7 @@ function selectFmt(fmt){
 
 
 let exportCols = 4;
+let exportArrange = 'grouped'; // 'grouped'(依類型/尺寸分組) | 'chrono'(純時序、不分類)
 const EXPORT_FIELDS = [];
 function getExportFields(){
   const L = LANGS[currentLang] || LANGS['zh-TW'];
@@ -3212,12 +3220,19 @@ function selectLayout(l){
   document.getElementById('layout-grid').classList.toggle('selected', l==='grid');
   document.getElementById('layout-table').classList.toggle('selected', l==='table');
   document.getElementById('grid-cols-section').style.display = l==='grid' ? '' : 'none';
+  document.getElementById('grid-arrange-section').style.display = l==='grid' ? '' : 'none';
   document.getElementById('table-fields-section').style.display = l==='table' ? '' : 'none';
 }
 
 function selectCols(n){
   exportCols = n;
   [4,6,8,10].forEach(c=>document.getElementById('col-'+c).classList.toggle('on',c===n));
+}
+
+function selectArrange(m){
+  exportArrange = m;
+  document.getElementById('arrange-grouped').classList.toggle('selected', m==='grouped');
+  document.getElementById('arrange-chrono').classList.toggle('selected', m==='chrono');
 }
 
 function buildFieldChips(){
@@ -3351,6 +3366,8 @@ async function doExport(){
 
   // 分組：type → size → badges
   function groupBadges(badges){
+    // 純時序：單一群組、全部徽章按目前順序(篩選+頁面排序)，不分類型/尺寸
+    if(exportArrange === 'chrono'){ return [{ type:'__flat__', sizeLabel:'__flat__', items:[...badges] }]; }
     const groups = [];
     const types = [...new Set(badges.map(b=>b.type||''))].sort((a,b)=>{
       const ai = TYPE_ORDER.indexOf(a||''); const bi = TYPE_ORDER.indexOf(b||'');
@@ -3397,8 +3414,10 @@ async function doExport(){
     let h = HEADER_H + PAD;
     let prevT = null;
     for(const g of groups){
-      if(g.type !== prevT){ h += TYPE_H + 6; prevT = g.type; }
-      h += SIZE_H + 8;
+      if(exportArrange !== 'chrono'){
+        if(g.type !== prevT){ h += TYPE_H + 6; prevT = g.type; }
+        h += SIZE_H + 8;
+      }
       const rows = Math.ceil(g.items.length / COLS);
       h += rows * ITEM_H + PAD;
     }
@@ -3456,25 +3475,27 @@ async function doExport(){
   let prevType = null;
 
   for(const g of groups){
-    // 類型標題（只在換類型時顯示）
-    if(g.type !== prevType){
-      const typeLabel = getTypeName(g.type, currentLang) || '未分類';
-      ctx.fillStyle = '#1a1a2e';
-      ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, TYPE_H, 8); ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 16px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-      ctx.fillText('▌ ' + typeLabel, PAD+12, curY+24);
-      curY += TYPE_H + 6;
-      prevType = g.type;
-    }
+    if(exportArrange !== 'chrono'){
+      // 類型標題（只在換類型時顯示）
+      if(g.type !== prevType){
+        const typeLabel = getTypeName(g.type, currentLang) || '未分類';
+        ctx.fillStyle = '#1a1a2e';
+        ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, TYPE_H, 8); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+        ctx.fillText('▌ ' + typeLabel, PAD+12, curY+24);
+        curY += TYPE_H + 6;
+        prevType = g.type;
+      }
 
-    // 尺寸標題
-    ctx.fillStyle = '#e8e5f5';
-    ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, SIZE_H, 6); ctx.fill();
-    ctx.fillStyle = '#3d3d8f';
-    ctx.font = 'bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
-    ctx.fillText(getSizeName(g.sizeLabel, currentLang), PAD+10, curY+19);
-    curY += SIZE_H + 8;
+      // 尺寸標題
+      ctx.fillStyle = '#e8e5f5';
+      ctx.beginPath(); ctx.roundRect(PAD, curY, W-PAD*2, SIZE_H, 6); ctx.fill();
+      ctx.fillStyle = '#3d3d8f';
+      ctx.font = 'bold 13px "Noto Sans TC",sans-serif'; ctx.textAlign='left';
+      ctx.fillText(getSizeName(g.sizeLabel, currentLang), PAD+10, curY+19);
+      curY += SIZE_H + 8;
+    }
 
     // 徽章
     g.items.forEach((b, i)=>{
@@ -3786,6 +3807,20 @@ async function doExportTable(list, title, btn, progWrap, prog){
         <div class="export-opt" id="layout-table" onclick="selectLayout('table')">
           <div class="export-opt-title" id="exp-table-title">☰ 清單表格</div>
           <div class="export-opt-desc" id="exp-table-desc">含文字資訊的表格形式</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="grid-arrange-section" style="margin-bottom:1rem;">
+      <h3 style="font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.75rem;">排列方式</h3>
+      <div class="export-options">
+        <div class="export-opt selected" id="arrange-grouped" onclick="selectArrange('grouped')">
+          <div class="export-opt-title">▦ 依類型／尺寸分組</div>
+          <div class="export-opt-desc">含類型/尺寸區塊標題（本站特色）</div>
+        </div>
+        <div class="export-opt" id="arrange-chrono" onclick="selectArrange('chrono')">
+          <div class="export-opt-title">🕒 純時序（不分類）</div>
+          <div class="export-opt-desc">不分區塊，依目前篩選順序一路排</div>
         </div>
       </div>
     </div>

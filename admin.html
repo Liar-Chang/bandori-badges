@@ -2985,7 +2985,7 @@ buildTextCharList('');
   <div style="background:#fff;border-radius:16px;width:min(520px,96vw);max-height:90vh;overflow-y:auto;padding:1.75rem;font-family:inherit;">
     <h2 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:#1a1a2e;">📅 依日期範圍匯出圖檔清單</h2>
     <div style="font-size:0.8rem;color:#888;margin-bottom:1rem;line-height:1.6;">
-      依照 <strong>created_at</strong>（新增時間）或 <strong>updated_at</strong>（更新時間）篩選，匯出符合條件的徽章圖檔路徑清單。
+      依照 <strong>created_at</strong>（新增時間）、<strong>updated_at</strong>（更新時間）或 <strong>image_updated_at</strong>（圖片更新時間）篩選，匯出符合條件的徽章圖檔路徑清單。
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1rem;">
       <div class="field">
@@ -3004,9 +3004,12 @@ buildTextCharList('');
       <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
         <input type="checkbox" class="exp-date-field-cb" value="updated_at" checked style="accent-color:#3d3d8f;"/> 更新時間
       </label>
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
+        <input type="checkbox" class="exp-date-field-cb" value="image_updated_at" checked style="accent-color:#3d3d8f;"/> 圖片更新時間
+      </label>
     </div>
     <div style="font-size:0.72rem;color:#999;margin-bottom:1rem;line-height:1.5;">
-      兩者皆勾時，每筆會標 <span style="color:#27ae60;font-weight:600;">[新]</span>（新增）或 <span style="color:#0ea5e9;font-weight:600;">[改]</span>（僅更新）；新增當天有更新仍算 [新]。
+      多欄皆勾時，每筆標 <span style="color:#27ae60;font-weight:600;">[新]</span>（新增）/ <span style="color:#0ea5e9;font-weight:600;">[改]</span>（僅更新）/ <span style="color:#a855f7;font-weight:600;">[圖]</span>（僅圖片更新）；優先序 新 &gt; 改 &gt; 圖。
     </div>
     <div style="margin-bottom:1rem;">
       <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
@@ -3305,23 +3308,26 @@ function runExportByDate(){
   // 兩個都勾時會一起挑出來；只勾一個時行為等同以前
   const useCreated = checkedFields.includes('created_at');
   const useUpdated = checkedFields.includes('updated_at');
+  const useImage = checkedFields.includes('image_updated_at');
   const inRange = ts => ts >= fromTs && ts <= toTs;
 
   const picked = [];
   badges.forEach(b=>{
     const cTs = b.created_at ? new Date(b.created_at).getTime() : null;
     const uTs = b.updated_at ? new Date(b.updated_at).getTime() : null;
+    const iTs = b.image_updated_at ? new Date(b.image_updated_at).getTime() : null;
     const cHit = useCreated && cTs && inRange(cTs);
     const uHit = useUpdated && uTs && inRange(uTs);
-    if(!cHit && !uHit) return;
-    // created_at 優先（新增當天改也算新）
-    const changeType = cHit ? 'new' : 'updated';
+    const iHit = useImage && iTs && inRange(iTs);
+    if(!cHit && !uHit && !iHit) return;
+    // 優先序：新增 > 更新 > 圖片更新
+    const changeType = cHit ? 'new' : (uHit ? 'updated' : 'image');
     picked.push({...b, _changeType: changeType});
   });
 
   expResultItems = picked;
 
-  const modeLabel = (useCreated && useUpdated) ? '新增/更新' : (useCreated ? '新增' : '更新');
+  const _ml=[]; if(useCreated)_ml.push('新增'); if(useUpdated)_ml.push('更新'); if(useImage)_ml.push('圖片更新'); const modeLabel = _ml.join('/');
 
   if(!expResultItems.length){
     info.textContent=`找不到符合條件的資料（${modeLabel}時間：${from} ～ ${to}）`;
@@ -3332,10 +3338,12 @@ function runExportByDate(){
 
   // 兩欄都勾時，額外顯示 [新]/[改] 各多少筆
   let breakdown = '';
-  if(useCreated && useUpdated){
+  if(checkedFields.length >= 2){
     const nNew = expResultItems.filter(x=>x._changeType==='new').length;
     const nUpd = expResultItems.filter(x=>x._changeType==='updated').length;
-    breakdown = ` ｜[新] ${nNew} / [改] ${nUpd}`;
+    const nImg = expResultItems.filter(x=>x._changeType==='image').length;
+    const _p=[]; if(nNew)_p.push(`[新] ${nNew}`); if(nUpd)_p.push(`[改] ${nUpd}`); if(nImg)_p.push(`[圖] ${nImg}`);
+    breakdown = ' ｜' + _p.join(' / ');
   }
   info.textContent=`✓ 找到 ${expResultItems.length} 筆（${modeLabel}時間：${from} ～ ${to}）${breakdown}`;
   info.style.color='#27ae60';
@@ -3353,12 +3361,14 @@ function runExportByDate(){
 function renderExpCheckList(){
   const list = document.getElementById('exp-check-list');
   // 兩個欄位都勾時才顯示 [新]/[改] tag
-  const bothChecked = document.querySelectorAll('.exp-date-field-cb:checked').length === 2;
+  const multiChecked = document.querySelectorAll('.exp-date-field-cb:checked').length >= 2;
   list.innerHTML = expResultItems.map((b,i)=>{
     let tagHtml = '';
-    if(bothChecked){
+    if(multiChecked){
       if(b._changeType === 'new'){
         tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#27ae60;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">新</span>`;
+      } else if(b._changeType === 'image'){
+        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#a855f7;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">圖</span>`;
       } else {
         tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#0ea5e9;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">改</span>`;
       }
@@ -3429,12 +3439,13 @@ function copyAnnouncementText(){
   const items = getExpSelectedItems();
   if(!items.length){ showToast('請至少勾選一筆'); return; }
 
-  const bothChecked = document.querySelectorAll('.exp-date-field-cb:checked').length === 2;
-  const onlyUpdated = !bothChecked && document.querySelector('.exp-date-field-cb:checked')?.value === 'updated_at';
+  const checkedN = document.querySelectorAll('.exp-date-field-cb:checked').length;
+  const singleVal = checkedN === 1 ? document.querySelector('.exp-date-field-cb:checked')?.value : '';
 
   // 把 items 按 _changeType 分組（若沒有就全當 new，以相容單選）
   const newItems = items.filter(b => b._changeType === 'new' || !b._changeType);
   const updItems = items.filter(b => b._changeType === 'updated');
+  const imgItems = items.filter(b => b._changeType === 'image');
 
   // 把一組 items 按活動分組後組成文字段落
   function buildSection(sectionItems){
@@ -3468,10 +3479,10 @@ function copyAnnouncementText(){
   const lines = [];
   const dateStr = new Date().toISOString().slice(0, 10);
 
-  if(bothChecked){
-    // 兩欄都勾：分「新增」「更新」兩區塊
+  if(checkedN >= 2){
+    // 多欄勾選：分「新增 / 更新 / 圖片更新」區塊
     lines.push(`【新增/更新徽章清單】${dateStr}`);
-    lines.push(`共 ${items.length} 張（新增 ${newItems.length} / 更新 ${updItems.length}）`);
+    lines.push(`共 ${items.length} 張（新增 ${newItems.length} / 更新 ${updItems.length} / 圖片更新 ${imgItems.length}）`);
     lines.push('');
     if(newItems.length){
       lines.push(`═══ 【新增】${newItems.length} 張 ═══`);
@@ -3483,15 +3494,15 @@ function copyAnnouncementText(){
       lines.push('');
       lines.push(...buildSection(updItems));
     }
-  } else if(onlyUpdated){
-    // 只勾更新
-    lines.push(`【更新徽章清單】${dateStr}`);
-    lines.push(`共 ${items.length} 張`);
-    lines.push('');
-    lines.push(...buildSection(items));
+    if(imgItems.length){
+      lines.push(`═══ 【圖片更新】${imgItems.length} 張 ═══`);
+      lines.push('');
+      lines.push(...buildSection(imgItems));
+    }
   } else {
-    // 只勾新增（或舊行為）
-    lines.push(`【新增徽章清單】${dateStr}`);
+    // 單選：直接全列
+    const _lbl = singleVal === 'updated_at' ? '更新' : (singleVal === 'image_updated_at' ? '圖片更新' : '新增');
+    lines.push(`【${_lbl}徽章清單】${dateStr}`);
     lines.push(`共 ${items.length} 張`);
     lines.push('');
     lines.push(...buildSection(items));
