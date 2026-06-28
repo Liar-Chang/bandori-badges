@@ -197,6 +197,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
         <div class="st" id="st-ellipse" onclick="setShape('ellipse')">⬭ 橢圓形</div>
         <div class="st" id="st-heart" onclick="setShape('heart')">♥ 心形</div>
         <div class="st" id="st-pick" onclick="setShape('pick')">🎸 撥片</div>
+        <div class="st" id="st-star" onclick="setShape('star')">⭐ 星形</div>
       </div>
     </div>
 
@@ -244,6 +245,15 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
             <input type="range" id="pick-bulge-lr" min="0" max="50" value="14" oninput="onPickBulgeChange()" style="width:100%;"/>
             <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">設定會自動記憶,下次開工具沿用上次的值</p>
           </div>
+          <div id="ctrl-star-round" style="display:none;margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed var(--border);">
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">⭐ 飽滿度（內凹深淺） <span id="star-fullness-val" style="color:var(--accent);">50%</span></label>
+            <input type="range" id="star-fullness" min="0" max="100" value="50" oninput="onStarRoundChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">⭐ 外角圓度 <span id="star-round-outer-val" style="color:var(--accent);">50%</span></label>
+            <input type="range" id="star-round-outer" min="0" max="100" value="50" oninput="onStarRoundChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">⭐ 內角圓度 <span id="star-round-inner-val" style="color:var(--accent);">50%</span></label>
+            <input type="range" id="star-round-inner" min="0" max="100" value="50" oninput="onStarRoundChange()" style="width:100%;"/>
+            <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">飽滿度越高臂越短越胖;圓角 0%＝銳角、100%＝最圓滑。設定會自動記憶</p>
+          </div>
         </div>
       </div>
       <div id="mode-click" style="display:none;">
@@ -264,7 +274,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
         <button class="btn btn-s" style="margin:0;padding:0.32rem;" onclick="nudgeRotate(0.1)">+0.1°</button>
       </div>
       <button class="btn btn-s" style="margin-top:0.32rem;" onclick="resetRotate()">↺ 歸零</button>
-      <p style="font-size:0.66rem;color:var(--muted);line-height:1.5;margin-top:0.4rem;">💡 先轉正、再框裁切;裁出來就是轉正後的圖。框會自動置中,轉大角度後可重設位置。</p>
+      <p style="font-size:0.66rem;color:var(--muted);line-height:1.5;margin-top:0.4rem;">💡 可先框好位置、再微調角度——裁切框會跟著旋轉鎖定同一處;裁出來就是轉正後的圖。</p>
     </div>
 
     <div class="ps">
@@ -289,6 +299,11 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
         </select>
       </div>
       <div style="font-size:0.68rem;color:var(--muted);">下一個檔名：<span id="num-preview" style="color:var(--accent);font-family:'Space Mono',monospace;">001.jpg</span></div>
+      <div class="grid-row" style="margin-top:0.5rem;">
+        <input type="checkbox" id="trim-blank" checked onchange="updatePreview()"/>
+        <label for="trim-blank" style="cursor:pointer;">去除周圍空白（裁齊內容）</label>
+      </div>
+      <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">把星形等形狀外圍的透明空白削掉,讓星尖貼齊圖片邊。</p>
     </div>
 
     <div class="ps">
@@ -373,7 +388,7 @@ const ctx=mc.getContext('2d');
 // ── 形狀切換 ──
 function setShape(s){
   shape=s;
-  ['circle','square','rect','ellipse','heart','pick'].forEach(sh=>{
+  ['circle','square','rect','ellipse','heart','pick','star'].forEach(sh=>{
     document.getElementById('st-'+sh).classList.toggle('active',sh===s);
   });
   const isCenterR = s==='circle'||s==='square';
@@ -391,6 +406,19 @@ function setShape(s){
       document.getElementById('pick-bulge-lr').value = Math.round(pickBulgeLR * 100);
       document.getElementById('pick-bulge-top-val').textContent = pickBulgeTop.toFixed(2);
       document.getElementById('pick-bulge-lr-val').textContent = pickBulgeLR.toFixed(2);
+    }
+  }
+  // 星形時顯示外角/內角圓度 slider,並用記憶值初始化
+  const starCtrl = document.getElementById('ctrl-star-round');
+  if(starCtrl){
+    starCtrl.style.display = s==='star' ? '' : 'none';
+    if(s==='star'){
+      document.getElementById('star-fullness').value = Math.round(starFullness * 100);
+      document.getElementById('star-round-outer').value = Math.round(starRoundOuter * 100);
+      document.getElementById('star-round-inner').value = Math.round(starRoundInner * 100);
+      document.getElementById('star-fullness-val').textContent = Math.round(starFullness*100) + '%';
+      document.getElementById('star-round-outer-val').textContent = Math.round(starRoundOuter*100) + '%';
+      document.getElementById('star-round-inner-val').textContent = Math.round(starRoundInner*100) + '%';
     }
   }
   // 更新預覽形狀
@@ -544,15 +572,27 @@ function rotateImageEl(el, deg){
 function rebuildWorkImage(){ img = origImg ? rotateImageEl(origImg, rotationDeg) : null; }
 function applyRotation(deg){
   deg = Math.max(-180, Math.min(180, Math.round((deg||0)*10)/10));   // 精度 0.1
+  const oldDeg = rotationDeg;
   rotationDeg = deg;
   const di=document.getElementById('rot-deg'), si=document.getElementById('rot-slider');
   if(di) di.value=deg; if(si) si.value=deg;
   if(!origImg) return;
+  const Wold = img ? img.naturalWidth : origImg.naturalWidth;
+  const Hold = img ? img.naturalHeight : origImg.naturalHeight;
   rebuildWorkImage();
-  // 旋轉後把框重新置中(保持大小)→ 轉正置中徽章時,框跟著貼齊
   const W=img.naturalWidth, H=img.naturalHeight;
-  if(shape==='circle'||shape==='square'){ cx=Math.round(W/2); cy=Math.round(H/2); }
-  else { const bw=rx2-rx1, bh=ry2-ry1; rx1=Math.round(W/2-bw/2); ry1=Math.round(H/2-bh/2); rx2=rx1+bw; ry2=ry1+bh; }
+  // 旋轉後讓裁切框「跟著轉、鎖定同一處」:把目前中心隨角度差繞影像中心轉到新座標
+  // (rotateImageEl 是繞影像中心旋轉、且畫布會隨角度放大,故需此轉換,而非保留原值或強制置中)
+  const dRad=(deg-oldDeg)*Math.PI/180, csr=Math.cos(dRad), snr=Math.sin(dRad);
+  const track=(px,py)=>{ const ox=px-Wold/2, oy=py-Hold/2; return [W/2+(csr*ox-snr*oy), H/2+(snr*ox+csr*oy)]; };
+  const clamp=(v,hi)=>Math.round(Math.max(0,Math.min(hi,v)));
+  if(shape==='circle'||shape==='square'){
+    const [nx,ny]=track(cx,cy); cx=clamp(nx,W); cy=clamp(ny,H);
+  } else {
+    const bw=rx2-rx1, bh=ry2-ry1, [nx0,ny0]=track((rx1+rx2)/2,(ry1+ry2)/2);
+    const nx=clamp(nx0,W), ny=clamp(ny0,H);
+    rx1=Math.round(nx-bw/2); ry1=Math.round(ny-bh/2); rx2=rx1+bw; ry2=ry1+bh;
+  }
   fitCanvasToArea(); syncInputs(); draw();
 }
 function onRotateInput(){ applyRotation(parseFloat(document.getElementById('rot-deg').value)); }
@@ -659,12 +699,14 @@ function draw(){
     else if(shape==='ellipse'){ctx.beginPath();ctx.ellipse(sx1+sw/2,sy1+sh/2,sw/2,sh/2,0,0,Math.PI*2);ctx.fill();}
     else if(shape==='heart'){drawHeartPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.fill();}
     else if(shape==='pick'){drawPickPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.fill();}
+    else if(shape==='star'){drawStarPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.fill();}
     ctx.restore();
     ctx.save();ctx.strokeStyle='#818cf8';ctx.lineWidth=2;ctx.setLineDash([7,4]);
     if(shape==='rect'){ctx.strokeRect(sx1,sy1,sw,sh);}
     else if(shape==='ellipse'){ctx.beginPath();ctx.ellipse(sx1+sw/2,sy1+sh/2,sw/2,sh/2,0,0,Math.PI*2);ctx.stroke();}
     else if(shape==='heart'){drawHeartPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.stroke();}
     else if(shape==='pick'){drawPickPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.stroke();}
+    else if(shape==='star'){drawStarPath(ctx,sx1+sw/2,sy1,sw/2,sh);ctx.stroke();}
     ctx.restore();
     const ow=Math.round(rx2-rx1),oh=Math.round(ry2-ry1);
     updateInfoBox(`左上：${Math.round(rx1)}, ${Math.round(ry1)}\n右下：${Math.round(rx2)}, ${Math.round(ry2)}\n輸出：${ow} × ${oh}`);
@@ -682,6 +724,87 @@ function drawHeartPath(ctx,cx,topY,hw,hh){
   ctx.bezierCurveTo(x-w,y+h*0.65,x,y+h*0.85,x,y+h);
   ctx.bezierCurveTo(x,y+h*0.85,x+w,y+h*0.65,x+w,y+h*0.35);
   ctx.bezierCurveTo(x+w,y,x,y,x,y+h*0.35);
+  ctx.closePath();
+}
+
+// ── 星形參數:飽滿度(內外半徑比)+ 外角/內角圓度(0~1,可調並記憶)──
+const LS_STAR_OUTER = 'star_round_outer', LS_STAR_INNER = 'star_round_inner', LS_STAR_FULL = 'star_fullness';
+let starRoundOuter = parseFloat(localStorage.getItem(LS_STAR_OUTER)); if(isNaN(starRoundOuter)) starRoundOuter = 0.5;
+let starRoundInner = parseFloat(localStorage.getItem(LS_STAR_INNER)); if(isNaN(starRoundInner)) starRoundInner = 0.5;
+let starFullness   = parseFloat(localStorage.getItem(LS_STAR_FULL));  if(isNaN(starFullness))   starFullness   = 0.5;
+// 飽滿度 0~1 → 內外半徑比 ρ(越大臂越短越胖);範圍取星形仍成立、不溢框的安全區間
+function starRho(){ return 0.25 + 0.45 * Math.max(0, Math.min(1, starFullness)); }
+
+// 從全域星形參數,同步「單張 + 批次」兩組滑桿與讀數,並寫入記憶(兩邊任一改動都呼叫它)
+function applyStarParams(){
+  const sv=(id,v)=>{ const e=document.getElementById(id); if(e) e.value=Math.round(v*100); };
+  const tx=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=Math.round(v*100)+'%'; };
+  sv('star-fullness',starFullness);          sv('star-round-outer',starRoundOuter);     sv('star-round-inner',starRoundInner);
+  tx('star-fullness-val',starFullness);       tx('star-round-outer-val',starRoundOuter);  tx('star-round-inner-val',starRoundInner);
+  sv('batch-star-fullness',starFullness);     sv('batch-star-outer',starRoundOuter);     sv('batch-star-inner',starRoundInner);
+  tx('batch-star-fullness-val',starFullness); tx('batch-star-outer-val',starRoundOuter);  tx('batch-star-inner-val',starRoundInner);
+  localStorage.setItem(LS_STAR_OUTER, starRoundOuter);
+  localStorage.setItem(LS_STAR_INNER, starRoundInner);
+  localStorage.setItem(LS_STAR_FULL, starFullness);
+}
+
+function onStarRoundChange(){
+  starRoundOuter = parseInt(document.getElementById('star-round-outer').value) / 100;
+  starRoundInner = parseInt(document.getElementById('star-round-inner').value) / 100;
+  starFullness   = parseInt(document.getElementById('star-fullness').value) / 100;
+  applyStarParams();
+  if(img && shape==='star') draw();
+}
+
+function onBatchStarRoundChange(){
+  starFullness   = parseInt(document.getElementById('batch-star-fullness').value) / 100;
+  starRoundOuter = parseInt(document.getElementById('batch-star-outer').value) / 100;
+  starRoundInner = parseInt(document.getElementById('batch-star-inner').value) / 100;
+  applyStarParams();
+  if(typeof renderBatchCanvas==='function') renderBatchCanvas();
+  if(typeof renderBatchList==='function') renderBatchList();
+}
+
+// 由「單位星」(尺度無關)算外尖/內凹的半角與邊長 —— 隨飽滿度變化,圓角補償與上限都靠它
+function starGeom(rho){
+  const V = [];
+  for(let i=0;i<10;i++){ const isO=(i%2===0), rad=isO?1:rho, a=-Math.PI/2+i*Math.PI/5; V.push({x:Math.cos(a)*rad, y:Math.sin(a)*rad}); }
+  function half(i){
+    const p=V[(i+9)%10], c=V[i], n=V[(i+1)%10];
+    const ax=p.x-c.x, ay=p.y-c.y, bx=n.x-c.x, by=n.y-c.y;
+    return Math.acos(Math.max(-1, Math.min(1, (ax*bx+ay*by)/(Math.hypot(ax,ay)*Math.hypot(bx,by))))) / 2;
+  }
+  return { aOut: half(0), aIn: half(1), E: Math.hypot(V[0].x-V[1].x, V[0].y-V[1].y) };
+}
+
+function drawStarPath(ctx,cx,topY,hw,hh){
+  // 圓角五角星(尖端朝上):飽滿度 starFullness、外角 starRoundOuter、內角 starRoundInner 皆可調
+  // bbox 由 5 個外尖決定(與飽滿度無關),故 0.951/1.809/0.0955 對任意飽滿度都成立
+  const fo = Math.max(0, Math.min(1, starRoundOuter));
+  const fi = Math.max(0, Math.min(1, starRoundInner));
+  const rho = starRho();
+  const G = starGeom(rho);
+  const tanO = Math.tan(G.aOut), tanI = Math.tan(G.aIn);
+  // 外尖圓角會徑向內縮 inset = rOuter·(1/sinαout − 1);反推未圓角半徑 R,讓圓角後外接 Reff(填滿框)
+  const K = 0.5 * G.E * tanO * (1/Math.sin(G.aOut) - 1);
+  const Reff = Math.min(hw/0.951, hh/1.809);
+  const R = Reff / (1 - fo*K);
+  const innerRad = R * rho;
+  const cyc = topY + hh/2 + 0.0955*Reff;
+  const V = [];
+  for(let i=0;i<10;i++){
+    const isOuter = (i%2===0), rad = isOuter ? R : innerRad, ang = -Math.PI/2 + i*Math.PI/5;
+    V.push({x: cx + rad*Math.cos(ang), y: cyc + rad*Math.sin(ang), isOuter});
+  }
+  const edge = G.E * R;                  // 星臂邊長(10 邊等長)
+  const rOuter = fo * 0.5*edge*tanO;     // 外角圓角半徑,上限=半條邊
+  const rInner = fi * 0.5*edge*tanI;     // 內角圓角半徑,上限=半條邊
+  ctx.beginPath();
+  ctx.moveTo((V[9].x+V[0].x)/2, (V[9].y+V[0].y)/2);   // 由末邊中點起,arcTo 串成圓角多邊形
+  for(let i=0;i<10;i++){
+    const cur = V[i], next = V[(i+1)%10];
+    ctx.arcTo(cur.x, cur.y, next.x, next.y, cur.isOuter ? rOuter : rInner);
+  }
   ctx.closePath();
 }
 
@@ -912,16 +1035,27 @@ function updatePreview(){
   else if(shape==='ellipse'){oc.save();oc.beginPath();oc.ellipse(ow/2,oh/2,ow/2,oh/2,0,0,Math.PI*2);oc.clip();}
   else if(shape==='heart'){oc.save();drawHeartPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   else if(shape==='pick'){oc.save();drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
+  else if(shape==='star'){oc.save();drawStarPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   else{oc.save();}
   oc.drawImage(img,srcX,srcY,isCenterR?r*2:rx2-rx1,isCenterR?r*2:ry2-ry1,0,0,ow,oh);
   oc.restore();
+  const isCR=shape==='circle'||shape==='square';
+  let outW = isCR?Math.round(r*2):Math.round(rx2-rx1);
+  let outH = isCR?Math.round(r*2):Math.round(ry2-ry1);
+  // 去除周圍空白(裁齊內容)— 預覽即時呈現;尺寸標示換算回實際輸出大小(預覽有上限 600)
+  if(document.getElementById('trim-blank')?.checked){
+    const owPre=pc.width, ohPre=pc.height, t=trimAlpha(pc);
+    if(t!==pc){
+      outW=Math.round(outW*t.width/owPre); outH=Math.round(outH*t.height/ohPre);
+      pc.width=t.width; pc.height=t.height; pc.getContext('2d').drawImage(t,0,0);
+    }
+  }
   // 預覽框形狀
-  pc.style.borderRadius=shape==='circle'?'50%':shape==='square'?'0':'0';
+  pc.style.borderRadius=shape==='circle'?'50%':'0';
   pc.style.display='block';
   document.getElementById('preview-empty-bar').style.display='none';
   document.getElementById('preview-filename').textContent=fileItems[currentIdx]?.file.name||'';
-  const isCR=shape==='circle'||shape==='square';
-  document.getElementById('preview-size').textContent=isCR?`${Math.round(r*2)} × ${Math.round(r*2)} px`:`${Math.round(rx2-rx1)} × ${Math.round(ry2-ry1)} px`;
+  document.getElementById('preview-size').textContent=`${outW} × ${outH} px`;
 }
 
 // ═══════════════════════════════════════════════════
@@ -1187,6 +1321,20 @@ mc.addEventListener('touchend',e=>{
   if(e.touches.length < 2) singlePinch.active = false;
 });
 
+// 去除周圍透明空白:裁到「不透明內容」的外接矩形(全透明或已貼齊則原樣返回)
+function trimAlpha(src){
+  const w=src.width, h=src.height; if(!w||!h) return src;
+  let data; try{ data=src.getContext('2d').getImageData(0,0,w,h).data; }catch(e){ return src; }
+  let minX=w, minY=h, maxX=-1, maxY=-1;
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ if(data[(y*w+x)*4+3]>10){ if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; } }
+  if(maxX<minX) return src;                                              // 全透明
+  if(minX===0&&minY===0&&maxX===w-1&&maxY===h-1) return src;             // 已貼齊四邊,免複製
+  const nw=maxX-minX+1, nh=maxY-minY+1;
+  const out=document.createElement('canvas'); out.width=nw; out.height=nh;
+  out.getContext('2d').drawImage(src, minX,minY,nw,nh, 0,0,nw,nh);
+  return out;
+}
+
 // ── 裁切下載 ──
 function doCrop(){
   if(!img)return;
@@ -1207,8 +1355,10 @@ function doCrop(){
   else if(shape==='ellipse'){oc.beginPath();oc.ellipse(ow/2,oh/2,ow/2,oh/2,0,0,Math.PI*2);oc.clip();}
   else if(shape==='heart'){drawHeartPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   else if(shape==='pick'){drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
+  else if(shape==='star'){drawStarPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   oc.drawImage(img,srcX,srcY,srcW,srcH,0,0,ow,oh);
-  off.toBlob(blob=>{
+  const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(off) : off;
+  outC.toBlob(blob=>{
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.href=url;a.download=filename;a.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -1270,8 +1420,10 @@ async function doCropAllSamePosition(){
     else if(shape==='ellipse'){oc.beginPath();oc.ellipse(ow/2,oh/2,ow/2,oh/2,0,0,Math.PI*2);oc.clip();}
     else if(shape==='heart'){drawHeartPath(oc,ow/2,0,ow/2,oh);oc.clip();}
     else if(shape==='pick'){drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
+    else if(shape==='star'){drawStarPath(oc,ow/2,0,ow/2,oh);oc.clip();}
     oc.drawImage(im,srcX,srcY,srcW,srcH,0,0,ow,oh);
-    const blob = await new Promise(res=>off.toBlob(res,mime,0.95));
+    const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(off) : off;
+    const blob = await new Promise(res=>outC.toBlob(res,mime,0.95));
     if(blob) zip.file(String(startNum+i).padStart(3,'0')+'.'+ext, blob);
   }
   if(btn) btn.textContent='打包 ZIP 中...';
@@ -1369,7 +1521,7 @@ updateNumPreview();
       <div class="batch-side">
         <div id="batch-config-foldable" style="display:flex;flex-direction:column;gap:0.45rem;">
         <div class="batch-config">
-          <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option></select></div>
+          <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option><option value="star">★ 星形</option></select></div>
           <div><label>預設半徑</label><input type="number" id="batch-default-r" value="100" min="10"/></div>
           <div><label>起始編號</label><input type="number" id="batch-start-num" value="2900" min="1"/></div>
           <div><label>副檔名</label><select id="batch-ext"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option></select></div>
@@ -1384,6 +1536,14 @@ updateNumPreview();
               <option value="500">500 px</option>
             </select>
           </div>
+        </div>
+        <div id="batch-star-ctrl" style="display:none;flex-direction:column;gap:0.3rem;padding:0.5rem 0.6rem;background:var(--surface2);border-radius:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>⭐ 飽滿度（內凹深淺）</span><span id="batch-star-fullness-val" style="color:var(--accent);">50%</span></div>
+          <input type="range" id="batch-star-fullness" min="0" max="100" value="50" oninput="onBatchStarRoundChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>⭐ 外角圓度</span><span id="batch-star-outer-val" style="color:var(--accent);">50%</span></div>
+          <input type="range" id="batch-star-outer" min="0" max="100" value="50" oninput="onBatchStarRoundChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>⭐ 內角圓度</span><span id="batch-star-inner-val" style="color:var(--accent);">50%</span></div>
+          <input type="range" id="batch-star-inner" min="0" max="100" value="50" oninput="onBatchStarRoundChange()" style="width:100%;accent-color:var(--accent);"/>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.4rem;align-items:end;padding:0.5rem 0.6rem;background:var(--surface2);border-radius:8px;">
           <div><label style="color:var(--muted);font-size:0.66rem;">偏移 ΔX</label><input type="number" id="batch-offset-x" value="0" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;"/></div>
@@ -1670,6 +1830,9 @@ function onBatchShapeChange(){
       c.hw = s; c.hh = s;
     }
   });
+  // 星形:顯示三支滑桿並用全域值初始化(與單張模式共用同一組設定)
+  const bsc = document.getElementById('batch-star-ctrl');
+  if(bsc){ bsc.style.display = batchShape==='star' ? 'flex' : 'none'; if(batchShape==='star') applyStarParams(); }
   renderBatchCanvas();
   renderBatchList();
 }
@@ -1682,6 +1845,9 @@ function batchDrawShape(ctx, c){
   } else if(c.shape === 'pick'){
     // 撥片路徑:借用單張模式的 drawPickPath 函式
     drawPickPath(ctx, c.cx, c.cy - c.hh, c.hw, c.hh*2);
+  } else if(c.shape === 'star'){
+    // 星形路徑:借用單張模式的 drawStarPath 函式
+    drawStarPath(ctx, c.cx, c.cy - c.hh, c.hw, c.hh*2);
   }
 }
 // hit test:游標是否在 crop 內
@@ -1699,7 +1865,7 @@ function batchHitTest(x, y){
 }
 // 形狀符號(列表用)
 function batchShapeSymbol(shape){
-  return {circle:'⊙', square:'▢', rect:'▭', pick:'♪'}[shape || 'circle'] || '⊙';
+  return {circle:'⊙', square:'▢', rect:'▭', pick:'♪', star:'★'}[shape || 'circle'] || '⊙';
 }
 let batchZoom = 1.0;      // 縮放倍率(1.0 = 100%)
 let batchMouse = {        // 拖曳狀態
@@ -1727,6 +1893,8 @@ function openBatchMode(){
   }
   batchZoom = 1.0;
   document.getElementById('batch-overlay').classList.add('open');
+  const bsc = document.getElementById('batch-star-ctrl');
+  if(bsc){ bsc.style.display = batchShape==='star' ? 'flex' : 'none'; if(batchShape==='star') applyStarParams(); }
   renderBatchCanvas();
   applyBatchZoom();
   renderBatchList();
@@ -2142,6 +2310,7 @@ function drawBatchThumbnail(canvas, c, img, size){
   if(shape === 'circle'){ ctx.arc(size/2, size/2, Math.min(dw,dh)/2 - 0.5, 0, Math.PI*2); }
   else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx, dy, dw, dh); }
   else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy, dw/2, dh); }
+  else if(shape === 'star'){ drawStarPath(ctx, size/2, dy, dw/2, dh); }
   ctx.clip();
   try {
     ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
@@ -2154,6 +2323,7 @@ function drawBatchThumbnail(canvas, c, img, size){
   if(shape === 'circle'){ ctx.arc(size/2, size/2, Math.min(dw,dh)/2 - 0.5, 0, Math.PI*2); }
   else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx+0.5, dy+0.5, dw-1, dh-1); }
   else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
+  else if(shape === 'star'){ drawStarPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
   ctx.stroke();
   // 動態 borderRadius:圓形才圓,其他維持方形 canvas
   canvas.style.borderRadius = (shape === 'circle') ? '50%' : '6px';
@@ -2831,11 +3001,13 @@ async function cropBatchAll(){
     if(shape === 'circle'){ cctx.arc(ow/2, oh/2, Math.min(ow,oh)/2, 0, Math.PI*2); }
     else if(shape === 'square' || shape === 'rect'){ cctx.rect(0, 0, ow, oh); }
     else if(shape === 'pick'){ drawPickPath(cctx, ow/2, 0, ow/2, oh); }
+    else if(shape === 'star'){ drawStarPath(cctx, ow/2, 0, ow/2, oh); }
     cctx.clip();
     // 從原圖切出
     cctx.drawImage(img, c.cx - c.hw, c.cy - c.hh, ow, oh, 0, 0, ow, oh);
     cctx.restore();
-    const blob = await new Promise(resolve => cropCanvas.toBlob(resolve, mime));
+    const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(cropCanvas) : cropCanvas;
+    const blob = await new Promise(resolve => outC.toBlob(resolve, mime));
     if(blob){
       const filename = String(startNum + i).padStart(3, '0') + '.' + ext;
       zip.file(filename, blob);
