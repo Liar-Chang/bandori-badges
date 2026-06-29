@@ -1781,12 +1781,12 @@ function applyBatchBulkEdit(){
       const newW = (op === 'add') ? c.hw * 2 + value : value;
       if(newW <= 0) continue;
       c.hw = newW / 2;
-      if(c.shape === 'circle' || c.shape === 'square') c.hh = c.hw;
+      if(c.shape === 'circle' || c.shape === 'square' || c.shape === 'star') c.hh = c.hw;
     } else if(field === 'h'){
       const newH = (op === 'add') ? c.hh * 2 + value : value;
       if(newH <= 0) continue;
       c.hh = newH / 2;
-      if(c.shape === 'circle' || c.shape === 'square') c.hw = c.hh;
+      if(c.shape === 'circle' || c.shape === 'square' || c.shape === 'star') c.hw = c.hh;
     } else if(field === 'r'){
       const newR = (op === 'add') ? c.hw + value : value;
       if(newR <= 0) continue;
@@ -1825,7 +1825,7 @@ function onBatchShapeChange(){
   batchCrops.forEach(c => {
     c.shape = batchShape;
     // 圓形 / 正方形要求 hw = hh,取較小值保證形狀正確
-    if(batchShape === 'circle' || batchShape === 'square'){
+    if(batchShape === 'circle' || batchShape === 'square' || batchShape === 'star'){
       const s = Math.min(c.hw, c.hh);
       c.hw = s; c.hh = s;
     }
@@ -2413,10 +2413,10 @@ function updateBatchCrop(idx, field, value){
   if(field === 'w'){
     c.hw = v / 2;
     // 圓形 / 正方形:W=H 連動
-    if(c.shape === 'circle' || c.shape === 'square') c.hh = v / 2;
+    if(c.shape === 'circle' || c.shape === 'square' || c.shape === 'star') c.hh = v / 2;
   } else if(field === 'h'){
     c.hh = v / 2;
-    if(c.shape === 'circle' || c.shape === 'square') c.hw = v / 2;
+    if(c.shape === 'circle' || c.shape === 'square' || c.shape === 'star') c.hw = v / 2;
   } else if(field === 'x1'){
     // 任意方形:改左邊,右邊固定 → 重算中心 cx 與 hw
     const x2 = c.cx + c.hw;
@@ -2449,7 +2449,7 @@ function updateBatchCrop(idx, field, value){
   }
   // W/H 連動:圓形/正方形時,改 W 自動同步 H(反之亦然)
   // 不 re-render 整個 list(會洗掉 input focus),只 surgically 更新對方欄位的 value
-  if((field === 'w' || field === 'h') && (c.shape === 'circle' || c.shape === 'square')){
+  if((field === 'w' || field === 'h') && (c.shape === 'circle' || c.shape === 'square' || c.shape === 'star')){
     const rows = document.querySelectorAll('.batch-list tbody tr');
     const tr = rows[idx];
     if(tr){
