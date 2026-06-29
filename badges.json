@@ -99042,9 +99042,10 @@
     "note": "直径　約 53mm",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-06-29T14:16:40.065Z",
-    "updated_at": "2026-06-29T14:16:40.065Z",
-    "noimg": true
+    "updated_at": "2026-06-29T14:31:57.544Z",
+    "image_updated_at": "2026-06-29T14:31:32.784Z"
   },
   {
     "id": "5567",
@@ -99242,9 +99243,10 @@
     "note": "直径　約 53mm",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-06-29T14:20:09.103Z",
-    "updated_at": "2026-06-29T14:20:09.103Z",
-    "noimg": true
+    "updated_at": "2026-06-29T14:31:52.468Z",
+    "image_updated_at": "2026-06-29T14:31:32.784Z"
   },
   {
     "id": "5577",
@@ -99442,9 +99444,10 @@
     "note": "直径　約 53mm",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-06-29T14:23:05.153Z",
-    "updated_at": "2026-06-29T14:23:05.153Z",
-    "noimg": true
+    "updated_at": "2026-06-29T14:31:40.447Z",
+    "image_updated_at": "2026-06-29T14:31:32.784Z"
   },
   {
     "id": "5587",
@@ -99642,9 +99645,10 @@
     "note": "直径　約 53mm",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-06-29T14:25:23.130Z",
-    "updated_at": "2026-06-29T14:25:23.130Z",
-    "noimg": true
+    "updated_at": "2026-06-29T14:31:45.627Z",
+    "image_updated_at": "2026-06-29T14:31:32.784Z"
   },
   {
     "id": "5597",
