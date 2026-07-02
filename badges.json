@@ -102542,5 +102542,25 @@
     "created_at": "2026-07-02T15:43:36.974Z",
     "updated_at": "2026-07-02T15:43:36.974Z",
     "image_updated_at": "2026-07-02T15:43:36.974Z"
+  },
+  {
+    "id": "5741",
+    "ext": "png",
+    "band": "RAISE A SUILEN",
+    "character": "RAISE A SUILEN全團",
+    "series": "BOX特典",
+    "year": "2026年8月28日",
+    "event": "PalVerse　BanG Dream! Afterglow【BOX】",
+    "type": "角色合影",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000280575777",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "PalVerse Afterglow特典",
+    "created_at": "2026-07-02T15:53:42.967Z",
+    "updated_at": "2026-07-02T15:53:42.967Z",
+    "image_updated_at": "2026-07-02T15:53:42.967Z"
   }
 ]
