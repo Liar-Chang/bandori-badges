@@ -101505,7 +101505,7 @@
   },
   {
     "id": "5689",
-    "ext": "",
+    "ext": "png",
     "band": "RAISE A SUILEN",
     "character": "鳰原令王那(PAREO)",
     "series": "ミニキャラ/ホログラム",
@@ -101520,8 +101520,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:58:47.652Z",
+    "image_updated_at": "2026-07-03T14:58:47.652Z"
   },
   {
     "id": "5690",
@@ -101845,7 +101845,7 @@
   },
   {
     "id": "5706",
-    "ext": "",
+    "ext": "png",
     "band": "Pastel*Palettes",
     "character": "丸山彩",
     "series": "ミニキャラ/ホログラム",
@@ -101860,8 +101860,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:57:07.865Z",
+    "image_updated_at": "2026-07-03T14:57:07.865Z"
   },
   {
     "id": "5707",
