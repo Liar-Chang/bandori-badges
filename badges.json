@@ -101445,7 +101445,7 @@
   },
   {
     "id": "5686",
-    "ext": "",
+    "ext": "png",
     "band": "RAISE A SUILEN",
     "character": "和奏瑞依(LAYER)",
     "series": "ミニキャラ/ホログラム",
@@ -101460,12 +101460,12 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:22:27.795Z",
+    "image_updated_at": "2026-07-03T14:22:27.795Z"
   },
   {
     "id": "5687",
-    "ext": "",
+    "ext": "png",
     "band": "RAISE A SUILEN",
     "character": "朝日六花(ROCK)",
     "series": "ミニキャラ/ホログラム",
@@ -101480,8 +101480,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:22:27.795Z",
+    "image_updated_at": "2026-07-03T14:22:27.795Z"
   },
   {
     "id": "5688",
