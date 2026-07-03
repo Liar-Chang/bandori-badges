@@ -101365,7 +101365,7 @@
   },
   {
     "id": "5682",
-    "ext": "",
+    "ext": "png",
     "band": "Roselia",
     "character": "冰川紗夜",
     "series": "ミニキャラ/ホログラム",
@@ -101380,8 +101380,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:00:23.654Z",
+    "image_updated_at": "2026-07-03T14:00:23.654Z"
   },
   {
     "id": "5683",
@@ -101400,8 +101400,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:24:33.844Z",
-    "image_updated_at": "2026-07-01T14:24:33.844Z"
+    "updated_at": "2026-07-03T14:04:58.919Z",
+    "image_updated_at": "2026-07-03T14:04:58.919Z"
   },
   {
     "id": "5684",
@@ -101425,7 +101425,7 @@
   },
   {
     "id": "5685",
-    "ext": "",
+    "ext": "png",
     "band": "Roselia",
     "character": "白金燐子",
     "series": "ミニキャラ/ホログラム",
@@ -101440,8 +101440,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-03T14:04:58.919Z",
+    "image_updated_at": "2026-07-03T14:04:58.919Z"
   },
   {
     "id": "5686",
