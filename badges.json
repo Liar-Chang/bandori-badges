@@ -101865,7 +101865,7 @@
   },
   {
     "id": "5707",
-    "ext": "",
+    "ext": "png",
     "band": "Pastel*Palettes",
     "character": "冰川日菜",
     "series": "ミニキャラ/ホログラム",
@@ -101880,12 +101880,12 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-04T13:17:41.304Z",
+    "image_updated_at": "2026-07-04T13:17:41.304Z"
   },
   {
     "id": "5708",
-    "ext": "",
+    "ext": "png",
     "band": "Pastel*Palettes",
     "character": "白鷺千聖",
     "series": "ミニキャラ/ホログラム",
@@ -101900,8 +101900,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-04T14:00:19.355Z",
+    "image_updated_at": "2026-07-04T14:00:19.355Z"
   },
   {
     "id": "5709",
