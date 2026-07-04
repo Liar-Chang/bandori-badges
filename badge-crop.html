@@ -274,7 +274,9 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
         <button class="btn btn-s" style="margin:0;padding:0.32rem;" onclick="nudgeRotate(0.1)">+0.1°</button>
       </div>
       <button class="btn btn-s" style="margin-top:0.32rem;" onclick="resetRotate()">↺ 歸零</button>
-      <p style="font-size:0.66rem;color:var(--muted);line-height:1.5;margin-top:0.4rem;">💡 可先框好位置、再微調角度——裁切框會跟著旋轉鎖定同一處;裁出來就是轉正後的圖。</p>
+      <button class="btn btn-s" id="level-tool-btn" style="margin-top:0.32rem;" onclick="toggleLevelTool()">📐 拉線校正</button>
+      <p id="level-tool-hint" style="font-size:0.68rem;color:var(--accent);line-height:1.5;margin-top:0.3rem;min-height:1em;"></p>
+      <p style="font-size:0.66rem;color:var(--muted);line-height:1.5;margin-top:0.4rem;">💡 可先框好位置、再微調角度——裁切框會跟著旋轉鎖定同一處;裁出來就是轉正後的圖。<br>💡 不確定該轉幾度?按「拉線校正」,點兩個畫面上「照理說應該同高」的點(例如色塊邊界的左右兩端),自動算出精確角度。</p>
     </div>
 
     <div class="ps">
@@ -379,6 +381,7 @@ let singlePan={active:false, startX:0, startY:0, startScrollLeft:0, startScrollT
 let singlePinch={active:false, initialDist:0, initialZoom:1};
 let rx1=0,ry1=0,rx2=0,ry2=0; // 矩形模式
 let mode='manual', shape='circle';
+let levelToolActive=false, levelPoint1=null, levelCursorPos=null; // 拉線校正:點兩個應同高的點,直接算出精確旋轉角度
 let dragging=false, dragOrigin=null;
 let fileItems=[], currentIdx=-1;
 
@@ -600,6 +603,31 @@ function onRotateSlider(){ applyRotation(parseFloat(document.getElementById('rot
 function nudgeRotate(d){ applyRotation((rotationDeg||0)+d); }
 function resetRotate(){ applyRotation(0); }
 
+// ── 拉線校正:點兩個「照理說應該同高」的點,直接算出精確旋轉角度並套用 ──
+function toggleLevelTool(){
+  if(!img){ alert('請先選一張圖片'); return; }
+  levelToolActive = !levelToolActive;
+  levelPoint1 = null; levelCursorPos = null;
+  const btn = document.getElementById('level-tool-btn');
+  const hint = document.getElementById('level-tool-hint');
+  if(levelToolActive){
+    btn.textContent = '✕ 取消拉線校正';
+    hint.textContent = '點第一個點(Esc 可取消)';
+  } else {
+    btn.textContent = '📐 拉線校正';
+    hint.textContent = '';
+  }
+  draw();
+}
+function cancelLevelTool(){
+  if(!levelToolActive) return;
+  levelToolActive = false; levelPoint1 = null; levelCursorPos = null;
+  document.getElementById('level-tool-btn').textContent = '📐 拉線校正';
+  document.getElementById('level-tool-hint').textContent = '';
+  draw();
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && levelToolActive) cancelLevelTool(); });
+
 // 把畫布大小調整到符合容器 — 視窗縮放或上傳新圖時呼叫
 function fitCanvasToArea(){
   if(!img)return;
@@ -669,6 +697,26 @@ function draw(){
     ctx.font=`${Math.max(9,ss*0.12)}px Space Mono,monospace`;ctx.fillStyle='rgba(192,132,252,0.5)';
     for(let px=0;px<=img.naturalWidth;px+=step){const sx=px*scale;ctx.beginPath();ctx.moveTo(sx,0);ctx.lineTo(sx,mc.height);ctx.stroke();if(px>0)ctx.fillText(px,sx+2,10);}
     for(let py=0;py<=img.naturalHeight;py+=step){const sy=py*scale;ctx.beginPath();ctx.moveTo(0,sy);ctx.lineTo(mc.width,sy);ctx.stroke();if(py>0)ctx.fillText(py,2,sy-3);}
+    ctx.restore();
+  }
+
+  // 拉線校正:畫出已點的第一點,以及到游標的即時預覽線+角度
+  if(levelToolActive && levelPoint1){
+    const p1s={x:levelPoint1.x*scale, y:levelPoint1.y*scale};
+    ctx.save();
+    ctx.fillStyle='#22d3ee'; ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(p1s.x,p1s.y,5,0,Math.PI*2); ctx.fill();
+    if(levelCursorPos){
+      const p2s={x:levelCursorPos.x*scale, y:levelCursorPos.y*scale};
+      ctx.setLineDash([6,4]);
+      ctx.beginPath(); ctx.moveTo(p1s.x,p1s.y); ctx.lineTo(p2s.x,p2s.y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(p2s.x,p2s.y,4,0,Math.PI*2); ctx.fill();
+      const angleDeg=Math.atan2(levelCursorPos.y-levelPoint1.y, levelCursorPos.x-levelPoint1.x)*180/Math.PI;
+      ctx.font='13px "Space Mono",monospace'; ctx.fillStyle='#0891b2';
+      ctx.fillRect(p2s.x+8, p2s.y-16, 60, 18);
+      ctx.fillStyle='#fff'; ctx.fillText(angleDeg.toFixed(1)+'°', p2s.x+11, p2s.y-2);
+    }
     ctx.restore();
   }
 
@@ -1233,6 +1281,11 @@ mc.addEventListener('mousemove',e=>{
   const ci=document.getElementById('cursor-info');
   ci.style.display='block';ci.style.left=(e.clientX+14)+'px';ci.style.top=(e.clientY+14)+'px';
   ci.textContent=`x:${Math.round(pos.x)}  y:${Math.round(pos.y)}`;
+  if(levelToolActive&&levelPoint1){
+    levelCursorPos=pos;
+    draw();
+    return;
+  }
   if(mode==='click'&&dragging&&dragOrigin){
     const isCenterR=shape==='circle'||shape==='square';
     if(isCenterR){r=Math.max(Math.abs(pos.x-dragOrigin.x),Math.abs(pos.y-dragOrigin.y));cx=dragOrigin.x;cy=dragOrigin.y;}
@@ -1258,6 +1311,23 @@ mc.addEventListener('mousedown',e=>{
     return;
   }
   if(e.button!==0)return;
+  if(levelToolActive){
+    const pos=getPos(e);
+    if(!levelPoint1){
+      levelPoint1=pos;
+      document.getElementById('level-tool-hint').textContent='再點第二個同高的點(Esc 可取消)';
+    } else {
+      const dx=pos.x-levelPoint1.x, dy=pos.y-levelPoint1.y;
+      const angleDeg=Math.atan2(dy,dx)*180/Math.PI;
+      const newDeg=(rotationDeg||0)-angleDeg;
+      levelToolActive=false; levelPoint1=null; levelCursorPos=null;
+      document.getElementById('level-tool-btn').textContent='📐 拉線校正';
+      document.getElementById('level-tool-hint').textContent='✓ 已套用校正角度';
+      applyRotation(newDeg);
+    }
+    draw();
+    return;
+  }
   if(mode==='click'){
     const pos=getPos(e);
     dragOrigin={x:pos.x,y:pos.y};

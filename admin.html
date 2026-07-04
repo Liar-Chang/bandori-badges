@@ -102,6 +102,8 @@ tr:hover td{background:#fafafa;}
 .badge-thumb-wrap{position:relative;width:40px;height:40px;cursor:pointer;border-radius:50%;}
 .badge-thumb-wrap .thumb-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;font-size:0.55rem;font-weight:600;line-height:1.15;display:none;align-items:center;justify-content:center;text-align:center;pointer-events:none;}
 .badge-thumb-wrap:hover .thumb-overlay{display:flex;}
+.thumb-clear-btn{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#e74c3c;color:#fff;border:1.5px solid #fff;font-size:0.55rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;z-index:2;}
+.thumb-clear-btn:hover{background:#c0392b;}
 .thumb-cell.drag-over .badge-thumb-wrap{box-shadow:0 0 0 2px #5a4fcf;}
 .thumb-cell.drag-over .thumb-overlay{display:flex;background:rgba(90,79,207,0.85);}
 .band-pill{display:inline-block;padding:0.18rem 0.55rem;border-radius:10px;font-size:0.72rem;font-weight:600;}
@@ -792,7 +794,7 @@ let pendingImageUploads={}; // 待推 GitHub 的圖檔暫存: { id: {file, ext} 
 
 function imgUrl(b){
   if(imageCache[b.id]) return imageCache[b.id];
-  return IMG_BASE_URL + b.id + '.' + (b.ext||'jpg');
+  return IMG_BASE_URL + b.id + '.' + (b.ext||'jpg') + '?v=1';
 }
 
 function persist(){
@@ -1416,25 +1418,32 @@ document.addEventListener('click', e=>{
   }
 });
 
-// 真實偵測圖檔:抓 GitHub images/ 清單,比對出「實際沒圖檔」的徽章(配合 !noimg 篩出未標徵集的)
-// ⚠ 圖庫若遷到 R2 後,這裡要改成查 R2(GitHub images/ 屆時會空)
+// 真實偵測圖檔:圖庫已在 R2(無公開列表 API),改用逐筆 HEAD 請求問 R2「這個檔案在不在」
+// (配合 !noimg 篩出未標徵集的;已標 noimg 的不用查,反正篩選條件也會排除它)
 let existingImgIds = null;   // Set<string> 有圖檔的 id;null = 尚未掃描
 let imgScanning = false;
 async function scanExistingImages(){
   if(imgScanning) return;
   imgScanning = true;
-  showToast('🔍 偵測圖檔中…（抓 GitHub images/ 清單）');
+  const targets = badges.filter(b=>!b.noimg);
+  showToast(`🔍 偵測圖檔中…（逐筆確認 R2,共 ${targets.length} 筆)`);
   try {
-    const headers = {'Accept':'application/vnd.github.v3+json'};
-    const tk = localStorage.getItem('gh_token');
-    if(tk) headers['Authorization'] = 'token '+tk;
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${GH_BRANCH}?recursive=1`, {headers});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data = await res.json();
     const ids = new Set();
-    (data.tree||[]).forEach(t=>{ const m=t.path&&t.path.match(/^images\/(\d+)\.\w+$/i); if(m) ids.add(m[1]); });
+    let idx = 0, done = 0;
+    async function worker(){
+      while(idx < targets.length){
+        const b = targets[idx++];
+        try{
+          const res = await fetch(IMG_BASE_URL + b.id + '.' + (b.ext||'jpg') + '?v=1', {method:'HEAD'});
+          if(res.ok) ids.add(String(b.id));
+        }catch(e){ /* 視為找不到,留給人工複查 */ }
+        done++;
+        if(done % 100 === 0) showToast(`🔍 偵測圖檔中…（${done}/${targets.length}）`);
+      }
+    }
+    await Promise.all(Array.from({length: Math.min(12, targets.length)}, worker));
     existingImgIds = ids;
-    showToast(data.truncated ? '⚠ 清單被 GitHub 截斷,結果可能不完整' : `✓ images/ 共 ${ids.size} 張圖檔`);
+    showToast(`✓ 偵測完成,R2 上找到 ${ids.size}/${targets.length} 張圖檔`);
   } catch(e){
     existingImgIds = null;
     showToast('✗ 偵測失敗:'+e.message);
@@ -1522,6 +1531,7 @@ function renderList(){
           onclick="event.stopPropagation();triggerListImgUpload(${ri})">
           <img class="badge-thumb" src="${imgUrl(b)}" crossorigin="anonymous" onerror="this.style.visibility='hidden'" alt=""/>
           <div class="thumb-overlay">點擊或<br>拖入換圖</div>
+          ${pendingImageUploads[b.id]?`<button class="thumb-clear-btn" title="取消這次換圖（還原成上傳前）" onclick="event.stopPropagation();clearListImg(${ri})">✕</button>`:''}
         </div>
       </td>
       <td>${b.band==='夢ノ結唱'?'<span title="夢ノ結唱(獨立計畫)" style="margin-right:0.2rem;">✨</span>':''}<strong>#${b.id}</strong>${b.admin_note?` <span style="cursor:help;font-size:0.85rem;" title="🔒 後台備註：&#10;${b.admin_note.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}">🔒</span>`:''}${b.is_lottery?' <span title="抽獎取得" style="font-size:0.85rem;">🎲</span>':''}${b.noimg?' <span title="無圖徵集中（募集中）" style="font-size:0.85rem;">🔍</span>':''}</td>
@@ -1618,6 +1628,11 @@ function processListImgChange(file, ri){
     showToast('只接受 jpg / png / webp');
     return;
   }
+  // 記錄換圖前的狀態(只在「這筆第一次待推」時記,避免連續換圖把 prev 洗成中間那次錯的)
+  // 讓「✕ 取消換圖」能還原回上傳前的原狀,而不是上一次(可能也是錯的)換圖結果
+  const prev = pendingImageUploads[b.id]
+    ? pendingImageUploads[b.id].prev
+    : { ext: b.ext, image_updated_at: b.image_updated_at, updated_at: b.updated_at };
   // 釋放舊 objectURL,建立新的
   if(imageCache[b.id]) URL.revokeObjectURL(imageCache[b.id]);
   imageCache[b.id] = URL.createObjectURL(file);
@@ -1627,11 +1642,27 @@ function processListImgChange(file, ri){
   b.image_updated_at = now;
   b.updated_at = now;
   // 加入待推 GitHub 隊列
-  pendingImageUploads[b.id] = { file, ext };
+  pendingImageUploads[b.id] = { file, ext, prev };
   persist();
   renderList();
   updateSyncButtonLabel();
   showToast(`#${b.id} 已換圖（待同步）`);
+}
+
+function clearListImg(ri){
+  const b = badges[ri];
+  if(!b){ showToast('找不到該筆資料'); return; }
+  const pending = pendingImageUploads[b.id];
+  if(!pending){ showToast('這筆沒有待同步的換圖,無法取消'); return; }
+  if(imageCache[b.id]){ URL.revokeObjectURL(imageCache[b.id]); delete imageCache[b.id]; }
+  delete pendingImageUploads[b.id];
+  b.ext = pending.prev.ext;
+  b.image_updated_at = pending.prev.image_updated_at;
+  b.updated_at = pending.prev.updated_at;
+  persist();
+  renderList();
+  updateSyncButtonLabel();
+  showToast(`#${b.id} 已取消換圖`);
 }
 
 /* ── Checkbox / bulk ── */
@@ -2420,6 +2451,26 @@ async function r2PutImage(id, ext, file){
   return true;
 }
 
+// 有限並行上傳一批圖片到 R2(取代一張張序列等待,大量圖片時明顯加速)
+// concurrency 張同時進行;任何一張失敗就彙整成一個錯誤丟出,呼叫端據此中止(不建立 commit)
+async function r2PutImagesConcurrent(entries, concurrency, onProgress){
+  let idx = 0, done = 0;
+  const errors = [];
+  async function worker(){
+    while(idx < entries.length){
+      const i = idx++;
+      const [id, {file, ext}] = entries[i];
+      try{ await r2PutImage(id, ext, file); }
+      catch(e){ errors.push(`#${id}（${e.message}）`); }
+      done++;
+      if(onProgress) onProgress(done, entries.length);
+    }
+  }
+  const workers = Array.from({length: Math.min(concurrency, entries.length)}, worker);
+  await Promise.all(workers);
+  if(errors.length) throw new Error(`${errors.length} 張圖上傳失敗：${errors.slice(0,5).join('、')}${errors.length>5?' 等':''}`);
+}
+
 
 /* ── 批次建資料（先建文字，圖片後補）── */
 function buildTextCharList(filter){
@@ -2810,11 +2861,11 @@ async function syncToGitHub(){
       body: JSON.stringify({ content: json, encoding: 'utf-8' }),
     });
 
-    // 4. 上傳每張待推圖檔到 Cloudflare R2（不再進 GitHub commit，圖庫與 repo 解耦）
-    for(let i=0; i<pendingEntries.length; i++){
-      const [id, {file, ext}] = pendingEntries[i];
-      btn.textContent = `上傳圖片到 R2... (${i+1}/${pendingEntries.length})`;
-      await r2PutImage(id, ext, file);
+    // 4. 上傳每張待推圖檔到 Cloudflare R2（並行上傳,不再進 GitHub commit，圖庫與 repo 解耦）
+    if(pendingEntries.length){
+      await r2PutImagesConcurrent(pendingEntries, 6, (done,total)=>{
+        btn.textContent = `上傳圖片到 R2... (${done}/${total})`;
+      });
     }
 
     // 5. 建立新 tree (只含 badges.json；圖已上 R2)
@@ -3198,7 +3249,7 @@ async function downloadExpGrid(){
   await Promise.all(list.map(b=>new Promise(res=>{
     const img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>{imgMap[b.id]=img;res();}; img.onerror=()=>res();
-    img.src=EXP_IMG_BASE+b.id+'.'+(b.ext||'jpg');
+    img.src=EXP_IMG_BASE+b.id+'.'+(b.ext||'jpg')+'?v=1';
   })));
   bar.style.width='50%'; status.textContent='合成圖片中...';
 
@@ -3379,7 +3430,7 @@ function renderExpCheckList(){
     return `
     <label style="display:flex;align-items:center;gap:0.5rem;padding:0.25rem 0.3rem;border-radius:5px;cursor:pointer;font-size:0.8rem;border-bottom:1px solid #eee;">
       <input type="checkbox" class="exp-item-cb" value="${i}" checked onchange="updateExpCheckedCount()" style="accent-color:#5a4fcf;cursor:pointer;flex-shrink:0;"/>
-      <img crossorigin="anonymous" src="${EXP_IMG_BASE}${b.id}.${b.ext||'jpg'}"
+      <img crossorigin="anonymous" src="${EXP_IMG_BASE}${b.id}.${b.ext||'jpg'}?v=1"
         style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#f0f0f0;"
         onerror="this.style.opacity='0.3'"/>
       ${tagHtml}

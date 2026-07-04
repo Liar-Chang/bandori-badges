@@ -3323,7 +3323,7 @@ async function doExport(){
 
   const title = document.getElementById('export-title').value || 'BanG Dream! 徽章圖鑑';
   const _expOnlyImg = document.getElementById('exp-only-with-image')?.checked;
-  const list = _expOnlyImg ? currentFiltered.filter(b=>!isNoImg(b)) : currentFiltered;
+  let list = _expOnlyImg ? currentFiltered.filter(b=>!isNoImg(b)) : currentFiltered;
 
   // Excel 輸出
   if(exportFmt === 'xlsx'){
@@ -3428,10 +3428,7 @@ async function doExport(){
     return h + PAD;
   }
 
-  const groups = groupBadges(list);
-  const H = calcHeight(groups);
-
-  // Load images
+  // 先載入所有圖片（用「實際載入結果」當有沒有圖的權威依據）
   const imgMap = {};
   await Promise.all(list.map(b => new Promise(res=>{
     const img = new Image();
@@ -3442,7 +3439,14 @@ async function doExport(){
   })));
   prog.style.width = '50%';
 
-  // 圖片載入後，無圖片的排到每個群組最後
+  // 「只輸出有圖的徽章」：以 imgMap（真的載到的圖）為準排除無圖徽章
+  // ——不能只靠開頭的 isNoImg 過濾，那依賴主列表渲染過的 _noImgIds，尚未瀏覽的頁面/新資料會漏抓（由乃案例）
+  if(_expOnlyImg){ list = list.filter(b => imgMap[b.id]); }
+
+  const groups = groupBadges(list);
+  const H = calcHeight(groups);
+
+  // 圖片載入後，無圖片的排到每個群組最後（「只輸出有圖」時此時已無無圖徽章）
   for(const g of groups){
     g.items.sort((a,b)=>{
       const aNoImg = !imgMap[a.id] ? 1 : 0;
