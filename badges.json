@@ -101905,7 +101905,7 @@
   },
   {
     "id": "5709",
-    "ext": "",
+    "ext": "png",
     "band": "Pastel*Palettes",
     "character": "大和麻彌",
     "series": "ミニキャラ/ホログラム",
@@ -101920,12 +101920,12 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-04T13:08:22.300Z",
+    "image_updated_at": "2026-07-04T13:08:22.300Z"
   },
   {
     "id": "5710",
-    "ext": "",
+    "ext": "png",
     "band": "Pastel*Palettes",
     "character": "若宮伊芙",
     "series": "ミニキャラ/ホログラム",
@@ -101940,8 +101940,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-04T13:08:22.300Z",
+    "image_updated_at": "2026-07-04T13:08:22.300Z"
   },
   {
     "id": "5711",
