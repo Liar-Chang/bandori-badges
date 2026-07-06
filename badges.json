@@ -101625,7 +101625,7 @@
   },
   {
     "id": "5695",
-    "ext": "",
+    "ext": "png",
     "band": "Afterglow",
     "character": "羽澤鶇",
     "series": "ミニキャラ/ホログラム",
@@ -101640,8 +101640,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-06T17:16:55.748Z",
+    "image_updated_at": "2026-07-06T17:16:55.748Z"
   },
   {
     "id": "5696",
@@ -101685,7 +101685,7 @@
   },
   {
     "id": "5698",
-    "ext": "",
+    "ext": "png",
     "band": "Hello, Happy World!",
     "character": "北澤育美",
     "series": "ミニキャラ/ホログラム",
@@ -101700,8 +101700,8 @@
     "is_lottery": false,
     "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-06T17:16:55.748Z",
+    "image_updated_at": "2026-07-06T17:16:55.748Z"
   },
   {
     "id": "5699",
