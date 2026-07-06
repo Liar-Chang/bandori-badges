@@ -848,6 +848,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
 <!-- 改版:滿版指令列(搜尋+排序+重置),對齊 redesign-preview -->
 <div class="cmdbar" id="cmdbar">
   <input class="search-box" type="text" id="search" placeholder="角色、版本、活動/商品..." data-l-placeholder="searchPlaceholder" oninput="applyFilters()"/>
+  <button class="btn-view" id="btn-imgsearch-cmd" onclick="openImgSearch()" title="以圖搜圖" style="border-color:#8b5cf6;color:#8b5cf6;font-weight:600;flex-shrink:0;padding:0.4rem 0.55rem;">📷</button>
   <select class="sort-select" id="sort" onchange="applyFilters()">
     <option value="year-desc">發售日期（新→舊）</option>
     <option value="year-asc">發售日期（舊→新）</option>
@@ -957,6 +958,7 @@ body.batch-mode .btn-batch-toggle{background:var(--accent);color:#fff;border-col
         </div>
         <button class="btn-view" onclick="openExport()" style="border-color:var(--accent);color:var(--accent);font-weight:600;">⬇ 下載圖檔</button>
         <button class="btn-view" id="btn-share" onclick="openShareModal()" style="border-color:#27ae60;color:#27ae60;font-weight:600;">🔗 分享</button>
+        <button class="btn-view" id="btn-imgsearch" onclick="openImgSearch()" style="border-color:#8b5cf6;color:#8b5cf6;font-weight:600;">📷 以圖搜圖</button>
       </div>
     </div>
     <div class="badge-grid" id="badge-grid"></div>
@@ -2306,6 +2308,8 @@ const LANGS = {
     colSectionTitle:'✓ 蒐集記錄',
     // 分享模組
     shareBtn:'🔗 分享', shareSiteBtn:'🔗 分享此網站', shareTitle:'🔗 分享', shareTitleFiltered:'🔗 分享篩選結果', shareTitleSite:'🔗 分享此網站', shareCopy:'複製', shareCopied:'✓ 已複製', shareQRHint:'掃描 QR Code 開啟', shareDownloadQR:'⬇ 下載 QR Code', shareTo:'分享到', shareDiscordLabel:'Discord（複製）', shareDiscordToast:'✓ 已複製，貼到 Discord 分享吧！',
+    // 以圖搜圖
+    imgsBtn:'📷 以圖搜圖', imgsTitle:'📷 以圖搜圖', imgsDesc:'上傳徽章照片或圖片，找出圖鑑中最相似的徽章', imgsDrop:'點擊選擇圖片，或直接拖放、貼上（Ctrl+V）', imgsTip:'💡 盡量裁到只剩徽章本體、保持正面朝上，準確度會更高', imgsLoading:'載入搜尋索引中…', imgsNoIdx:'搜尋索引尚未建立，請稍後再試', imgsAnalyzing:'分析圖片中…', imgsResults:'最相似的徽章', imgsWeak:'沒有高相似度的結果，以下依相似程度排列僅供參考', imgsSim:'相似度', imgsAgain:'↻ 換一張圖', imgsClose:'關閉', imgsErr:'圖片讀取失敗，請換一張試試',
   },
   'ja': {
     title:'BanG Dream! バッジ図鑑', subtitle:' バッジ図鑑',
@@ -2350,6 +2354,8 @@ const LANGS = {
     colSectionTitle:'✓ コレクション記録',
     // 分享模組
     shareBtn:'🔗 シェア', shareSiteBtn:'🔗 このサイトをシェア', shareTitle:'🔗 シェア', shareTitleFiltered:'🔗 絞り込み結果をシェア', shareTitleSite:'🔗 このサイトをシェア', shareCopy:'コピー', shareCopied:'✓ コピーしました', shareQRHint:'QR コードをスキャンして開く', shareDownloadQR:'⬇ QR コードをダウンロード', shareTo:'シェア先', shareDiscordLabel:'Discord（コピー）', shareDiscordToast:'✓ コピーしました。Discord に貼り付けてシェアしよう！',
+    // 以圖搜圖
+    imgsBtn:'📷 画像で検索', imgsTitle:'📷 画像で検索', imgsDesc:'バッジの写真や画像をアップロードして、図鑑から最も似ているバッジを探します', imgsDrop:'クリックして画像を選択、またはドラッグ＆ドロップ／貼り付け（Ctrl+V）', imgsTip:'💡 バッジ本体だけになるようトリミングし、正面向きにすると精度が上がります', imgsLoading:'検索インデックスを読み込み中…', imgsNoIdx:'検索インデックスがまだ作成されていません。後ほどお試しください', imgsAnalyzing:'画像を分析中…', imgsResults:'最も似ているバッジ', imgsWeak:'類似度の高い結果はありません。参考として近い順に表示します', imgsSim:'類似度', imgsAgain:'↻ 別の画像', imgsClose:'閉じる', imgsErr:'画像の読み込みに失敗しました。別の画像でお試しください',
   },
   'en': {
     title:'BanG Dream! Badge Encyclopedia', subtitle:' Badge Encyclopedia',
@@ -2394,6 +2400,8 @@ const LANGS = {
     colSectionTitle:'✓ Collection',
     // 分享模組
     shareBtn:'🔗 Share', shareSiteBtn:'🔗 Share This Site', shareTitle:'🔗 Share', shareTitleFiltered:'🔗 Share Filtered Results', shareTitleSite:'🔗 Share This Site', shareCopy:'Copy', shareCopied:'✓ Copied', shareQRHint:'Scan QR code to open', shareDownloadQR:'⬇ Download QR Code', shareTo:'Share to', shareDiscordLabel:'Discord (Copy)', shareDiscordToast:'✓ Copied! Paste in Discord to share.',
+    // 以圖搜圖
+    imgsBtn:'📷 Image Search', imgsTitle:'📷 Search by Image', imgsDesc:'Upload a badge photo to find the most similar badges in the encyclopedia', imgsDrop:'Click to choose an image, or drag & drop / paste (Ctrl+V)', imgsTip:'💡 Crop to just the badge and keep it upright for better accuracy', imgsLoading:'Loading search index…', imgsNoIdx:'Search index not built yet — please try again later', imgsAnalyzing:'Analyzing image…', imgsResults:'Most similar badges', imgsWeak:'No close match found — nearest results shown for reference', imgsSim:'Similarity', imgsAgain:'↻ Try another image', imgsClose:'Close', imgsErr:'Could not read the image. Please try another one',
   },
   'ko': {
     title:'BanG Dream! 뱃지 도감', subtitle:' 뱃지 도감',
@@ -2438,6 +2446,8 @@ const LANGS = {
     colSectionTitle:'✓ 수집 기록',
     // 分享模組
     shareBtn:'🔗 공유', shareSiteBtn:'🔗 이 사이트 공유', shareTitle:'🔗 공유', shareTitleFiltered:'🔗 필터 결과 공유', shareTitleSite:'🔗 이 사이트 공유', shareCopy:'복사', shareCopied:'✓ 복사됨', shareQRHint:'QR 코드를 스캔하여 열기', shareDownloadQR:'⬇ QR 코드 다운로드', shareTo:'공유하기', shareDiscordLabel:'Discord (복사)', shareDiscordToast:'✓ 복사되었습니다. Discord에 붙여넣어 공유하세요!',
+    // 以圖搜圖
+    imgsBtn:'📷 이미지로 검색', imgsTitle:'📷 이미지로 검색', imgsDesc:'뱃지 사진이나 이미지를 업로드하면 도감에서 가장 비슷한 뱃지를 찾아 드립니다', imgsDrop:'클릭하여 이미지 선택, 또는 드래그 앤 드롭／붙여넣기(Ctrl+V)', imgsTip:'💡 뱃지 본체만 나오도록 자르고 정면을 향하게 하면 정확도가 높아집니다', imgsLoading:'검색 인덱스 불러오는 중…', imgsNoIdx:'검색 인덱스가 아직 준비되지 않았습니다. 나중에 다시 시도해 주세요', imgsAnalyzing:'이미지 분석 중…', imgsResults:'가장 비슷한 뱃지', imgsWeak:'유사도가 높은 결과가 없습니다. 참고용으로 가까운 순서대로 표시합니다', imgsSim:'유사도', imgsAgain:'↻ 다른 이미지', imgsClose:'닫기', imgsErr:'이미지를 불러오지 못했습니다. 다른 이미지로 시도해 주세요',
   },
 }
 let currentLang = (()=>{
@@ -2497,6 +2507,12 @@ function applyLang(){
   // 視圖/下載按鈕
   const dlBtn = document.querySelector('[onclick="openExport()"]');
   if(dlBtn) dlBtn.textContent = L.download;
+  // 以圖搜圖按鈕 + modal
+  const imgsSet=(id,key)=>{const el=document.getElementById(id); if(el&&L[key]) el.textContent=L[key];};
+  imgsSet('btn-imgsearch','imgsBtn'); imgsSet('imgs-title-h2','imgsTitle'); imgsSet('imgs-desc','imgsDesc');
+  const imgsCmd=document.getElementById('btn-imgsearch-cmd'); if(imgsCmd&&L.imgsTitle) imgsCmd.title=L.imgsTitle.replace('📷 ','');
+  imgsSet('imgs-drop-label','imgsDrop'); imgsSet('imgs-tip','imgsTip'); imgsSet('imgs-results-h','imgsResults');
+  imgsSet('imgs-weak-note','imgsWeak'); imgsSet('imgs-again','imgsAgain'); imgsSet('imgs-close','imgsClose');
   const gridBtn = document.getElementById('btn-grid');
   const tableBtn = document.getElementById('btn-table');
   if(gridBtn) gridBtn.textContent = '⊞ ' + L.gridView;
@@ -3721,6 +3737,197 @@ async function doExportTable(list, title, btn, progWrap, prog){
   setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent='⬇ 下載';}if(progWrap){progWrap.style.display='none';}if(prog){prog.style.width='0%';}},600);
 }
 
+/* ═══════════════ 以圖搜圖:imghash 模組 v1 ═══════════════
+   與 admin.html 的同名模組完全相同;演算法改動必須兩邊同步並提升 IMGHASH_VER、重建索引。
+   指紋 = 64 hex 字元:前 16 = 64-bit DCT pHash(結構),後 48 = 4×4 RGB 色彩簽名(各通道 4 bit)。 */
+const IMGHASH_VER = 1;
+function _ihCanvas128(src){
+  const c=document.createElement('canvas'); c.width=128; c.height=128;
+  const x=c.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,128,128);   // 透明背景一律合成白底
+  x.drawImage(src,0,0,128,128);                  // 拉伸到正方形(經典 pHash 作法,兩端一致即可)
+  return c;
+}
+function _ihSample(c128,s){
+  const c=document.createElement('canvas'); c.width=s; c.height=s;
+  const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(c128,0,0,s,s);
+  return x.getImageData(0,0,s,s).data;
+}
+function _ihPhashHex(c128){
+  const N=32, d=_ihSample(c128,N), g=new Float64Array(N*N);
+  for(let i=0;i<N*N;i++){const p=i*4; g[i]=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];}
+  const K=8, cosT=[];
+  for(let u=0;u<K;u++){const r=new Float64Array(N); for(let x=0;x<N;x++) r[x]=Math.cos((2*x+1)*u*Math.PI/(2*N)); cosT.push(r);}
+  const rows=new Float64Array(K*N);               // 分離式 2D DCT-II,只算前 8×8 低頻
+  for(let y=0;y<N;y++) for(let u=0;u<K;u++){let s=0; for(let x=0;x<N;x++) s+=g[y*N+x]*cosT[u][x]; rows[u*N+y]=s;}
+  const coef=new Float64Array(K*K);
+  for(let u=0;u<K;u++) for(let v=0;v<K;v++){let s=0; for(let y=0;y<N;y++) s+=rows[u*N+y]*cosT[v][y]; coef[u*K+v]=s;}
+  const ac=Array.from(coef.slice(1)).sort((a,b)=>a-b);
+  const med=ac[31];                               // 63 個 AC 係數的中位數
+  let hex='';
+  for(let i=0;i<64;i+=4){
+    let nib=0;
+    for(let j=0;j<4;j++){const k=i+j; nib=(nib<<1)|((k>0&&coef[k]>med)?1:0);}
+    hex+=nib.toString(16);
+  }
+  return hex;
+}
+function _ihColorHex(c128){
+  const d=_ihSample(c128,4); let hex='';
+  for(let i=0;i<16;i++){const p=i*4; hex+=(d[p]>>4).toString(16)+(d[p+1]>>4).toString(16)+(d[p+2]>>4).toString(16);}
+  return hex;
+}
+async function imghashCompute(srcBlobOrImg){
+  let bmp=srcBlobOrImg, own=false;
+  if(typeof Blob!=='undefined' && srcBlobOrImg instanceof Blob){ bmp=await createImageBitmap(srcBlobOrImg); own=true; }
+  const c128=_ihCanvas128(bmp);
+  const h=_ihPhashHex(c128)+_ihColorHex(c128);
+  if(own&&bmp.close) bmp.close();
+  return h;
+}
+const _ihPop=[0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4];
+function imghashDist(a,b){ // 0(相同)–96:結構漢明距離 0–64 + 色彩 L1 差(正規化到 0–32)
+  let ham=0;
+  for(let i=0;i<16;i++) ham+=_ihPop[parseInt(a[i],16)^parseInt(b[i],16)];
+  let col=0;
+  for(let i=16;i<64;i++) col+=Math.abs(parseInt(a[i],16)-parseInt(b[i],16));
+  return ham+col*(32/720);
+}
+/* ═══════════════ 以圖搜圖 UI ═══════════════ */
+// 距離閾值(由 5767 筆實測分布校準:同源圖≤7、實拍命中 8–20、無關底線 18–24):
+// ≤8 綠=幾乎同源;≤18 橘=可能相關;>18 灰=僅供參考。取前 N 名。
+const IMGS_STRONG=8, IMGS_MID=18, IMGS_TOPN=12;
+let _imgsIndex=null, _imgsLoadPromise=null, _imgsWired=false, _imgsPrevUrl=null;
+function _imgsLoadIndex(){
+  if(_imgsIndex) return Promise.resolve(_imgsIndex);
+  if(!_imgsLoadPromise){
+    _imgsLoadPromise=fetch('imghash.json').then(r=>{
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(j=>{
+      const arr=[];
+      const items=(j&&j.items)||{};
+      for(const k in items){
+        const h=String(items[k]).split('|')[0];
+        if(h.length>=64) arr.push({id:k,hash:h});
+      }
+      if(!arr.length) throw new Error('empty index');
+      _imgsIndex=arr;
+      return arr;
+    }).catch(e=>{_imgsLoadPromise=null; throw e;});
+  }
+  return _imgsLoadPromise;
+}
+function _imgsWire(){
+  if(_imgsWired) return;
+  _imgsWired=true;
+  const drop=document.getElementById('imgs-drop');
+  const fi=document.getElementById('imgs-file');
+  fi.addEventListener('change',()=>{ if(fi.files&&fi.files[0]) imgsHandleFile(fi.files[0]); fi.value=''; });
+  drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});
+  drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
+  drop.addEventListener('drop',e=>{
+    e.preventDefault(); drop.classList.remove('drag');
+    const f=[...(e.dataTransfer.files||[])].find(f=>f.type&&f.type.startsWith('image/'));
+    if(f) imgsHandleFile(f);
+  });
+  document.addEventListener('paste',e=>{
+    if(!document.getElementById('imgs-overlay').classList.contains('active')) return;
+    const it=[...((e.clipboardData&&e.clipboardData.items)||[])].find(i=>i.type&&i.type.startsWith('image/'));
+    if(it){ const f=it.getAsFile(); if(f) imgsHandleFile(f); }
+  });
+}
+function openImgSearch(){
+  _imgsWire();
+  imgsReset();
+  document.getElementById('imgs-overlay').classList.add('active');
+  _imgsLoadIndex().catch(()=>{}); // 開窗即預載索引,失敗留給實際搜尋時提示
+}
+function closeImgSearch(){ document.getElementById('imgs-overlay').classList.remove('active'); }
+function maybeCloseImgSearch(e){ if(e.target===document.getElementById('imgs-overlay')) closeImgSearch(); }
+function imgsReset(){
+  document.getElementById('imgs-input-wrap').style.display='block';
+  document.getElementById('imgs-result-wrap').style.display='none';
+  const st=document.getElementById('imgs-status');
+  st.style.display='none'; st.textContent='';
+  document.getElementById('imgs-grid').innerHTML='';
+  if(_imgsPrevUrl){ URL.revokeObjectURL(_imgsPrevUrl); _imgsPrevUrl=null; }
+}
+function _imgsSimPct(d){ return Math.max(0, Math.min(100, Math.round(100-d*2.5))); }
+// 查詢端多重裁切:照片常留有背景邊或裁偏,對每種裁切各算一個指紋,比對時取最小距離。
+// (索引端每顆徽章仍只存一個指紋,調整這裡不需要重建索引)
+const _IMGS_CROPS=[[0,0,1],[0,0,.93],[0,0,.85],[0,0,.72],[0,0,.6],[-.06,-.06,.85],[.06,-.06,.85],[-.06,.06,.85],[.06,.06,.85]];
+async function _imgsQueryHashes(file){
+  const bmp=await createImageBitmap(file);
+  const W=bmp.width,H=bmp.height,out=[];
+  for(const [dx,dy,s] of _IMGS_CROPS){
+    const w=W*s,h=H*s,x0=(W-w)/2+dx*W,y0=(H-h)/2+dy*H;
+    const c=document.createElement('canvas'); c.width=128; c.height=128;
+    const x=c.getContext('2d');
+    x.fillStyle='#fff'; x.fillRect(0,0,128,128);
+    x.drawImage(bmp,x0,y0,w,h,0,0,128,128);
+    out.push(_ihPhashHex(c)+_ihColorHex(c));
+  }
+  if(bmp.close) bmp.close();
+  return out;
+}
+async function imgsHandleFile(file){
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  const st=document.getElementById('imgs-status');
+  st.style.display='block';
+  try{
+    st.textContent=L.imgsLoading;
+    let idx;
+    try{ idx=await _imgsLoadIndex(); }
+    catch(e){ st.textContent=L.imgsNoIdx; return; }
+    st.textContent=L.imgsAnalyzing;
+    const qhs=await _imgsQueryHashes(file);
+    if(_imgsPrevUrl) URL.revokeObjectURL(_imgsPrevUrl);
+    _imgsPrevUrl=URL.createObjectURL(file);
+    document.getElementById('imgs-preview').src=_imgsPrevUrl;
+    const byId={};
+    all.forEach(b=>{ byId[String(b.id)]=b; });
+    const scored=[];
+    for(const it of idx){
+      const b=byId[it.id];
+      if(!b||isNoImgFlag(b)) continue;
+      let d=Infinity;
+      for(const qh of qhs){ const v=imghashDist(qh,it.hash); if(v<d) d=v; }
+      scored.push({b, d});
+    }
+    scored.sort((a,b)=>a.d-b.d);
+    _imgsRender(scored.slice(0,IMGS_TOPN));
+    st.style.display='none';
+    document.getElementById('imgs-input-wrap').style.display='none';
+    document.getElementById('imgs-result-wrap').style.display='block';
+  }catch(e){
+    st.style.display='block'; st.textContent=L.imgsErr;
+  }
+}
+function _imgsRender(top){
+  const L=LANGS[currentLang]||LANGS['zh-TW'];
+  const weak=document.getElementById('imgs-weak-note');
+  if(top.length&&top[0].d>IMGS_MID){ weak.textContent=L.imgsWeak; weak.style.display='block'; }
+  else weak.style.display='none';
+  document.getElementById('imgs-grid').innerHTML=top.map(({b,d})=>{
+    const style = d<=IMGS_STRONG ? 'background:#22c55e22;color:#15803d'
+                : d<=IMGS_MID    ? 'background:#f59e0b22;color:#b45309'
+                :                  'background:#9ca3af22;color:#6b7280';
+    const nm=_chipEsc(getCharName(b.character,currentLang)||b.character||('#'+b.id));
+    const ev=_chipEsc(b.event||b.series||'');
+    return `<div class="imgs-card" onclick="imgsOpen('${String(b.id)}')" title="#${b.id}">`+
+      `<img loading="lazy" src="${imgUrl(b)}" alt="" onerror="this.style.visibility='hidden'"/>`+
+      `<div class="nm">${nm}</div><div class="ev">${ev}</div>`+
+      `<span class="sim" style="${style}">${_imgsSimPct(d)}%</span></div>`;
+  }).join('');
+}
+function imgsOpen(id){
+  const i=all.findIndex(b=>String(b.id)===String(id));
+  if(i<0) return;
+  closeImgSearch();
+  openDetail(i);
+}
 
 </script>
 
@@ -3797,6 +4004,50 @@ async function doExportTable(list, title, btn, progWrap, prog){
     <div class="changelog-fab-content" id="fab-log-content" style="display:none;"></div>
   </div>
   <button class="changelog-fab-btn" onclick="toggleChangelogFab()" title="公告/更新日誌">📋</button>
+</div>
+
+<!-- 以圖搜圖 Modal -->
+<style>
+.imgs-drop{border:2px dashed var(--border);border-radius:12px;padding:1.8rem 1rem;text-align:center;color:var(--muted);cursor:pointer;transition:border-color .15s,background .15s,color .15s;font-size:0.85rem;}
+.imgs-drop:hover,.imgs-drop.drag{border-color:#8b5cf6;background:#8b5cf611;color:#8b5cf6;}
+.imgs-preview-wrap{display:flex;gap:0.75rem;align-items:center;margin-bottom:0.75rem;}
+.imgs-preview{width:72px;height:72px;object-fit:contain;border-radius:10px;border:1px solid var(--border);background:#fff;flex-shrink:0;}
+.imgs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:0.6rem;max-height:46vh;overflow-y:auto;padding:0.25rem;}
+.imgs-card{border:1px solid var(--border);border-radius:10px;padding:0.4rem;cursor:pointer;text-align:center;background:var(--surface);transition:transform .12s,box-shadow .12s,border-color .12s;}
+.imgs-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px #0002;border-color:#8b5cf6;}
+.imgs-card img{width:100%;aspect-ratio:1;object-fit:contain;border-radius:8px;background:#fff;}
+.imgs-card .nm{font-size:0.68rem;font-weight:600;margin-top:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
+.imgs-card .ev{font-size:0.6rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.imgs-card .sim{display:inline-block;font-size:0.62rem;font-weight:700;border-radius:999px;padding:0.05rem 0.45rem;margin-top:0.2rem;}
+</style>
+<div class="export-overlay" id="imgs-overlay" onclick="maybeCloseImgSearch(event)">
+  <div class="export-modal" style="max-width:640px;">
+    <h2 id="imgs-title-h2" style="margin-bottom:0.35rem;">📷 以圖搜圖</h2>
+    <div id="imgs-desc" style="font-size:0.82rem;color:var(--muted);margin-bottom:0.9rem;">上傳徽章照片或圖片，找出圖鑑中最相似的徽章</div>
+    <div id="imgs-input-wrap">
+      <div class="imgs-drop" id="imgs-drop" onclick="document.getElementById('imgs-file').click()">
+        <div style="font-size:1.6rem;margin-bottom:0.3rem;">🖼️</div>
+        <div id="imgs-drop-label">點擊選擇圖片，或直接拖放、貼上（Ctrl+V）</div>
+      </div>
+      <div id="imgs-tip" style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">💡 盡量裁到只剩徽章本體、保持正面朝上，準確度會更高</div>
+    </div>
+    <input type="file" id="imgs-file" accept="image/*" style="display:none;"/>
+    <div id="imgs-status" style="display:none;font-size:0.82rem;color:var(--muted);margin-top:0.75rem;"></div>
+    <div id="imgs-result-wrap" style="display:none;margin-top:0.9rem;">
+      <div class="imgs-preview-wrap">
+        <img class="imgs-preview" id="imgs-preview" alt=""/>
+        <div style="flex:1;min-width:0;">
+          <div id="imgs-results-h" style="font-weight:700;font-size:0.9rem;color:var(--text);">最相似的徽章</div>
+          <div id="imgs-weak-note" style="display:none;font-size:0.72rem;color:#d97706;margin-top:0.2rem;"></div>
+        </div>
+        <button id="imgs-again" class="btn-view" onclick="imgsReset()" style="white-space:nowrap;flex-shrink:0;">↻ 換一張圖</button>
+      </div>
+      <div class="imgs-grid" id="imgs-grid"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+      <button id="imgs-close" class="btn-view" onclick="closeImgSearch()">關閉</button>
+    </div>
+  </div>
 </div>
 
 <!-- Export Modal -->

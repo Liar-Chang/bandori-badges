@@ -200,6 +200,7 @@ tr.selected td{background:#f0effd !important;}
         <button class="header-dropdown-item" onclick="document.getElementById('json-import').click();closeMoreMenu()">📂 匯入 JSON</button>
         <button class="header-dropdown-item" onclick="openExportByDateModal();closeMoreMenu()">📅 依日期匯出圖檔</button>
         <button class="header-dropdown-item" onclick="batchFillCreatedAt();closeMoreMenu()">🕐 批次補填新增時間</button>
+        <button class="header-dropdown-item" onclick="rebuildImghashIndex();closeMoreMenu()">🔍 重建以圖搜圖索引</button>
         <button class="header-dropdown-item danger" onclick="clearAll();closeMoreMenu()">🗑 清除全部</button>
       </div>
     </div>
@@ -2868,11 +2869,38 @@ async function syncToGitHub(){
       });
     }
 
+    // 4.5 順手更新以圖搜圖索引:新上傳的圖直接用本地檔算指紋(不用回抓 R2),失敗不影響同步
+    let imghashBlobSha = null;
+    if(pendingEntries.length){
+      try{
+        btn.textContent = '同步中... (以圖搜圖索引)';
+        const idx = await loadImghashFromGH();   // 404 → 空索引;網路錯誤 → throw(跳過,避免把索引洗掉)
+        for(const [id, u] of pendingEntries){
+          const b = badges.find(x=>String(x.id)===String(id));
+          const h = await imghashCompute(u.file);
+          idx.items[String(id)] = h + '|' + ((b&&b.image_updated_at)||'');
+        }
+        const alive = new Set(badges.filter(b=>!b.noimg).map(b=>String(b.id)));
+        for(const k of Object.keys(idx.items)) if(!alive.has(k)) delete idx.items[k];
+        idx.ver = IMGHASH_VER;
+        idx.updated = new Date().toISOString();
+        const ihBlob = await ghFetch(`${apiBase}/git/blobs`, {
+          method: 'POST',
+          body: JSON.stringify({ content: JSON.stringify(idx), encoding: 'utf-8' }),
+        });
+        imghashBlobSha = ihBlob.sha;
+      }catch(e){
+        console.warn('imghash 索引更新失敗(不影響本次同步):', e);
+        showToast('⚠ 以圖搜圖索引未更新，稍後可用「⚙ 更多 → 🔍 重建以圖搜圖索引」補上');
+      }
+    }
+
     // 5. 建立新 tree (只含 badges.json；圖已上 R2)
     btn.textContent = '同步中... (建立 commit)';
     const treeEntries = [
       { path: GH_FILE, mode: '100644', type: 'blob', sha: jsonBlob.sha },
     ];
+    if(imghashBlobSha) treeEntries.push({ path: 'imghash.json', mode: '100644', type: 'blob', sha: imghashBlobSha });
     const treeData = await ghFetch(`${apiBase}/git/trees`, {
       method: 'POST',
       body: JSON.stringify({ base_tree: baseTreeSha, tree: treeEntries }),
@@ -2912,6 +2940,154 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ═══════════════ 以圖搜圖:imghash 模組 v1 ═══════════════
+   與 index.html 的同名模組完全相同;演算法改動必須兩邊同步並提升 IMGHASH_VER、重建索引。
+   指紋 = 64 hex 字元:前 16 = 64-bit DCT pHash(結構),後 48 = 4×4 RGB 色彩簽名(各通道 4 bit)。 */
+const IMGHASH_VER = 1;
+function _ihCanvas128(src){
+  const c=document.createElement('canvas'); c.width=128; c.height=128;
+  const x=c.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,128,128);   // 透明背景一律合成白底
+  x.drawImage(src,0,0,128,128);                  // 拉伸到正方形(經典 pHash 作法,兩端一致即可)
+  return c;
+}
+function _ihSample(c128,s){
+  const c=document.createElement('canvas'); c.width=s; c.height=s;
+  const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(c128,0,0,s,s);
+  return x.getImageData(0,0,s,s).data;
+}
+function _ihPhashHex(c128){
+  const N=32, d=_ihSample(c128,N), g=new Float64Array(N*N);
+  for(let i=0;i<N*N;i++){const p=i*4; g[i]=0.299*d[p]+0.587*d[p+1]+0.114*d[p+2];}
+  const K=8, cosT=[];
+  for(let u=0;u<K;u++){const r=new Float64Array(N); for(let x=0;x<N;x++) r[x]=Math.cos((2*x+1)*u*Math.PI/(2*N)); cosT.push(r);}
+  const rows=new Float64Array(K*N);               // 分離式 2D DCT-II,只算前 8×8 低頻
+  for(let y=0;y<N;y++) for(let u=0;u<K;u++){let s=0; for(let x=0;x<N;x++) s+=g[y*N+x]*cosT[u][x]; rows[u*N+y]=s;}
+  const coef=new Float64Array(K*K);
+  for(let u=0;u<K;u++) for(let v=0;v<K;v++){let s=0; for(let y=0;y<N;y++) s+=rows[u*N+y]*cosT[v][y]; coef[u*K+v]=s;}
+  const ac=Array.from(coef.slice(1)).sort((a,b)=>a-b);
+  const med=ac[31];                               // 63 個 AC 係數的中位數
+  let hex='';
+  for(let i=0;i<64;i+=4){
+    let nib=0;
+    for(let j=0;j<4;j++){const k=i+j; nib=(nib<<1)|((k>0&&coef[k]>med)?1:0);}
+    hex+=nib.toString(16);
+  }
+  return hex;
+}
+function _ihColorHex(c128){
+  const d=_ihSample(c128,4); let hex='';
+  for(let i=0;i<16;i++){const p=i*4; hex+=(d[p]>>4).toString(16)+(d[p+1]>>4).toString(16)+(d[p+2]>>4).toString(16);}
+  return hex;
+}
+async function imghashCompute(srcBlobOrImg){
+  let bmp=srcBlobOrImg, own=false;
+  if(typeof Blob!=='undefined' && srcBlobOrImg instanceof Blob){ bmp=await createImageBitmap(srcBlobOrImg); own=true; }
+  const c128=_ihCanvas128(bmp);
+  const h=_ihPhashHex(c128)+_ihColorHex(c128);
+  if(own&&bmp.close) bmp.close();
+  return h;
+}
+const _ihPop=[0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4];
+function imghashDist(a,b){ // 0(相同)–96:結構漢明距離 0–64 + 色彩 L1 差(正規化到 0–32)
+  let ham=0;
+  for(let i=0;i<16;i++) ham+=_ihPop[parseInt(a[i],16)^parseInt(b[i],16)];
+  let col=0;
+  for(let i=16;i<64;i++) col+=Math.abs(parseInt(a[i],16)-parseInt(b[i],16));
+  return ham+col*(32/720);
+}
+
+/* ═══════════════ 以圖搜圖:索引維護 ═══════════════
+   索引檔 imghash.json:{ ver, updated, items: { "<id>": "<64hex>|<image_updated_at>" } }
+   由前台 index.html 懶載入使用。 */
+async function loadImghashFromGH(){
+  const res = await fetch(`https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/imghash.json?t=${Date.now()}`);
+  if(res.status===404) return { ver: IMGHASH_VER, items: {} };  // 還沒建過索引
+  if(!res.ok) throw new Error('imghash.json 載入失敗 HTTP '+res.status);
+  const j = await res.json();
+  return { ver: (j&&j.ver)||IMGHASH_VER, items: (j&&typeof j.items==='object'&&j.items)||{} };
+}
+let imghashBuilding = false;
+async function rebuildImghashIndex(){
+  if(imghashBuilding) return;
+  const token = localStorage.getItem('gh_token');
+  if(!token){ alert('請先設定 GitHub Token'); return; }
+  if(!confirm('重建以圖搜圖索引？\n\n會逐張下載 R2 圖檔計算指紋（只算缺少的與圖有更新的），完成後把 imghash.json 同步到 GitHub。')) return;
+  imghashBuilding = true;
+  try{
+    showToast('🔍 載入現有索引…');
+    const idx = await loadImghashFromGH();
+    if(idx.ver !== IMGHASH_VER){ idx.items = {}; idx.ver = IMGHASH_VER; }  // 演算法換版 → 全部重算
+    const targets = badges.filter(b=>!b.noimg);
+    const alive = new Set(targets.map(b=>String(b.id)));
+    let pruned = 0;
+    for(const k of Object.keys(idx.items)) if(!alive.has(k)){ delete idx.items[k]; pruned++; }
+    const todo = targets.filter(b=>{
+      const cur = idx.items[String(b.id)];
+      if(!cur) return true;   // 沒建過(含 R2 無圖的佔位紀錄,每次都會再試一次)
+      return (String(cur).split('|')[1]||'') !== (b.image_updated_at||'');
+    });
+    if(!todo.length && !pruned){
+      showToast('✓ 索引已是最新，無需重建');
+      return;
+    }
+    showToast(`🔍 計算指紋中…（0/${todo.length}）`);
+    let i = 0, done = 0, ok = 0, miss = 0, changed = pruned;
+    async function worker(){
+      while(i < todo.length){
+        const b = todo[i++];
+        try{
+          // ext 可能過時(本機資料落後),404 時輪流試其他副檔名再放棄
+          const exts = [b.ext||'jpg'].concat(['jpg','png','webp','jpeg'].filter(e=>e!==(b.ext||'jpg')));
+          let got = false;
+          for(const ext of exts){
+            const res = await fetch(IMG_BASE_URL + b.id + '.' + ext + '?v=1');
+            if(res.ok){
+              idx.items[String(b.id)] = (await imghashCompute(await res.blob())) + '|' + (b.image_updated_at||'');
+              ok++; got = true; changed++; break;
+            }
+          }
+          if(!got){
+            if(idx.items[String(b.id)] !== undefined){ delete idx.items[String(b.id)]; changed++; }  // 原本有、現在沒圖 → 剔除
+            miss++;  // 佔位紀錄(本來就沒圖)只計數,不算變化
+          }
+        }catch(e){ /* 單張失敗跳過,下次重建再補 */ }
+        done++;
+        if(done % 50 === 0) showToast(`🔍 計算指紋中…（${done}/${todo.length}）`);
+      }
+    }
+    await Promise.all(Array.from({length: Math.min(8, todo.length)}, worker));
+    if(!changed){
+      showToast(`✓ 索引已是最新（${miss} 筆無圖佔位照舊），未重新上傳`);
+      return;
+    }
+    idx.updated = new Date().toISOString();
+    showToast('☁ 上傳索引到 GitHub…');
+    await ghCommitImghash(token, idx);
+    showToast(`✓ 索引重建完成：新算 ${ok} 張、無圖 ${miss} 筆、索引共 ${Object.keys(idx.items).length} 筆`);
+  }catch(e){
+    showToast('✗ 重建失敗：'+e.message);
+  }finally{
+    imghashBuilding = false;
+  }
+}
+async function ghCommitImghash(token, idx){
+  const apiBase = `https://api.github.com/repos/${GH_REPO}`;
+  const headers = {'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'};
+  async function gf(url, opts={}){
+    const res = await fetch(url, {headers, ...opts});
+    if(!res.ok){ const err = await res.json().catch(()=>({message:'HTTP '+res.status})); throw new Error(err.message||('HTTP '+res.status)); }
+    return res.json();
+  }
+  const refData = await gf(`${apiBase}/git/refs/heads/${GH_BRANCH}`);
+  const commitData = await gf(`${apiBase}/git/commits/${refData.object.sha}`);
+  const blob = await gf(`${apiBase}/git/blobs`, {method:'POST', body:JSON.stringify({content:JSON.stringify(idx), encoding:'utf-8'})});
+  const tree = await gf(`${apiBase}/git/trees`, {method:'POST', body:JSON.stringify({base_tree:commitData.tree.sha, tree:[{path:'imghash.json', mode:'100644', type:'blob', sha:blob.sha}]})});
+  const commit = await gf(`${apiBase}/git/commits`, {method:'POST', body:JSON.stringify({message:`更新 imghash.json（以圖搜圖索引，${Object.keys(idx.items).length} 筆）`, tree:tree.sha, parents:[refData.object.sha]})});
+  await gf(`${apiBase}/git/refs/heads/${GH_BRANCH}`, {method:'PATCH', body:JSON.stringify({sha:commit.sha})});
 }
 
 function batchFillCreatedAt(){
