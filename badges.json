@@ -101305,12 +101305,13 @@
   },
   {
     "id": "5679",
-    "ext": "",
+    "ext": "jpg",
     "band": "Poppin'Party",
     "character": "山吹紗綾",
     "series": "ミニキャラ/ホログラム",
     "year": "2026年7月1日",
     "event": "BanG Dream! in R Baker コラボキャンペーン－Aグループ トレーディング ミニキャラ缶バッジ",
+    "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -101318,10 +101319,10 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "BanG Dream! in Baker コラボキャンペーン",
+    "noimg": true,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-07T12:54:04.148Z",
+    "image_updated_at": null
   },
   {
     "id": "5680",
@@ -101405,12 +101406,13 @@
   },
   {
     "id": "5684",
-    "ext": "",
+    "ext": "jpg",
     "band": "Roselia",
     "character": "宇田川亞子",
     "series": "ミニキャラ/ホログラム",
     "year": "2026年7月1日",
     "event": "BanG Dream! in R Baker コラボキャンペーン－Aグループ トレーディング ミニキャラ缶バッジ",
+    "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -101418,10 +101420,10 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "BanG Dream! in Baker コラボキャンペーン",
+    "noimg": false,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-07T12:53:37.393Z",
+    "image_updated_at": null
   },
   {
     "id": "5685",
@@ -101485,12 +101487,13 @@
   },
   {
     "id": "5688",
-    "ext": "",
+    "ext": "jpg",
     "band": "RAISE A SUILEN",
     "character": "佐藤益木(MASKING)",
     "series": "ミニキャラ/ホログラム",
     "year": "2026年7月1日",
     "event": "BanG Dream! in R Baker コラボキャンペーン－Aグループ トレーディング ミニキャラ缶バッジ",
+    "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -101498,10 +101501,10 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "BanG Dream! in Baker コラボキャンペーン",
+    "noimg": true,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-07T12:53:25.407Z",
+    "image_updated_at": null
   },
   {
     "id": "5689",
@@ -101525,12 +101528,13 @@
   },
   {
     "id": "5690",
-    "ext": "",
+    "ext": "jpg",
     "band": "RAISE A SUILEN",
     "character": "珠手知由(CHU2)",
     "series": "ミニキャラ/ホログラム",
     "year": "2026年7月1日",
     "event": "BanG Dream! in R Baker コラボキャンペーン－Aグループ トレーディング ミニキャラ缶バッジ",
+    "short_event": "BanG Dream! in Baker コラボキャンペーン",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -101538,10 +101542,10 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "BanG Dream! in Baker コラボキャンペーン",
+    "noimg": true,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-01T14:19:20.692Z",
-    "image_updated_at": ""
+    "updated_at": "2026-07-07T12:52:06.273Z",
+    "image_updated_at": null
   },
   {
     "id": "5691",
