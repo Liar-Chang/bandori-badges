@@ -102550,11 +102550,12 @@
   {
     "id": "5741",
     "ext": "png",
-    "band": "RAISE A SUILEN",
-    "character": "RAISE A SUILEN全團",
+    "band": "Afterglow",
+    "character": "Afterglow全團",
     "series": "BOX特典",
     "year": "2026年8月28日",
     "event": "PalVerse　BanG Dream! Afterglow【BOX】",
+    "short_event": "PalVerse Afterglow特典",
     "type": "角色合影",
     "size": "75mm圓形",
     "country": "日本",
@@ -102562,9 +102563,9 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "PalVerse Afterglow特典",
+    "noimg": false,
     "created_at": "2026-07-02T15:53:42.967Z",
-    "updated_at": "2026-07-02T15:53:42.967Z",
+    "updated_at": "2026-07-09T15:44:42.071Z",
     "image_updated_at": "2026-07-02T15:53:42.967Z"
   },
   {
@@ -106859,5 +106860,25 @@
     "created_at": "2026-07-08T15:14:05.281Z",
     "updated_at": "2026-07-08T15:22:38.026Z",
     "image_updated_at": "2026-07-08T15:14:05.281Z"
+  },
+  {
+    "id": "5957",
+    "ext": "png",
+    "band": "Hello, Happy World!",
+    "character": "Hello, Happy World!全團",
+    "series": "BOX特典",
+    "year": "2026年10月30日",
+    "event": "PalVerse　BanG Dream! ハロー、ハッピーワールド！【BOX】",
+    "type": "角色合影",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000292814659",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "PalVerse ハロー、ハッピーワールド！特典",
+    "created_at": "2026-07-09T15:46:19.809Z",
+    "updated_at": "2026-07-09T15:46:19.809Z",
+    "image_updated_at": "2026-07-09T15:46:19.809Z"
   }
 ]
