@@ -101319,9 +101319,9 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "noimg": true,
+    "noimg": false,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-10T07:38:35.593Z",
+    "updated_at": "2026-07-10T07:40:56.015Z",
     "image_updated_at": "2026-07-10T07:38:35.593Z"
   },
   {
@@ -101487,7 +101487,7 @@
   },
   {
     "id": "5688",
-    "ext": "jpg",
+    "ext": "png",
     "band": "RAISE A SUILEN",
     "character": "佐藤益木(MASKING)",
     "series": "ミニキャラ/ホログラム",
@@ -101501,10 +101501,10 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "noimg": true,
+    "noimg": false,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-07T12:53:25.407Z",
-    "image_updated_at": null
+    "updated_at": "2026-07-10T09:24:13.353Z",
+    "image_updated_at": "2026-07-10T09:24:13.353Z"
   },
   {
     "id": "5689",
