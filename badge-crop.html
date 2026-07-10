@@ -1648,7 +1648,6 @@ updateNumPreview();
               <option value="cy">中心 Y</option>
               <option value="w">寬 W</option>
               <option value="h">高 H</option>
-              <option value="r">半徑 (W=H)</option>
             </select>
             <select id="batch-bulk-op" style="font-family:inherit;font-size:0.72rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:0.3rem;">
               <option value="set">設為</option>
@@ -1750,7 +1749,7 @@ function updateBatchBulkFieldOptions(){
   const prev = sel.value;
   const opts = (mode === 'rect')
     ? [['x1','左 X1'],['y1','上 Y1'],['x2','右 X2'],['y2','下 Y2'],['cx','中心 X'],['cy','中心 Y'],['w','寬 W'],['h','高 H']]
-    : [['cx','中心 X'],['cy','中心 Y'],['w','寬 W'],['h','高 H'],['r','半徑 (W=H)']];
+    : [['cx','中心 X'],['cy','中心 Y'],['w','寬 W'],['h','高 H']];
   sel.innerHTML = opts.map(o => '<option value="'+o[0]+'">'+o[1]+'</option>').join('');
   if(opts.some(o => o[0] === prev)) sel.value = prev; // 盡量沿用先前欄位
 }
@@ -1830,7 +1829,6 @@ function applyBatchBulkEdit(){
     else if(field === 'cy') value = first.cy;
     else if(field === 'w') value = first.hw * 2;
     else if(field === 'h') value = first.hh * 2;
-    else if(field === 'r') value = first.hw;
     else if(field === 'x1') value = first.cx - first.hw;
     else if(field === 'y1') value = first.cy - first.hh;
     else if(field === 'x2') value = first.cx + first.hw;
@@ -1857,11 +1855,6 @@ function applyBatchBulkEdit(){
       if(newH <= 0) continue;
       c.hh = newH / 2;
       if(c.shape === 'circle' || c.shape === 'square' || c.shape === 'star') c.hw = c.hh;
-    } else if(field === 'r'){
-      const newR = (op === 'add') ? c.hw + value : value;
-      if(newR <= 0) continue;
-      c.hw = newR;
-      c.hh = newR;
     } else if(field === 'x1'){          // 左邊:右邊(X2)固定 → 重算中心與寬
       const x2 = c.cx + c.hw;
       const nx1 = (op === 'add') ? (c.cx - c.hw) + value : value;

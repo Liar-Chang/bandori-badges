@@ -163,7 +163,7 @@ tr.selected td{background:#f0effd !important;}
 .th-filter-icon{display:inline-block;margin-left:4px;font-size:0.7em;cursor:pointer;opacity:0.3;padding:2px 4px;border-radius:3px;vertical-align:middle;transition:opacity 0.15s;}
 .th-filter-icon:hover{opacity:1;background:#d9d8e8;}
 .th-filter-icon.active{opacity:1;color:#5a4fcf;background:#d9d8e8;}
-.col-filter-popup{position:absolute;top:100%;left:0;z-index:50;background:#fff;border:1.5px solid #c0bef0;border-radius:8px;padding:8px;min-width:220px;max-height:380px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 4px 16px rgba(0,0,0,0.15);text-align:left;font-weight:normal;color:#333;text-transform:none;letter-spacing:0;}
+.col-filter-popup{position:fixed;z-index:50;background:#fff;border:1.5px solid #c0bef0;border-radius:8px;padding:8px;min-width:220px;max-height:380px;overflow:hidden;display:none;flex-direction:column;box-shadow:0 4px 16px rgba(0,0,0,0.15);text-align:left;font-weight:normal;color:#333;text-transform:none;letter-spacing:0;}
 .col-filter-popup.open{display:flex;}
 .col-filter-search{width:100%;padding:4px 8px;border:1px solid #ddd;border-radius:4px;font-size:0.82rem;margin-bottom:6px;font-family:inherit;outline:none;box-sizing:border-box;}
 .col-filter-search:focus{border-color:#5a4fcf;}
@@ -1314,6 +1314,12 @@ function toggleColFilter(col){
   document.querySelectorAll('.col-filter-popup.open').forEach(p=>{ if(p!==popup) p.classList.remove('open'); });
   if(popup.classList.contains('open')){ popup.classList.remove('open'); return; }
   _buildColFilterPopup(col, popup);
+  // position:fixed 定位在圖示正下方(而非 CSS absolute)——避免被 .table-scroll 的 overflow-y:auto 裁掉,
+  // 導致外觀上「點了沒反應」(其實有開,只是被捲動容器裁切到看不見)
+  const icon = th.querySelector('.th-filter-icon');
+  const r = icon.getBoundingClientRect();
+  popup.style.top = (r.bottom + 4) + 'px';
+  popup.style.left = Math.max(0, Math.min(r.left, window.innerWidth - 240)) + 'px';
   popup.classList.add('open');
 }
 function _buildColFilterPopup(col, popup){
@@ -1348,9 +1354,48 @@ function _filterColPopupOptions(col, query){
     label.style.display = !q || text.includes(q) ? 'flex' : 'none';
   });
 }
+// base(搜尋字+缺漏篩選)判斷,與 renderList 共用,確保欄位篩選 popup 的計數跟實際列表一致
+function _matchesBaseFilters(b){
+  const q = document.getElementById('search').value.toLowerCase();
+  const mq = !q || [b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.admin_note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
+  if(!mq) return false;
+  const fm = document.getElementById('filter-missing').value;
+  if(fm==='no_url') return !b.url&&!b.note;
+  if(fm==='no_short') return !b.short_event;
+  if(fm==='no_url_and_short') return !b.url&&!b.short_event;
+  if(fm==='no_img') return !!b.noimg;
+  if(fm==='no_img_real') return existingImgIds ? (!existingImgIds.has(String(b.id)) && !b.noimg) : false;
+  return true;
+}
+// 欄位篩選(band/char/size/year),excludeCol 是「先不套用哪一欄」——
+// 讓某欄位的篩選彈窗只看「其他已套用欄位」交集出的計數,不會出現「顯示3筆、選了卻0筆」的誤導
+function _matchesColFilters(b, excludeCol){
+  if(excludeCol!=='band' && listColFilters.band.size){
+    const v = b.band || '(無)';
+    if(!listColFilters.band.has(v)) return false;
+  }
+  if(excludeCol!=='char' && listColFilters.char.size){
+    const s = (b.character||'').trim();
+    if(!s){ if(!listColFilters.char.has('(無)')) return false; }
+    else {
+      const parts = s.split('x').map(x=>x.trim()).filter(Boolean);
+      if(!parts.some(p=>listColFilters.char.has(p))) return false;
+    }
+  }
+  if(excludeCol!=='size' && listColFilters.size.size){
+    const v = b.size || '(無)';
+    if(!listColFilters.size.has(v)) return false;
+  }
+  if(excludeCol!=='year' && listColFilters.year.size){
+    const m = (b.year||'').match(/(\d{4})年/);
+    const v = m ? m[1] : '(無)';
+    if(!listColFilters.year.has(v)) return false;
+  }
+  return true;
+}
 function _getUniqueColValues(col){
   const counts = {};
-  badges.forEach(b=>{
+  badges.filter(b=>_matchesBaseFilters(b) && _matchesColFilters(b, col)).forEach(b=>{
     if(col === 'char'){
       const s = (b.character||'').trim();
       if(!s){ counts['(無)'] = (counts['(無)']||0)+1; return; }
@@ -1458,44 +1503,11 @@ let searchDebounce;
 function onSearchInput(){ clearTimeout(searchDebounce); searchDebounce = setTimeout(renderList, 200); }
 
 function renderList(){
-  const q=document.getElementById('search').value.toLowerCase();
   const tbody=document.getElementById('badge-tbody');
   const empty=document.getElementById('list-empty');
   const fm=document.getElementById('filter-missing').value;
   if(fm==='no_img_real' && existingImgIds===null && !imgScanning){ scanExistingImages(); }
-  const filtered=badges.filter(b=>{
-    const mq=!q||[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note,b.admin_note,b.size,b.country,b.type].some(v=>(v||'').toLowerCase().includes(q));
-    let missingOk=true;
-    if(fm==='no_url') missingOk=!b.url&&!b.note;
-    else if(fm==='no_short') missingOk=!b.short_event;
-    else if(fm==='no_url_and_short') missingOk=!b.url&&!b.short_event;
-    else if(fm==='no_img') missingOk=!!b.noimg;
-    else if(fm==='no_img_real') missingOk = existingImgIds ? (!existingImgIds.has(String(b.id)) && !b.noimg) : false;
-    if(!mq || !missingOk) return false;
-    // 欄位篩選(band/char/size/year)
-    if(listColFilters.band.size){
-      const v = b.band || '(無)';
-      if(!listColFilters.band.has(v)) return false;
-    }
-    if(listColFilters.char.size){
-      const s = (b.character||'').trim();
-      if(!s){ if(!listColFilters.char.has('(無)')) return false; }
-      else {
-        const parts = s.split('x').map(x=>x.trim()).filter(Boolean);
-        if(!parts.some(p=>listColFilters.char.has(p))) return false;
-      }
-    }
-    if(listColFilters.size.size){
-      const v = b.size || '(無)';
-      if(!listColFilters.size.has(v)) return false;
-    }
-    if(listColFilters.year.size){
-      const m = (b.year||'').match(/(\d{4})年/);
-      const v = m ? m[1] : '(無)';
-      if(!listColFilters.year.has(v)) return false;
-    }
-    return true;
-  });
+  const filtered=badges.filter(b=>_matchesBaseFilters(b) && _matchesColFilters(b, null));
   // 排序
   let sorted = filtered.slice();
   if(listSortCol){
@@ -1541,6 +1553,7 @@ function renderList(){
       <td onclick="event.stopPropagation()" style="min-width:140px;">
         <select style="width:100%;min-width:130px;font-family:inherit;font-size:0.82rem;padding:0.3rem 1.4rem 0.3rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;white-space:nowrap;text-overflow:ellipsis;"
           onchange="commitSizeEdit(this,${ri})">
+          <option value=""${b.size?'':' selected'}>—（未設定）</option>
           ${['56mm圓形','57mm圓形','58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','星形','名牌','金屬','約80mm布偶胸章','刺繡布章','未確定'].map(s=>`<option value="${s}"${b.size===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
