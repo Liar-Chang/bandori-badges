@@ -101305,7 +101305,7 @@
   },
   {
     "id": "5679",
-    "ext": "jpg",
+    "ext": "png",
     "band": "Poppin'Party",
     "character": "山吹紗綾",
     "series": "ミニキャラ/ホログラム",
@@ -101321,8 +101321,8 @@
     "is_lottery": false,
     "noimg": true,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-07T12:54:04.148Z",
-    "image_updated_at": null
+    "updated_at": "2026-07-10T07:38:35.593Z",
+    "image_updated_at": "2026-07-10T07:38:35.593Z"
   },
   {
     "id": "5680",
@@ -101542,9 +101542,9 @@
     "note": "当たりはホログラム仕様★",
     "admin_note": "",
     "is_lottery": false,
-    "noimg": true,
+    "noimg": false,
     "created_at": "2026-07-01T14:19:20.692Z",
-    "updated_at": "2026-07-07T13:28:12.419Z",
+    "updated_at": "2026-07-10T07:31:16.234Z",
     "image_updated_at": "2026-07-07T13:28:12.419Z"
   },
   {
