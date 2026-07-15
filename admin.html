@@ -308,6 +308,7 @@ tr.selected td{background:#f0effd !important;}
             <option>角色相關</option>
             <option>角色聲優</option>
             <option>角色合影</option>
+            <option>樂團相關</option>
             <option>其他</option>
           </select>
         </div>
@@ -418,7 +419,7 @@ tr.selected td{background:#f0effd !important;}
           <label>類型</label>
           <select id="t-type">
             <option value="">請選擇</option>
-            <option>角色本身</option><option>角色相關</option><option>角色聲優</option><option>角色合影</option><option>其他</option>
+            <option>角色本身</option><option>角色相關</option><option>角色聲優</option><option>角色合影</option><option>樂團相關</option><option>其他</option>
           </select>
         </div>
         <div class="field">
@@ -665,6 +666,7 @@ tr.selected td{background:#f0effd !important;}
           <option>角色相關</option>
           <option>角色聲優</option>
           <option>角色合影</option>
+          <option>樂團相關</option>
           <option>其他</option>
         </select>
       </div>
@@ -894,6 +896,7 @@ function renderBatchGrid(){
             <option${item.type==='角色相關'?' selected':''}>角色相關</option>
             <option${item.type==='角色聲優'?' selected':''}>角色聲優</option>
             <option${item.type==='角色合影'?' selected':''}>角色合影</option>
+            <option${item.type==='樂團相關'?' selected':''}>樂團相關</option>
             <option${item.type==='其他'?' selected':''}>其他</option>
           </select>
         </div>
@@ -1798,7 +1801,7 @@ function bulkDelete(){
 // 各欄位的選項設定
 const BULK_SELECT_OPTIONS = {
   band: ["Poppin'Party","Afterglow","Pastel*Palettes","Roselia","Hello, Happy World!","Morfonica","RAISE A SUILEN","MyGO!!!!!","Ave Mujica","夢限大MewType","millsage","一家Dumb Rock!","夢ノ結唱","Glitter*Green","CRYCHIC","Sumimi","跨團合照","跨企劃合照","其他"],
-  type: ["角色本身","角色相關","角色聲優","角色合影","其他"],
+  type: ["角色本身","角色相關","角色聲優","角色合影","樂團相關","其他"],
   size: ["56mm圓形","57mm圓形","58mm圓形","15.2cm圓形","15cm圓形","100mm圓形","76mm圓形","75mm圓形","65mm圓形","60mm圓形","55mm圓形","54mm圓形","50mm圓形","44mm圓形","32mm圓形","31mm圓形","30mm圓形","25mm圓形","橢圓形","方形","心形","撥片","星形","名牌","金屬","約80mm布偶胸章","刺繡布章","未確定"],
   country: ["日本","台灣","韓國","中國","香港","新加坡","美國","其他"],
   is_lottery: ["是","否"],
@@ -3398,7 +3401,7 @@ async function downloadExpGrid(){
   const HEADER_H=72, TYPE_H=36, SIZE_H=28, LABEL_H=88;
   const ITEM_H=CELL+LABEL_H+GAP;
   const W=COLS*(CELL+GAP)+PAD*2;
-  const TYPE_ORDER=['角色本身','角色相關','角色聲優','角色合影','其他',''];
+  const TYPE_ORDER=['角色本身','角色相關','角色聲優','角色合影','樂團相關','其他',''];
   const SIZE_ORDER=['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形','橢圓形','方形','心形','撥片','星形','名牌','金屬','約80mm布偶胸章','刺繡布章','未確定'];
   const SIZE_56_GROUP=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形']);
   const ROUND_SIZES=new Set(['56mm圓形','57mm圓形','58mm圓形','56-58mm圓形','76mm圓形','75mm圓形','15.2cm圓形','15cm圓形','65mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','44mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形']);
@@ -3458,7 +3461,7 @@ async function downloadExpGrid(){
 
   let curY=HEADER_H+PAD, prevType=null;
   const COUNTRY_COLORS={'台灣':'#27ae60','韓國':'#e74c3c','中國':'#922b21','新加坡':'#e67e22','美國':'#2980b9'};
-  const TYPE_LABELS={'角色本身':'角色本身','角色相關':'角色相關','角色聲優':'角色聲優','角色合影':'角色合影','其他':'其他'};
+  const TYPE_LABELS={'角色本身':'角色本身','角色相關':'角色相關','角色聲優':'角色聲優','角色合影':'角色合影','樂團相關':'樂團相關','其他':'其他'};
 
   for(const g of groups){
     if(g.type!==prevType){

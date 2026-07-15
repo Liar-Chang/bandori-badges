@@ -1237,7 +1237,7 @@ function buildSidebar(){
     buildEventList();
   }
   // 類型：value 存繁中原始值，label 透過 getTypeName 翻譯
-  const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影','其他'];
+  const TYPE_ZH_LIST = ['角色本身','角色相關','角色聲優','角色合影','樂團相關','其他'];
   const availTypes = TYPE_ZH_LIST.filter(t => source.some(b => b.type === t));
   const typeSec = document.getElementById('type-section');
   const typeListEl = document.getElementById('type-list');
@@ -2115,6 +2115,7 @@ const TYPE_TRANS = {
   '角色相關': {'ja':'キャラクター関連','en':'Character-related','ko':'캐릭터 관련'},
   '角色聲優': {'ja':'声優','en':'Voice Actor','ko':'성우'},
   '角色合影': {'ja':'キャラクター集合','en':'Group','ko':'캐릭터 단체'},
+  '樂團相關': {'ja':'バンド関連','en':'Band-related','ko':'밴드 관련'},
   '其他': {'ja':'その他','en':'Other','ko':'기타'},
 };
 
@@ -3369,7 +3370,7 @@ async function doExport(){
   const ITEM_H = CELL + LABEL_H + GAP;
   const W = COLS * (CELL + GAP) + PAD * 2;
 
-  const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', '角色合影', '其他', ''];
+  const TYPE_ORDER = ['角色本身', '角色相關', '角色聲優', '角色合影', '樂團相關', '其他', ''];
   const SIZE_ORDER = [
     '56mm圓形','57mm圓形','58mm圓形','56-58mm圓形',
     '15.2cm圓形','15cm圓形','100mm圓形','76mm圓形','75mm圓形','65mm圓形','60mm圓形','55mm圓形',
