@@ -115049,5 +115049,25 @@
     "created_at": "2026-07-16T13:24:18.156Z",
     "updated_at": "2026-07-16T13:24:18.156Z",
     "image_updated_at": "2026-07-16T13:24:18.156Z"
+  },
+  {
+    "id": "6365",
+    "ext": "png",
+    "band": "Roselia",
+    "character": "",
+    "series": "",
+    "year": "2023年7月",
+    "event": "BanG Dream! ガールズバンドパーティ! トレーディング称号アクリルバッジ Roselia vol.2",
+    "type": "樂團相關",
+    "size": "名牌",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000141947538",
+    "note": "サイズ：約 W70×H17mm",
+    "admin_note": "https://bushiroad-creative.com/items/6214/",
+    "is_lottery": false,
+    "short_event": "トレーディング称号アクリルバッジ Roselia vol.2",
+    "created_at": "2026-07-16T13:26:52.692Z",
+    "updated_at": "2026-07-16T13:26:52.692Z",
+    "image_updated_at": "2026-07-16T13:26:52.692Z"
   }
 ]
