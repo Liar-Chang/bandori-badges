@@ -114829,5 +114829,25 @@
     "created_at": "2026-07-15T17:59:37.427Z",
     "updated_at": "2026-07-15T18:01:42.742Z",
     "image_updated_at": "2026-07-15T17:59:37.427Z"
+  },
+  {
+    "id": "6354",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "",
+    "series": "",
+    "year": "2023年4月",
+    "event": "BanG Dream! ガールズバンドパーティ! トレーディング称号アクリルバッジ Poppin'Party vol.2",
+    "type": "樂團相關",
+    "size": "名牌",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000133176007",
+    "note": "サイズ：約 W70×H17mm",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "トレーディング称号アクリルバッジ Poppin’Party vol.2",
+    "created_at": "2026-07-16T13:20:56.412Z",
+    "updated_at": "2026-07-16T13:20:56.412Z",
+    "image_updated_at": "2026-07-16T13:20:56.412Z"
   }
 ]
