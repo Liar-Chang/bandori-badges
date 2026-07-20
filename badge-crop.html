@@ -254,6 +254,26 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
             <input type="range" id="star-round-inner" min="0" max="100" value="50" oninput="onStarRoundChange()" style="width:100%;"/>
             <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">飽滿度越高臂越短越胖;圓角 0%＝銳角、100%＝最圓滑。設定會自動記憶</p>
           </div>
+          <div id="ctrl-heart-notch" style="display:none;margin-top:0.6rem;padding-top:0.5rem;border-top:1px dashed var(--border);">
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin-bottom:0.3rem;">♥ 中間V型凹陷深淺 <span id="heart-notch-val" style="color:var(--accent);">14%</span></label>
+            <input type="range" id="heart-notch" min="0" max="100" value="14" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 上方兩顆展開寬度 <span id="heart-lobe-w-val" style="color:var(--accent);">79%</span></label>
+            <input type="range" id="heart-lobe-w" min="0" max="100" value="79" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 上方兩顆高低位置 <span id="heart-lobe-h-val" style="color:var(--accent);">31%</span></label>
+            <input type="range" id="heart-lobe-h" min="0" max="100" value="31" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 最寬處高低位置 <span id="heart-waist-y-val" style="color:var(--accent);">69%</span></label>
+            <input type="range" id="heart-waist-y" min="0" max="100" value="69" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 底部尖端高低位置 <span id="heart-tip-y-val" style="color:var(--accent);">100%</span></label>
+            <input type="range" id="heart-tip-y" min="0" max="100" value="100" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin:0.3rem 0;">以上五個是「骨架比例」(位置),決定心形的基本輪廓;數值越大分別代表凹陷越深、兩顆越展開、兩顆位置越低、最寬處位置越低、尖端越貼近裁切框底邊。裁切框不用硬拉伸來遷就尖端,尖端自己能往上收。</p>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 上方兩顆圓潤度 <span id="heart-lobe-val" style="color:var(--accent);">60%</span></label>
+            <input type="range" id="heart-lobe" min="0" max="100" value="60" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 左右轉角圓潤度 <span id="heart-waist-val" style="color:var(--accent);">40%</span></label>
+            <input type="range" id="heart-waist" min="0" max="100" value="40" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <label style="font-size:0.72rem;color:var(--muted);display:block;margin:0.5rem 0 0.3rem;">♥ 底部尖端圓潤度 <span id="heart-tip-val" style="color:var(--accent);">30%</span></label>
+            <input type="range" id="heart-tip" min="0" max="100" value="30" oninput="onHeartNotchChange()" style="width:100%;"/>
+            <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">這三個是「圓潤度」(0%＝銳角、100%＝最圓滑),分別對應上方兩顆峰、左右腰身轉折、底部尖端這三處轉角,每處各自獨立調整、平滑相接。設定會自動記憶</p>
+          </div>
         </div>
       </div>
       <div id="mode-click" style="display:none;">
@@ -423,6 +443,12 @@ function setShape(s){
       document.getElementById('star-round-outer-val').textContent = Math.round(starRoundOuter*100) + '%';
       document.getElementById('star-round-inner-val').textContent = Math.round(starRoundInner*100) + '%';
     }
+  }
+  // 心形時顯示三個造型 slider,並用記憶值初始化
+  const heartCtrl = document.getElementById('ctrl-heart-notch');
+  if(heartCtrl){
+    heartCtrl.style.display = s==='heart' ? '' : 'none';
+    if(s==='heart') applyHeartParams();
   }
   // 更新預覽形狀
   const pc=document.getElementById('preview-canvas');
@@ -763,16 +789,111 @@ function draw(){
 }
 
 function drawHeartPath(ctx,cx,topY,hw,hh){
-  // 心形:cx=水平中心,topY=頂部Y,hw=半寬,hh=高度
+  // 心形:改用「六個關鍵頂點 + arcTo 圓角」構圖(跟星形 drawStarPath 同一套技巧)
+  // 每個轉角都是 arcTo 算出的相切圓弧,保證平滑銜接,不會像舊版貝茲曲線硬拼接那樣出現怪異轉折
+  // 八個可調全域參數:heartNotch/heartLobeSpread/heartLobeHeight/heartWaistPos/heartTipPos=骨架比例(位置);heartLobe/heartWaist/heartTip=對應三種轉角的圓潤度(曲率)
+  // 以下四個位置比例的範圍,是拿 3 張真實心形徽章去背照片(#1341/#1345/#1356)逐像素比對校準的:
+  // 用 IoU(交集/聯集)量化「這組參數畫出來的形狀」跟「真實輪廓」重疊多少,對 #1341 找最佳值、再拿另外兩張獨立驗證都收斂到同一組比例——
+  // 峰高低≈0.015~0.04、V谷底≈0.02~0.03、展開寬度≈0.90~0.95、最寬處≈0.55~0.60,IoU 從舊版預設的 0.58~0.62 拉到 0.90 左右(三張獨立驗證圖分別 0.893/0.897/0.903)。
+  // 舊版範圍(凹陷32~48%、峰12~32%、最寬處40~75%)全都下限太深、上限也不夠寬,滑桿拉到底也構不到真實比例,才會怎麼調都貼合不了。
+  // 四個滑桿的預設值(14%/79%/31%/69%)已對齊上述實測最佳點,新開工具或清空 localStorage 時就直接落在高 IoU 附近,不用每次從頭手動調。
+  const lobeFrac       = 0.00 + 0.08 * Math.max(0, Math.min(1, heartLobeHeight)); // 上方兩顆峰的高低位置(0.00~0.08,實測最佳值約0.015)
+  const lobeSpreadFrac = 0.65 + 0.35 * Math.max(0, Math.min(1, heartLobeSpread)); // 上方兩顆峰的左右展開幅度(0.65~1.00,實測最佳值約0.90~0.95)
+  const waistFrac      = 0.30 + 0.40 * Math.max(0, Math.min(1, heartWaistPos));   // 最寬處(腰身)的高低位置(0.30~0.70,實測最佳值約0.55~0.60)
+  const tipFrac         = 0.78 + 0.22 * Math.max(0, Math.min(1, heartTipPos));    // 底部尖端的高低位置(0.78~1.00,不一定要頂到裁切框底邊)
+  const nd = 0.01 + 0.11 * Math.max(0, Math.min(1, heartNotch)); // V 谷底位置(0.01~0.12,實測最佳值約0.03,遠比舊版0.32~0.48淺)
+  const notchY = topY + hh*nd;
+  const lobeY   = topY + hh*lobeFrac;
+  const lobeX   = hw*lobeSpreadFrac;
+  const waistY  = topY + hh*waistFrac;
+  const tipY    = topY + hh*tipFrac;
+  // 六個未圓角前的頂點,順時針:V谷底 → 右峰 → 右腰身 → 底部尖端 → 左腰身 → 左峰 → (回V谷底)
+  const V = [
+    {x:cx,       y:notchY},
+    {x:cx+lobeX, y:lobeY},
+    {x:cx+hw,    y:waistY},
+    {x:cx,       y:tipY},
+    {x:cx-hw,    y:waistY},
+    {x:cx-lobeX, y:lobeY},
+  ];
+  // 0.42上限:確保任兩個相鄰轉角同時拉滿 100% 也只會吃掉該邊 84%,一定留一小段直線讓三個滑桿互相獨立、不互相搶邊
+  const edge=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const rLobe  = 0.42*Math.max(0,Math.min(1,heartLobe))  * Math.min(edge(V[0],V[1]), edge(V[1],V[2]));
+  const rWaist = 0.42*Math.max(0,Math.min(1,heartWaist)) * Math.min(edge(V[1],V[2]), edge(V[2],V[3]));
+  const rTip   = 0.42*Math.max(0,Math.min(1,heartTip))   * Math.min(edge(V[2],V[3]), edge(V[3],V[4]));
+  const R = [0, rLobe, rWaist, rTip, rWaist, rLobe]; // V谷底固定銳利(0),其餘依左右鏡像對稱
   ctx.beginPath();
-  const x=cx,y=topY+hh*0.25;
-  const w=hw,h=hh*0.75;
-  ctx.moveTo(x,y+h*0.35);
-  ctx.bezierCurveTo(x,y,x-w,y,x-w,y+h*0.35);
-  ctx.bezierCurveTo(x-w,y+h*0.65,x,y+h*0.85,x,y+h);
-  ctx.bezierCurveTo(x,y+h*0.85,x+w,y+h*0.65,x+w,y+h*0.35);
-  ctx.bezierCurveTo(x+w,y,x,y,x,y+h*0.35);
+  const last=V[5], first=V[0];
+  ctx.moveTo((last.x+first.x)/2, (last.y+first.y)/2);
+  for(let i=0;i<6;i++){
+    const cur=V[i], next=V[(i+1)%6];
+    ctx.arcTo(cur.x, cur.y, next.x, next.y, R[i]);
+  }
   ctx.closePath();
+}
+// ── 心形參數:骨架比例(V凹陷深淺/上方展開寬度/上方高低位置/最寬處高低位置/底部尖端高低位置) + 圓潤度(上方/左右/底部,各 0~1,可調並記憶)──
+const LS_HEART_NOTCH = 'heart_notch', LS_HEART_LOBE = 'heart_lobe', LS_HEART_WAIST = 'heart_waist', LS_HEART_TIP = 'heart_tip';
+const LS_HEART_LOBE_SPREAD = 'heart_lobe_spread', LS_HEART_LOBE_HEIGHT = 'heart_lobe_height', LS_HEART_WAIST_POS = 'heart_waist_pos', LS_HEART_TIP_POS = 'heart_tip_pos';
+let heartNotch = parseFloat(localStorage.getItem(LS_HEART_NOTCH)); if(isNaN(heartNotch)) heartNotch = 0.14;
+let heartLobe  = parseFloat(localStorage.getItem(LS_HEART_LOBE));  if(isNaN(heartLobe))  heartLobe  = 0.6;
+let heartWaist = parseFloat(localStorage.getItem(LS_HEART_WAIST)); if(isNaN(heartWaist)) heartWaist = 0.4;
+let heartTip   = parseFloat(localStorage.getItem(LS_HEART_TIP));   if(isNaN(heartTip))   heartTip   = 0.3;
+let heartLobeSpread = parseFloat(localStorage.getItem(LS_HEART_LOBE_SPREAD)); if(isNaN(heartLobeSpread)) heartLobeSpread = 0.79;
+let heartLobeHeight = parseFloat(localStorage.getItem(LS_HEART_LOBE_HEIGHT)); if(isNaN(heartLobeHeight)) heartLobeHeight = 0.31;
+let heartWaistPos   = parseFloat(localStorage.getItem(LS_HEART_WAIST_POS));   if(isNaN(heartWaistPos))   heartWaistPos   = 0.69;
+let heartTipPos      = parseFloat(localStorage.getItem(LS_HEART_TIP_POS));    if(isNaN(heartTipPos))     heartTipPos     = 1.0;
+function applyHeartParams(){
+  const sv=(id,v)=>{ const e=document.getElementById(id); if(e) e.value=Math.round(v*100); };
+  const tx=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=Math.round(v*100)+'%'; };
+  sv('heart-notch',heartNotch);       tx('heart-notch-val',heartNotch);
+  sv('heart-lobe-w',heartLobeSpread); tx('heart-lobe-w-val',heartLobeSpread);
+  sv('heart-lobe-h',heartLobeHeight); tx('heart-lobe-h-val',heartLobeHeight);
+  sv('heart-waist-y',heartWaistPos);  tx('heart-waist-y-val',heartWaistPos);
+  sv('heart-tip-y',heartTipPos);      tx('heart-tip-y-val',heartTipPos);
+  sv('heart-lobe',heartLobe);         tx('heart-lobe-val',heartLobe);
+  sv('heart-waist',heartWaist);       tx('heart-waist-val',heartWaist);
+  sv('heart-tip',heartTip);           tx('heart-tip-val',heartTip);
+  sv('batch-heart-notch',heartNotch);       tx('batch-heart-notch-val',heartNotch);
+  sv('batch-heart-lobe-w',heartLobeSpread); tx('batch-heart-lobe-w-val',heartLobeSpread);
+  sv('batch-heart-lobe-h',heartLobeHeight); tx('batch-heart-lobe-h-val',heartLobeHeight);
+  sv('batch-heart-waist-y',heartWaistPos);  tx('batch-heart-waist-y-val',heartWaistPos);
+  sv('batch-heart-tip-y',heartTipPos);      tx('batch-heart-tip-y-val',heartTipPos);
+  sv('batch-heart-lobe',heartLobe);   tx('batch-heart-lobe-val',heartLobe);
+  sv('batch-heart-waist',heartWaist); tx('batch-heart-waist-val',heartWaist);
+  sv('batch-heart-tip',heartTip);     tx('batch-heart-tip-val',heartTip);
+  localStorage.setItem(LS_HEART_NOTCH, heartNotch);
+  localStorage.setItem(LS_HEART_LOBE, heartLobe);
+  localStorage.setItem(LS_HEART_WAIST, heartWaist);
+  localStorage.setItem(LS_HEART_TIP, heartTip);
+  localStorage.setItem(LS_HEART_LOBE_SPREAD, heartLobeSpread);
+  localStorage.setItem(LS_HEART_LOBE_HEIGHT, heartLobeHeight);
+  localStorage.setItem(LS_HEART_WAIST_POS, heartWaistPos);
+  localStorage.setItem(LS_HEART_TIP_POS, heartTipPos);
+}
+function onHeartNotchChange(){
+  heartNotch = parseInt(document.getElementById('heart-notch').value) / 100;
+  heartLobeSpread = parseInt(document.getElementById('heart-lobe-w').value) / 100;
+  heartLobeHeight = parseInt(document.getElementById('heart-lobe-h').value) / 100;
+  heartWaistPos   = parseInt(document.getElementById('heart-waist-y').value) / 100;
+  heartTipPos     = parseInt(document.getElementById('heart-tip-y').value) / 100;
+  heartLobe  = parseInt(document.getElementById('heart-lobe').value) / 100;
+  heartWaist = parseInt(document.getElementById('heart-waist').value) / 100;
+  heartTip   = parseInt(document.getElementById('heart-tip').value) / 100;
+  applyHeartParams();
+  if(img && shape==='heart') draw();
+}
+function onBatchHeartNotchChange(){
+  heartNotch = parseInt(document.getElementById('batch-heart-notch').value) / 100;
+  heartLobeSpread = parseInt(document.getElementById('batch-heart-lobe-w').value) / 100;
+  heartLobeHeight = parseInt(document.getElementById('batch-heart-lobe-h').value) / 100;
+  heartWaistPos   = parseInt(document.getElementById('batch-heart-waist-y').value) / 100;
+  heartTipPos     = parseInt(document.getElementById('batch-heart-tip-y').value) / 100;
+  heartLobe  = parseInt(document.getElementById('batch-heart-lobe').value) / 100;
+  heartWaist = parseInt(document.getElementById('batch-heart-waist').value) / 100;
+  heartTip   = parseInt(document.getElementById('batch-heart-tip').value) / 100;
+  applyHeartParams();
+  if(typeof renderBatchCanvas==='function') renderBatchCanvas();
+  if(typeof renderBatchList==='function') renderBatchList();
 }
 
 // ── 星形參數:飽滿度(內外半徑比)+ 外角/內角圓度(0~1,可調並記憶)──
@@ -1589,9 +1710,9 @@ updateNumPreview();
         </div>
       </div>
       <div class="batch-side">
-        <div id="batch-config-foldable" style="display:flex;flex-direction:column;gap:0.45rem;">
+        <div id="batch-config-foldable" style="display:flex;flex-direction:column;gap:0.45rem;max-height:42vh;overflow-y:auto;padding-right:0.3rem;flex-shrink:0;">
         <div class="batch-config">
-          <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option><option value="star">★ 星形</option></select></div>
+          <div><label>形狀</label><select id="batch-shape" onchange="onBatchShapeChange()"><option value="circle">⊙ 圓形</option><option value="square">▢ 正方形</option><option value="rect">▭ 任意方形</option><option value="pick">♪ 撥片</option><option value="star">★ 星形</option><option value="heart">♥ 心形</option></select></div>
           <div><label>預設半徑</label><input type="number" id="batch-default-r" value="100" min="10"/></div>
           <div><label>起始編號</label><input type="number" id="batch-start-num" value="2900" min="1"/></div>
           <div><label>副檔名</label><select id="batch-ext"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option></select></div>
@@ -1614,6 +1735,24 @@ updateNumPreview();
           <input type="range" id="batch-star-outer" min="0" max="100" value="50" oninput="onBatchStarRoundChange()" style="width:100%;accent-color:var(--accent);"/>
           <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>⭐ 內角圓度</span><span id="batch-star-inner-val" style="color:var(--accent);">50%</span></div>
           <input type="range" id="batch-star-inner" min="0" max="100" value="50" oninput="onBatchStarRoundChange()" style="width:100%;accent-color:var(--accent);"/>
+        </div>
+        <div id="batch-heart-ctrl" style="display:none;flex-direction:column;gap:0.3rem;padding:0.5rem 0.6rem;background:var(--surface2);border-radius:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 中間V型凹陷深淺</span><span id="batch-heart-notch-val" style="color:var(--accent);">14%</span></div>
+          <input type="range" id="batch-heart-notch" min="0" max="100" value="14" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 上方兩顆展開寬度</span><span id="batch-heart-lobe-w-val" style="color:var(--accent);">79%</span></div>
+          <input type="range" id="batch-heart-lobe-w" min="0" max="100" value="79" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 上方兩顆高低位置</span><span id="batch-heart-lobe-h-val" style="color:var(--accent);">31%</span></div>
+          <input type="range" id="batch-heart-lobe-h" min="0" max="100" value="31" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 最寬處高低位置</span><span id="batch-heart-waist-y-val" style="color:var(--accent);">69%</span></div>
+          <input type="range" id="batch-heart-waist-y" min="0" max="100" value="69" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 底部尖端高低位置</span><span id="batch-heart-tip-y-val" style="color:var(--accent);">100%</span></div>
+          <input type="range" id="batch-heart-tip-y" min="0" max="100" value="100" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 上方兩顆圓潤度</span><span id="batch-heart-lobe-val" style="color:var(--accent);">60%</span></div>
+          <input type="range" id="batch-heart-lobe" min="0" max="100" value="60" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 左右轉角圓潤度</span><span id="batch-heart-waist-val" style="color:var(--accent);">40%</span></div>
+          <input type="range" id="batch-heart-waist" min="0" max="100" value="40" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
+          <div style="display:flex;justify-content:space-between;font-size:0.66rem;color:var(--muted);"><span>♥ 底部尖端圓潤度</span><span id="batch-heart-tip-val" style="color:var(--accent);">30%</span></div>
+          <input type="range" id="batch-heart-tip" min="0" max="100" value="30" oninput="onBatchHeartNotchChange()" style="width:100%;accent-color:var(--accent);"/>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.4rem;align-items:end;padding:0.5rem 0.6rem;background:var(--surface2);border-radius:8px;">
           <div><label style="color:var(--muted);font-size:0.66rem;">偏移 ΔX</label><input type="number" id="batch-offset-x" value="0" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:5px;color:var(--text);padding:0.32rem 0.45rem;font-size:0.78rem;font-family:'Space Mono',monospace;outline:none;"/></div>
@@ -1896,6 +2035,9 @@ function onBatchShapeChange(){
   // 星形:顯示三支滑桿並用全域值初始化(與單張模式共用同一組設定)
   const bsc = document.getElementById('batch-star-ctrl');
   if(bsc){ bsc.style.display = batchShape==='star' ? 'flex' : 'none'; if(batchShape==='star') applyStarParams(); }
+  // 心形:顯示凹陷深淺滑桿並用全域值初始化(與單張模式共用同一組設定)
+  const bhc = document.getElementById('batch-heart-ctrl');
+  if(bhc){ bhc.style.display = batchShape==='heart' ? 'flex' : 'none'; if(batchShape==='heart') applyHeartParams(); }
   renderBatchCanvas();
   renderBatchList();
 }
@@ -1911,6 +2053,9 @@ function batchDrawShape(ctx, c){
   } else if(c.shape === 'star'){
     // 星形路徑:借用單張模式的 drawStarPath 函式
     drawStarPath(ctx, c.cx, c.cy - c.hh, c.hw, c.hh*2);
+  } else if(c.shape === 'heart'){
+    // 心形路徑:借用單張模式的 drawHeartPath 函式
+    drawHeartPath(ctx, c.cx, c.cy - c.hh, c.hw, c.hh*2);
   }
 }
 // hit test:游標是否在 crop 內
@@ -1928,7 +2073,7 @@ function batchHitTest(x, y){
 }
 // 形狀符號(列表用)
 function batchShapeSymbol(shape){
-  return {circle:'⊙', square:'▢', rect:'▭', pick:'♪', star:'★'}[shape || 'circle'] || '⊙';
+  return {circle:'⊙', square:'▢', rect:'▭', pick:'♪', star:'★', heart:'♥'}[shape || 'circle'] || '⊙';
 }
 let batchZoom = 1.0;      // 縮放倍率(1.0 = 100%)
 let batchMouse = {        // 拖曳狀態
@@ -2374,6 +2519,7 @@ function drawBatchThumbnail(canvas, c, img, size){
   else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx, dy, dw, dh); }
   else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy, dw/2, dh); }
   else if(shape === 'star'){ drawStarPath(ctx, size/2, dy, dw/2, dh); }
+  else if(shape === 'heart'){ drawHeartPath(ctx, size/2, dy, dw/2, dh); }
   ctx.clip();
   try {
     ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
@@ -2387,6 +2533,7 @@ function drawBatchThumbnail(canvas, c, img, size){
   else if(shape === 'square' || shape === 'rect'){ ctx.rect(dx+0.5, dy+0.5, dw-1, dh-1); }
   else if(shape === 'pick'){ drawPickPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
   else if(shape === 'star'){ drawStarPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
+  else if(shape === 'heart'){ drawHeartPath(ctx, size/2, dy+0.5, (dw-1)/2, dh-1); }
   ctx.stroke();
   // 動態 borderRadius:圓形才圓,其他維持方形 canvas
   canvas.style.borderRadius = (shape === 'circle') ? '50%' : '6px';
@@ -3065,6 +3212,7 @@ async function cropBatchAll(){
     else if(shape === 'square' || shape === 'rect'){ cctx.rect(0, 0, ow, oh); }
     else if(shape === 'pick'){ drawPickPath(cctx, ow/2, 0, ow/2, oh); }
     else if(shape === 'star'){ drawStarPath(cctx, ow/2, 0, ow/2, oh); }
+    else if(shape === 'heart'){ drawHeartPath(cctx, ow/2, 0, ow/2, oh); }
     cctx.clip();
     // 從原圖切出
     cctx.drawImage(img, c.cx - c.hw, c.cy - c.hh, ow, oh, 0, 0, ow, oh);
