@@ -477,6 +477,7 @@ body{
   transition:transform .15s,box-shadow .15s;}
 .toc-tile:hover{transform:translateY(-3px);box-shadow:0 4px 18px color-mix(in srgb,var(--bc,#888) 28%,transparent);}
 .toc-name{font-weight:900;font-size:0.93rem;color:var(--text);line-height:1.25;}
+.toc-logo{display:block;max-width:100%;max-height:36px;width:auto;height:auto;margin-bottom:0.3rem;object-fit:contain;}
 .toc-cnt{font-size:0.74rem;color:var(--muted);margin-top:0.2rem;}
 .toc-pbar{height:4px;background:var(--border);border-radius:2px;margin-top:0.55rem;overflow:hidden;}
 .toc-pbar i{display:block;height:100%;background:var(--bc,#888);border-radius:2px;}
@@ -1120,6 +1121,23 @@ const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
 const BACKGROUND_BANDS = new Set(["Glitter*Green","CRYCHIC","Sumimi"]);
 // 獨立計畫:資料層仍是 band 欄位,UI 層獨立
 const INDEPENDENT_BANDS = new Set(["夢ノ結唱"]);
+// 各樂團團標圖(封面目錄頁用):明羽提供的檔案放在專案根目錄「BanG Dream各樂團團標/」
+const BAND_LOGO_DIR = 'BanG Dream各樂團團標/';
+const BAND_LOGO = {
+  "Poppin'Party": 'logo_poppinparty.webp',
+  'Afterglow': 'logo_afterglow.webp',
+  'Pastel*Palettes': 'logo_pastel-palettes.webp',
+  'Roselia': 'logo_roselia.webp',
+  'Hello, Happy World!': 'logo_hello-happy-world.webp',
+  'Morfonica': 'logo_morfonica.webp',
+  'RAISE A SUILEN': 'logo_raise-a-suilen.webp',
+  'MyGO!!!!!': 'logo_mygo.webp',
+  'Ave Mujica': 'logo_avemujica.webp',
+  '夢限大MewType': 'logo_yumemita.webp',
+  'millsage': 'logo_millsage.webp',
+  '一家Dumb Rock!': 'logo_ikka-dumb-rock.webp',
+};
+function bandLogoUrl(band){ const f = BAND_LOGO[band]; return f ? encodeURI(BAND_LOGO_DIR + f) : null; }
 
 let all=[];
 let selBands=new Set(),selYears=new Set(),selSeries=new Set(),selEvents=new Set(),selTypes=new Set(),selChars=new Set(),selSizes=new Set(),selCountries=new Set();
@@ -1636,8 +1654,12 @@ function buildTocHTML(){
       const pct=n?Math.round(col/n*100):0;
       prog=`<div class="toc-cnt">${L.tocCollected||'已蒐集'} ${col}(${pct}%)</div><div class="toc-pbar"><i style="width:${pct}%"></i></div>`;
     }
+    const logo=bandLogoUrl(b);
+    const title=logo
+      ? `<img class="toc-logo" src="${logo}" alt="${_chipEsc(getBandName(b,currentLang))}" loading="lazy"/>`
+      : `<div class="toc-name">${_chipEsc(getBandName(b,currentLang))}</div>`;
     return `<button class="toc-tile" style="--bc:${bandColor(b)}" onclick="toggleBand('${_chipJsEsc(b)}')">
-      <div class="toc-name">${_chipEsc(getBandName(b,currentLang))}</div><div class="toc-cnt">${n} 枚</div>${prog}</button>`;
+      ${title}<div class="toc-cnt">${n} 枚</div>${prog}</button>`;
   };
   const chip=b=>`<button class="toc-other-chip" onclick="if(BACKGROUND_BANDS.has('${_chipJsEsc(b)}')||INDEPENDENT_BANDS.has('${_chipJsEsc(b)}')){_moreBandsOpen=true;}toggleBand('${_chipJsEsc(b)}')">
     <span class="band-dot" style="background:${bandColor(b)}"></span>${_chipEsc(getBandName(b,currentLang))}<span style="opacity:.5;font-size:0.7rem">${counts[b]}</span></button>`;
