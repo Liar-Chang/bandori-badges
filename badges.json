@@ -126852,5 +126852,25 @@
     "created_at": "2026-08-12T13:50:38.135Z",
     "updated_at": "2026-08-12T13:50:38.135Z",
     "image_updated_at": "2026-08-12T13:50:38.135Z"
+  },
+  {
+    "id": "6948",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "峰月律",
+    "series": "特典",
+    "year": "2026年8月10日",
+    "event": "ねんどろいど 峰月律",
+    "type": "角色本身",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://www.goodsmile.com/ja/product/1142371/%E3%81%AD%E3%82%93%E3%81%A9%E3%82%8D%E3%81%84%E3%81%A9+%E5%B3%B0%E6%9C%88%E5%BE%8B",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "ねんどろいど 峰月律",
+    "created_at": "2026-08-12T13:59:24.877Z",
+    "updated_at": "2026-08-12T13:59:24.877Z",
+    "image_updated_at": "2026-08-12T13:59:24.877Z"
   }
 ]
