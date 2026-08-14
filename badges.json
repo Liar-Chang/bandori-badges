@@ -127664,12 +127664,14 @@
     "type": "角色本身",
     "size": "75mm圓形",
     "country": "日本",
-    "url": "https://bang-dream.com/discographies/4228/",
+    "url": "https://bushiroad-store.com/collections/new-arrival/products/2000321754352",
     "note": "",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-08-13T14:38:49.055Z",
-    "updated_at": "2026-08-13T14:38:49.055Z"
+    "updated_at": "2026-08-14T14:49:01.410Z",
+    "image_updated_at": null
   },
   {
     "id": "6987",
@@ -128274,10 +128276,11 @@
     "id": "7017",
     "ext": "png",
     "band": "Roselia",
-    "character": "白金燐子",
+    "character": "宇田川亞子",
     "series": "通常ver.",
     "year": "2026年10月9日",
     "event": "BanG Dream!　Roselia トレーディング缶バッジ Flower Garden ver.",
+    "short_event": "Flower Garden ver.",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -128285,9 +128288,9 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "Flower Garden ver.",
+    "noimg": false,
     "created_at": "2026-08-14T14:19:04.875Z",
-    "updated_at": "2026-08-14T14:19:04.875Z",
+    "updated_at": "2026-08-14T17:14:24.276Z",
     "image_updated_at": "2026-08-14T14:19:04.875Z"
   },
   {
