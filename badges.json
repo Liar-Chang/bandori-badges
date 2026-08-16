@@ -24267,15 +24267,19 @@
     "character": "峰月律",
     "series": "ホログラム",
     "year": "2026年2月7日",
-    "event": "生日紀念商品2026峰月律",
-    "short_event": "生日紀念商品2026",
+    "event": "BanG Dream!　峰月律 バースデーグッズ2026　ホログラム缶バッジ",
+    "short_event": "峰月律 バースデーグッズ2026",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
     "url": "https://bushiroad-store.com/collections/ritsu-birthday2026/products/2000277187983",
     "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-04-17T14:23:19.021Z",
-    "updated_at": "2026-04-17T14:23:19.021Z"
+    "updated_at": "2026-08-16T14:19:37.095Z",
+    "image_updated_at": null
   },
   {
     "id": "1606",
@@ -129441,6 +129445,7 @@
     "series": "ホログラム",
     "year": "2026年8月16日",
     "event": "BanG Dream!　仲町あられ バースデーグッズ2026　ホログラム缶バッジ",
+    "short_event": "仲町あられ バースデーグッズ2026",
     "type": "角色本身",
     "size": "56mm圓形",
     "country": "日本",
@@ -129448,9 +129453,9 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "Game Party! ver.",
+    "noimg": false,
     "created_at": "2026-08-16T14:13:03.142Z",
-    "updated_at": "2026-08-16T14:13:03.142Z",
+    "updated_at": "2026-08-16T14:17:21.786Z",
     "image_updated_at": "2026-08-16T14:13:03.142Z"
   }
 ]
