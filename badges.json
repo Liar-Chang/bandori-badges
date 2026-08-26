@@ -99154,7 +99154,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-06-28T15:18:07.781Z",
-    "updated_at": "2026-06-28T15:18:07.781Z"
+    "updated_at": "2026-06-28T15:18:07.781Z",
+    "noimg": true
   },
   {
     "id": "5558",
@@ -99173,7 +99174,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-06-28T15:18:07.781Z",
-    "updated_at": "2026-06-28T15:18:07.781Z"
+    "updated_at": "2026-06-28T15:18:07.781Z",
+    "noimg": true
   },
   {
     "id": "5559",
@@ -99192,7 +99194,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-06-28T15:18:07.781Z",
-    "updated_at": "2026-06-28T15:18:07.781Z"
+    "updated_at": "2026-06-28T15:18:07.781Z",
+    "noimg": true
   },
   {
     "id": "5560",
@@ -99211,7 +99214,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-06-28T15:18:07.781Z",
-    "updated_at": "2026-06-28T15:18:07.781Z"
+    "updated_at": "2026-06-28T15:18:07.781Z",
+    "noimg": true
   },
   {
     "id": "5561",
