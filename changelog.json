@@ -1,5 +1,10 @@
 [
   {
+    "date": "2026/8/26",
+    "content": "歷月推薦歌單\n115年4月：vaundy－飛ぶ時\n115年5月：周杰倫－四面楚歌\n115年6月：周杰倫－反方向的鐘\n115年7月：八三夭－飢餓遊戲\n115年8月：五月天－盛夏光年",
+    "pinned": true
+  },
+  {
     "date": "2026/8/24",
     "content": {
       "zh": "【新增】\n・RoseliaのRADIO SHOUT!「Spaß」　トレーディング缶バッジ（新增 10 張）\n・BanG Dream!　トレーディングビッグホロ缶バッジ　Stargazing ver.（新增 1 張）\n・Morfonica LIVE「Rubato」　トレーディング缶バッジ（新增 10 張）\n\n【功能調整】\n（無）",
@@ -1051,16 +1056,6 @@
     "content": "新增以下徽章：\nPoppin'Party 22nd Single「どきどきデエト」\nRoselia 19th Single「Fear Nothing」\nMorfonica 9th Single「Resonant Strings」\nPoppin'Party 21st Single「Drive Your Heart」\nRoselia「Dazzle the Destiny/Requiem for Fate (Studio ver.)」\nRoselia 18th Single「Steadfast Spirits」\nRAISE A SUILEN 14th Single「‘FIGHT’ ADDICT」\nバンドリ！ ガールズバンドパーティ！ カバーコレクションVol.10\nハロー、ハッピーワールド！ ミニAlbum「いっつあ！すまいるわーるど！！」\nMorfonica 8th Single「Feathered Dreams」\nPastel＊Palettes ミニAlbum「きみと Stage by Stage」"
   },
   {
-    "date": "2026/4/5",
-    "content": {
-      "zh": "徵求Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SUILEN七個樂團角色徽章圖檔及資料，煩請用電子郵件聯絡，謝謝！",
-      "ja": "Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SULENの7バンドのキャラクターバッジの画像とデータを募集しています。メールにてご連絡ください。よろしくお願いします！",
-      "en": "Seeking badge images and data for characters from Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, and RAISE A SUILEN. Please contact us via email. Thank you!",
-      "ko": "Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, RAISE A SUILEN 7개 밴드의 캐릭터 배지 이미지 및 데이터를 구합니다. 이메일로 연락해 주세요. 감사합니다！"
-    },
-    "pinned": true
-  },
-  {
     "date": "2026/4/4",
     "content": "1.錯誤回報已開通，若於網站中發現錯誤可以用此管道回報\n2.新增JR東海BanG Dream! 10th Anniversary! × 推し旅Thanks Party部分圖檔及資料\n3.更換JR東海BanG Dream! 10th Anniversary! × 推し旅Thanks Party部分圖檔"
   },
@@ -1103,5 +1098,15 @@
   {
     "date": "2026/3/19",
     "content": "網站上線"
+  },
+  {
+    "date": "2026/4/5",
+    "content": {
+      "zh": "徵求Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SUILEN七個樂團角色徽章圖檔及資料，煩請用電子郵件聯絡，謝謝！",
+      "ja": "Poppin'Party、Afterglow、Pastel*Palettes、Roselia、Hello, Happy World!、Morfonica、RAISE A SULENの7バンドのキャラクターバッジの画像とデータを募集しています。メールにてご連絡ください。よろしくお願いします！",
+      "en": "Seeking badge images and data for characters from Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, and RAISE A SUILEN. Please contact us via email. Thank you!",
+      "ko": "Poppin'Party, Afterglow, Pastel*Palettes, Roselia, Hello, Happy World!, Morfonica, RAISE A SUILEN 7개 밴드의 캐릭터 배지 이미지 및 데이터를 구합니다. 이메일로 연락해 주세요. 감사합니다！"
+    },
+    "pinned": true
   }
 ]
