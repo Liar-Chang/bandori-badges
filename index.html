@@ -1052,6 +1052,7 @@ const BAND_COLORS={
   "Glitter*Green":"#01DFA5",
   "CRYCHIC":"#8cb3d4",
   "Sumimi":"#BBFF77",
+  "妖精花束":"#b19cd9",
   "跨團合照":"#9e9e9e",
   "跨企劃合照":"#78909c",
   "其他":"#888"
@@ -1112,13 +1113,13 @@ const BAND_ORDER=["Poppin'Party","Roselia","Afterglow","Pastel*Palettes",
   "Hello, Happy World!","RAISE A SUILEN","Morfonica","MyGO!!!!!","Ave Mujica",
   "夢限大MewType","millsage","一家Dumb Rock!",
   // 重要背景樂團(會被 BACKGROUND_BANDS 抽到獨立 section)
-  "Glitter*Green","CRYCHIC","Sumimi",
+  "Glitter*Green","CRYCHIC","Sumimi","妖精花束",
   // 獨立計畫(會被 INDEPENDENT_BANDS 抽到獨立 section)
   "夢ノ結唱",
   // meta 分類固定排在最後(順序明羽指定:跨團合照 → 跨企劃合照 → 其他)
   "跨團合照","跨企劃合照","其他"];
 // 重要背景樂團:在 sidebar 跟一般樂團分開呈現的副樂團
-const BACKGROUND_BANDS = new Set(["Glitter*Green","CRYCHIC","Sumimi"]);
+const BACKGROUND_BANDS = new Set(["Glitter*Green","CRYCHIC","Sumimi","妖精花束"]);
 // 獨立計畫:資料層仍是 band 欄位,UI 層獨立
 const INDEPENDENT_BANDS = new Set(["夢ノ結唱"]);
 // 各樂團團標圖(封面目錄頁用):明羽提供的檔案放在專案根目錄「BanG Dream各樂團團標/」
@@ -1363,8 +1364,9 @@ function buildCharList(){
     "Poppin'Party全團",'Afterglow全團','Pastel*Palettes全團','Roselia全團',
     'Hello, Happy World!全團','Morfonica全團','RAISE A SUILEN全團',
     'MyGO!!!!!全團','Ave Mujica全團','夢限大MewType全團','millsage全團','一家Dumb Rock!全團',
-    // 重要背景樂團 (只列全團;個別角色目前無獨立徽章,需要時再加)
+    // 重要背景樂團 (Glitter*Green/CRYCHIC/Sumimi 只列全團,個別角色目前無獨立徽章,需要時再加;妖精花束已有個別角色)
     'Glitter*Green全團','CRYCHIC全團','Sumimi全團',
+    '妖精花束全團','薇歐拉','蓓兒','波波',
     // 夢ノ結唱 (獨立計畫,衍生自既有角色)
     'POPY','ROSE','Pastel','Halo','Aver',
     // Poppin'Party
@@ -1478,6 +1480,7 @@ const CHAR_TO_BAND = {
   "Glitter*Green全團":"Glitter*Green",
   "CRYCHIC全團":"CRYCHIC",
   "Sumimi全團":"Sumimi",
+  "妖精花束全團":"妖精花束","薇歐拉":"妖精花束","蓓兒":"妖精花束","波波":"妖精花束",
 };
 function badgeBands(b){
   const bands = new Set();
@@ -1708,6 +1711,7 @@ function applyFilters(){
   "Glitter*Green全團":"Glitter*Green",
   "CRYCHIC全團":"CRYCHIC",
   "Sumimi全團":"Sumimi",
+  "妖精花束全團":"妖精花束","薇歐拉":"妖精花束","蓓兒":"妖精花束","波波":"妖精花束",
   };
   function badgeBands(b){
     // 回傳這個徽章相關的所有樂團
@@ -2176,6 +2180,7 @@ function formatDate(dateStr, lang){
 const BAND_NAME_MAP = {
   '夢限大MewType': {'zh-TW':'夢限大MewType','ja':'夢限大みゅーたいぷ','en':'Mugendai MewType','ko':'무겐다이 뮤타입'},
   '一家Dumb Rock!': {'zh-TW':'一家Dumb Rock!','ja':'一家Dumb Rock!','en':'Ikka Dumb Rock!','ko':'一家Dumb Rock!'},
+  '妖精花束': {'zh-TW':'妖精花束','ja':'フェアリィブゥケ','en':'Fairy Bouquet','ko':'페어리 부케'},
   '跨團合照':       {'zh-TW':'跨團合照','ja':'合同フォト','en':'Cross-Band Photo','ko':'합동 사진'},
   '跨企劃合照':     {'zh-TW':'跨企劃合照','ja':'コラボフォト','en':'Cross-Project Photo','ko':'콜라보 사진'},
   '其他':           {'zh-TW':'其他','ja':'その他','en':'Other','ko':'기타'},
@@ -2203,6 +2208,11 @@ const CHAR_NAME_MAP = {
   '夢限大MewType全團':   {'ja':'夢限大みゅーたいぷ全員','en':'Mugendai MewType (All)','ko':'무겐다이 뮤타입 전원'},
   'millsage全團':        {'ja':'millsage全員','en':'millsage (All)','ko':'millsage 전원'},
   '一家Dumb Rock!全團':  {'ja':'一家Dumb Rock!全員','en':'Ikka Dumb Rock! (All)','ko':'Dumb Rock! 전원'},
+  // 妖精花束(重要背景樂團;ja官方名フェアリィブゥケ,角色名ビオラ/ベル/ポポ官方確認,en/ko為合理翻譯)
+  '妖精花束全團': {'ja':'フェアリィブゥケ全員','en':'Fairy Bouquet (All)','ko':'페어리 부케 전원'},
+  '薇歐拉': {'ja':'ビオラ','en':'Viola','ko':'비올라'},
+  '蓓兒':   {'ja':'ベル','en':'Belle','ko':'벨'},
+  '波波':   {'ja':'ポポ','en':'Popo','ko':'포포'},
   // Poppin'Party
   '戶山香澄': {'ja':'戸山香澄','en':'Kasumi Toyama','ko':'토야마카스미'},
   '花園多惠':  {'ja':'花園たえ','en':'Tae Hanazono','ko':'하나조노타에'},
