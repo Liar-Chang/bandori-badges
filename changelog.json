@@ -1,6 +1,15 @@
 [
   {
     "date": "2026/8/26",
+    "content": {
+      "zh": "【新增】\n・Pastel＊Palettes Special Event「Together!!」　トレーディング缶バッジ（新增 10 張）\n・BanG Dream!　トレーディング缶バッジ SideB 10th Anniversary ver.（新增 10 張）\n・Poppin'Party 10th Anniversary LIVE「ホシノコドウ」　トレーディング缶バッジ（新增 10 張）\n・BanG Dream!　トレーディングホログラム缶バッジ Poppin'Party活動10周年記念イラストver.（新增 15 張）\n・BanG Dream!　トレーディング缶バッジ SideA 10th Anniversary ver.（新增 25 張）\n・RAISE A SUILEN LIVE 2025「REBEL SOUNDWAVE」　トレーディング缶バッジ（新增 5 張）\n\n【功能調整】\n（無）",
+      "ja": "【新規】\n・Pastel＊Palettes Special Event「Together!!」　トレーディング缶バッジ（10枚追加）\n・BanG Dream!　トレーディング缶バッジ SideB 10th Anniversary ver.（10枚追加）\n・Poppin'Party 10th Anniversary LIVE「ホシノコドウ」　トレーディング缶バッジ（10枚追加）\n・BanG Dream!　トレーディングホログラム缶バッジ Poppin'Party活動10周年記念イラストver.（15枚追加）\n・BanG Dream!　トレーディング缶バッジ SideA 10th Anniversary ver.（25枚追加）\n・RAISE A SUILEN LIVE 2025「REBEL SOUNDWAVE」　トレーディング缶バッジ（5枚追加）\n\n【機能調整】\n(なし)",
+      "en": "【New】\n・Pastel*Palettes Special Event \"Together!!\" Trading Can Badge (10 added)\n・BanG Dream! Trading Can Badge SideB 10th Anniversary ver. (10 added)\n・Poppin'Party 10th Anniversary LIVE \"Hoshi no Kodou\" Trading Can Badge (10 added)\n・BanG Dream! Trading Hologram Can Badge Poppin'Party 10th Anniversary Commemorative Illustration ver. (15 added)\n・BanG Dream! Trading Can Badge SideA 10th Anniversary ver. (25 added)\n・RAISE A SUILEN LIVE 2025 \"REBEL SOUNDWAVE\" Trading Can Badge (5 added)\n\n【Feature Adjustments】\n(None)",
+      "ko": "【추가】\n・Pastel*Palettes 스페셜 이벤트 \"Together!!\" 트레이딩 캔뱃지 (10장 추가)\n・BanG Dream! 트레이딩 캔뱃지 SideB 10th Anniversary ver. (10장 추가)\n・Poppin'Party 10th Anniversary LIVE \"호시노 코도\" 트레이딩 캔뱃지 (10장 추가)\n・BanG Dream! 트레이딩 홀로그램 캔뱃지 Poppin'Party 10주년 기념 일러스트ver. (15장 추가)\n・BanG Dream! 트레이딩 캔뱃지 SideA 10th Anniversary ver. (25장 추가)\n・RAISE A SUILEN LIVE 2025 \"REBEL SOUNDWAVE\" 트레이딩 캔뱃지 (5장 추가)\n\n【기능 조정】\n(없음)"
+    }
+  },
+  {
+    "date": "2026/8/26",
     "content": "歷月推薦歌單\n115年4月：vaundy－飛ぶ時\n115年5月：周杰倫－四面楚歌\n115年6月：周杰倫－反方向的鐘\n115年7月：八三夭－飢餓遊戲\n115年8月：五月天－盛夏光年",
     "pinned": true
   },
