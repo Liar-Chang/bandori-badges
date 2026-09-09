@@ -149953,5 +149953,25 @@
     "created_at": "2026-09-09T14:28:36.890Z",
     "updated_at": "2026-09-09T14:28:36.890Z",
     "image_updated_at": "2026-09-09T14:28:36.890Z"
+  },
+  {
+    "id": "8088",
+    "ext": "png",
+    "band": "Ave Mujica",
+    "character": "Ave Mujica全團",
+    "series": "ビッグホロ",
+    "year": "2025年2月14日",
+    "event": "BanG Dream!　トレーディングビッグホロ缶バッジ　鮮美透涼 ver.",
+    "type": "角色合影",
+    "size": "75mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/products/2000210126024",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "鮮美透涼 ver.",
+    "created_at": "2026-09-09T14:36:44.221Z",
+    "updated_at": "2026-09-09T14:36:44.221Z",
+    "image_updated_at": "2026-09-09T14:36:44.221Z"
   }
 ]
