@@ -19429,13 +19429,19 @@
     "character": "高松燈",
     "series": "",
     "year": "2025年9月25日",
-    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストアMyGO!!!!!",
-    "note": "",
-    "size": "56mm圓形",
+    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア MyGO!!!!!",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "type": "角色本身",
+    "size": "56mm圓形",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
-    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
+    "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "noimg": false,
+    "created_at": "2026-09-13T13:57:33.628Z",
+    "updated_at": "2026-09-13T13:57:33.628Z",
+    "image_updated_at": null
   },
   {
     "id": "1284",
@@ -19444,12 +19450,12 @@
     "character": "千早愛音",
     "series": "",
     "year": "2025年9月25日",
-    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストアMyGO!!!!!",
+    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア MyGO!!!!!",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19459,12 +19465,12 @@
     "character": "要樂奈",
     "series": "",
     "year": "2025年9月25日",
-    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストアMyGO!!!!!",
+    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア MyGO!!!!!",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19474,12 +19480,12 @@
     "character": "長崎爽世",
     "series": "",
     "year": "2025年9月25日",
-    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストアMyGO!!!!!",
+    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア MyGO!!!!!",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19489,12 +19495,12 @@
     "character": "椎名立希",
     "series": "",
     "year": "2025年9月25日",
-    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストアMyGO!!!!!",
+    "event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア MyGO!!!!!",
     "note": "",
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19929,7 +19935,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19944,7 +19950,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19959,7 +19965,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19974,7 +19980,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -19989,7 +19995,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -21896,7 +21902,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -21911,7 +21917,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -21926,7 +21932,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -21941,7 +21947,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
@@ -21956,7 +21962,7 @@
     "size": "56mm圓形",
     "type": "角色本身",
     "country": "日本",
-    "short_event": "GAMERS邦邦10周年紀念",
+    "short_event": "BanG Dream!10周年記念スペシャルフェア in ブシロードストア",
     "url": "https://www.gamers.co.jp/contents/event_fair/detail.php?id=7035"
   },
   {
