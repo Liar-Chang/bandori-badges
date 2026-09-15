@@ -157332,5 +157332,25 @@
     "created_at": "2026-09-15T12:35:41.270Z",
     "updated_at": "2026-09-15T12:35:41.270Z",
     "image_updated_at": "2026-09-15T12:35:41.270Z"
+  },
+  {
+    "id": "8395",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "戶山香澄",
+    "series": "特製缶バッジ",
+    "year": "2018年1月13日",
+    "event": "【ガルパーティ！in東京 月ブシブース】月ブシ福袋2018",
+    "type": "角色本身",
+    "size": "57mm圓形",
+    "country": "日本",
+    "url": "https://gekkan-bushi.com/column/2018/01/10/",
+    "note": "「BanG_Dream!［星の鼓動］」から、 ひと和先生が描いた、とってもカワイイ香澄のイラストが缶バッジになりました！",
+    "admin_note": "原圖來源：https://tw.mercari.com/zh-hant/items/85c199b3-097a-423a-8062-b70ed83e5065?srsltid=AU7gw4UrvrQaGN962C1V6bJGu9VMHPi44garGiOoWN2wovWVnr1thQK7&original-translation=true\n尺寸來源：https://item.fril.jp/b188ae8993dbddae2de89cb06d72c3a9",
+    "is_lottery": false,
+    "short_event": "【ガルパーティ！in東京 月ブシブース】月ブシ福袋2018",
+    "created_at": "2026-09-15T15:00:24.470Z",
+    "updated_at": "2026-09-15T15:00:24.470Z",
+    "image_updated_at": "2026-09-15T15:00:24.470Z"
   }
 ]
