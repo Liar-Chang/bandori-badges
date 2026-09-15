@@ -156932,5 +156932,25 @@
     "created_at": "2026-09-14T15:51:44.819Z",
     "updated_at": "2026-09-14T15:51:44.819Z",
     "image_updated_at": "2026-09-14T15:51:44.819Z"
+  },
+  {
+    "id": "8300",
+    "ext": "png",
+    "band": "其他",
+    "character": "",
+    "series": "",
+    "year": "2016年8月12日",
+    "event": "BanG Dream!　トレーディング缶バッジ　ver.1",
+    "type": "其他",
+    "size": "44mm圓形",
+    "country": "日本",
+    "url": "https://sp.bushiroad.com/sp/ck90/goods/index.html",
+    "note": "コミックマーケット90",
+    "admin_note": "尺寸來源：https://www.suruga-ya.jp/kaitori/kaitori_detail/871282863",
+    "is_lottery": false,
+    "short_event": "BanG Dream!　トレーディング缶バッジ　ver.1",
+    "created_at": "2026-09-15T12:15:08.185Z",
+    "updated_at": "2026-09-15T12:19:08.628Z",
+    "image_updated_at": "2026-09-15T12:19:08.628Z"
   }
 ]
