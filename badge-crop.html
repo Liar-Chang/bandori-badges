@@ -464,6 +464,7 @@ function setMode(m){
   document.getElementById('tab-click').classList.toggle('active',m==='click');
   document.getElementById('mode-manual').style.display=m==='manual'?'':'none';
   document.getElementById('mode-click').style.display=m==='click'?'':'none';
+  if(img) draw();
 }
 
 // ── 上傳 ──
@@ -710,6 +711,10 @@ window.addEventListener('resize',()=>{
 
 // ── 繪圖 ──
 function draw(){
+  drawBase();
+  drawSelHandles();
+}
+function drawBase(){
   if(!img)return;
   // 保護：scale 不合理時先重新計算
   if(!isFinite(scale)||scale<=0){ fitCanvasToArea(); }
@@ -1388,6 +1393,126 @@ function setBgMode(){
 
 // ── 滑鼠 ──
 function getPos(e){const rect=mc.getBoundingClientRect();return{x:(e.clientX-rect.left)/scale,y:(e.clientY-rect.top)/scale};}
+// ── 選取框編輯:框內拖曳=移動、拖邊=單向調整、拖角=等比例縮放(圓形/正方形一律以半徑縮放) ──
+let selDrag=null;
+const SEL_HIT_PX=9; // 命中邊/角的容許距離(螢幕像素)
+const SEL_HINT_DONE='✓ 完成！框內拖曳=移動、拖邊=調整、拖角=等比例縮放;框外拖曳=重畫';
+function getSelGeom(){
+  if(!img) return null;
+  if(shape==='circle') return r>0 ? {t:'circle',cx:cx,cy:cy,r:r} : null;
+  if(shape==='square') return r>0 ? {t:'box',x1:cx-r,y1:cy-r,x2:cx+r,y2:cy+r} : null;
+  return ((rx2-rx1)>0 && (ry2-ry1)>0) ? {t:'box',x1:rx1,y1:ry1,x2:rx2,y2:ry2} : null;
+}
+function hitTestSel(pos){
+  const g=getSelGeom(); if(!g) return null;
+  const T=SEL_HIT_PX/scale;
+  if(g.t==='circle'){
+    const d=Math.hypot(pos.x-g.cx,pos.y-g.cy);
+    if(Math.abs(d-g.r)<=Math.min(T,g.r/3)) return {kind:'resize',handle:'r'};
+    return d<g.r ? {kind:'move'} : null;
+  }
+  const te=Math.min(T,(g.x2-g.x1)/3,(g.y2-g.y1)/3);
+  if(pos.x<g.x1-te||pos.x>g.x2+te||pos.y<g.y1-te||pos.y>g.y2+te) return null;
+  let hd='';
+  if(Math.abs(pos.y-g.y1)<=te) hd+='n'; else if(Math.abs(pos.y-g.y2)<=te) hd+='s';
+  if(Math.abs(pos.x-g.x1)<=te) hd+='w'; else if(Math.abs(pos.x-g.x2)<=te) hd+='e';
+  return hd ? {kind:'resize',handle:hd} : {kind:'move'};
+}
+function selCursor(hit,pos){
+  if(hit.kind==='move') return 'move';
+  const hd=hit.handle;
+  if(hd==='r'){
+    const g=getSelGeom();
+    const a=(Math.atan2(pos.y-g.cy,pos.x-g.cx)*180/Math.PI+180)%180;
+    if(a<22.5||a>=157.5) return 'ew-resize';
+    if(a<67.5) return 'nwse-resize';
+    if(a<112.5) return 'ns-resize';
+    return 'nesw-resize';
+  }
+  if(hd==='n'||hd==='s') return 'ns-resize';
+  if(hd==='w'||hd==='e') return 'ew-resize';
+  return (hd==='nw'||hd==='se') ? 'nwse-resize' : 'nesw-resize';
+}
+function updateSelCursor(pos){
+  if(selDrag) return;
+  let c='crosshair';
+  if(mode==='click'&&!dragging&&!levelToolActive){
+    const hit=hitTestSel(pos);
+    if(hit) c=selCursor(hit,pos);
+  }
+  if(mc.style.cursor!==c) mc.style.cursor=c;
+}
+function startSelDrag(hit,pos){
+  const off={x:0,y:0};
+  let aspect=1;
+  if(hit.kind==='resize'){
+    if(shape==='circle') off.x=Math.hypot(pos.x-cx,pos.y-cy)-r;
+    else if(shape==='square') off.x=Math.max(Math.abs(pos.x-cx),Math.abs(pos.y-cy))-r;
+    else{
+      const hd=hit.handle;
+      if(hd.includes('w')) off.x=pos.x-rx1; else if(hd.includes('e')) off.x=pos.x-rx2;
+      if(hd.includes('n')) off.y=pos.y-ry1; else if(hd.includes('s')) off.y=pos.y-ry2;
+      aspect=(rx2-rx1)/(ry2-ry1);
+    }
+  }
+  selDrag={kind:hit.kind,handle:hit.handle,start:{x:pos.x,y:pos.y},orig:{cx:cx,cy:cy,r:r,rx1:rx1,ry1:ry1,rx2:rx2,ry2:ry2},off:off,aspect:aspect};
+  mc.style.cursor=selCursor(hit,pos);
+}
+function applySelDrag(pos){
+  const d=selDrag,o=d.orig;
+  const MIN=Math.max(2,4/scale);
+  if(d.kind==='move'){
+    const dx=pos.x-d.start.x,dy=pos.y-d.start.y;
+    if(shape==='circle'||shape==='square'){cx=o.cx+dx;cy=o.cy+dy;}
+    else{rx1=o.rx1+dx;ry1=o.ry1+dy;rx2=o.rx2+dx;ry2=o.ry2+dy;}
+    return;
+  }
+  if(shape==='circle'){r=Math.max(MIN,Math.hypot(pos.x-o.cx,pos.y-o.cy)-d.off.x);return;}
+  if(shape==='square'){r=Math.max(MIN/2,Math.max(Math.abs(pos.x-o.cx),Math.abs(pos.y-o.cy))-d.off.x);return;}
+  const px=pos.x-d.off.x,py=pos.y-d.off.y,hd=d.handle;
+  let x1=o.rx1,y1=o.ry1,x2=o.rx2,y2=o.ry2;
+  if(hd.length===2){
+    // 角:以對角為錨點、維持拖曳前的寬高比
+    const west=hd.includes('w'),north=hd.includes('n');
+    const ax=west?o.rx2:o.rx1,ay=north?o.ry2:o.ry1;
+    const sx=west?-1:1,sy=north?-1:1;
+    let nw=Math.max((px-ax)*sx,(py-ay)*sy*d.aspect);
+    nw=Math.max(nw,MIN,MIN*d.aspect);
+    const nh=nw/d.aspect;
+    x1=Math.min(ax,ax+sx*nw);x2=Math.max(ax,ax+sx*nw);
+    y1=Math.min(ay,ay+sy*nh);y2=Math.max(ay,ay+sy*nh);
+  }else{
+    if(hd==='w') x1=Math.min(px,o.rx2-MIN);
+    if(hd==='e') x2=Math.max(px,o.rx1+MIN);
+    if(hd==='n') y1=Math.min(py,o.ry2-MIN);
+    if(hd==='s') y2=Math.max(py,o.ry1+MIN);
+  }
+  rx1=x1;ry1=y1;rx2=x2;ry2=y2;
+}
+function endSelDrag(){
+  if(!selDrag) return;
+  selDrag=null;
+  syncInputs();
+  const hint=document.getElementById('click-hint');
+  if(hint) hint.innerHTML=SEL_HINT_DONE;
+  draw();
+}
+function drawSelHandles(){
+  if(mode!=='click'||dragging) return;
+  const g=getSelGeom(); if(!g) return;
+  const pts=[];
+  if(g.t==='circle'){
+    for(let k=0;k<8;k++){const a=k*Math.PI/4;pts.push([g.cx+g.r*Math.cos(a),g.cy+g.r*Math.sin(a)]);}
+  }else{
+    const mx=(g.x1+g.x2)/2,my=(g.y1+g.y2)/2;
+    pts.push([g.x1,g.y1],[mx,g.y1],[g.x2,g.y1],[g.x2,my],[g.x2,g.y2],[mx,g.y2],[g.x1,g.y2],[g.x1,my]);
+  }
+  ctx.save();
+  ctx.fillStyle='#fff';ctx.strokeStyle=(shape==='circle'||shape==='square')?'#c084fc':'#818cf8';ctx.lineWidth=1.5;ctx.setLineDash([]);
+  pts.forEach(p=>{ctx.beginPath();ctx.rect(p[0]*scale-4,p[1]*scale-4,8,8);ctx.fill();ctx.stroke();});
+  ctx.restore();
+}
+window.addEventListener('mouseup',endSelDrag); // 在畫布外放開滑鼠也能結束拖曳
 
 mc.addEventListener('mousemove',e=>{
   // 中鍵 pan 中:更新 container 捲動
@@ -1407,6 +1532,8 @@ mc.addEventListener('mousemove',e=>{
     draw();
     return;
   }
+  updateSelCursor(pos);
+  if(selDrag){applySelDrag(pos);draw();return;}
   if(mode==='click'&&dragging&&dragOrigin){
     const isCenterR=shape==='circle'||shape==='square';
     if(isCenterR){r=Math.max(Math.abs(pos.x-dragOrigin.x),Math.abs(pos.y-dragOrigin.y));cx=dragOrigin.x;cy=dragOrigin.y;}
@@ -1451,6 +1578,8 @@ mc.addEventListener('mousedown',e=>{
   }
   if(mode==='click'){
     const pos=getPos(e);
+    const selHit=hitTestSel(pos);
+    if(selHit){startSelDrag(selHit,pos);return;}
     dragOrigin={x:pos.x,y:pos.y};
     const isCenterR=shape==='circle'||shape==='square';
     if(isCenterR){cx=pos.x;cy=pos.y;r=0;}
@@ -1460,9 +1589,10 @@ mc.addEventListener('mousedown',e=>{
 });
 mc.addEventListener('mouseup',e=>{
   if(singlePan.active){singlePan.active=false; mc.style.cursor=''; return;}
+  endSelDrag();
   if(mode==='click'&&dragging){
-    dragging=false;syncInputs();
-    document.getElementById('click-hint').innerHTML='✓ 完成！可重新拖曳或微調';
+    dragging=false;syncInputs();draw();
+    document.getElementById('click-hint').innerHTML=SEL_HINT_DONE;
   }
 });
 mc.addEventListener('contextmenu',e=>{
