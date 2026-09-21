@@ -1683,8 +1683,22 @@ function dateSortKey(yearStr){
   const dd = (s.match(/(\d{1,2})日/)||[])[1];
   return (+y[1])*10000 + (mm?+mm:99)*100 + (dd?+dd:99);
 }
+// ── 搜尋比對:忽略大小寫、所有空白(含全形空格)、全半形差異(NFKC),彎引號視為直引號 ──
+function normSearch(s){
+  return String(s==null?'':s).normalize('NFKC').toLowerCase().replace(/[\u2018\u2019\u201B\u2032]/g,"'").replace(/\s+/g,'');
+}
+// 徽章的可搜尋內容:編號/角色/版本工藝/活動全名/簡稱/樂團/備註(欄位間用 \u0001 隔開,不會被空白清除)
+function searchHay(b){
+  const cache=searchHay._c||(searchHay._c=new WeakMap());
+  const raw=[b.id,b.character,b.series,b.event,b.short_event,b.band,b.note].map(v=>v==null?'':v).join('\u0001');
+  const c=cache.get(b);
+  if(c&&c.raw===raw) return c.hay;
+  const hay=normSearch(raw);
+  cache.set(b,{raw:raw,hay:hay});
+  return hay;
+}
 function applyFilters(){
-  const q=document.getElementById('search').value.toLowerCase();
+  const q=normSearch(document.getElementById('search').value);
   const sort=document.getElementById('sort').value;
   updateAccBadges();
   renderActiveChips();
@@ -1755,7 +1769,7 @@ function applyFilters(){
     if(selTypes.size&&!selTypes.has(b.type)) return false;
     if(selSizes.size&&!selSizes.has(b.size)) return false;
     if(selCountries.size&&!selCountries.has(b.country)) return false;
-    if(q&&![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(q&&!searchHay(b).includes(q)) return false;
     if(document.getElementById('hide-no-image')?.checked && isNoImg(b)) return false;
     if(document.getElementById('hide-lottery')?.checked && b.is_lottery === true) return false;
     if(selectedList && !(myListItems[b.id]||[]).includes(selectedList)) return false;
@@ -2683,6 +2697,7 @@ applyLang();
 
 /* ── 活動 Modal ── */
 let _eventAllItems = []; // 當前可選的活動清單
+let _eventShortMap = new Map(); // 活動全名 → 簡稱集合(供活動清單搜尋比對簡稱)
 
 function updateEventBtnLabel(){
   const btn = document.getElementById('event-btn-label');
@@ -2701,6 +2716,8 @@ function updateEventBtnLabel(){
 function openEventModal(){
   const source = selBands.size > 0 ? all.filter(b=>selBands.has(b.band)) : all;
   _eventAllItems = [...new Set(source.map(b=>b.event).filter(Boolean))].sort();
+  _eventShortMap = new Map();
+  source.forEach(b=>{ if(b.event && b.short_event){ let st=_eventShortMap.get(b.event); if(!st){ st=new Set(); _eventShortMap.set(b.event,st); } st.add(b.short_event); } });
   document.getElementById('event-search').value = '';
   document.getElementById('event-modal-overlay').style.display = 'flex';
   buildEventList();
@@ -2733,8 +2750,8 @@ function maybeCloseSeriesModal(e){
   if(e.target===document.getElementById('series-modal-overlay')) closeSeriesModal();
 }
 function buildSeriesList(){
-  const q = (document.getElementById('series-search').value||'').toLowerCase();
-  const items = q ? _seriesAllItems.filter(s=>s.toLowerCase().includes(q)) : _seriesAllItems;
+  const q = normSearch(document.getElementById('series-search').value||'');
+  const items = q ? _seriesAllItems.filter(s=>normSearch(s).includes(q)) : _seriesAllItems;
   const el = document.getElementById('series-list-inner');
   if(!items.length){
     el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的版本/工藝</div>`;
@@ -2788,8 +2805,8 @@ function maybeCloseEventModal(e){
 }
 
 function buildEventList(){
-  const q = (document.getElementById('event-search').value||'').toLowerCase();
-  const items = q ? _eventAllItems.filter(e=>e.toLowerCase().includes(q)) : _eventAllItems;
+  const q = normSearch(document.getElementById('event-search').value||'');
+  const items = q ? _eventAllItems.filter(e=>normSearch(e).includes(q) || [...(_eventShortMap.get(e)||[])].some(st=>normSearch(st).includes(q))) : _eventAllItems;
   const el = document.getElementById('event-list-inner');
   if(!items.length){
     el.innerHTML = `<div style="color:var(--muted);font-size:0.82rem;padding:1rem 0;text-align:center;">找不到符合的活動/商品</div>`;
@@ -4957,8 +4974,8 @@ function matchesSmartListCondition(b, cond){
   if((cond.sizes||[]).length && !cond.sizes.includes(b.size)) return false;
   if((cond.countries||[]).length && !cond.countries.includes(b.country)) return false;
   if(cond.search){
-    const q = cond.search.toLowerCase();
-    if(![b.id,b.character,b.series,b.event,b.band,b.note].some(v=>(v||'').toLowerCase().includes(q))) return false;
+    const q = normSearch(cond.search);
+    if(q && !searchHay(b).includes(q)) return false;
   }
   return true;
 }
