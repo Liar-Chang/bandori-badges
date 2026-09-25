@@ -578,6 +578,7 @@ details.sidebar-section .filter-group{margin-top:0.35rem;}
 .badge-table td{padding:0.6rem 1rem;border-top:1px solid var(--border);vertical-align:middle;}
 .badge-table tr:hover td{background:#fafaf8;cursor:pointer;}
 .tbl-thumb{width:40px;height:40px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border);background:#f5f5f5;display:block;}
+.tbl-thumb.non-round{border-radius:6px;object-fit:contain;background:#fff;}
 .tbl-band-tag{display:inline-block;padding:0.15rem 0.55rem;border-radius:10px;font-size:0.72rem;font-weight:600;white-space:nowrap;}
 
 /* Table export modal */
@@ -1185,6 +1186,13 @@ function bandColor(b){ return BAND_COLORS[b]||'#888'; }
 const ROUND_SIZES_SET = new Set(['56-58mm圓形','57mm圓形','56mm圓形','58mm圓形',
   '100mm圓形','75mm圓形','65mm圓形','64mm圓形','60mm圓形','55mm圓形','54mm圓形','50mm圓形','45mm圓形','44mm圓形','38mm圓形','32mm圓形','31mm圓形','30mm圓形','25mm圓形','15.2cm圓形']);
 function isBadgeRound(size){ return !size || ROUND_SIZES_SET.has(size); }
+// 版本/工藝含吊飾類字眼 → 圖片完整顯示(不裁圓),尺寸仍照實記圓形
+const CHARM_KEYWORDS = ['吊飾','掛飾','鑰匙圈','チャーム','ストラップ','キーホルダー','charm','strap','keychain'];
+function isBadgeCharm(b){
+  const s = normSearch(b && b.series);
+  return !!s && CHARM_KEYWORDS.some(k => s.includes(normSearch(k)));
+}
+function showAsRound(b){ return isBadgeRound(b.size) && !isBadgeCharm(b); }
 
 function buildSidebar(){
   const bc={};
@@ -1931,10 +1939,10 @@ function renderGrid(list){
       <div class="badge-batch-cb" onclick="event.stopPropagation();toggleBadgeSelection('${b.id}')">${_batchSelected.has(b.id)?'✓':''}</div>
       <button class="fav-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openFavModal('${b.id}')" style="position:absolute;top:5px;left:5px;z-index:3;background:rgba(0,0,0,0.5);border:none;color:${isInAnyList(b.id)?'#ffd700':'#fff'};font-size:1rem;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${isInAnyList(b.id)?'★':'☆'}</button>
       <button class="col-btn" data-badge-id="${b.id}" onclick="event.stopPropagation();openCollectionModal('${b.id}')" style="position:absolute;top:5px;left:36px;z-index:3;background:${isCollected(b.id)?'#22c55e':'rgba(0,0,0,0.5)'};border:none;color:#fff;font-size:0.85rem;font-weight:700;width:26px;height:26px;border-radius:50%;cursor:pointer;display:${currentUser?'flex':'none'};align-items:center;justify-content:center;padding:0;line-height:1;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'" title="蒐集記錄">${isCollected(b.id)?'✓':'+'}</button>
-      <div class="badge-img-wrap${isBadgeRound(b.size)?' round':''}">
+      <div class="badge-img-wrap${showAsRound(b)?' round':''}">
         <img src="${src}" crossorigin="anonymous" alt="${b.character||b.id}" loading="lazy"
-          class="${isBadgeRound(b.size)?'':'non-round'}"
-          style="${isBadgeRound(b.size)?'border-radius:50%;':''}"
+          class="${showAsRound(b)?'':'non-round'}"
+          style="${showAsRound(b)?'border-radius:50%;':''}"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';_noImgIds.add('${b.id}');_maybeRefreshHideNoImg()"/>
         <div class="no-img" style="display:none;color:${CHAR_COLORS[b.character]||CHAR_COLORS.default}">🎵</div>
         ${_isNew?'<div class="new-tag">NEW</div>':''}
@@ -1981,7 +1989,7 @@ function openDetail(idx){
   dImg.crossOrigin='anonymous'; dImg.src=imgUrl(b);
   dImg.onerror=function(){this.style.display='none';};
   dImg.style.display='block';
-  dImg.className = isBadgeRound(b.size) ? 'detail-img' : 'detail-img non-round';
+  dImg.className = showAsRound(b) ? 'detail-img' : 'detail-img non-round';
   document.getElementById('d-band').textContent=getBandName(b.band,currentLang)||'—';
   document.getElementById('d-band').style.cssText=`background:${c}20;color:${c}`;
   document.getElementById('d-char').textContent=getCharName(b.character,currentLang)||'—';
@@ -3196,7 +3204,7 @@ function renderTable(list){
         <td style="font-size:0.8rem;color:var(--muted);">${escapeHtml(sourceText)}</td>`;
     }
     return `<tr data-badge-id="${b.id}" onclick="handleTableRowClick(event,'${b.id}',${idx})">
-      <td><img class="tbl-thumb" src="${src}" crossorigin="anonymous" onerror="this.style.visibility='hidden'" alt=""/></td>
+      <td><img class="tbl-thumb${showAsRound(b)?'':' non-round'}" src="${src}" crossorigin="anonymous" onerror="this.style.visibility='hidden'" alt=""/></td>
       <td><span class="tbl-band-tag" style="background:${c}20;color:${c}">${getBandName(b.band,currentLang)||'—'}</span></td>
       <td>${b.character||'—'}</td>
       <td>${eventHtml}</td>
@@ -3583,7 +3591,7 @@ async function doExport(){
       const x = PAD + col*(CELL+GAP);
       const y = curY + row * ITEM_H;
       const c = bandColor(b.band);
-      const isRoundBadge = isRound(b.size||'');
+      const isRoundBadge = isRound(b.size||'') && !isBadgeCharm(b);
 
       // Card bg
       ctx.fillStyle = '#fff';
@@ -6046,7 +6054,7 @@ function renderBatchCollectionModal(){
   title.textContent = `✓ 逐張填寫（${idx+1} / ${total}）`;
   content.innerHTML = `
     <div style="display:flex;gap:0.75rem;align-items:center;padding:0.6rem;background:var(--bg);border-radius:10px;margin-bottom:0.85rem;">
-      <img src="${imgSrc}" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:${isBadgeRound(badgeObj.size)?'50%':'8px'};flex-shrink:0;" onerror="this.style.visibility='hidden'"/>
+      <img src="${imgSrc}" alt="" style="width:54px;height:54px;object-fit:${showAsRound(badgeObj)?'cover':'contain'};border-radius:${showAsRound(badgeObj)?'50%':'8px'};flex-shrink:0;" onerror="this.style.visibility='hidden'"/>
       <div style="min-width:0;flex:1;">
         <div style="font-size:0.82rem;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${badgeObj.character || '—'}</div>
         <div style="font-size:0.68rem;color:var(--muted);font-family:monospace;">#${curId}</div>
