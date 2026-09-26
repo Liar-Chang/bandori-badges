@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/9/26",
+    "content": {
+      "zh": "【新增】\n・BanG Dream! 交織的樂章公測紀念POPUP 樂團大徽章（新增 5 張）\n【功能調整】\n・尺寸新增「38mm圓形」「45mm圓形」\n・尺寸「六角形」更名為「多角形」，並可在尺寸篩選中單獨選取\n・搜尋可用活動簡稱，且不受空格、全形半形差異影響\n・附吊飾的徽章改為完整顯示，不再裁成圓形；表格檢視的縮圖也依徽章形狀顯示",
+      "ja": "【新規】\n・BanG Dream! 交織的樂章公測紀念POPUP 樂團大徽章（5枚追加）\n【機能調整】\n・サイズに「38mmサークル」「45mmサークル」を追加\n・サイズ「六角形」を「多角形」に名称変更し、サイズ絞り込みで個別に選べるように\n・検索でイベント略称もヒットするように（スペースや全角・半角の違いも区別しません）\n・チャーム付きの缶バッジを円形に切り抜かず全体表示に。表形式のサムネイルも形に合わせて表示",
+      "en": "【New】\n・BanG Dream! 交織的樂章公測紀念POPUP 樂團大徽章 (5 added)\n【Feature Adjustments】\n・Added sizes \"38mm Circle\" and \"45mm Circle\"\n・Renamed size \"Hexagon\" to \"Polygon\" and made it selectable on its own in the size filter\n・Search now matches short event names and ignores spaces and full-/half-width differences\n・Badges with charms are now shown in full instead of being cropped to a circle; table-view thumbnails follow each badge's shape",
+      "ko": "【추가】\n・BanG Dream! 交織的樂章公測紀念POPUP 樂團大徽章 (5장 추가)\n【기능 조정】\n・사이즈 「38mm 원형」「45mm 원형」 추가\n・사이즈 「육각형」을 「다각형」으로 변경하고 사이즈 필터에서 따로 선택할 수 있도록 수정\n・검색에서 이벤트 약칭도 찾을 수 있으며, 띄어쓰기와 전각·반각 차이를 구분하지 않음\n・참이 달린 뱃지는 원형으로 자르지 않고 전체를 표시, 표 보기 썸네일도 뱃지 모양에 맞춰 표시"
+    }
+  },
+  {
     "date": "2026/9/24",
     "content": {
       "zh": "【新增】\n・Ave Mujica 7th LIVE「Virtus」　トレーディング缶バッジ（新增 10 張）\n【功能調整】\n（無）",
