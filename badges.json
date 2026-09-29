@@ -166726,5 +166726,25 @@
     "created_at": "2026-09-28T15:37:27.398Z",
     "updated_at": "2026-09-28T15:37:27.398Z",
     "image_updated_at": "2026-09-28T15:37:27.398Z"
+  },
+  {
+    "id": "8605",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "藤都子",
+    "series": "特典",
+    "year": "2026年9月29日",
+    "event": "ねんどろいど 藤都子",
+    "type": "角色本身",
+    "size": "未確定",
+    "country": "日本",
+    "url": "https://www.goodsmile.com/ja/product/1143257/%E3%81%AD%E3%82%93%E3%81%A9%E3%82%8D%E3%81%84%E3%81%A9+%E8%97%A4%E9%83%BD%E5%AD%90",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "ねんどろいど 藤都子",
+    "created_at": "2026-09-29T13:28:44.877Z",
+    "updated_at": "2026-09-29T13:28:44.877Z",
+    "image_updated_at": "2026-09-29T13:28:44.877Z"
   }
 ]
