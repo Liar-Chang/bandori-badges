@@ -323,7 +323,7 @@ canvas#mc.bg-gray,#preview-canvas.bg-gray{background:#888888;}
       <div style="font-size:0.68rem;color:var(--muted);">下一個檔名：<span id="num-preview" style="color:var(--accent);font-family:'Space Mono',monospace;">001.jpg</span></div>
       <div class="grid-row" style="margin-top:0.5rem;">
         <input type="checkbox" id="trim-blank" checked onchange="updatePreview()"/>
-        <label for="trim-blank" style="cursor:pointer;">去除周圍空白（裁齊內容）</label>
+        <label for="trim-blank" style="cursor:pointer;">去除形狀周圍空白（心形/撥片/星形）</label>
       </div>
       <p style="font-size:0.64rem;color:var(--muted);line-height:1.5;margin-top:0.3rem;">把星形等形狀外圍的透明空白削掉,讓星尖貼齊圖片邊。</p>
     </div>
@@ -1218,7 +1218,7 @@ function updatePreview(){
   let outH = isCR?Math.round(r*2):Math.round(ry2-ry1);
   // 去除周圍空白(裁齊內容)— 預覽即時呈現;尺寸標示換算回實際輸出大小(預覽有上限 600)
   if(document.getElementById('trim-blank')?.checked){
-    const owPre=pc.width, ohPre=pc.height, t=trimAlpha(pc);
+    const owPre=pc.width, ohPre=pc.height, t=trimToShape(pc, shape);
     if(t!==pc){
       outW=Math.round(outW*t.width/owPre); outH=Math.round(outH*t.height/ohPre);
       pc.width=t.width; pc.height=t.height; pc.getContext('2d').drawImage(t,0,0);
@@ -1310,6 +1310,7 @@ function singleAutoDetectNext(){
 }
 
 function applySingleDetectCircle(circle){
+  selPlaced = true;
   cx = circle.cx;
   cy = circle.cy;
   r = circle.r;
@@ -1323,6 +1324,7 @@ function applySingleDetectCircle(circle){
 }
 
 function previewShape(){
+  selPlaced=true;
   const isCenterR=shape==='circle'||shape==='square';
   if(isCenterR){
     const ncx=parseFloat(document.getElementById('cx').value);
@@ -1366,6 +1368,7 @@ function moveRectByCenter(){
   if(isNaN(ncx)||isNaN(ncy))return;
   const w=rx2-rx1,h=ry2-ry1;
   if(w<=0||h<=0)return; // 還沒選過框就不處理
+  selPlaced=true;
   rx1=ncx-w/2; ry1=ncy-h/2;
   rx2=ncx+w/2; ry2=ncy+h/2;
   // 更新左上/右下欄位
@@ -1375,7 +1378,7 @@ function moveRectByCenter(){
   document.getElementById('ry2').value=Math.round(ry2);
   draw();
 }
-function syncR(){const nr=parseFloat(document.getElementById('r-click').value);if(!isNaN(nr)&&nr>0){r=nr;draw();}}
+function syncR(){const nr=parseFloat(document.getElementById('r-click').value);if(!isNaN(nr)&&nr>0){r=nr;selPlaced=true;draw();}}
 function setBgMode(){
   const mode=document.getElementById('bg-sel').value;
   const mc=document.getElementById('mc');
@@ -1395,6 +1398,7 @@ function setBgMode(){
 function getPos(e){const rect=mc.getBoundingClientRect();return{x:(e.clientX-rect.left)/scale,y:(e.clientY-rect.top)/scale};}
 // ── 選取框編輯:框內拖曳=移動、拖邊=單向調整、拖角=等比例縮放(圓形/正方形一律以半徑縮放) ──
 let selDrag=null;
+let selPlaced=false; // false=載入圖時自動放的預設框;使用者畫過/偵測/手動輸入後才 true,才能拖曳移動或縮放
 const SEL_HIT_PX=9; // 命中邊/角的容許距離(螢幕像素)
 const SEL_HINT_DONE='✓ 完成！框內拖曳=移動、拖邊=調整、拖角=等比例縮放;框外拖曳=重畫';
 function getSelGeom(){
@@ -1436,7 +1440,7 @@ function selCursor(hit,pos){
 function updateSelCursor(pos){
   if(selDrag) return;
   let c='crosshair';
-  if(mode==='click'&&!dragging&&!levelToolActive){
+  if(selPlaced&&mode==='click'&&!dragging&&!levelToolActive){
     const hit=hitTestSel(pos);
     if(hit) c=selCursor(hit,pos);
   }
@@ -1498,7 +1502,7 @@ function endSelDrag(){
   draw();
 }
 function drawSelHandles(){
-  if(mode!=='click'||dragging) return;
+  if(!selPlaced||mode!=='click'||dragging) return;
   const g=getSelGeom(); if(!g) return;
   const pts=[];
   if(g.t==='circle'){
@@ -1578,7 +1582,7 @@ mc.addEventListener('mousedown',e=>{
   }
   if(mode==='click'){
     const pos=getPos(e);
-    const selHit=hitTestSel(pos);
+    const selHit=selPlaced?hitTestSel(pos):null;
     if(selHit){startSelDrag(selHit,pos);return;}
     dragOrigin={x:pos.x,y:pos.y};
     const isCenterR=shape==='circle'||shape==='square';
@@ -1591,7 +1595,7 @@ mc.addEventListener('mouseup',e=>{
   if(singlePan.active){singlePan.active=false; mc.style.cursor=''; return;}
   endSelDrag();
   if(mode==='click'&&dragging){
-    dragging=false;syncInputs();draw();
+    dragging=false;selPlaced=true;syncInputs();draw();
     document.getElementById('click-hint').innerHTML=SEL_HINT_DONE;
   }
 });
@@ -1643,13 +1647,22 @@ mc.addEventListener('touchend',e=>{
 });
 
 // 去除周圍透明空白:裁到「不透明內容」的外接矩形(全透明或已貼齊則原樣返回)
-function trimAlpha(src){
-  const w=src.width, h=src.height; if(!w||!h) return src;
-  let data; try{ data=src.getContext('2d').getImageData(0,0,w,h).data; }catch(e){ return src; }
+// 去除周圍空白:只裁掉「形狀沒填滿裁切框」的空白(心形/撥片/星形),用形狀遮罩算外框、不讀原圖像素,
+// 所以原圖的透明背景或框超出圖片的部分不會被裁掉,預覽與輸出都跟框起來的位置一致
+function trimToShape(src, shp){
+  const w=src.width, h=src.height;
+  if(!w||!h||!(shp==='heart'||shp==='pick'||shp==='star')) return src;
+  const m=document.createElement('canvas'); m.width=w; m.height=h;
+  const g=m.getContext('2d');
+  if(shp==='heart') drawHeartPath(g,w/2,0,w/2,h);
+  else if(shp==='pick') drawPickPath(g,w/2,0,w/2,h);
+  else drawStarPath(g,w/2,0,w/2,h);
+  g.fill();
+  const data=g.getImageData(0,0,w,h).data;
   let minX=w, minY=h, maxX=-1, maxY=-1;
   for(let y=0;y<h;y++) for(let x=0;x<w;x++){ if(data[(y*w+x)*4+3]>10){ if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; } }
-  if(maxX<minX) return src;                                              // 全透明
-  if(minX===0&&minY===0&&maxX===w-1&&maxY===h-1) return src;             // 已貼齊四邊,免複製
+  if(maxX<minX) return src;
+  if(minX===0&&minY===0&&maxX===w-1&&maxY===h-1) return src;
   const nw=maxX-minX+1, nh=maxY-minY+1;
   const out=document.createElement('canvas'); out.width=nw; out.height=nh;
   out.getContext('2d').drawImage(src, minX,minY,nw,nh, 0,0,nw,nh);
@@ -1678,7 +1691,7 @@ function doCrop(){
   else if(shape==='pick'){drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   else if(shape==='star'){drawStarPath(oc,ow/2,0,ow/2,oh);oc.clip();}
   oc.drawImage(img,srcX,srcY,srcW,srcH,0,0,ow,oh);
-  const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(off) : off;
+  const outC = document.getElementById('trim-blank')?.checked ? trimToShape(off, shape) : off;
   outC.toBlob(blob=>{
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.href=url;a.download=filename;a.click();
@@ -1743,7 +1756,7 @@ async function doCropAllSamePosition(){
     else if(shape==='pick'){drawPickPath(oc,ow/2,0,ow/2,oh);oc.clip();}
     else if(shape==='star'){drawStarPath(oc,ow/2,0,ow/2,oh);oc.clip();}
     oc.drawImage(im,srcX,srcY,srcW,srcH,0,0,ow,oh);
-    const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(off) : off;
+    const outC = document.getElementById('trim-blank')?.checked ? trimToShape(off, shape) : off;
     const blob = await new Promise(res=>outC.toBlob(res,mime,0.95));
     if(blob) zip.file(String(startNum+i).padStart(3,'0')+'.'+ext, blob);
   }
@@ -1770,6 +1783,7 @@ function resetCurrent(){
   r=Math.round(Math.min(img.naturalWidth,img.naturalHeight)/2*0.85);
   rx1=Math.round(img.naturalWidth*0.1);ry1=Math.round(img.naturalHeight*0.1);
   rx2=Math.round(img.naturalWidth*0.9);ry2=Math.round(img.naturalHeight*0.9);
+  selPlaced=false;
   syncInputs();draw();
 }
 
@@ -3347,7 +3361,7 @@ async function cropBatchAll(){
     // 從原圖切出
     cctx.drawImage(img, c.cx - c.hw, c.cy - c.hh, ow, oh, 0, 0, ow, oh);
     cctx.restore();
-    const outC = document.getElementById('trim-blank')?.checked ? trimAlpha(cropCanvas) : cropCanvas;
+    const outC = document.getElementById('trim-blank')?.checked ? trimToShape(cropCanvas, shape) : cropCanvas;
     const blob = await new Promise(resolve => outC.toBlob(resolve, mime));
     if(blob){
       const filename = String(startNum + i).padStart(3, '0') + '.' + ext;
