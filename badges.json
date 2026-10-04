@@ -127911,8 +127911,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-08-13T13:51:55.086Z",
-    "updated_at": "2026-08-13T14:03:34.936Z",
-    "image_updated_at": null
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6980",
@@ -127932,8 +127932,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-08-13T14:07:10.332Z",
-    "updated_at": "2026-08-13T14:08:45.569Z",
-    "image_updated_at": null
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6981",
@@ -127952,7 +127952,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-13T14:08:28.213Z",
-    "updated_at": "2026-08-13T14:08:28.213Z"
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6982",
@@ -127971,7 +127972,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-13T14:11:07.725Z",
-    "updated_at": "2026-08-13T14:11:07.725Z"
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6983",
@@ -127991,8 +127993,8 @@
     "is_lottery": false,
     "noimg": false,
     "created_at": "2026-08-13T14:17:45.812Z",
-    "updated_at": "2026-08-13T14:19:12.334Z",
-    "image_updated_at": null
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6984",
@@ -128011,7 +128013,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-13T14:35:40.116Z",
-    "updated_at": "2026-08-13T14:35:40.116Z"
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6985",
@@ -128030,7 +128033,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-13T14:37:15.077Z",
-    "updated_at": "2026-08-13T14:37:15.077Z"
+    "updated_at": "2026-10-04T15:29:23.245Z",
+    "image_updated_at": "2026-10-04T15:29:23.245Z"
   },
   {
     "id": "6986",
