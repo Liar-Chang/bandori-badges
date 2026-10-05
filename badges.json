@@ -167061,7 +167061,7 @@
     "id": "8941",
     "ext": "png",
     "band": "Afterglow",
-    "character": "Ave Mujica全團",
+    "character": "Afterglow全團",
     "series": "グッズ付初回生産限定盤－WonderGOO/新星堂(一部店舗を除く)/新星堂WonderGOOオンライン",
     "year": "2027年2月10日",
     "event": "Afterglow ミニAlbum「OVERGLOW」",
@@ -167073,8 +167073,10 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
+    "noimg": false,
     "created_at": "2026-10-05T15:48:37.340Z",
-    "updated_at": "2026-10-05T15:48:37.340Z"
+    "updated_at": "2026-10-05T15:52:01.154Z",
+    "image_updated_at": null
   },
   {
     "id": "8942",
@@ -167153,5 +167155,45 @@
     "is_lottery": false,
     "created_at": "2026-10-05T15:50:57.106Z",
     "updated_at": "2026-10-05T15:50:57.106Z"
+  },
+  {
+    "id": "8548",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "戶山香澄",
+    "series": "浮雕",
+    "year": "2026年9月22日",
+    "event": "Anime Girls Project Store",
+    "type": "角色本身",
+    "size": "75mm圓形",
+    "country": "中國",
+    "url": "https://idolmaster-official.jp/news/01_19922",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "Anime Girls Project Store",
+    "created_at": "2026-10-05T16:41:20.422Z",
+    "updated_at": "2026-10-05T16:46:45.409Z",
+    "image_updated_at": "2026-10-05T16:46:45.409Z"
+  },
+  {
+    "id": "8549",
+    "ext": "png",
+    "band": "Poppin'Party",
+    "character": "戶山香澄",
+    "series": "Q版",
+    "year": "2026年9月22日",
+    "event": "Anime Girls Project Store",
+    "type": "角色本身",
+    "size": "44mm圓形",
+    "country": "中國",
+    "url": "https://idolmaster-official.jp/news/01_19922",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "Anime Girls Project Store",
+    "created_at": "2026-10-05T16:43:08.229Z",
+    "updated_at": "2026-10-05T16:46:45.409Z",
+    "image_updated_at": "2026-10-05T16:46:45.409Z"
   }
 ]
