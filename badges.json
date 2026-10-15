@@ -137034,7 +137034,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-29T13:09:37.528Z",
-    "updated_at": "2026-08-29T13:09:37.528Z"
+    "updated_at": "2026-10-15T15:46:56.218Z",
+    "image_updated_at": "2026-10-15T15:46:56.218Z"
   },
   {
     "id": "7435",
@@ -137110,7 +137111,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-29T13:09:37.528Z",
-    "updated_at": "2026-08-29T13:09:37.528Z"
+    "updated_at": "2026-10-15T15:46:56.218Z",
+    "image_updated_at": "2026-10-15T15:46:56.218Z"
   },
   {
     "id": "7439",
