@@ -137274,7 +137274,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-29T13:11:11.059Z",
-    "updated_at": "2026-08-29T13:11:11.059Z"
+    "updated_at": "2026-10-16T14:11:06.762Z",
+    "image_updated_at": "2026-10-16T14:11:06.762Z"
   },
   {
     "id": "7447",
@@ -137293,7 +137294,8 @@
     "admin_note": "",
     "is_lottery": false,
     "created_at": "2026-08-29T13:11:33.313Z",
-    "updated_at": "2026-08-29T13:11:33.313Z"
+    "updated_at": "2026-10-16T14:11:06.762Z",
+    "image_updated_at": "2026-10-16T14:11:06.762Z"
   },
   {
     "id": "7448",
