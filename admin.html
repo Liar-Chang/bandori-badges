@@ -2794,7 +2794,7 @@ function clGetContent(item, lang){
 }
 function clRender(){
   const wrap=document.getElementById('cl-items');
-  if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';return;}
+  if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';clRenderPinJump();return;}
   const TA = (id,val,ph)=>`<div style="margin-bottom:0.4rem;"><label style="font-size:0.7rem;font-weight:600;color:#888;">${ph}</label><textarea id="${id}" rows="2" style="width:100%;margin-top:0.15rem;padding:0.35rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.82rem;box-sizing:border-box;resize:vertical;">${val}</textarea></div>`;
   wrap.innerHTML=clData.map((item,i)=>{
     const isPinned=!!item.pinned;
@@ -2807,7 +2807,7 @@ function clRender(){
     const en = isMulti ? (item.content.en||'') : '';
     const ko = isMulti ? (item.content.ko||'') : '';
     const badge = isMulti ? '<span style="font-size:0.6rem;background:#e8f5e9;color:#27ae60;border:1px solid #a5d6a7;border-radius:8px;padding:0.05rem 0.35rem;margin-left:0.3rem;">🌐 多語</span>' : '';
-    return `<div style="border:1.5px solid ${borderColor};border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:${bgColor};">
+    return `<div id="cl-item-${i}" style="border:1.5px solid ${borderColor};border-radius:10px;padding:0.85rem 1rem;margin-bottom:0.6rem;background:${bgColor};transition:box-shadow 0.3s;">
       <div style="display:flex;align-items:flex-start;gap:0.6rem;">
         <div style="display:flex;flex-direction:column;gap:0.2rem;flex-shrink:0;">
           <button onclick="clMove(${i},-1)" ${i===0?'disabled':''} style="font-size:0.7rem;padding:0.15rem 0.4rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;opacity:${i===0?'0.3':'1'};">▲</button>
@@ -2840,6 +2840,27 @@ function clRender(){
     </div>`;
   }).join('');
   document.getElementById('cl-status').textContent=`共 ${clData.length} 筆`;
+  clRenderPinJump();
+}
+// 置頂公告散落在長列表中(如歷月推薦歌單在第 35 則、徵求圖檔在最後一則),頂端列出捷徑,點了直接捲過去
+function clRenderPinJump(){
+  const el=document.getElementById('cl-pin-jump'); if(!el) return;
+  const pins=clData.map((item,i)=>({item,i})).filter(p=>p.item.pinned);
+  if(!pins.length){el.innerHTML='';el.style.display='none';return;}
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  el.style.display='flex';
+  el.innerHTML='<span style="font-size:0.72rem;font-weight:700;color:#e05c5c;flex-shrink:0;">📌 置頂快速跳轉</span>'+pins.map(({item,i})=>{
+    const first=(clGetContent(item,'zh').split('\n').find(l=>l.trim())||'').trim();
+    const label=first.length>16?first.slice(0,16)+'…':first;
+    return `<button onclick="clJumpTo(${i})" title="${esc(first)}" style="font-family:inherit;font-size:0.72rem;padding:0.2rem 0.65rem;border:1.5px solid rgba(224,92,92,0.5);border-radius:12px;background:rgba(224,92,92,0.06);color:#c0392b;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.date)}・${esc(label)}</button>`;
+  }).join('');
+}
+function clJumpTo(i){
+  const el=document.getElementById('cl-item-'+i), panel=document.getElementById('cl-panel-list'); if(!el||!panel) return;
+  const bar=document.getElementById('cl-pin-jump'), barH=bar&&bar.style.display!=='none'?bar.offsetHeight:0;
+  panel.scrollTo({top:panel.scrollTop+el.getBoundingClientRect().top-panel.getBoundingClientRect().top-barH-8,behavior:'smooth'});
+  el.style.boxShadow='0 0 0 3px rgba(224,92,92,0.45)';
+  setTimeout(()=>{el.style.boxShadow='';},1600);
 }
 function clTogglePin(i){ clData[i].pinned = !clData[i].pinned; clRender(); }
 function clStartEdit(i){document.getElementById('cl-view-'+i).style.display='none';document.getElementById('cl-edit-'+i).style.display='block';document.getElementById('cl-btns-'+i).style.display='none';document.getElementById('cl-editbtns-'+i).style.display='flex';}
@@ -3270,7 +3291,7 @@ buildTextCharList('');
 <div id="changelog-overlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:500;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:16px;width:min(680px,96vw);max-height:92vh;display:flex;flex-direction:column;font-family:inherit;">
     <div style="padding:1.25rem 1.5rem 0;flex-shrink:0;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;"><h2 style="margin:0;font-size:1rem;font-weight:700;">📝 更新日誌管理</h2><div style="display:flex;gap:0.5rem;"><button id="cl-tab-list" onclick="clSwitchTab('list')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #3d3d8f;background:#3d3d8f;color:#fff;cursor:pointer;font-weight:600;">📋 全部日誌</button><button id="cl-tab-add" onclick="clSwitchTab('add')" style="font-family:inherit;font-size:0.8rem;padding:0.35rem 0.9rem;border-radius:6px;border:1.5px solid #ddd;background:#fff;color:#555;cursor:pointer;">➕ 新增</button></div></div></div>
-    <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;"><div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div><div id="cl-list-wrap" style="display:none;"><div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div><div id="cl-items"></div></div><div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div></div>
+    <div id="cl-panel-list" style="flex:1;overflow-y:auto;padding:0 1.5rem;"><div id="cl-loading" style="text-align:center;padding:2rem;color:#aaa;font-size:0.85rem;">載入中...</div><div id="cl-list-wrap" style="display:none;"><div style="font-size:0.78rem;color:#888;margin-bottom:0.75rem;">從 GitHub 載入 · 可編輯、刪除、調整順序</div><div id="cl-pin-jump" style="display:none;position:sticky;top:0;z-index:2;background:#fff;flex-wrap:wrap;align-items:center;gap:0.4rem;padding:0.5rem 0;margin-bottom:0.6rem;border-bottom:1px dashed rgba(224,92,92,0.35);"></div><div id="cl-items"></div></div><div id="cl-list-err" style="display:none;color:#c0392b;font-size:0.82rem;padding:1rem 0;"></div></div>
     <div id="cl-panel-add" style="flex:1;overflow-y:auto;padding:0 1.5rem;display:none;">
       <div style="margin-bottom:0.75rem;">
         <label style="font-size:0.82rem;font-weight:600;color:#555;">日期</label>
