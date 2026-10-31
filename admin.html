@@ -2795,7 +2795,7 @@ function clGetContent(item, lang){
 function clRender(){
   const wrap=document.getElementById('cl-items');
   if(!clData.length){wrap.innerHTML='<div style="color:#aaa;font-size:0.85rem;padding:1rem 0;">目前沒有日誌資料</div>';clRenderPinJump();return;}
-  const TA = (id,val,ph)=>`<div style="margin-bottom:0.4rem;"><label style="font-size:0.7rem;font-weight:600;color:#888;">${ph}</label><textarea id="${id}" rows="2" style="width:100%;margin-top:0.15rem;padding:0.35rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.82rem;box-sizing:border-box;resize:vertical;">${val}</textarea></div>`;
+  const TA = (id,val,ph)=>`<div style="margin-bottom:0.4rem;"><label style="font-size:0.7rem;font-weight:600;color:#888;">${ph}</label><textarea id="${id}" rows="4" oninput="clAutoSize(this)" style="width:100%;margin-top:0.15rem;padding:0.35rem 0.6rem;border:1.5px solid #c0bef0;border-radius:6px;font-family:inherit;font-size:0.82rem;box-sizing:border-box;resize:vertical;">${val}</textarea></div>`;
   wrap.innerHTML=clData.map((item,i)=>{
     const isPinned=!!item.pinned;
     const borderColor=isPinned?'#e05c5c':'#e8e8e8';
@@ -2863,7 +2863,9 @@ function clJumpTo(i){
   setTimeout(()=>{el.style.boxShadow='';},1600);
 }
 function clTogglePin(i){ clData[i].pinned = !clData[i].pinned; clRender(); }
-function clStartEdit(i){document.getElementById('cl-view-'+i).style.display='none';document.getElementById('cl-edit-'+i).style.display='block';document.getElementById('cl-btns-'+i).style.display='none';document.getElementById('cl-editbtns-'+i).style.display='flex';}
+function clStartEdit(i){document.getElementById('cl-view-'+i).style.display='none';document.getElementById('cl-edit-'+i).style.display='block';document.getElementById('cl-btns-'+i).style.display='none';document.getElementById('cl-editbtns-'+i).style.display='flex';document.querySelectorAll('#cl-edit-'+i+' textarea').forEach(clAutoSize);}
+// 文字框依內容自動長高(上限畫面高度 60%,再多就框內捲動);右下角仍可手動拖拉
+function clAutoSize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight+4,Math.round(window.innerHeight*0.6))+'px';}
 function clCancelEdit(i){document.getElementById('cl-view-'+i).style.display='block';document.getElementById('cl-edit-'+i).style.display='none';document.getElementById('cl-btns-'+i).style.display='flex';document.getElementById('cl-editbtns-'+i).style.display='none';}
 function clConfirmEdit(i){
   const d=document.getElementById('cl-edit-date-'+i).value.trim();
@@ -3301,19 +3303,19 @@ buildTextCharList('');
         <div style="font-size:0.78rem;color:#888;margin-bottom:0.6rem;">各語言內容（至少填繁中；其他語言可空白，空白時前台顯示繁中版本）</div>
         <div style="margin-bottom:0.6rem;">
           <label style="font-size:0.82rem;font-weight:600;color:#555;">🇹🇼 繁中</label>
-          <textarea id="cl-content-zh" rows="3" placeholder="繁體中文內容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="cl-content-zh" rows="6" oninput="clAutoSize(this)" placeholder="繁體中文內容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
         <div style="margin-bottom:0.6rem;">
           <label style="font-size:0.82rem;font-weight:600;color:#555;">🇯🇵 日文</label>
-          <textarea id="cl-content-ja" rows="3" placeholder="日本語の内容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="cl-content-ja" rows="6" oninput="clAutoSize(this)" placeholder="日本語の内容" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
         <div style="margin-bottom:0.6rem;">
           <label style="font-size:0.82rem;font-weight:600;color:#555;">🇺🇸 英文</label>
-          <textarea id="cl-content-en" rows="3" placeholder="English content" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="cl-content-en" rows="6" oninput="clAutoSize(this)" placeholder="English content" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
         <div style="margin-bottom:0.6rem;">
           <label style="font-size:0.82rem;font-weight:600;color:#555;">🇰🇷 韓文</label>
-          <textarea id="cl-content-ko" rows="3" placeholder="한국어 내용" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
+          <textarea id="cl-content-ko" rows="6" oninput="clAutoSize(this)" placeholder="한국어 내용" style="width:100%;margin-top:0.3rem;padding:0.5rem 0.75rem;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:0.85rem;box-sizing:border-box;resize:vertical;"></textarea>
         </div>
       </div>
       <div style="margin-bottom:0.75rem;">
