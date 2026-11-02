@@ -176327,10 +176327,11 @@
     "id": "9400",
     "ext": "png",
     "band": "RAISE A SUILEN",
-    "character": "鳰原令王那(PAREO)",
+    "character": "珠手知由(CHU2)",
     "series": "BIG",
     "year": "2025年11月12日",
     "event": "チュチュ Ani-Art 第6弾 BIG缶バッジ",
+    "short_event": "Ani-Art 第6弾",
     "type": "角色本身",
     "size": "15.2cm圓形",
     "country": "日本",
@@ -176338,9 +176339,9 @@
     "note": "",
     "admin_note": "",
     "is_lottery": false,
-    "short_event": "Ani-Art 第6弾",
+    "noimg": false,
     "created_at": "2026-11-02T13:59:12.384Z",
-    "updated_at": "2026-11-02T13:59:12.384Z",
+    "updated_at": "2026-11-02T15:06:30.169Z",
     "image_updated_at": "2026-11-02T13:59:12.384Z"
   }
 ]
