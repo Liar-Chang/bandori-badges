@@ -176343,5 +176343,25 @@
     "created_at": "2026-11-02T13:59:12.384Z",
     "updated_at": "2026-11-02T15:06:30.169Z",
     "image_updated_at": "2026-11-02T13:59:12.384Z"
+  },
+  {
+    "id": "9249",
+    "ext": "png",
+    "band": "夢限大MewType",
+    "character": "千石由乃",
+    "series": "ホログラム",
+    "year": "2026年11月4日",
+    "event": "BanG Dream!　千石ユノ バースデーグッズ2026　ホログラム缶バッジ",
+    "type": "角色本身",
+    "size": "56mm圓形",
+    "country": "日本",
+    "url": "https://bushiroad-store.com/collections/yuno-birthday2026/products/2000331109357",
+    "note": "",
+    "admin_note": "",
+    "is_lottery": false,
+    "short_event": "千石ユノ バースデーグッズ2026",
+    "created_at": "2026-11-04T14:23:15.308Z",
+    "updated_at": "2026-11-04T14:23:15.308Z",
+    "image_updated_at": "2026-11-04T14:23:15.308Z"
   }
 ]
