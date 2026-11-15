@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026/11/15",
+    "content": {
+      "zh": "【新增】\n・BanG Dream! 少女乐团派对! 角色徽章 2026ver.（新增 8 張）\n・BanG Dream! 少女乐团派对 角色徽章 2024 ver.（新增 7 張）\n・BanG Dream! 少女乐团派对! 流沙亚克力徽章 2025 ver.（新增 7 張）\n・BanG Dream! 少女乐团派对! 角色徽章 2025 ver.（新增 7 張）\n・トレーディング Botania 缶バッジ ver.A　BanG Dream! 10th Anniversary（新增 5 張）\n・トレーディング Botania 缶バッジ ver.B　BanG Dream! 10th Anniversary（新增 5 張）\n・トレーディング Botania 缶バッジ ver.C　BanG Dream! 10th Anniversary（新增 5 張）\n・トレーディング Botania 缶バッジ ver.D　BanG Dream! 10th Anniversary（新增 10 張）\n・トレーディング Botania 缶バッジ ver.E　BanG Dream! 10th Anniversary（新增 10 張）\n【功能調整】\n・millsage、一家Dumb Rock! 全員角色名補上日文、英文、韓文版本，一家Dumb Rock! 團名韓文改為「일가 Dumb Rock!」\n・圖鑑卡片的角色名稱太長時改為自動換行，完整顯示、不再被截斷",
+      "ja": "【新規】\n・BanG Dream! 少女乐团派对! 角色徽章 2026ver.（8枚追加）\n・BanG Dream! 少女乐团派对 角色徽章 2024 ver.（7枚追加）\n・BanG Dream! 少女乐团派对! 流沙亚克力徽章 2025 ver.（7枚追加）\n・BanG Dream! 少女乐团派对! 角色徽章 2025 ver.（7枚追加）\n・トレーディング Botania 缶バッジ ver.A　BanG Dream! 10th Anniversary（5枚追加）\n・トレーディング Botania 缶バッジ ver.B　BanG Dream! 10th Anniversary（5枚追加）\n・トレーディング Botania 缶バッジ ver.C　BanG Dream! 10th Anniversary（5枚追加）\n・トレーディング Botania 缶バッジ ver.D　BanG Dream! 10th Anniversary（10枚追加）\n・トレーディング Botania 缶バッジ ver.E　BanG Dream! 10th Anniversary（10枚追加）\n【機能調整】\n・millsage・一家Dumb Rock! メンバー名の日本語・英語・韓国語表記を追加\n・図鑑カードのキャラクター名が長い場合も省略せず、折り返して全文表示するように変更",
+      "en": "【New】\n・BanG Dream! 少女乐团派对! 角色徽章 2026ver. (8 added)\n・BanG Dream! 少女乐团派对 角色徽章 2024 ver. (7 added)\n・BanG Dream! 少女乐团派对! 流沙亚克力徽章 2025 ver. (7 added)\n・BanG Dream! 少女乐团派对! 角色徽章 2025 ver. (7 added)\n・Trading Botania Can Badge ver.A BanG Dream! 10th Anniversary (5 added)\n・Trading Botania Can Badge ver.B BanG Dream! 10th Anniversary (5 added)\n・Trading Botania Can Badge ver.C BanG Dream! 10th Anniversary (5 added)\n・Trading Botania Can Badge ver.D BanG Dream! 10th Anniversary (10 added)\n・Trading Botania Can Badge ver.E BanG Dream! 10th Anniversary (10 added)\n【Feature Adjustments】\n・Added Japanese, English and Korean names for all millsage and Ikka Dumb Rock! members\n・Long character names on badge cards now wrap and display in full instead of being cut off",
+      "ko": "【추가】\n・BanG Dream! 少女乐团派对! 角色徽章 2026ver. (8장 추가)\n・BanG Dream! 少女乐团派对 角色徽章 2024 ver. (7장 추가)\n・BanG Dream! 少女乐团派对! 流沙亚克力徽章 2025 ver. (7장 추가)\n・BanG Dream! 少女乐团派对! 角色徽章 2025 ver. (7장 추가)\n・트레이딩 Botania 캔뱃지 ver.A BanG Dream! 10th Anniversary (5장 추가)\n・트레이딩 Botania 캔뱃지 ver.B BanG Dream! 10th Anniversary (5장 추가)\n・트레이딩 Botania 캔뱃지 ver.C BanG Dream! 10th Anniversary (5장 추가)\n・트레이딩 Botania 캔뱃지 ver.D BanG Dream! 10th Anniversary (10장 추가)\n・트레이딩 Botania 캔뱃지 ver.E BanG Dream! 10th Anniversary (10장 추가)\n【기능 조정】\n・millsage・일가 Dumb Rock! 멤버 이름의 일본어・영어・한국어 표기 추가 (밴드명 한국어 표기 「일가 Dumb Rock!」)\n・도감 카드의 캐릭터 이름이 길어도 잘리지 않고 줄바꿈되어 모두 표시되도록 변경"
+    }
+  },
+  {
     "date": "2026/11/12",
     "content": {
       "zh": "【新增】\n・MyGO!!!!!×Ave Mujica ツーマンライブ「\"moment / memory\"」台北追加公演 Blu-ray（新增 12 張）\n【功能調整】\n（無）",
