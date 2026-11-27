@@ -1229,13 +1229,16 @@ async function saveBatch(){
     // 夢ノ結唱角色自動填衍生來源(admin_note 為空時)
     autoFillYumeAdminNote(data);
     const idx=badges.findIndex(b=>b.id===data.id);
+    let imgQueuePrev = null; // 既有 ID 被覆蓋(換圖)時的換圖前狀態
     // 批次模式每張都有圖,所以一律寫 image_updated_at
     if(idx>=0){
       // 既有 ID:過濾掉空字串欄位,避免洗掉預填的資料(例如夢ノ結唱預先建好的 band/character/admin_note)
       const cleanData = Object.fromEntries(
         Object.entries(data).filter(([k,v]) => v !== '' && v !== undefined && v !== null)
       );
+      imgQueuePrev = (pendingImageUploads[data.id] && pendingImageUploads[data.id].prev) || imgSnapshot(badges[idx]);
       badges[idx]={...badges[idx], ...cleanData, created_at: badges[idx].created_at||now, updated_at: now, image_updated_at: now};
+      applyImageAddedAt(badges[idx], imageAddedAtBeforeReplace(imgQueuePrev));
       updated++;
     } else {
       badges.push({...data, created_at: now, updated_at: now, image_updated_at: now});
@@ -1243,7 +1246,7 @@ async function saveBatch(){
     }
     if(objectUrl) imageCache[data.id]=objectUrl;
     // 加入待推 GitHub 隊列
-    if(file) pendingImageUploads[data.id] = { file, ext: data.ext };
+    if(file) pendingImageUploads[data.id] = imgQueuePrev ? { file, ext: data.ext, prev: imgQueuePrev } : { file, ext: data.ext };
   });
   updateSyncButtonLabel();
   // 若有跳過,把跳過的留在 batchItems 給使用者繼續處理
@@ -1652,6 +1655,19 @@ function updateSyncButtonLabel(){
   btn.textContent = count > 0 ? `🔄 同步(GitHub＋R2)・${count} 張圖待推` : '🔄 同步(GitHub＋R2)';
 }
 
+// 首次上圖時間 image_added_at:只有「換過圖」的徽章才存這欄;沒換過圖的,首次上圖 = image_updated_at。
+// base = 換圖前的狀態(若這筆已有待同步的換圖,以待同步前的原狀為準)。原本就有圖 → 回傳原本的首次上圖時間;原本沒圖 → null(這次就是首次上圖)。
+// ⚠️ 2026/05/11 以前就有圖、沒有 image_updated_at 的舊徽章判斷不到(明羽選擇只管以後、不回補舊資料),換圖時會被當成首次上圖。
+function imageAddedAtBeforeReplace(base){
+  return (base && (base.image_added_at || base.image_updated_at)) || null;
+}
+function imgSnapshot(b){
+  return { ext: b.ext, image_updated_at: b.image_updated_at, image_added_at: b.image_added_at, updated_at: b.updated_at };
+}
+function applyImageAddedAt(b, added){
+  if(added) b.image_added_at = added; else delete b.image_added_at;
+}
+
 function processListImgChange(file, ri){
   const b = badges[ri];
   if(!b){ showToast('找不到該筆資料'); return; }
@@ -1666,7 +1682,7 @@ function processListImgChange(file, ri){
   // 讓「✕ 取消換圖」能還原回上傳前的原狀,而不是上一次(可能也是錯的)換圖結果
   const prev = pendingImageUploads[b.id]
     ? pendingImageUploads[b.id].prev
-    : { ext: b.ext, image_updated_at: b.image_updated_at, updated_at: b.updated_at };
+    : imgSnapshot(b);
   // 釋放舊 objectURL,建立新的
   if(imageCache[b.id]) URL.revokeObjectURL(imageCache[b.id]);
   imageCache[b.id] = URL.createObjectURL(file);
@@ -1675,6 +1691,7 @@ function processListImgChange(file, ri){
   b.ext = ext;
   b.image_updated_at = now;
   b.updated_at = now;
+  applyImageAddedAt(b, imageAddedAtBeforeReplace(prev));
   // 加入待推 GitHub 隊列
   pendingImageUploads[b.id] = { file, ext, prev };
   persist();
@@ -1692,6 +1709,7 @@ function clearListImg(ri){
   delete pendingImageUploads[b.id];
   b.ext = pending.prev.ext;
   b.image_updated_at = pending.prev.image_updated_at;
+  applyImageAddedAt(b, pending.prev.image_added_at);
   b.updated_at = pending.prev.updated_at;
   persist();
   renderList();
@@ -2362,11 +2380,19 @@ async function saveSingle(){
     if(choice!=='continue') return;
   }
   const now = new Date().toISOString();
+  let modalImgPrev = null; // 編輯模式換圖時的換圖前狀態(給 ✕ 取消與首次上圖判斷)
   if(editingIdx>=0){
     badge.created_at = badges[editingIdx].created_at || now;
     badge.updated_at = now;
     // 編輯模式:有換圖才更新 image_updated_at,否則保留原值
     badge.image_updated_at = modalImgChanged ? now : (badges[editingIdx].image_updated_at || null);
+    if(modalImgChanged){
+      const imgBase = (pendingImageUploads[badges[editingIdx].id] && pendingImageUploads[badges[editingIdx].id].prev) || imgSnapshot(badges[editingIdx]);
+      applyImageAddedAt(badge, imageAddedAtBeforeReplace(imgBase));
+      modalImgPrev = imgBase;
+    } else {
+      applyImageAddedAt(badge, badges[editingIdx].image_added_at); // 沒換圖:原樣保留(表單沒有這欄,不帶過來會被洗掉)
+    }
     badges[editingIdx]=badge;showToast('已更新');
   } else {
     if(badges.find(b=>b.id===id)){showToast('此編號已存在');return;}
@@ -2378,7 +2404,7 @@ async function saveSingle(){
   }
   // 有換圖則加入待推 GitHub 隊列
   if(modalImgChanged && modalImgFile){
-    pendingImageUploads[badge.id] = { file: modalImgFile, ext: badge.ext };
+    pendingImageUploads[badge.id] = modalImgPrev ? { file: modalImgFile, ext: badge.ext, prev: modalImgPrev } : { file: modalImgFile, ext: badge.ext };
     updateSyncButtonLabel();
   }
   persist();renderList();closeModal();
@@ -3334,7 +3360,7 @@ buildTextCharList('');
   <div style="background:#fff;border-radius:16px;width:min(520px,96vw);max-height:90vh;overflow-y:auto;padding:1.75rem;font-family:inherit;">
     <h2 style="font-size:1rem;font-weight:700;margin-bottom:1.25rem;color:#1a1a2e;">📅 依日期範圍匯出圖檔清單</h2>
     <div style="font-size:0.8rem;color:#888;margin-bottom:1rem;line-height:1.6;">
-      依照 <strong>created_at</strong>（新增時間）、<strong>updated_at</strong>（更新時間）或 <strong>image_updated_at</strong>（圖片更新時間）篩選，匯出符合條件的徽章圖檔路徑清單。
+      依照 <strong>新增時間</strong>、<strong>更新時間</strong>、<strong>首次上圖</strong>（這段期間第一次有圖）或 <strong>換圖</strong>（之前就有圖、這段期間換成新圖）篩選，匯出符合條件的徽章圖檔路徑清單。<br><span style="color:#b07a00;">※ 換圖的判斷從 2026/11/28 起才有紀錄；這之前換過的圖會算成「首次上圖」。</span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;margin-bottom:1rem;">
       <div class="field">
@@ -3354,11 +3380,14 @@ buildTextCharList('');
         <input type="checkbox" class="exp-date-field-cb" value="updated_at" checked style="accent-color:#3d3d8f;"/> 更新時間
       </label>
       <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
-        <input type="checkbox" class="exp-date-field-cb" value="image_updated_at" checked style="accent-color:#3d3d8f;"/> 圖片更新時間
+        <input type="checkbox" class="exp-date-field-cb" value="image_new" checked style="accent-color:#3d3d8f;"/> 首次上圖
+      </label>
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.83rem;cursor:pointer;">
+        <input type="checkbox" class="exp-date-field-cb" value="image_replaced" checked style="accent-color:#3d3d8f;"/> 換圖
       </label>
     </div>
     <div style="font-size:0.72rem;color:#999;margin-bottom:1rem;line-height:1.5;">
-      多欄皆勾時，每筆標 <span style="color:#27ae60;font-weight:600;">[新]</span>（新增）/ <span style="color:#0ea5e9;font-weight:600;">[改]</span>（僅更新）/ <span style="color:#a855f7;font-weight:600;">[圖]</span>（僅圖片更新）；優先序 新 &gt; 改 &gt; 圖。
+      多欄皆勾時，每筆標 <span style="color:#27ae60;font-weight:600;">[新]</span>（新增）/ <span style="color:#a855f7;font-weight:600;">[新圖]</span>（首次上圖）/ <span style="color:#e07b2a;font-weight:600;">[換圖]</span>（換圖）/ <span style="color:#0ea5e9;font-weight:600;">[改]</span>（僅改資料）；優先序 新 &gt; 新圖 &gt; 換圖 &gt; 改。
     </div>
     <div style="margin-bottom:1rem;">
       <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem;flex-wrap:wrap;">
@@ -3637,12 +3666,14 @@ function openExportByDateModal(){
   document.getElementById('export-date-overlay').style.display='flex';
 }
 
+// 本地日期 YYYY-MM-DD(toISOString 是 UTC,台灣早上 8 點前會變成前一天)
+function localYMD(d){ return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
 function setExpDateQuick(days){
   const to = new Date();
   const from = new Date();
   if(days > 0) from.setDate(from.getDate() - days + 1);
-  document.getElementById('exp-date-from').value = from.toISOString().slice(0,10);
-  document.getElementById('exp-date-to').value = to.toISOString().slice(0,10);
+  document.getElementById('exp-date-from').value = localYMD(from);
+  document.getElementById('exp-date-to').value = localYMD(to);
 }
 
 function runExportByDate(){
@@ -3660,7 +3691,8 @@ function runExportByDate(){
   // 兩個都勾時會一起挑出來；只勾一個時行為等同以前
   const useCreated = checkedFields.includes('created_at');
   const useUpdated = checkedFields.includes('updated_at');
-  const useImage = checkedFields.includes('image_updated_at');
+  const useImgNew = checkedFields.includes('image_new');
+  const useImgRep = checkedFields.includes('image_replaced');
   const inRange = ts => ts >= fromTs && ts <= toTs;
 
   const picked = [];
@@ -3670,16 +3702,20 @@ function runExportByDate(){
     const iTs = b.image_updated_at ? new Date(b.image_updated_at).getTime() : null;
     const cHit = useCreated && cTs && inRange(cTs);
     const uHit = useUpdated && uTs && inRange(uTs);
-    const iHit = useImage && iTs && inRange(iTs);
-    if(!cHit && !uHit && !iHit) return;
-    // 優先序：新增 > 更新 > 圖片更新
-    const changeType = cHit ? 'new' : (uHit ? 'updated' : 'image');
+    // 首次上圖時間:有換過圖的才存 image_added_at,否則就是 image_updated_at
+    const aTs = b.image_added_at ? new Date(b.image_added_at).getTime() : iTs;
+    const imgInRange = iTs && inRange(iTs);
+    const inHit = useImgNew && imgInRange && aTs >= fromTs;   // 這段期間第一次有圖
+    const rpHit = useImgRep && imgInRange && aTs < fromTs;    // 之前就有圖,這段期間換圖
+    if(!cHit && !uHit && !inHit && !rpHit) return;
+    // 優先序：新增 > 首次上圖 > 換圖 > 更新(換圖也會動到 updated_at,所以圖片類優先)
+    const changeType = cHit ? 'new' : (inHit ? 'imgnew' : (rpHit ? 'imgrep' : 'updated'));
     picked.push({...b, _changeType: changeType});
   });
 
   expResultItems = picked;
 
-  const _ml=[]; if(useCreated)_ml.push('新增'); if(useUpdated)_ml.push('更新'); if(useImage)_ml.push('圖片更新'); const modeLabel = _ml.join('/');
+  const _ml=[]; if(useCreated)_ml.push('新增'); if(useUpdated)_ml.push('更新'); if(useImgNew)_ml.push('首次上圖'); if(useImgRep)_ml.push('換圖'); const modeLabel = _ml.join('/');
 
   if(!expResultItems.length){
     info.textContent=`找不到符合條件的資料（${modeLabel}時間：${from} ～ ${to}）`;
@@ -3693,8 +3729,9 @@ function runExportByDate(){
   if(checkedFields.length >= 2){
     const nNew = expResultItems.filter(x=>x._changeType==='new').length;
     const nUpd = expResultItems.filter(x=>x._changeType==='updated').length;
-    const nImg = expResultItems.filter(x=>x._changeType==='image').length;
-    const _p=[]; if(nNew)_p.push(`[新] ${nNew}`); if(nUpd)_p.push(`[改] ${nUpd}`); if(nImg)_p.push(`[圖] ${nImg}`);
+    const nImgNew = expResultItems.filter(x=>x._changeType==='imgnew').length;
+    const nImgRep = expResultItems.filter(x=>x._changeType==='imgrep').length;
+    const _p=[]; if(nNew)_p.push(`[新] ${nNew}`); if(nImgNew)_p.push(`[新圖] ${nImgNew}`); if(nImgRep)_p.push(`[換圖] ${nImgRep}`); if(nUpd)_p.push(`[改] ${nUpd}`);
     breakdown = ' ｜' + _p.join(' / ');
   }
   info.textContent=`✓ 找到 ${expResultItems.length} 筆（${modeLabel}時間：${from} ～ ${to}）${breakdown}`;
@@ -3719,8 +3756,10 @@ function renderExpCheckList(){
     if(multiChecked){
       if(b._changeType === 'new'){
         tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#27ae60;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">新</span>`;
-      } else if(b._changeType === 'image'){
-        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#a855f7;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">圖</span>`;
+      } else if(b._changeType === 'imgnew'){
+        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#a855f7;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">新圖</span>`;
+      } else if(b._changeType === 'imgrep'){
+        tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#e07b2a;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">換圖</span>`;
       } else {
         tagHtml = `<span style="display:inline-block;font-size:0.68rem;font-weight:700;color:#fff;background:#0ea5e9;padding:0.08rem 0.4rem;border-radius:3px;flex-shrink:0;">改</span>`;
       }
@@ -3797,7 +3836,8 @@ function copyAnnouncementText(){
   // 把 items 按 _changeType 分組（若沒有就全當 new，以相容單選）
   const newItems = items.filter(b => b._changeType === 'new' || !b._changeType);
   const updItems = items.filter(b => b._changeType === 'updated');
-  const imgItems = items.filter(b => b._changeType === 'image');
+  const imgNewItems = items.filter(b => b._changeType === 'imgnew');
+  const imgRepItems = items.filter(b => b._changeType === 'imgrep');
 
   // 把一組 items 按活動分組後組成文字段落
   function buildSection(sectionItems){
@@ -3829,31 +3869,26 @@ function copyAnnouncementText(){
   }
 
   const lines = [];
-  const dateStr = new Date().toISOString().slice(0, 10);
+  const dateStr = localYMD(new Date());
 
   if(checkedN >= 2){
     // 多欄勾選：分「新增 / 更新 / 圖片更新」區塊
-    lines.push(`【新增/更新徽章清單】${dateStr}`);
-    lines.push(`共 ${items.length} 張（新增 ${newItems.length} / 更新 ${updItems.length} / 圖片更新 ${imgItems.length}）`);
+    // 只勾「首次上圖」+「換圖」時標題沿用【圖片更新徽章清單】,其餘組合用【新增/更新徽章清單】
+    const checkedVals = Array.from(document.querySelectorAll('.exp-date-field-cb:checked')).map(cb=>cb.value);
+    const onlyImg = checkedVals.every(v => v === 'image_new' || v === 'image_replaced');
+    lines.push(onlyImg ? `【圖片更新徽章清單】${dateStr}` : `【新增/更新徽章清單】${dateStr}`);
+    const _cnt=[]; if(!onlyImg) _cnt.push(`新增 ${newItems.length}`); _cnt.push(`首次上圖 ${imgNewItems.length}`, `換圖 ${imgRepItems.length}`); if(!onlyImg) _cnt.push(`更新 ${updItems.length}`);
+    lines.push(`共 ${items.length} 張（${_cnt.join(' / ')}）`);
     lines.push('');
-    if(newItems.length){
-      lines.push(`═══ 【新增】${newItems.length} 張 ═══`);
+    [[newItems,'新增'],[imgNewItems,'首次上圖'],[imgRepItems,'換圖'],[updItems,'更新']].forEach(([sec,label])=>{
+      if(!sec.length) return;
+      lines.push(`═══ 【${label}】${sec.length} 張 ═══`);
       lines.push('');
-      lines.push(...buildSection(newItems));
-    }
-    if(updItems.length){
-      lines.push(`═══ 【更新】${updItems.length} 張 ═══`);
-      lines.push('');
-      lines.push(...buildSection(updItems));
-    }
-    if(imgItems.length){
-      lines.push(`═══ 【圖片更新】${imgItems.length} 張 ═══`);
-      lines.push('');
-      lines.push(...buildSection(imgItems));
-    }
+      lines.push(...buildSection(sec));
+    });
   } else {
     // 單選：直接全列
-    const _lbl = singleVal === 'updated_at' ? '更新' : (singleVal === 'image_updated_at' ? '圖片更新' : '新增');
+    const _lbl = singleVal === 'updated_at' ? '更新' : (singleVal === 'image_new' ? '首次上圖' : (singleVal === 'image_replaced' ? '換圖' : '新增'));
     lines.push(`【${_lbl}徽章清單】${dateStr}`);
     lines.push(`共 ${items.length} 張`);
     lines.push('');
